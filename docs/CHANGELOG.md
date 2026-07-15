@@ -3,6 +3,30 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.21 · 2026-07-15
+**Deep-dive modal UX pass** (design-led, brainstormed spec + in-browser verification via
+chrome-devtools; spec at `docs/superpowers/specs/2026-07-15-deepdive-modal-ux-design.md`):
+- **Full-width surface.** The overlay `.panel` widened 1000→1180px; the `max-width:74ch` cap
+  removed from the wide blocks so `.io` cards, `table.map`, `.comp` cards and figures span the
+  full content width. Prose (`p`, `.lead`) and callouts keep a reading measure via a new
+  `--rd` (~82ch) so line length stays legible; callout/reading boxes hug that measure.
+- **Section navigator.** The `.bar .tag` (the black `H · DEEP DIVE` chip) became a toggle
+  (`role=button`, `aria-expanded/controls`, caret) that opens a `.secnav` popover listing every
+  `§` heading; clicking a row smooth-scrolls the panel to that section (respects reduced-motion).
+- **Reading progress.** An Intersectionless rAF scroll handler on the `.panel` marks sections
+  as the reader passes them; a `seen X/N` chip sits before the close button, a `.ddprog` fill
+  line under the bar tracks scroll position, and popover rows get a "seen" tick + a "current"
+  highlight. The seen-set persists through the existing `store` (`state.seen[<overlayId>]`,
+  key `agentic-study-v1`; included in export/import) so it survives close/reopen.
+- **Generic + scoped.** One `initDeepDiveNav()` keyed off each `.e1ov[role=dialog]` with ≥2
+  `h2` sections — all 17 content overlays (H1, H2, D1, E1–E8, P1–P5, SDLC) get the features with
+  no per-overlay wiring; the version-history modal is excluded. Headings get stable ids
+  (`<overlayId>-s<n>`, assigned only if absent). No content or topic-id changes.
+
+Note: the feature code itself landed in commit for v1.20 (bundled by a concurrent session that
+committed the shared working tree); this entry adds the version bump and documentation. Validator
+green.
+
 ## v1.20 · 2026-07-15
 **Added the H2 deep-dive companion** (EARS & Gherkin: machine-verifiable acceptance criteria) —
 second in the M3 set, embedded as an in-page overlay and as the standalone
