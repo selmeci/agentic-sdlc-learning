@@ -3,6 +3,47 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.22 · 2026-07-15
+
+Added the **H3 deep dive — Traceability & Spec Modes** (topic `hand-traceability`): embedded
+workbook overlay + standalone `deep-dives/H3-traceability-spec-modes-deepdive.html`, written
+after a three-teammate fact-verification & discovery pass (facts-toolchain, facts-research,
+discovery).
+
+Content (11 sections): why traceability becomes load-bearing at agent speed (the link is the
+memory; Jama May-2026 audit story flagged as vendor illustration, no numbers); the thirty-year
+heritage (Gotel & Finkelstein ICRE '94, RTM/ISO-IEC-IEEE 29148, DOORS/Jama "suspect links",
+mandatory trace in DO-178C / ISO 26262 / IEC 62304); the ID chain requirement→spec→task→code→
+test→PR with the Kiro criterion-level (`_Requirements: 1.2, 2.1_`) vs Spec Kit feature-folder/
+branch contrast (v0.12.x, point-in-time); structural vs inferred links (trace recovery ~60–85%
+by method, RAG best-case ~85.5% recovery accuracy RE:FSQ 2025; ReqToCode arXiv:2603.13999 on
+ID persistence under AI modification; inference reserved for one-shot brownfield bootstrap);
+a git-native suspect gate (**our synthesis**, flagged; Kiro precision: "Sync Files" is
+task-completion sync only — no drift detection in today's SDD tools); Böckeler's three spec
+modes with verified verbatim definitions (Birgitta Böckeler, martinfowler.com, 15 Oct 2025),
+Beck's verified Dec-2025 objection, and Tessl's Jan-2026 pivot away from spec-as-source
+(point-in-time); a new **provenance** section (AIDev census arXiv:2606.24429 — bot detection
+recovers 3.3% of Claude Code commits, 30× undercount; Assisted-by vs Co-authored-by trailer
+debate incl. the VS Code default-trailer revert; GitHub Copilot PR attribution; EU AI Act
+Art. 11 horizon with vendor-gloss caveat); a five-move minimal ID scheme for brownfield
+clients (**our synthesis**, flagged) answering the topic's open scaling question.
+
+Fact corrections applied across all copies:
+- The unpinnable "~64% ML traceability accuracy" figure **retired** in the H3 topic `know`
+  and Report 2 notes — replaced by the verifiable band (~60–85% by method) with sources.
+- **"Martin Böckeler" → "Birgitta Böckeler"** in the E8 reading list (workbook overlay +
+  standalone).
+- The Beck paraphrase ("you learn during implementation; the spec changes") replaced by his
+  verified LinkedIn wording ("encodes the (to me bizarre) assumption that you aren't going to
+  learn anything during implementation that would change the specification") in E8 (both
+  copies), Report 2 notes, and the H3 check answer.
+- Report 2 invalidation bullet now credits the RM-tool heritage and notes SDD tools don't
+  ship it.
+
+Workbook plumbing: H3 topic first `src` → `#h3-deepdive`; `know` rewritten (5 bullets incl.
+provenance), `concepts` +"provenance trailers", second self-check added; overlay wired
+(scoped `edH3`/`ahH3a` CSS + JS handler); version bump + this entry.
+
 ## v1.21 · 2026-07-15
 **Deep-dive modal UX pass** (design-led, brainstormed spec + in-browser verification via
 chrome-devtools; spec at `docs/superpowers/specs/2026-07-15-deepdive-modal-ux-design.md`):

@@ -44,7 +44,13 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     11.52% confirmed relative, Bashir 20.2% reframed 10-shot-vs-0-shot, Wang +23.2 pp confirmed)
     and discovery sources (Mathews & Nagappan ASE 2024 tests-in-prompt, SWE-bench Verified
     FAIL_TO_PASS oracle, AutoUAT/TestFlow, QVscribe, Automation Panda Gherkin-guidelines-for-AI).
-    Next in M3: **H3** (traceability & spec modes) or **H4** (feedback loop).
+  - ~~**H3** `hand-traceability` — traceability & spec modes~~ — **done (v1.22)**, with a
+    three-teammate fact pass (the "~64% ML traceability accuracy" figure retired as unpinnable,
+    "Martin Böckeler" → Birgitta Böckeler fixed in E8, Beck's Dec-2025 verbatim wording, Kiro
+    Sync-Files-not-drift-detection precision, Tessl Jan-2026 pivot flagged) and discovery
+    sources (AIDev census arXiv:2606.24429, ReqToCode arXiv:2603.13999, RE:FSQ 2025 RAG TLR,
+    Assisted-by/Co-authored-by trailer debate, EU AI Act Art. 11). Added a provenance section
+    and the five-move minimal ID scheme (our synthesis). Next in M3: **H4** (feedback loop).
 - **M4 Information architecture** (I1–I7): durable/derived/disposable, write-permissions,
   agentic search vs RAG, memory.
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,

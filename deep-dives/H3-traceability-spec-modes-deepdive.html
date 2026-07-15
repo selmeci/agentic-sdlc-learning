@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H3 Deep Dive — Traceability &amp; Spec Modes: The Chain from Requirement to PR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edH3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahH3a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">H3 · DEEP DIVE</span>
+    <h1>Traceability &amp; Spec Modes: The Chain from Requirement to PR</h1>
+    <span class="bc">companion to module M3 · Handoff contract</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · Thirty years of prior art</a>
+  <a href="#s2"><b>2</b> · The chain — IDs travel</a>
+  <a href="#s3"><b>3</b> · Structural vs inferred</a>
+  <a href="#s4"><b>4</b> · Invalidation — suspect flag</a>
+  <a href="#s5"><b>5</b> · The three spec modes</a>
+  <a href="#s6"><b>6</b> · Provenance — who wrote this?</a>
+  <a href="#s7"><b>7</b> · A minimal ID scheme</a>
+  <a href="#s8"><b>8</b> · Framework map</a>
+  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> · Further reading</a>
+</nav>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">Every artifact in this module exists so that work can be delegated and still be accountable. H1 built the contract, H2 made its criteria machine-verifiable — H3 is about what happens <em>after</em> the handoff: keeping the chain requirement → spec → task → code → test → PR connected while agents generate most of its links. At human speed, weak traceability is an annoyance that surfaces in a quarterly audit. At agent speed it is structural: an agent produces artifacts faster than anyone can reconstruct their provenance afterwards, so the question "which requirement does this code serve?" stops being an audit question and becomes the operating question of the whole delegation loop. Without the link you cannot review by intent (H1), you cannot re-verify after a change (E4), and you cannot triage drift when spec and code disagree (H4).</p>
+      <p>The failure mode is already documented — though so far as vendor narrative, not measurement. Jama Software describes a systems-engineering team that ran a traceability audit about six months into an AI-assisted initiative and found that "a significant share" of agent-generated code had no traceable link back to any documented requirement, alongside orphaned test cases and specified features that were never built (Mario Maldari, Jama blog, May 2026). No percentage is given, and Jama sells traceability tooling — treat it as an illustration with an incentive, not a statistic. But it names the mechanism precisely: the agent built <em>something</em>, tests passed, PRs merged, and only the audit revealed that nobody could say which requirements the code answered to.</p>
+      <div class="callout"><div class="t">The link is the memory</div><p>A human author can be interrogated months later — "why is this here?" gets an answer from memory, however fuzzy. An agent's session is gone the moment it ends (the amnesia argument P3 made for decomposition). For agent-written artifacts the recorded link is not documentation <em>about</em> the knowledge — it is the only knowledge there is. That inversion is why traceability moves from compliance chore to load-bearing infrastructure in an agentic SDLC.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>Thirty years of prior art</h2>
+      <p>Traceability is the least novel topic in this workbook, and that is its strength: the concepts are proven, only the economics changed. The field's founding problem statement is Gotel &amp; Finkelstein's "An Analysis of the Requirements Traceability Problem" (ICRE '94), built on a study of 100+ practitioners, which also drew the still-useful line between <em>pre-requirements</em> traceability (where a requirement came from — stakeholder, regulation, decision) and <em>post-requirements</em> traceability (where it went — design, code, test). The requirements traceability matrix is a standard artifact formalized in ISO/IEC/IEEE 29148; BABOK calls the same thing a coverage matrix. And requirements-management tools solved <em>change propagation</em> decades ago: in IBM DOORS, Jama Connect or Polarion, editing an upstream requirement automatically flags every downstream link as <strong>"suspect"</strong> until an engineer reviews and clears it — a mechanism we will steal wholesale in §4.</p>
+      <p>In regulated industries none of this is optional. DO-178C (avionics) requires demonstrable bidirectional trace from system requirements through software requirements to source code, test cases and results; ISO 26262 (automotive) and IEC 62304 (medical device software) mandate the same discipline with different evidence depth. The audit question "show me the requirement behind this code" has had a mandatory answer in aerospace since before most web developers were born.</p>
+      <div class="io"><div class="box"><div class="lab">What the heritage solved</div><ul><li>the vocabulary: trace links, suspect flags, coverage matrices (29148)</li><li>the mechanism: upstream change → downstream artifacts flagged for review</li><li>the governance: bidirectional trace as an audit obligation (DO-178C, ISO 26262, IEC 62304)</li></ul></div>
+      <div class="box"><div class="lab">What agents change</div><ul><li><strong>volume</strong> — hundreds of artifacts a week, not per release</li><li><strong>speed</strong> — drift accumulates in hours, not quarters</li><li><strong>authorship</strong> — no human memory behind the artifact; the link <em>is</em> the memory (§0)</li><li>and one thing in our favour: an instructed agent applies ID discipline deterministically — it never finds it tedious (§3)</li></ul></div></div>
+      <p>The practical conclusion for a brownfield client: agentic teams are converging on what regulated industries always did — minus the tooling weight. The job is not to buy an ALM suite; it is to get the suspect-flag idea and the coverage idea running on git primitives (§7).</p>
+
+      <h2 id="s2"><span class="n">2</span>The chain — IDs travel forward</h2>
+      <p>Traceability at its simplest is one identifier that survives every hop. The requirement gets an ID at birth; the spec quotes it; the task names it; the branch, the commits and the PR carry it; the tests encode it in their names. Each hop is written down at the moment the artifact is created — by the author, human or agent — which is what makes the whole chain greppable, auditable and free of inference.</p>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 300" role="img" aria-label="The traceability chain: requirement to spec to task to code to test to PR, with IDs traveling forward and suspicion traveling back">
+<defs><marker id="ahH3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+<text x="20" y="28" class="tg">THE CHAIN — IDS TRAVEL FORWARD, SUSPICION TRAVELS BACK</text>
+<rect x="20" y="60" width="140" height="56" rx="10" class="bxC"/>
+<text x="90" y="84" text-anchor="middle" class="tt">Requirement</text>
+<text x="90" y="102" text-anchor="middle" class="ts">REQ-12</text>
+<rect x="180" y="60" width="140" height="56" rx="10" class="bx"/>
+<text x="250" y="84" text-anchor="middle" class="tt">Spec</text>
+<text x="250" y="102" text-anchor="middle" class="ts">specs/REQ-12-*.md</text>
+<rect x="340" y="60" width="140" height="56" rx="10" class="bx"/>
+<text x="410" y="84" text-anchor="middle" class="tt">Task</text>
+<text x="410" y="102" text-anchor="middle" class="ts">TASK-042 · REQ-12</text>
+<rect x="500" y="60" width="140" height="56" rx="10" class="bx"/>
+<text x="570" y="84" text-anchor="middle" class="tt">Code</text>
+<text x="570" y="102" text-anchor="middle" class="ts">branch req/12-*</text>
+<rect x="660" y="60" width="140" height="56" rx="10" class="bxK"/>
+<text x="730" y="84" text-anchor="middle" class="tt">Test</text>
+<text x="730" y="102" text-anchor="middle" class="ts">test_req12_*</text>
+<rect x="820" y="60" width="140" height="56" rx="10" class="bxK"/>
+<text x="890" y="84" text-anchor="middle" class="tt">PR</text>
+<text x="890" y="102" text-anchor="middle" class="ts">"Closes REQ-12"</text>
+<path d="M160 88 L176 88" class="edH3"/>
+<path d="M320 88 L336 88" class="edH3"/>
+<path d="M480 88 L496 88" class="edH3"/>
+<path d="M640 88 L656 88" class="edH3"/>
+<path d="M800 88 L816 88" class="edH3"/>
+<path d="M570 120 L570 172" class="edH3 edD"/>
+<rect x="360" y="176" width="420" height="52" rx="10" class="bxA"/>
+<text x="570" y="198" text-anchor="middle" class="ti">code changed → linked spec, requirement &amp; tests become</text>
+<text x="570" y="216" text-anchor="middle" class="tt">SUSPECT</text>
+<path d="M356 202 L90 202 L90 122" class="edH3 edD"/>
+<path d="M730 172 L730 122" class="edH3 edD"/>
+<text x="150" y="192" class="ts">review or re-affirm the link</text>
+<text x="20" y="266" class="ts">solid = IDs carried forward in file names, branches, commit trailers, test names, PR bodies</text>
+<text x="20" y="284" class="ts">dashed = invalidation (§4): a change at one end marks the linked artifacts suspect until re-affirmed</text>
+</svg></div>
+<figcaption>The traceability chain. Forward: one requirement ID travels through spec, task, branch, commit, test name and PR — cheap, structural, greppable. Backward: a change flips linked artifacts to "suspect" until the link is re-affirmed, so drift is detected rather than discovered in an audit.</figcaption></figure>
+      <p>The two spec-driven toolchains implement the forward chain at different resolutions — a genuine design contrast, not just branding (tool facts point-in-time, mid-2026; re-verify). <strong>Kiro</strong> traces at the level of individual acceptance criteria: <span class="mono">requirements.md</span> numbers every criterion (1.1, 1.2 …), and each task in <span class="mono">tasks.md</span> carries a trailing line naming exactly which criteria it implements — the format Kiro emits is <span class="mono">_Requirements: 1.2, 2.1_</span> under the task entry. <strong>GitHub Spec Kit</strong> (v0.12.x as of July 2026) traces at the level of the feature: <span class="mono">/speckit.specify</span> creates a numbered directory <span class="mono">specs/001-feature-name/</span> holding spec.md, plan.md and tasks.md, plus a matching git branch <span class="mono">001-feature-name</span> — folder- and branch-level linkage, with no per-requirement ID system. Kiro answers "which criterion does this task serve?"; Spec Kit answers "which feature does this branch serve?". For a brownfield client the difference matters: criterion-level trace is what lets a failing test point back at a specific requirement line.</p>
+      <p>Outside the toolchains, the carriers are ordinary git and forge conventions: the ID in the branch name, a commit trailer (<span class="mono">Refs: REQ-12</span> in the Conventional-Commits footer position), the forge's closing keywords in the PR body ("Closes REQ-12" auto-links and closes the tracker item), and the ID embedded in test names so a red test announces which requirement is failing. This is also where H1's anatomy pays off twice: component E (context links) is where the contract records the chain <em>backwards</em> — the requirement, ADRs and code paths the task descends from — and component F (Definition of Done) is where the tech lead demands the chain <em>forwards</em>: "PR links REQ-12; tests named for it." A T0 micro-task (H1's sizing tiers) may carry nothing but an issue ID; a T2 contract carries the full set.</p>
+
+      <h2 id="s3"><span class="n">3</span>Structural links vs inferred links</h2>
+      <p>There are exactly two ways to know which requirement a piece of code serves: write the link down when the artifact is born (<strong>structural</strong>), or reconstruct it afterwards from textual similarity (<strong>inferred</strong> — the research field of automated trace-link recovery). The research verdict on inference is remarkably stable across two decades: never reliable enough for unattended use. The retrospective by Cleland-Huang, Hayes and colleagues ("Automating Requirements Traceability: Two Decades of Learning from KDD", arXiv:1807.11454) documents that classic information-retrieval methods never reached uncritical-use quality; current LLM-based recovery lands around 60–70% recall on benchmark datasets, and even the strongest recent result — a retrieval-augmented pipeline for requirements-to-code recovery in automotive reporting ~85.5% recovery accuracy (RE:FSQ 2025) — comes wrapped in the same caveat every paper in the genre carries: residual "phantom links", naming bias, and an explicit requirement for human review, especially in regulated contexts.</p>
+      <p>So the defensible claim is not "IDs beat ML" absolutely — LLM recovery is improving fast and the gap is narrowing. It is sharper and more useful: <strong>structural links are deterministic, auditable and 100%-precise by construction; inferred links are probabilistic and need a human in the loop.</strong> A regulated audit (§1) accepts the first kind as evidence and the second only as a reviewed proposal. ReqToCode (Schlathölter, arXiv:2603.13999, March 2026) makes exactly this argument for the agentic setting: requirement IDs embedded structurally in the codebase <em>persist</em> when AI generates or modifies code, whereas ML-inferred associations degrade and need re-training as the code moves under them.</p>
+      <p>And here the economics tilt further than they ever did for humans, in an inversion worth savouring: humans find ID discipline tedious, so structural traceability historically decayed — which is what created the market for recovery research in the first place. An agent finds nothing tedious. Put the stamping rule in CLAUDE.md and the deterministic gate in CI (§7), and the agent applies the convention on every commit without complaint or fatigue. <strong>The author that caused the traceability problem at scale is also the first author that reliably follows the discipline that prevents it.</strong></p>
+      <div class="callout pine"><div class="t">Where inference does earn its keep: the brownfield bootstrap</div><p>Your client's existing codebase has no links — and no discipline retroactively creates them. A one-shot, human-reviewed recovery pass (LLM-assisted, ~60–85% by method) is the realistic way to bootstrap coverage over legacy code, prioritized by the change heatmap (M5). Inference to bootstrap once; structure to maintain forever. What does not work is running inference continuously as a substitute for discipline.</p></div>
+
+      <h2 id="s4"><span class="n">4</span>Invalidation — the suspect flag</h2>
+      <p>A chain of links is only useful if it reacts to change. The mechanism is §1's suspect flag, generalized: <strong>when an artifact at one end of a link changes, the artifact at the other end becomes suspect</strong> — possibly stale, pending a human (or gate) re-affirming the link. Code changed? The linked spec, requirement and tests are suspect. Requirement changed? Every task, code path and test tracing to it is suspect. In DOORS or Jama this is a built-in red flag cleared by review; the concept transfers to a git-native stack almost embarrassingly cheaply, because markdown specs versioned in the repo (M4's durable tier) already ride the same diff and the same review as code.</p>
+      <p>Be precise about what today's agentic tools actually do here, because the marketing suggests more than the products deliver (point-in-time, mid-2026). <strong>Kiro does not do drift detection.</strong> Its one sync feature — "Sync Files" on tasks.md — analyzes the codebase and checks off tasks that turn out to be already implemented (useful when a colleague did the work in another session). That is one-directional and task-completion-only: nothing in Kiro flags that your code has wandered away from requirements.md, and nothing regenerates a spec from code. Spec Kit has no invalidation mechanism at all. If you want suspect flags, you build them — which is fortunately a CI rule, not a product:</p>
+      <div class="comp"><div class="chead"><span class="cid">SYNTHESIS</span><h3>A git-native suspect gate</h3><span class="role">ours — flag it as such to the client</span></div>
+      <p>Two deterministic rules (E5's advisory→deterministic principle), implementable as a CI script over the PR diff: <strong>(1) code-side:</strong> if the PR touches source paths that a spec's context links (H1 component E) name, but does not touch the spec file, label the PR <span class="mono">suspect-spec</span> — advisory at first, a failing check once the team trusts it. <strong>(2) spec-side:</strong> if a spec file changes but no linked code or test changes with it (and the PR is not labelled <span class="mono">spec-only</span>), flag the reverse. Both rules are greps over the diff plus the spec's own link list — no ML, no new tooling, and the suspect label lands exactly where H4's triage question picks it up: <em>is the code wrong, is the requirement wrong, or did we learn something?</em></p></div>
+      <p>The deliberate modesty of this design is the point. The heritage tools implement suspect tracking with full link databases and audit trails because their industries must prove it; a product team needs the <em>reflex</em>, not the database — a PR label that forces the drift conversation while the diff is still open, instead of an audit that discovers it two quarters later.</p>
+
+      <h2 id="s5"><span class="n">5</span>The three spec modes</h2>
+      <p>Everything so far assumed the spec survives the task. Whether it should — and what role it plays afterwards — is the sharpest open question in spec-driven development, and the cleanest framing is Birgitta Böckeler's (Thoughtworks, martinfowler.com, October 2025), from her analysis of Kiro, Spec Kit and Tessl. Her three modes, verbatim: <strong>spec-first</strong> — "a well thought-out spec is written first, and then used in the AI-assisted development workflow for the task at hand"; <strong>spec-anchored</strong> — "the spec is kept even after the task is complete, to continue using it for evolution and maintenance of the respective feature"; <strong>spec-as-source</strong> — "the spec is the main source file over time, and only the spec is edited by the human, the human never touches the code." A terminology warning her own institution supplies: the Thoughtworks Radar notes that SDD terms are "used inconsistently … without shared definitions" across the industry — you will meet renamed variants (one circulating blog rebrands the third level "spec-as-truth"); anchor on Böckeler's definitions and cite them.</p>
+      <p>H3's angle on the modes is operational: <strong>each mode implies a different traceability contract.</strong> That is what the table adds beyond E8's strategic recommendation.</p>
+      <div class="figscroll"><table class="map"><tr><th>Mode</th><th>The spec is…</th><th>Traceability means…</th><th>Invalidation burden</th></tr>
+      <tr><td>spec-first</td><td>scaffolding — may not outlive the task</td><td>provenance note: "this PR grew from that spec" — links die young by design</td><td>none (nothing durable to drift)</td></tr>
+      <tr><td>spec-anchored</td><td>a living contract beside the code</td><td>the full chain of §2, both directions, kept honest by §4's suspect gate</td><td>the real cost of the mode — budget for it</td></tr>
+      <tr><td>spec-as-source</td><td>the only human-edited artifact</td><td>generative, not documentary: code is <em>rebuilt from</em> the spec (the compiler relationship — you don't trace a binary to its source, you recompile)</td><td>none in theory; total spec-completeness in practice</td></tr></table></div>
+      <p>Spec-as-source deserves respect as an idea and honesty as a status report. The ambition traces to Sean Grove's <em>The New Code</em> (the manifesto H1 dissects — intent as the durable asset, code as its "lossy projection"). Its boldest commercial bet was Tessl — which called its own approach "spec-centric"; spec-as-source is Böckeler's classification of it — where generated code files carried <span class="mono">// GENERATED FROM SPEC - DO NOT EDIT</span> and mapped 1:1 to spec files, backed by $125M of funding. The status report: in January 2026 Tessl repositioned toward an "agent enablement platform" — a versioned registry of agent skills ("Skills on Tessl") — and the pure spec-as-source framing is now its history rather than its headline (point-in-time; re-verify before quoting to a client). The most heavily funded attempt at code-as-disposable-byproduct pivoting away is itself evidence about how far the mode is from production reality.</p>
+      <p>The principled objection was stated by Kent Beck (LinkedIn, December 2025), on descriptions of SDD that require the whole spec before implementation: this "encodes the (to me bizarre) assumption that you aren't going to learn anything during implementation that would change the specification." That is precisely the assumption spec-as-source hard-codes and spec-anchored relaxes: an anchored spec is allowed to be wrong and get corrected by implementation learning — the suspect gate (§4) plus H4's triage are the machinery of that correction. Hence the recommendation E8 already made and H3 prices out: <strong>spec-anchored</strong> for a brownfield client — with eyes open that "anchored" is not a free lunch but a commitment to the invalidation discipline of §4. (The tool field keeps moving: the Radar now also lists OpenSpec, a fourth workflow built around change proposals — propose → apply → archive — rather than feature folders. Point-in-time.)</p>
+
+      <h2 id="s6"><span class="n">6</span>Provenance — who wrote this code?</h2>
+      <p>Traceability has a second axis the heritage tools never needed: not "which requirement does this serve?" but <strong>"who — or what — wrote it?"</strong> Review policy (E6's autonomy levels), incident forensics, licensing and emerging regulation all hinge on knowing whether a change was human, assisted, or delegated — and that fact, like the requirement link, must be stamped at creation or it is gone.</p>
+      <p>The evidence that it is gone by default is now quantified. The AIDev census (Khosravani &amp; Mockus, arXiv:2606.24429, June 2026) mined ~180 million repositories for agent activity and found that no single detection method captures more than a fraction of it: bot-account detection alone recovered just 3.3% (28,154) of Claude Code's actual commits — a 30× undercount against the 886,122 commits identifiable when four trace types are combined (bot accounts, commit-message signatures, author-name suffixes, and config-files-only "silent agents" like Copilot or Cursor, which leave no commit fingerprint at all). The census volumes — Claude Code 886k, Replit 315k, Google Jules 216k, Devin 98k in its late-2025→early-2026 window — matter less than the method finding: <strong>if provenance is not stamped deliberately, it cannot be reconstructed later, even by researchers trying hard.</strong> Strong independent evidence, and the provenance mirror of §0's Jama story.</p>
+      <p>What stamping looks like is currently a convention debate, not a standard (practitioner synthesis, point-in-time). One camp uses git's <span class="mono">Co-authored-by:</span> trailer — which forges render as co-authorship; the counter-argument runs that co-authorship implies shared accountability and "a model can't hold accountability", so the Linux-kernel-style <span class="mono">Assisted-by: &lt;agent&gt;:&lt;model-version&gt;</span> trailer is more honest, keeping the human's <span class="mono">Signed-off-by</span> as the accountability line. The debate has a cautionary tale: Microsoft made VS Code append a Copilot co-author trailer by default and reverted it around May 2026 after backlash (it fired even with AI assistance disabled). GitHub's own coding agent models the middle ground: Copilot-authored PRs are searchable by author, while release notes credit the human who asked for the work — the agent is part of the provenance, the human remains responsible for whether it ships. Regulation is converging on the same demand from above: the EU AI Act's technical-documentation duty (Article 11) requires "traceability throughout the system's lifetime", with high-risk obligations enforceable from 2 August 2026 — though note the popular reading that maps this onto <em>which model generated which code under which spec</em> is so far a vendor gloss on the statute, not its text; verify against the Act before citing it to a client.</p>
+      <div class="callout amber"><div class="t">Policy beats archaeology</div><p>Pick one trailer convention, write it into CLAUDE.md, and enforce its presence with a CI grep (E5). Record agent, model version and — where the harness supports it — a session or task ID, which links the commit back to the contract that authorized it (H1) and the autonomy level it ran at (E6). Three lines of convention at write time versus a research project at audit time: the AIDev census is the measurement of what the research project costs.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>A minimal ID scheme for a brownfield client</h2>
+      <p>Everything above compresses into one deployable scheme. It is <strong>our synthesis</strong> — assembled from the heritage mechanisms (§1), Kiro's criterion-level idea (§2), the structural-links argument (§3) and the provenance policy (§6) — not an industry standard, and we present it to clients as such.</p>
+      <div class="io"><div class="box"><div class="lab">The scheme — five moves</div><ul><li><strong>1 · Registry.</strong> <span class="mono">specs/</span> in the repo; one markdown file per requirement cluster, named <span class="mono">REQ-012-discount-codes.md</span>; changed only by PR (M4 durable tier)</li><li><strong>2 · Contract.</strong> IDs live in the contract's components E and F (H1): context links trace backwards, DoD demands the forward chain</li><li><strong>3 · Stamping.</strong> CLAUDE.md instructs the agent: branch <span class="mono">req/012-*</span>, trailer <span class="mono">Refs: REQ-012</span>, provenance trailer (§6), tests named <span class="mono">test_req012_*</span></li><li><strong>4 · Gates.</strong> Two CI greps: PR must carry a REQ id; the suspect rule of §4</li><li><strong>5 · Bootstrap.</strong> one reviewed inference pass over legacy hot spots (§3), then discipline only</li></ul></div>
+      <div class="box"><div class="lab">Deliberately skipped — until scale demands</div><ul><li>RTM/ALM tooling — the registry <em>is</em> the matrix, greppable</li><li>continuous ML trace recovery — probabilistic answers to a question the scheme answers deterministically</li><li>per-line provenance — commit granularity suffices outside regulated code</li><li>the threshold: ID discipline + grep carries you to hundreds of specs; buy tooling when the grep stops fitting in a head</li></ul></div></div>
+      <p>That last bullet answers the topic's open question — how does traceability scale to thousands of agent-generated artifacts? — with a claim we hold with medium confidence: <strong>discipline scales further than intuition suggests, because the marginal cost of stamping is zero for an agent</strong> (§3's inversion), and the reading side stays cheap as long as links are text in the repo rather than rows in a silo. The genuine scaling wall is human review capacity for suspect flags — which is E7's review-bottleneck finding wearing a different hat, and it is managed the same way: tighten what triggers a flag, not what gets recorded.</p>
+
+      <h2 id="s8"><span class="n">8</span>How H3 connects the framework</h2>
+      <div class="figscroll"><table class="map"><tr><th>Topic</th><th>The connection</th></tr>
+      <tr><td>H1 · contract</td><td>components E (context links) and F (DoD) are the chain's anchor points; T0–T2 sizing decides how much chain a task carries</td></tr>
+      <tr><td>H2 · EARS/Gherkin</td><td>numbered EARS criteria are what the IDs point at — Kiro's _Requirements: 1.2_ names an EARS line; a Gherkin scenario is the criterion's executable end of the link</td></tr>
+      <tr><td>H4 · feedback loop</td><td>the suspect flag (§4) is the trigger; H4's triage — code wrong, requirement wrong, or learning? — is the handler</td></tr>
+      <tr><td>E4 · verification</td><td>re-verification after change needs to know <em>which</em> tests answer for a requirement — that is a trace link, not a convention</td></tr>
+      <tr><td>E5 · governance</td><td>every rule here is advisory prose made deterministic: the REQ-id grep, the suspect gate, the provenance-trailer check</td></tr>
+      <tr><td>E6 · autonomy</td><td>provenance records which autonomy level produced a change — the audit trail that makes L3 delegation defensible</td></tr>
+      <tr><td>E8 · SDD</td><td>E8 recommends spec-anchored strategically; H3 prices it operationally (the invalidation burden is the mode's real cost)</td></tr>
+      <tr><td>M4 · information architecture</td><td>specs in the durable tier make the chain reviewable in the same diff as code; links are structure, not metadata in a silo</td></tr>
+      <tr><td>M5 · brownfield</td><td>the bootstrap pass (§3) runs over the change heatmap; characterization tests inherit REQ ids as they are ratified</td></tr></table></div>
+
+      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>can anyone answer "which requirement does this file serve?" — for human code? for agent code?</li><li>does any ID survive from tracker to PR today, or do links die at the first hop?</li><li>where do specs live — repo, wiki, nowhere — and who notices when code drifts from them?</li><li>is agent-authored work distinguishable in git history at all?</li></ul></div>
+      <div class="box"><div class="lab">Build (feeds E7 rollout)</div><ul><li>the five-move ID scheme (§7), advisory first, deterministic once trusted</li><li>the suspect gate as a PR label wired to H4's triage ritual</li><li>one provenance trailer convention in CLAUDE.md + CI</li><li>a metric for E7: % of merged PRs carrying a valid REQ id — the traceability coverage curve</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember H3 by</div><p>At agent speed the link between requirement and code is the only memory of intent, so it must be written at creation — structural IDs that travel requirement → spec → task → code → test → PR — because reconstructing links afterwards is probabilistic (~60–85%) while stamping them is deterministic and costs an agent nothing. Change management is the heritage suspect flag rebuilt on git: touch code without its spec and the PR gets flagged, feeding the drift triage. Of Böckeler's three spec modes, recommend spec-anchored and budget honestly for its invalidation discipline; treat spec-as-source as a horizon (its boldest bet, Tessl, pivoted away in January 2026), and stamp provenance now — the AIDev census shows unstamped agent authorship is unrecoverable even by researchers trying hard.</p></div>
+
+      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Birgitta Böckeler — Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl</div><div class="mt">martinfowler.com · October 2025</div><p>The spec-first / spec-anchored / spec-as-source framing this section builds on, with tool-by-tool analysis. The definitional anchor in a field the Radar itself calls terminologically inconsistent.</p></div>
+      <div class="item"><div class="rt">Gotel &amp; Finkelstein — An Analysis of the Requirements Traceability Problem</div><div class="mt">ICRE '94</div><p>The founding problem statement (100+ practitioners; pre- vs post-requirements traceability). Thirty years of prior art in twelve pages — read it to avoid reinventing vocabulary.</p></div>
+      <div class="item"><div class="rt">Khosravani &amp; Mockus — the AIDev census of AI coding agents in open source</div><div class="mt">arXiv:2606.24429 · June 2026</div><p>180M repos; bot-detection alone recovers 3.3% of Claude Code activity (30× undercount). The quantified case for stamping provenance at write time.</p></div>
+      <div class="item"><div class="rt">Schlathölter — ReqToCode: traceability as a structural property of the codebase</div><div class="mt">arXiv:2603.13999 · March 2026</div><p>The citable version of §3's argument: embedded requirement IDs persist under AI modification where inferred links degrade.</p></div>
+      <div class="item"><div class="rt">Kiro spec docs &amp; GitHub Spec Kit</div><div class="mt">kiro.dev/docs/specs · github.com/github/spec-kit</div><p>The two live implementations of the forward chain at different resolutions — criterion-level vs feature-folder-level. Both point-in-time; re-verify versions.</p></div>
+      <div class="item"><div class="rt">Jama Software — suspect tracking &amp; the SDD traceability-audit story</div><div class="mt">jamasoftware.com · vendor</div><p>The suspect-link mechanism our §4 gate borrows, and the May-2026 audit anecdote — useful narrative, vendor incentive, no numbers.</p></div>
+      <div class="item"><div class="rt">Report 2 (traceability &amp; feedback) + topics H1, H2, H4</div><div class="mt">this workbook — module M3</div><p>The contract whose components carry the IDs, the criteria the IDs point at, and the triage loop the suspect flag feeds.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (H3-traceability-spec-modes-deepdive.html). Its natural neighbours in the workbook are H1 (the contract components that carry the IDs), H2 (the criteria the links point at), H4 (drift triage), E5 (deterministic gates), E8 (the spec-anchored recommendation) and M4 (specs as durable artifacts).</p>
+
+</div>
+</body>
+</html>
