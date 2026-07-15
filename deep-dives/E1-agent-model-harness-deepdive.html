@@ -304,7 +304,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 <section>
   <h2 id="sdlc"><span class="n">3</span>Mapping the components to the SDLC</h2>
   <p>The framework is not a phase model, but each component has a natural home in the classical software lifecycle. This table is how we explain "where does the agent actually plug in?" to a client who thinks in SDLC stages.</p>
-  <table class="map">
+  <div class="figscroll"><table class="map">
     <tr><th>SDLC stage</th><th>Dominant component(s)</th><th>What good looks like</th></tr>
     <tr><td>Requirements / refinement</td><td>Prompt · (handoff contract)</td><td>scoped tasks with non-goals and machine-verifiable acceptance criteria</td></tr>
     <tr><td>Design / planning</td><td>Context · Harness</td><td>the agent can retrieve architecture and decisions; a plan mode before writes</td></tr>
@@ -312,7 +312,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
     <tr><td>Testing / CI</td><td>Verification</td><td>fast trustworthy suite as the external truth; tests protected from the agent</td></tr>
     <tr><td>Review / merge</td><td>Governance · Verification</td><td>human gate on intent; deterministic gates on correctness &amp; safety</td></tr>
     <tr><td>Operate / evolve</td><td>Memory · Governance</td><td>continuity across sessions; audit trail; blast radius bounded in prod</td></tr>
-  </table>
+  </table></div>
   <div class="callout pine">
     <div class="t">The shift to notice</div>
     <p>Classical SDLC runs left-to-right once. The agentic version <em>loops</em>: verification feeds implementation, and memory carries state between whole cycles. The components don't replace the SDLC — they instrument it with a fast inner feedback loop, which is exactly why a weak test/CI base (a weak verification component) makes the whole thing regress, as DORA's stability data shows.</p>

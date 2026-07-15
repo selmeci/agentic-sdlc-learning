@@ -219,12 +219,12 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <div class="callout amber"><div class="t">The rule that follows</div><p>Treat every retrieved item as <em>tainted</em> until proven otherwise. Summarise rather than pass raw untrusted content (Claude Code does this for web fetches). Once untrusted content has entered the window, apply the trifecta logic: an agent holding untrusted input must not also hold both sensitive data and an exfiltration path (Meta AI's "Agents Rule of Two", 2025 — M7). Context engineering and security engineering are the same activity seen from two angles.</p></div>
 
       <h2 id="s5"><span class="n">5</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>Role of context</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>Role of context</th><th>What good looks like</th></tr>
       <tr><td>Onboarding / discovery</td><td>retrieval quality</td><td>an agent can find architecture, decisions and conventions unaided — fast time-to-understanding</td></tr>
       <tr><td>Design / planning</td><td>selection</td><td>relevant ADRs and interfaces pulled in; nothing extraneous rotting the window</td></tr>
       <tr><td>Implementation</td><td>assembly every turn</td><td>curated per-turn context; live grep over stale index; excerpts + links</td></tr>
       <tr><td>Long tasks</td><td>long-horizon mgmt</td><td>compaction / notes / sub-agents keep the window in the green zone</td></tr>
-      <tr><td>Any external input</td><td>taint handling</td><td>retrieved/ticket/design content treated as untrusted; summarised, gated</td></tr></table>
+      <tr><td>Any external input</td><td>taint handling</td><td>retrieved/ticket/design content treated as untrusted; summarised, gated</td></tr></table></div>
 
       <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Are source-of-truth artifacts retrievable, or tribal knowledge?</li><li>Is documentation fresh enough to be worth retrieving?</li><li>Repo size/shape: does grep navigation stay tractable?</li><li>Where does untrusted content enter (tickets, web, design)?</li></ul></div>

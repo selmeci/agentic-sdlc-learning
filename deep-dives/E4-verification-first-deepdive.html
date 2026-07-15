@@ -230,13 +230,13 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 
       <h3>What a "mutant" is — common mutation operators</h3>
       <p>Tools apply a catalogue of small, mechanical transformations. A representative sample:</p>
-      <table class="map"><tr><th>Operator</th><th>Example change</th><th>What a survivor reveals</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Operator</th><th>Example change</th><th>What a survivor reveals</th></tr>
       <tr><td>Relational</td><td><span class="mono">a &gt; b</span> → <span class="mono">a &gt;= b</span></td><td>a boundary/equality case is never asserted</td></tr>
       <tr><td>Arithmetic</td><td><span class="mono">x + y</span> → <span class="mono">x - y</span></td><td>the computed value isn't actually checked</td></tr>
       <tr><td>Logical</td><td><span class="mono">a &amp;&amp; b</span> → <span class="mono">a || b</span></td><td>a combination of conditions is untested</td></tr>
       <tr><td>Constant</td><td><span class="mono">return 1</span> → <span class="mono">return 0</span></td><td>the exact return value isn't asserted</td></tr>
       <tr><td>Statement removal</td><td>delete a line / a <span class="mono">return</span></td><td>a side-effect or early exit isn't verified</td></tr>
-      <tr><td>Negation</td><td><span class="mono">if (x)</span> → <span class="mono">if (!x)</span></td><td>the branch direction isn't pinned down</td></tr></table>
+      <tr><td>Negation</td><td><span class="mono">if (x)</span> → <span class="mono">if (!x)</span></td><td>the branch direction isn't pinned down</td></tr></table></div>
 
       <h3>A worked micro-example</h3>
       <p>Suppose the code is <span class="mono">function isAdult(age) { return age &gt;= 18 }</span> and the only test is <span class="mono">isAdult(25) === true</span>. Coverage is 100% — the line ran. Now the tool creates a relational mutant: <span class="mono">age &gt; 18</span>. Run the test: <span class="mono">isAdult(25)</span> is still <span class="mono">true</span>, so the test passes — <strong>the mutant survives</strong>. That survivor tells you precisely what's missing: a test at the boundary, <span class="mono">isAdult(18) === true</span>, which would fail on the mutant and kill it. One survivor, one exact new test. That is the feedback coverage could never give you.</p>
@@ -263,10 +263,10 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <p>Everything above assumes a suite that is <em>fast</em> and <em>trustworthy</em>. Both are prerequisites, not nice-to-haves: a slow suite breaks the inner loop (the agent can't iterate), and an untrustworthy suite (flaky, or hollow) means green carries no information. This is why verification quality — not model quality — sets the autonomy ceiling.</p>
       <p><strong>Suite speed is engineered, not assumed.</strong> The practical shape is a fail-fast ladder: typecheck → lint → focused unit tests → full suite. The cheap layers run on every agent turn; the full suite runs at the session or PR boundary. As a rough tolerance, the per-turn signal must land in seconds to low minutes — slower than that and the agent stops iterating against it and starts guessing. Brownfield reality (M5) is a 40-minute suite, which is why building the focused-subset runner — mapping changed files to the tests that exercise them — is itself part of the harness work, not an optimisation to defer.</p>
       <p><strong>Flakiness is a direct attack on the signal.</strong> A flaky test destroys the information content of green and red, and a flaky oracle is worse than none: it trains humans and agents alike to retry until green and to shrug at red. Set an explicit flakiness budget and a quarantine protocol — a test that fails intermittently leaves the gating suite immediately and is tracked as a defect, not left in place to erode trust. Brownfield suites (M5) are flaky by default, so measuring and quarantining belongs to the same first build step as characterization tests.</p>
-      <table class="map"><tr><th>Verification state</th><th>Safe ceiling</th><th>Why</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Verification state</th><th>Safe ceiling</th><th>Why</th></tr>
       <tr><td>No/slow/flaky tests</td><td>L1–L2 (assist only)</td><td>no trustworthy inner loop; humans must verify everything</td></tr>
       <tr><td>Fast, trustworthy suite</td><td>L3 (delegated task→PR)</td><td>the agent self-corrects against real truth; humans review intent</td></tr>
-      <tr><td>+ mutation-verified, protected</td><td>robust L3, selective L4</td><td>the signal has teeth and can't be quietly weakened</td></tr></table>
+      <tr><td>+ mutation-verified, protected</td><td>robust L3, selective L4</td><td>the signal has teeth and can't be quietly weakened</td></tr></table></div>
       <p>In brownfield reality (M5), the suite often doesn't exist yet — which is why the bootstrap order is read-only → characterization tests → mutation-verify → then grant write autonomy. Verification isn't just a component of the harness; establishing it is the <em>first build step</em> before delegation is safe.</p>
 
       <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>

@@ -244,7 +244,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <p>Pruning needs data, and the harness is where the data comes from. Log per session: tool-call traces, cost per task, intervention rate (how often a human had to step in), and session outcome (merged / discarded / escalated) — these traces are the raw feed for E7's metrics. They also turn the operating rule above into a procedure rather than a vibe: keep a small canary task set, run it on each model release with and without a given scaffold component, and delete the component when the delta vanishes. A harness without observability can only accrete, because nobody can prove a component is dead.</p>
 
       <h2 id="s4"><span class="n">4</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>Harness pattern</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>Harness pattern</th><th>What good looks like</th></tr>
       <tr><td>Repo onboarding</td><td>initializer agent</td><td>a model can set up, build and test the repo unaided; init.sh + baseline commit exist</td></tr>
       <tr><td>Task kickoff</td><td>sprint contract</td><td>an explicit checkable "done" agreed before code is written</td></tr>
       <tr><td>Implementation</td><td>loop + controlled writes</td><td>bounded work, context assembled per turn, writes confined to safe surfaces</td></tr>
@@ -252,7 +252,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <tr><td>Across sessions</td><td>cross-session state</td><td>session N+1 resumes N without re-deriving intent</td></tr>
       <tr><td>CI / background runs</td><td>per-surface profiles</td><td>headless gates strictly tighter than interactive; concurrency capped to review capacity</td></tr>
       <tr><td>Org-wide rollout</td><td>plugins + managed settings</td><td>harness modules packaged and versioned; fleet held above a known-good version</td></tr>
-      <tr><td>Every model upgrade</td><td>pruning</td><td>obsolete scaffolding removed; canary set proves it, traces show it; harness stays minimal</td></tr></table>
+      <tr><td>Every model upgrade</td><td>pruning</td><td>obsolete scaffolding removed; canary set proves it, traces show it; harness stays minimal</td></tr></table></div>
 
       <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Can a model bootstrap the repo (build/test) unaided?</li><li>Is there a fast verification loop to make clean-state real?</li><li>Are artifacts classifiable as durable/derived/disposable?</li><li>Do we have hook enforcement points for controlled writes?</li></ul></div>

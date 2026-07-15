@@ -3,6 +3,14 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.19 · 2026-07-15
+**Table-responsiveness sweep completed** (finishes what v1.18 started): the remaining 36
+`table.map` tables — E1–E6, P1–P5, D1, SDLC-foundations, and the workbook's SDLC/Domain-map
+and topic sections — are now wrapped in the `.figscroll` container. All 50 tables across the
+artifact set now scroll horizontally in their own box below 760px instead of overflowing the
+page, matching the diagrams and the H1/E7/E8 tables. Applied in both copies (standalone files
+and the workbook overlays/sections). No content changes. Validator green.
+
 ## v1.18 · 2026-07-15
 **Table responsiveness follow-up** (consistency with the v1.16 pass): the five `table.map`
 tables in E7 (2) and E8 (3) are now wrapped in the same `.figscroll` container the diagrams

@@ -161,14 +161,14 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Andrej Karpathy compressed the whole argument into one line at YC's AI Startup School (June 2025): build <strong>autonomy sliders</strong> and keep AI "on a leash," because <em>generation is cheap and verification is expensive</em> — the human verification loop is the bottleneck. The P-scale is that slider for the product layer, calibrated to the only verifier the layer has: human judgment. Set the slider by what you can verify, not by what the model can generate.</p></div>
 
       <h2 id="s1"><span class="n">1</span>The five levels</h2>
-      <table class="map">
+      <div class="figscroll"><table class="map">
         <tr><th>Level</th><th>What the AI does</th><th>What the human does</th><th>Where it stands</th></tr>
         <tr><td>P1</td><td>assisted drafting — completions, rewording, structure on demand</td><td>authors; AI is stationery</td><td>universal, uncontroversial</td></tr>
         <tr><td>P2</td><td>drafts whole artifacts from rough input (PRD sections, story sets, synthesis)</td><td>edits, owns every sentence and the why</td><td><strong>today's mainstream</strong> (P2 topic)</td></tr>
         <tr><td>P3</td><td>red-teams human-owned artifacts: ambiguity, contradictions, missing edges</td><td>writes first, then disposes of findings</td><td>evidence-strongest step (§3) — the natural next move</td></tr>
         <tr><td>P4</td><td>drives decomposition and consistency checks across the backlog</td><td>approves at explicit gates; owns seams</td><td>works with gates — the SDD toolchains are this shape (P3 topic §5)</td></tr>
         <tr><td>P5</td><td>autonomous product definition — decides what to build</td><td>rubber-stamps, then stops looking</td><td><strong>anti-pattern today</strong> (§4)</td></tr>
-      </table>
+      </table></div>
       <p>Two properties matter more than the rungs themselves. First, the ladder is <strong>per artifact type, not per team</strong>: the same PM can run interview synthesis at P2–P3, PRD drafting at P2, refinement red-teaming at P3, and decomposition at P4-with-gates — the level attaches to the artifact and its verifiability, not to a job title. Second, the levels describe <em>who initiates and who judges</em>, not model quality: P3 uses the same model as P2 — pointed at critique, where the evidence says it is stronger (§3).</p>
 
       <h2 id="s2"><span class="n">2</span>The structural difference — verification asymmetry</h2>

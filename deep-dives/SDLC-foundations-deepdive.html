@@ -218,14 +218,14 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 
       <h2 id="s3"><span class="n">3</span>When to use which — a decision lens</h2>
       <p>The model is chosen by the shape of the problem, not fashion. The dimensions that actually decide it:</p>
-      <table class="map"><tr><th>If…</th><th>lean toward</th><th>because</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>If…</th><th>lean toward</th><th>because</th></tr>
       <tr><td>requirements are fixed &amp; fully known</td><td>Waterfall / V-Model</td><td>upfront spec is cheap to honour; change is rare</td></tr>
       <tr><td>safety-critical / regulated, traceability required</td><td>V-Model</td><td>gated verification per requirement is mandatory, not overhead</td></tr>
       <tr><td>requirements broadly known, will refine</td><td>Iterative &amp; Incremental</td><td>feedback each cycle without full adaptive overhead</td></tr>
       <tr><td>high novelty / dominant unknowns</td><td>Spiral</td><td>retire risk early with cheap (agent) prototypes</td></tr>
       <tr><td>evolving product, fast feedback available</td><td>Agile (Scrum/Kanban)</td><td>tightest loop = maximal agent leverage</td></tr>
       <tr><td>mature automation &amp; monitoring</td><td>DevOps / CD</td><td>strongest verification base → highest safe autonomy</td></tr>
-      </table>
+      </table></div>
       <div class="callout pine"><div class="t">The agentic overlay on the decision</div><p>Agentic development shifts the calculus toward <em>faster-feedback</em> models. Because agents make writing cheap and relocate the constraint to review (E7), the models that pay off most are those with a fast, trustworthy verification loop (E4) and continuous flow (Agile/DevOps). But the shift is conditional: without the verification and governance base, a fast model just produces instability faster (the DORA 2024 finding). So the honest recommendation is rarely "adopt Agile/DevOps" in the abstract — it's "build the verification + governance base first, then the faster models unlock higher autonomy." In regulated or safety-critical contexts, the gated models remain correct and agents live inside their gates.</p></div>
 
       <h2 id="s4"><span class="n">4</span>How agentic development changes the SDLC itself</h2>

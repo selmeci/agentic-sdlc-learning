@@ -839,13 +839,13 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h2><span class="n">3</span>Mapping the components to the SDLC</h2>
       <p>Not a phase model, but each component has a natural home. This is how we answer "where does the agent actually plug in?" for a client who thinks in SDLC stages.</p>
-      <table class="map"><tr><th>SDLC stage</th><th>Dominant component(s)</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>Dominant component(s)</th><th>What good looks like</th></tr>
       <tr><td>Requirements / refinement</td><td>Prompt · (handoff contract)</td><td>scoped tasks with non-goals and machine-verifiable acceptance criteria</td></tr>
       <tr><td>Design / planning</td><td>Context · Harness</td><td>the agent can retrieve architecture and decisions; a plan mode before writes</td></tr>
       <tr><td>Implementation</td><td>Loop · Tools · Context</td><td>a constrained loop, assembling context per turn</td></tr>
       <tr><td>Testing / CI</td><td>Verification</td><td>fast trustworthy suite as external truth; tests protected from the agent</td></tr>
       <tr><td>Review / merge</td><td>Governance · Verification</td><td>human gate on intent; deterministic gates on correctness &amp; safety</td></tr>
-      <tr><td>Operate / evolve</td><td>Memory · Governance</td><td>continuity across sessions; audit trail; blast radius bounded in prod</td></tr></table>
+      <tr><td>Operate / evolve</td><td>Memory · Governance</td><td>continuity across sessions; audit trail; blast radius bounded in prod</td></tr></table></div>
       <div class="callout pine"><div class="t">The shift to notice</div><p>Classical SDLC runs left-to-right once. The agentic version <em>loops</em>: verification feeds implementation, memory carries state between whole cycles. The components don't replace the SDLC — they instrument it with a fast inner feedback loop, which is why a weak test/CI base makes the whole thing regress, as DORA's stability data shows.</p></div>
 
       <h2><span class="n">4</span>Takeaways for introducing a harness</h2>
@@ -937,12 +937,12 @@ footer .verlink:hover{color:var(--cobalt)}
       <div class="callout amber"><div class="t">The rule that follows</div><p>Treat every retrieved item as <em>tainted</em> until proven otherwise. Summarise rather than pass raw untrusted content (Claude Code does this for web fetches). Once untrusted content has entered the window, apply the trifecta logic: an agent holding untrusted input must not also hold both sensitive data and an exfiltration path (Meta AI's "Agents Rule of Two", 2025 — M7). Context engineering and security engineering are the same activity seen from two angles.</p></div>
 
       <h2><span class="n">5</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>Role of context</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>Role of context</th><th>What good looks like</th></tr>
       <tr><td>Onboarding / discovery</td><td>retrieval quality</td><td>an agent can find architecture, decisions and conventions unaided — fast time-to-understanding</td></tr>
       <tr><td>Design / planning</td><td>selection</td><td>relevant ADRs and interfaces pulled in; nothing extraneous rotting the window</td></tr>
       <tr><td>Implementation</td><td>assembly every turn</td><td>curated per-turn context; live grep over stale index; excerpts + links</td></tr>
       <tr><td>Long tasks</td><td>long-horizon mgmt</td><td>compaction / notes / sub-agents keep the window in the green zone</td></tr>
-      <tr><td>Any external input</td><td>taint handling</td><td>retrieved/ticket/design content treated as untrusted; summarised, gated</td></tr></table>
+      <tr><td>Any external input</td><td>taint handling</td><td>retrieved/ticket/design content treated as untrusted; summarised, gated</td></tr></table></div>
 
       <h2><span class="n">6</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Are source-of-truth artifacts retrievable, or tribal knowledge?</li><li>Is documentation fresh enough to be worth retrieving?</li><li>Repo size/shape: does grep navigation stay tractable?</li><li>Where does untrusted content enter (tickets, web, design)?</li></ul></div>
@@ -1061,7 +1061,7 @@ footer .verlink:hover{color:var(--cobalt)}
       <p>Pruning needs data, and the harness is where the data comes from. Log per session: tool-call traces, cost per task, intervention rate (how often a human had to step in), and session outcome (merged / discarded / escalated) — these traces are the raw feed for E7's metrics. They also turn the operating rule above into a procedure rather than a vibe: keep a small canary task set, run it on each model release with and without a given scaffold component, and delete the component when the delta vanishes. A harness without observability can only accrete, because nobody can prove a component is dead.</p>
 
       <h2><span class="n">4</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>Harness pattern</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>Harness pattern</th><th>What good looks like</th></tr>
       <tr><td>Repo onboarding</td><td>initializer agent</td><td>a model can set up, build and test the repo unaided; init.sh + baseline commit exist</td></tr>
       <tr><td>Task kickoff</td><td>sprint contract</td><td>an explicit checkable "done" agreed before code is written</td></tr>
       <tr><td>Implementation</td><td>loop + controlled writes</td><td>bounded work, context assembled per turn, writes confined to safe surfaces</td></tr>
@@ -1069,7 +1069,7 @@ footer .verlink:hover{color:var(--cobalt)}
       <tr><td>Across sessions</td><td>cross-session state</td><td>session N+1 resumes N without re-deriving intent</td></tr>
       <tr><td>CI / background runs</td><td>per-surface profiles</td><td>headless gates strictly tighter than interactive; concurrency capped to review capacity</td></tr>
       <tr><td>Org-wide rollout</td><td>plugins + managed settings</td><td>harness modules packaged and versioned; fleet held above a known-good version</td></tr>
-      <tr><td>Every model upgrade</td><td>pruning</td><td>obsolete scaffolding removed; canary set proves it, traces show it; harness stays minimal</td></tr></table>
+      <tr><td>Every model upgrade</td><td>pruning</td><td>obsolete scaffolding removed; canary set proves it, traces show it; harness stays minimal</td></tr></table></div>
 
       <h2><span class="n">5</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Can a model bootstrap the repo (build/test) unaided?</li><li>Is there a fast verification loop to make clean-state real?</li><li>Are artifacts classifiable as durable/derived/disposable?</li><li>Do we have hook enforcement points for controlled writes?</li></ul></div>
@@ -1169,13 +1169,13 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h3>What a "mutant" is — common mutation operators</h3>
       <p>Tools apply a catalogue of small, mechanical transformations. A representative sample:</p>
-      <table class="map"><tr><th>Operator</th><th>Example change</th><th>What a survivor reveals</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Operator</th><th>Example change</th><th>What a survivor reveals</th></tr>
       <tr><td>Relational</td><td><span class="mono">a &gt; b</span> → <span class="mono">a &gt;= b</span></td><td>a boundary/equality case is never asserted</td></tr>
       <tr><td>Arithmetic</td><td><span class="mono">x + y</span> → <span class="mono">x - y</span></td><td>the computed value isn't actually checked</td></tr>
       <tr><td>Logical</td><td><span class="mono">a &amp;&amp; b</span> → <span class="mono">a || b</span></td><td>a combination of conditions is untested</td></tr>
       <tr><td>Constant</td><td><span class="mono">return 1</span> → <span class="mono">return 0</span></td><td>the exact return value isn't asserted</td></tr>
       <tr><td>Statement removal</td><td>delete a line / a <span class="mono">return</span></td><td>a side-effect or early exit isn't verified</td></tr>
-      <tr><td>Negation</td><td><span class="mono">if (x)</span> → <span class="mono">if (!x)</span></td><td>the branch direction isn't pinned down</td></tr></table>
+      <tr><td>Negation</td><td><span class="mono">if (x)</span> → <span class="mono">if (!x)</span></td><td>the branch direction isn't pinned down</td></tr></table></div>
 
       <h3>A worked micro-example</h3>
       <p>Suppose the code is <span class="mono">function isAdult(age) { return age &gt;= 18 }</span> and the only test is <span class="mono">isAdult(25) === true</span>. Coverage is 100% — the line ran. Now the tool creates a relational mutant: <span class="mono">age &gt; 18</span>. Run the test: <span class="mono">isAdult(25)</span> is still <span class="mono">true</span>, so the test passes — <strong>the mutant survives</strong>. That survivor tells you precisely what's missing: a test at the boundary, <span class="mono">isAdult(18) === true</span>, which would fail on the mutant and kill it. One survivor, one exact new test. That is the feedback coverage could never give you.</p>
@@ -1202,10 +1202,10 @@ footer .verlink:hover{color:var(--cobalt)}
       <p>Everything above assumes a suite that is <em>fast</em> and <em>trustworthy</em>. Both are prerequisites, not nice-to-haves: a slow suite breaks the inner loop (the agent can't iterate), and an untrustworthy suite (flaky, or hollow) means green carries no information. This is why verification quality — not model quality — sets the autonomy ceiling.</p>
       <p><strong>Suite speed is engineered, not assumed.</strong> The practical shape is a fail-fast ladder: typecheck → lint → focused unit tests → full suite. The cheap layers run on every agent turn; the full suite runs at the session or PR boundary. As a rough tolerance, the per-turn signal must land in seconds to low minutes — slower than that and the agent stops iterating against it and starts guessing. Brownfield reality (M5) is a 40-minute suite, which is why building the focused-subset runner — mapping changed files to the tests that exercise them — is itself part of the harness work, not an optimisation to defer.</p>
       <p><strong>Flakiness is a direct attack on the signal.</strong> A flaky test destroys the information content of green and red, and a flaky oracle is worse than none: it trains humans and agents alike to retry until green and to shrug at red. Set an explicit flakiness budget and a quarantine protocol — a test that fails intermittently leaves the gating suite immediately and is tracked as a defect, not left in place to erode trust. Brownfield suites (M5) are flaky by default, so measuring and quarantining belongs to the same first build step as characterization tests.</p>
-      <table class="map"><tr><th>Verification state</th><th>Safe ceiling</th><th>Why</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Verification state</th><th>Safe ceiling</th><th>Why</th></tr>
       <tr><td>No/slow/flaky tests</td><td>L1–L2 (assist only)</td><td>no trustworthy inner loop; humans must verify everything</td></tr>
       <tr><td>Fast, trustworthy suite</td><td>L3 (delegated task→PR)</td><td>the agent self-corrects against real truth; humans review intent</td></tr>
-      <tr><td>+ mutation-verified, protected</td><td>robust L3, selective L4</td><td>the signal has teeth and can't be quietly weakened</td></tr></table>
+      <tr><td>+ mutation-verified, protected</td><td>robust L3, selective L4</td><td>the signal has teeth and can't be quietly weakened</td></tr></table></div>
       <p>In brownfield reality (M5), the suite often doesn't exist yet — which is why the bootstrap order is read-only → characterization tests → mutation-verify → then grant write autonomy. Verification isn't just a component of the harness; establishing it is the <em>first build step</em> before delegation is safe.</p>
 
       <h2><span class="n">8</span>Takeaways for our engagement</h2>
@@ -1304,12 +1304,12 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h3>The same five layers in any harness</h3>
       <p>This document is written in Claude Code vocabulary because that is our reference harness — but the engagement premise is an <em>unknown</em> client stack. The mechanisms above are not product features; they are an abstract taxonomy that any harness either implements or lacks:</p>
-      <table class="map"><tr><th>Control layer</th><th>What it does</th><th>What your harness calls it (examples)</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Control layer</th><th>What it does</th><th>What your harness calls it (examples)</th></tr>
       <tr><td>declarative policy</td><td>static allow/deny/ask rules per tool &amp; pattern</td><td>Claude Code permission rules; Cursor allow/deny command lists</td></tr>
       <tr><td>programmable interceptor</td><td>your code runs before/after each tool call and can block or gate it</td><td>Claude Code PreToolUse/PostToolUse hooks — the layer many harnesses <strong>lack entirely</strong>; without it every rule is advisory-only, which caps the safe autonomy level you can grant (E6)</td></tr>
       <tr><td>OS-level isolation</td><td>bounds what an allowed action can touch (filesystem, processes)</td><td>Seatbelt / bubblewrap sandbox; devcontainer; throwaway VM</td></tr>
       <tr><td>egress control</td><td>network allowlist by domain; severs the exfiltration leg</td><td>sandbox network policy; TLS-inspecting proxy / firewall</td></tr>
-      <tr><td>audit log</td><td>records every consequential action for review &amp; rollback</td><td>PostToolUse log; OpenTelemetry export; CI job logs</td></tr></table>
+      <tr><td>audit log</td><td>records every consequential action for review &amp; rollback</td><td>PostToolUse log; OpenTelemetry export; CI job logs</td></tr></table></div>
       <p>The consultant's first governance question at any client is therefore not "which tool do you use?" but <strong>"which of these five layers does your harness actually have?"</strong> — the answer determines both the rollout design (E7) and the autonomy ceiling (E6).</p>
 
       <h2><span class="n">3</span>Why governance exists: the lethal trifecta</h2>
@@ -1319,12 +1319,12 @@ footer .verlink:hover{color:var(--cobalt)}
       <div class="callout amber"><div class="t">The supply chain is now a governed surface (point-in-time, mid-2026)</div><p>The rules-file backdoor (§1) generalises: everything the agent <em>loads</em> — skills, plugins, MCP servers, tool descriptions — is executable trust, and 2026 guidance treats it as such. The <strong>OWASP Agentic Skills Top&nbsp;10</strong> (AST10, v1.0 2026 — incubator status, so emerging community consensus rather than a settled standard) names the failure modes: malicious skills, typosquatted MCP servers, tool-description poisoning. <strong>Microsoft Security Blog</strong>, <em>"When prompts become shells: RCE vulnerabilities in AI agent frameworks"</em> (May 2026 — vendor research), showed agent frameworks turning injected prompts into remote code execution. And a <strong>Cloud Security Alliance</strong> research note (practitioner synthesis) analysed prompt injection against the Claude Code GitHub Action as a CI/CD supply-chain threat — an agent in your pipeline <em>is</em> part of your supply chain. The governance response is the same five layers pointed at what the agent loads, not just what it does: allowlist skills and MCP servers like dependencies, pin versions, log loads (M7). And the PostToolUse audit log earns double duty here — it is also the evidence artifact for SOC&nbsp;2, ISO&nbsp;42001 and EU AI Act conversations. All names and statuses point-in-time, mid-2026; re-verify.</p></div>
 
       <h2><span class="n">4</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>Governance mechanism</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>Governance mechanism</th><th>What good looks like</th></tr>
       <tr><td>Repo / org setup</td><td>permission baseline</td><td>enterprise managed settings; secrets &amp; destructive commands denied by default</td></tr>
       <tr><td>Implementation</td><td>PreToolUse hooks + sandbox</td><td>writes confined to safe paths; shell bounded; egress allowlisted</td></tr>
       <tr><td>Session boundary</td><td>Stop hook</td><td>suite intact &amp; green verified before the session can end (ties to E4)</td></tr>
       <tr><td>Review / merge</td><td>human "ask" gates</td><td>a person approves intent where all three trifecta legs would combine</td></tr>
-      <tr><td>Operate / audit</td><td>PostToolUse log</td><td>every consequential action recorded; rollback possible; OpenTelemetry export</td></tr></table>
+      <tr><td>Operate / audit</td><td>PostToolUse log</td><td>every consequential action recorded; rollback possible; OpenTelemetry export</td></tr></table></div>
 
       <h2><span class="n">5</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Do dev/prod separation, RBAC and secrets hygiene exist at all?</li><li>Is there a place to enforce hooks (or only advisory config)?</li><li>Can we set an egress allowlist / sandbox in their environment?</li><li>Is there an audit trail before anything touches production?</li></ul></div>
@@ -1384,11 +1384,11 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h2><span class="n">2</span>The component prerequisites — what each level requires</h2>
       <p>This is the operational heart of E6: each rung is unlocked by specific components being genuinely in place. This table is how we translate "what level?" into "what must exist first?" — and therefore how E6 drives both assessment and rollout.</p>
-      <table class="map"><tr><th>Level</th><th>Must have in place</th><th>What gates the step up</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Level</th><th>Must have in place</th><th>What gates the step up</th></tr>
       <tr><td>L1–L2</td><td>prompt + context + tools (E1, E2)</td><td>basic retrieval; a human watching every change</td></tr>
       <tr><td>L3</td><td>+ harness, verification, governance (E3, E4, E5)</td><td>a fast, trustworthy test loop; deterministic guardrails; PR review capacity</td></tr>
       <tr><td>L4</td><td>+ memory, blast-radius control</td><td>a narrow, repeated task with a deterministic oracle; bounded, reversible effects</td></tr>
-      <tr><td>L5</td><td>— (not achieved)</td><td>an unsolved problem, not a configuration</td></tr></table>
+      <tr><td>L5</td><td>— (not achieved)</td><td>an unsolved problem, not a configuration</td></tr></table></div>
       <div class="callout pine"><div class="t">The rule that caps everything</div><p><strong>Never scale the number of agents beyond code-review capacity.</strong> Autonomy and volume are the same budget seen twice: more agents or higher levels both produce more output needing review. When output outruns review, the effective level must come <em>down</em>, regardless of how capable the model is. This is why E7's review-bottleneck data (+98% PRs, +91% review time — Faros AI vendor telemetry) is really an E6 constraint.</p></div>
       <p>To see what the "staffing decision" headline cashes out to, run the arithmetic (numbers illustrative — measure your own): suppose one senior reviewer can <em>genuinely</em> review — read, question, sometimes reject — about five agent PRs a day. Two such reviewers cap an L3 workflow at roughly ten merged agent PRs a day, regardless of how many agents are provisioned. Adding a third, fifth or tenth agent does not raise throughput; it only deepens the review queue and stretches time-in-review, which is the same failure the Faros AI telemetry above describes. The only levers that raise the cap are more review capacity, cheaper review per PR (smaller diffs, verification evidence attached), or moving a narrow slice to L4 where a deterministic oracle replaces the reviewer.</p>
 
@@ -1397,30 +1397,30 @@ footer .verlink:hover{color:var(--cobalt)}
       <div class="io"><div class="box"><div class="lab">Signals that support L3</div><ul><li>fast, trustworthy tests (E4) with real teeth (mutation score)</li><li>CI that returns a signal the agent can read</li><li>deterministic governance: hooks, sandbox, egress (E5)</li><li>enough human review capacity for the PR volume</li></ul></div>
       <div class="box"><div class="lab">Signals that cap at L2</div><ul><li>no/slow/flaky test suite</li><li>advisory-only config; no enforcement points</li><li>no dev/prod separation, RBAC or secrets hygiene</li><li>review already saturated</li></ul></div></div>
       <p>Phrases like "fast, trustworthy tests" and "enough review capacity" only bite if they are checkable, so turn them into an assessment instrument. The rubric below gives each prerequisite a concrete heuristic and a way to measure it. <strong>Every threshold here is a judgment-call practitioner heuristic, not a standard</strong> — tune the numbers to the client — but the discipline is the point: each rung's prerequisites must be checkable, or the level decision is vibes.</p>
-      <table class="map"><tr><th>Prerequisite</th><th>Concrete heuristic</th><th>Measured how</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Prerequisite</th><th>Concrete heuristic</th><th>Measured how</th></tr>
       <tr><td>per-turn signal</td><td>a focused test subset returns in seconds to low minutes; the full suite is bounded and predictable</td><td>time the agent's inner loop: relevant-subset wall-clock, full-suite p95 in CI</td></tr>
       <tr><td>test trust</td><td>tests actually fail when the code is wrong — mutation score on the target module around ~70% is a pragmatic bar (E4; practitioner heuristic, not a standard)</td><td>run mutation testing on the specific modules the agent will touch, not the repo average</td></tr>
       <tr><td>review capacity</td><td>review queue depth trend is flat; median time-in-review is not growing</td><td>PR analytics over the last few sprints: queue depth over time, median time-in-review</td></tr>
       <tr><td>intervention rate</td><td>a human rarely has to correct the agent mid-task; a rising rate means the level is set too high</td><td>count mid-task human corrections per delegated task; watch the trend, not the absolute</td></tr>
-      <tr><td>blast radius</td><td>the agent's writes are confined to allowlisted paths; effects bounded and reversible</td><td>audit the hook/sandbox logs (E5): zero writes outside the allowlist over the trial window</td></tr></table>
+      <tr><td>blast radius</td><td>the agent's writes are confined to allowlisted paths; effects bounded and reversible</td><td>audit the hook/sandbox logs (E5): zero writes outside the allowlist over the trial window</td></tr></table></div>
       <div class="callout amber"><div class="t">The level is a dial, not a ratchet</div><p>Autonomy governance is bidirectional: alongside the promotion rubric, define <strong>demotion triggers</strong> up front — review queue saturating, intervention rate rising, escaped-defect rate climbing, the test suite slowing past its budget. Who decides matters: the <em>accountable reviewer or lead</em> pulls the trigger, never the agent operator, whose incentives all point at keeping the dial up. And the speeds are deliberately asymmetric: <strong>promotion is slow</strong> — one level at a time, after the rubric above holds for a sustained period — while <strong>demotion is instant</strong>: the moment a trigger fires, drop one level immediately and investigate afterwards. A team that can only turn the dial up has built a ratchet, and ratchets fail loudly.</p></div>
       <p>Note L4 is not "L3 done well" — it is a different shape of task. You do not graduate a general delegated-task workflow to L4; you identify a narrow, repeated, deterministically-checkable slice (dependency updates, flaky-test repair) and run <em>that slice</em> at L4 while everything else stays at L3. Level is per-workflow, not per-team.</p>
 
       <h2><span class="n">4</span>The parallel scales — L, P and D</h2>
       <p>E6's engineering ladder has two siblings elsewhere in the workbook, and seeing them together clarifies all three. They share a shape (5 rungs, top rung an anti-pattern or unreached) but differ in what does the verifying.</p>
-      <table class="map"><tr><th>Scale</th><th>Layer</th><th>What verifies each step</th><th>Top rung</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Scale</th><th>Layer</th><th>What verifies each step</th><th>Top rung</th></tr>
       <tr><td>L1–L5</td><td>engineering (E6)</td><td>deterministic tests / CI</td><td>L5 not achieved</td></tr>
       <tr><td>P1–P5</td><td>product (M2)</td><td>human judgment + consistency checks</td><td>P5 anti-pattern</td></tr>
-      <tr><td>D1–D5</td><td>design (M6)</td><td>conformance checks + designer taste</td><td>D5 anti-pattern</td></tr></table>
+      <tr><td>D1–D5</td><td>design (M6)</td><td>conformance checks + designer taste</td><td>D5 anti-pattern</td></tr></table></div>
       <div class="callout amber"><div class="t">Provenance — flag this honestly</div><p>The three scales do not share a pedigree. <strong>L1–L5</strong> is our adaptation of published industry autonomy ladders (Swarmia, Tessl and similar — see further reading); <strong>P1–P5</strong> and <strong>D1–D5</strong> are <em>original syntheses of this study programme</em>, useful lenses but not industry standards. Say so whenever presenting them — a client who searches for "P1–P5 product autonomy scale" should find nothing and not be surprised.</p></div>
       <p>The instructive contrast: engineering can push furthest (L4 in narrow cases) precisely because it has a <em>deterministic</em> oracle — tests either pass or fail. Product and design cap lower (P5/D5 are anti-patterns) because their verification is human judgment, which cannot be automated away. Autonomy rises exactly as far as verification can be made deterministic — the single principle behind all three scales.</p>
 
       <h2><span class="n">5</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC activity</th><th>Typical level</th><th>Why</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC activity</th><th>Typical level</th><th>Why</th></tr>
       <tr><td>Editing / prototyping</td><td>L1–L2</td><td>human in the loop every step; fast feedback, low stakes</td></tr>
       <tr><td>Scoped feature / bugfix → PR</td><td>L3</td><td>delegated with a verification loop and a human merge gate</td></tr>
       <tr><td>Dependency bumps, flaky-test repair</td><td>L4</td><td>narrow, repeated, deterministically verifiable; bounded blast radius</td></tr>
-      <tr><td>Anything safety-critical / high blast radius</td><td>≤ L2</td><td>the cost of a wrong autonomous action is unacceptable regardless of model skill</td></tr></table>
+      <tr><td>Anything safety-critical / high blast radius</td><td>≤ L2</td><td>the cost of a wrong autonomous action is unacceptable regardless of model skill</td></tr></table></div>
 
       <h2><span class="n">6</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess (the level question)</div><ul><li>which enabling components are genuinely in place (E3/E4/E5)?</li><li>the level is set by the weakest one, not the model</li><li>is there review capacity for the volume the level produces?</li><li>which narrow slices could run at L4 while the rest stays L3?</li></ul></div>
@@ -1803,14 +1803,14 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h2><span class="n">3</span>When to use which — a decision lens</h2>
       <p>The model is chosen by the shape of the problem, not fashion. The dimensions that actually decide it:</p>
-      <table class="map"><tr><th>If…</th><th>lean toward</th><th>because</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>If…</th><th>lean toward</th><th>because</th></tr>
       <tr><td>requirements are fixed &amp; fully known</td><td>Waterfall / V-Model</td><td>upfront spec is cheap to honour; change is rare</td></tr>
       <tr><td>safety-critical / regulated, traceability required</td><td>V-Model</td><td>gated verification per requirement is mandatory, not overhead</td></tr>
       <tr><td>requirements broadly known, will refine</td><td>Iterative &amp; Incremental</td><td>feedback each cycle without full adaptive overhead</td></tr>
       <tr><td>high novelty / dominant unknowns</td><td>Spiral</td><td>retire risk early with cheap (agent) prototypes</td></tr>
       <tr><td>evolving product, fast feedback available</td><td>Agile (Scrum/Kanban)</td><td>tightest loop = maximal agent leverage</td></tr>
       <tr><td>mature automation &amp; monitoring</td><td>DevOps / CD</td><td>strongest verification base → highest safe autonomy</td></tr>
-      </table>
+      </table></div>
       <div class="callout pine"><div class="t">The agentic overlay on the decision</div><p>Agentic development shifts the calculus toward <em>faster-feedback</em> models. Because agents make writing cheap and relocate the constraint to review (E7), the models that pay off most are those with a fast, trustworthy verification loop (E4) and continuous flow (Agile/DevOps). But the shift is conditional: without the verification and governance base, a fast model just produces instability faster (the DORA 2024 finding). So the honest recommendation is rarely "adopt Agile/DevOps" in the abstract — it's "build the verification + governance base first, then the faster models unlock higher autonomy." In regulated or safety-critical contexts, the gated models remain correct and agents live inside their gates.</p></div>
 
       <h2><span class="n">4</span>How agentic development changes the SDLC itself</h2>
@@ -1845,13 +1845,13 @@ footer .verlink:hover{color:var(--cobalt)}
       <h2><span class="n">0</span>Why discovery is where the product harness starts</h2>
       <p class="lead">The engineering deep dives (E1–E8) all rest on one assumption: that the task handed to the agent is the <em>right</em> task. P1 is where that rightness is decided. Discovery is the practice of continuously deciding what to build and why — and it is the first place a product harness can either amplify a PM or quietly replace the thinking that makes them a PM.</p>
       <p>For our engagement the framing matters as much as the technique. In the product layer the agent <strong>assists</strong>; it never owns the judgment. Everything in this topic is an application of that one rule to the messy, human-heavy work of understanding users — and it sets up the P1–P5 assistance scale (P5, full delegation of product judgment, is the anti-pattern) that the rest of M2 builds on. The P1–P5 scale — like D1–D5 — is an original synthesis of this programme, not an industry standard; flag it as such when presenting.</p>
-      <table class="map"><thead><tr><th>Rung</th><th>Working definition (this programme's wording — see the provenance note above)</th></tr></thead><tbody>
+      <div class="figscroll"><table class="map"><thead><tr><th>Rung</th><th>Working definition (this programme's wording — see the provenance note above)</th></tr></thead><tbody>
       <tr><td>P1</td><td>AI assist <strong>on demand</strong> — the PM invokes AI for specific discovery chores (transcription, clustering, a one-off parallel synthesis); the judgment loop is untouched.</td></tr>
       <tr><td>P2</td><td>Parallel second perspective as the <strong>default habit</strong> — two-perspectives synthesis runs on every study, not just when someone remembers.</td></tr>
       <tr><td>P3</td><td><strong>Agent drafts, human synthesises and decides</strong> — AI produces first drafts (summaries, PRD sections); the PM still does their own synthesis and owns the decision.</td></tr>
       <tr><td>P4</td><td><strong>Agent synthesises, human audits and owns the call</strong> — the AI synthesis is primary; the PM audits it via evals and raw-source spot-checks, and the call remains theirs.</td></tr>
       <tr><td>P5</td><td><strong>Delegated product judgment</strong> — the decision itself is handed to the agent. This is the anti-pattern, not a rung to aspire to.</td></tr>
-      </tbody></table>
+      </tbody></table></div>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>AI in discovery is a <em>second perspective</em>, not a replacement for the first. The value is never the AI's summary on its own — it is the <strong>delta</strong> between the PM's own synthesis and the AI's. If the PM stops synthesising and just reads AI summaries, discovery has been deleted, not accelerated.</p></div>
 
       <h2><span class="n">1</span>What discovery is — and what agents change</h2>
@@ -1978,12 +1978,12 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h2><span class="n">4</span>Requirements red-teaming — the highest-evidence quick win</h2>
       <p>Of everything in this topic, adversarial review of requirements is the job with the strongest quantitative support — and it is P3 on the assistance scale, one step beyond today's mainstream, which makes it the natural next move at a client.</p>
-      <table class="map">
+      <div class="figscroll"><table class="map">
         <tr><th>Evidence</th><th>What was measured</th><th>Result</th></tr>
         <tr><td>Bashir et al., ICSME 2025</td><td>LLM classification of ambiguous requirements on industrial data (Alstom / Westermo; RISE-led)</td><td><strong>+20.2%</strong> average improvement (10-shot vs 0-shot); best F1 67–76% by dataset; expert rating 3.84/5 (four criteria) — an assistant, not an arbiter</td></tr>
         <tr><td>ClarifyGPT, Mu et al., FSE 2024</td><td>Detecting ambiguity and asking clarifying questions before code generation</td><td>GPT-4 Pass@1 on MBPP-sanitized <strong>70.96% → 80.80%</strong>; average <strong>+11.52%</strong> (relative) across benchmarks</td></tr>
         <tr><td>Quattrocchi et al., 2025</td><td>QUS quality of LLM-generated stories (§2)</td><td>Generation is weak on rationale — which is exactly why the <em>critic</em> role outperforms the <em>author</em> role</td></tr>
-      </table>
+      </table></div>
       <p>The asymmetry is the lesson: models are measurably better at <em>finding problems in requirements</em> than at <em>authoring requirements</em>. Finding ambiguity is a pattern-matching task with a checkable answer; authoring rationale requires the product judgment the model does not have. So point the model at the job it is good at: after the PM writes (or edits) a draft, an AI red-team pass hunts for ambiguity, contradictions, missing edge cases, untestable acceptance criteria, and unstated assumptions — and the PM decides which findings matter.</p>
       <div class="callout pine"><div class="t">Packaging it — the backlog-refinement gate</div><p>The deployable form is a checklist gate in backlog refinement: no story leaves refinement until it has had an AI red-team pass and a human disposition of the findings. This is deliberately the same shape as E4's verification-first loop — a challenge step between draft and done — implemented with human judgment where engineering has tests. It is cheap (minutes per story), it produces its own evidence trail, and F1 in the 67–76% range means the human disposition step is structural, not optional.</p></div>
 
@@ -2015,6 +2015,7 @@ footer .verlink:hover{color:var(--cobalt)}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.19</span><span class="vd">2026-07-15</span><p>Completed the table-responsiveness sweep started in v1.18: every remaining <span class="mono">table.map</span> across the artifact set is now wrapped in the <span class="mono">.figscroll</span> container (36 more tables — E1–E6, P1–P5, D1, SDLC-foundations, and the workbook's SDLC/Domain-map and topic sections), so all 50 tables scroll horizontally on narrow screens rather than overflowing. Applied in both copies (standalone files + workbook overlays/sections). No content changes.</p></div>
       <div class="vitem"><span class="vv">v1.18</span><span class="vd">2026-07-15</span><p>Consistency follow-up to the v1.16 responsive pass: the five <span class="mono">table.map</span> tables in E7 (metrics dimensions, pilot data sources) and E8 (Superpowers vs Compound, SDD framework links, SDLC mapping) are now wrapped in the same <span class="mono">.figscroll</span> container the diagrams use — on narrow screens they scroll horizontally in their own box instead of overflowing the page, matching how H1 ships its tables. Applied in both copies (standalone files + workbook overlays). No content changes.</p></div>
       <div class="vitem"><span class="vv">v1.17</span><span class="vd">2026-07-15</span><p>Added the H1 deep-dive companion (Anatomy of the handoff contract) — opening the M3 set. The amnesia test, the six components with per-component failure modes and owners (flagged as Report 2's synthesis; July-2026 re-verification: Spec Kit v0.12 dropped its dedicated non-goals section, amux retired as a reference — it is an agent multiplexer, not a contract format), the spec-review gate with Kiro's Requirements Analysis (LLM+SMT; ~60% of 1,400+ first-draft AC needed refinement, vendor-reported) and Fowler's counter-view, three-amigos ownership with Adzic's verified framing (the unattributable "BDD's second chance" retired), the T0–T2 contract tiers answering the minimal-contract open question, and the annotated TASK-042. New sources: Grove's The New Code, Cognition's Devin task guidance, Osmani's three-tier boundaries, SWE-Bench+ weak-oracle audit, arXiv:2603.15911 as the correct 2026 citation for the 29.6-vs-4.1 tokens/line review density. Also repaired five double-encoded UTF-8 characters from v1.15.</p></div>
       <div class="vitem"><span class="vv">v1.16</span><span class="vd">2026-07-15</span><p>Responsive &amp; wayfinding pass (design-led review). <strong>Mobile diagram legibility:</strong> every dense SVG diagram — the SDLC and Domain-map views, and all deep-dive figures — now keeps a legible width and scrolls horizontally on phones (with a right-edge fade + thin scrollbar cue) instead of shrinking to unreadable; captions still wrap to the viewport. Applied in the workbook and mirrored across all 15 standalone deep-dives. <strong>Orientation:</strong> a scroll-spy highlight marks the module you are reading in the sidebar, a thin reading-position line sits atop the header, and a back-to-top control appears once you scroll. <strong>Touch &amp; scale:</strong> larger tap targets (status toggles, filter chips, tabs) meeting WCAG 2.2 target-size on touch screens, and fluid module/section headings via clamp(). No content, topic-id, storage, or desktop-layout changes. Dark mode was evaluated and deferred as a separate scoped initiative (it would touch ~150 colour points incl. every diagram fill across 16 files; light stays the right default for a reading-heavy artifact) — see NOTES.md / docs/CHANGELOG.</p></div>
@@ -2060,7 +2061,7 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h2><span class="n">1</span>INVEST, re-read for agents</h2>
       <p>Bill Wake coined <strong>INVEST</strong> — Independent, Negotiable, Valuable, Estimable, Small, Testable — in a 2003 article on xp123.com (a practitioner blog post, later popularised by Mike Cohn's <em>User Stories Applied</em>). It was designed for exactly our problem, twenty years early: handing work across a context gap to someone who was not in the room. Agents widen that gap to its maximum — the recipient now has <em>no</em> shared history at all — which makes INVEST more relevant, not less. Each letter earns a sharper reading:</p>
-      <table class="map">
+      <div class="figscroll"><table class="map">
         <tr><th>Letter</th><th>2003 reading (for humans)</th><th>Agent re-reading</th></tr>
         <tr><td>Independent</td><td>minimise ordering dependencies between stories</td><td><strong>parallelisable across agent sessions</strong> — false independence surfaces as merge conflicts; dependency order must be explicit (§5)</td></tr>
         <tr><td>Negotiable</td><td>a story is a placeholder for a conversation</td><td>drafts are <strong>cheap to regenerate</strong> (disposable, I1) — but the decisions in them must be pinned, because the agent won't renegotiate</td></tr>
@@ -2068,7 +2069,7 @@ footer .verlink:hover{color:var(--cobalt)}
         <tr><td>Estimable</td><td>clear enough to estimate</td><td>right-sized against the <strong>model's reliability horizon</strong> (§2) — and note: estimability serves the human slicer; AI's own estimates ran at 16% accuracy (§3)</td></tr>
         <tr><td>Small</td><td>fits in an iteration</td><td>fits a <strong>context window with room to work</strong> — the item plus its linked context plus the code it must read, before context rot (E2)</td></tr>
         <tr><td>Testable</td><td>you know when it's done</td><td><strong>machine-verifiable AC</strong> (EARS/Gherkin, H2) — the property that separates supervised assistance from delegable work (E4, E6)</td></tr>
-      </table>
+      </table></div>
       <p><strong>For our rollout:</strong> INVEST is the vocabulary the client's team already knows. Presenting agent-readiness as a re-reading of it — rather than a new methodology — is the cheapest possible change-management move: same checklist shape, sharpened definitions.</p>
 
       <h2><span class="n">2</span>Right-sizing — the 10–30 line rule and the capability ceiling</h2>
@@ -2150,12 +2151,12 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h2><span class="n">1</span>Which PM gets automated — Cagan's distinction</h2>
       <p>Marty Cagan's line is the sharpest on record, and worth quoting exactly (<em>A Vision For Product Teams</em>, svpg.com, February 2025): <em>"For product owners and feature team product managers, where the job is primarily about delivery, and driven by a delivery process, it seems pretty clear to me that there will be very substantial productivity improvements, if not full automation."</em> He calls these roles "very vulnerable in this timeframe" and urges the people in them to upskill. The other side of the same distinction (<em>Preparing For The Future</em>, 2023): <em>"if you're a product manager on an empowered product team, then your role is likely to become more critical rather than less."</em></p>
-      <table class="map">
+      <div class="figscroll"><table class="map">
         <tr><th>Profile</th><th>The job is mostly…</th><th>AI exposure</th></tr>
         <tr><td>delivery PO</td><td>backlog administration, ticket translation, status choreography</td><td>directly automatable — the P1–P4 assists do exactly this work</td></tr>
         <tr><td>feature-team PM</td><td>turning stakeholder requests into specs; output-driven</td><td>"very substantial productivity improvements, if not full automation"</td></tr>
         <tr><td>empowered PM</td><td>outcomes, discovery, judgment, product sense</td><td>becomes <strong>more</strong> critical — AI compresses delivery, so discovery becomes the main activity</td></tr>
-      </table>
+      </table></div>
       <p><strong>For our rollout:</strong> assess which of these the client actually employs <em>before</em> introducing product-layer tooling. If their PMs are ticket translators, the harness does not assist the role — it competes with it, and the rollout lands as a threat (T3's change-management problem). The honest engagement move is to pair the tooling with a deliberate shift of the saved hours toward discovery and user contact — turning delivery PMs toward the empowered profile rather than automating them in place. Practitioner synthesis, sober labelling: Cagan is opinion (consistently sober opinion, but opinion); the adoption numbers around it (Productboard 2025: 96% of enterprise product professionals report consistent AI use — vendor survey; Lenny's Newsletter 2025, ~1,750 respondents: over half save at least half a day per week, 92% also report significant downsides) are surveys, not controlled studies.</p>
 
       <h2><span class="n">2</span>Risk 1: automation bias — review is the only gate, and bias erodes it</h2>
@@ -2227,14 +2228,14 @@ footer .verlink:hover{color:var(--cobalt)}
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Andrej Karpathy compressed the whole argument into one line at YC's AI Startup School (June 2025): build <strong>autonomy sliders</strong> and keep AI "on a leash," because <em>generation is cheap and verification is expensive</em> — the human verification loop is the bottleneck. The P-scale is that slider for the product layer, calibrated to the only verifier the layer has: human judgment. Set the slider by what you can verify, not by what the model can generate.</p></div>
 
       <h2><span class="n">1</span>The five levels</h2>
-      <table class="map">
+      <div class="figscroll"><table class="map">
         <tr><th>Level</th><th>What the AI does</th><th>What the human does</th><th>Where it stands</th></tr>
         <tr><td>P1</td><td>assisted drafting — completions, rewording, structure on demand</td><td>authors; AI is stationery</td><td>universal, uncontroversial</td></tr>
         <tr><td>P2</td><td>drafts whole artifacts from rough input (PRD sections, story sets, synthesis)</td><td>edits, owns every sentence and the why</td><td><strong>today's mainstream</strong> (P2 topic)</td></tr>
         <tr><td>P3</td><td>red-teams human-owned artifacts: ambiguity, contradictions, missing edges</td><td>writes first, then disposes of findings</td><td>evidence-strongest step (§3) — the natural next move</td></tr>
         <tr><td>P4</td><td>drives decomposition and consistency checks across the backlog</td><td>approves at explicit gates; owns seams</td><td>works with gates — the SDD toolchains are this shape (P3 topic §5)</td></tr>
         <tr><td>P5</td><td>autonomous product definition — decides what to build</td><td>rubber-stamps, then stops looking</td><td><strong>anti-pattern today</strong> (§4)</td></tr>
-      </table>
+      </table></div>
       <p>Two properties matter more than the rungs themselves. First, the ladder is <strong>per artifact type, not per team</strong>: the same PM can run interview synthesis at P2–P3, PRD drafting at P2, refinement red-teaming at P3, and decomposition at P4-with-gates — the level attaches to the artifact and its verifiability, not to a job title. Second, the levels describe <em>who initiates and who judges</em>, not model quality: P3 uses the same model as P2 — pointed at critique, where the evidence says it is stronger (§3).</p>
 
       <h2><span class="n">2</span>The structural difference — verification asymmetry</h2>
@@ -2389,7 +2390,7 @@ footer .verlink:hover{color:var(--cobalt)}
       <p>The claim "structured design context measurably improves agent output" has evidence behind it — of sharply varying quality, so we sort it the way E7 taught. The ceiling without structure first: <strong>Design2Code</strong> (Si et al., arXiv:2403.03163; 484 real webpages curated from C4) had annotators judge <strong>GPT-4V</strong> screenshot-to-code output <em>exchangeable</em> with the reference in <strong>49%</strong> of cases and <em>preferred</em> in <strong>64%</strong> — with the authors' own hedge that the preference may reflect models having absorbed "more modern and popular webpage design principles," and with failure concentrated in visual-element recall and layout. Read precisely: these are GPT-4V-era (early 2024) numbers on <em>reproducing a given page</em> — they measure raw capability without a system, and they say nothing about consistency across a product, which is what a design system is for.</p>
       <p>The strongest practitioner data is <strong>Indeed's</strong> (Diana Wolosin; written up by Into Design Systems, April 2026 — practitioner benchmark, methodology described but not peer-reviewed, point-in-time): 77 components parsed from MDX into JSON metadata, then <strong>1,056 prompts benchmarked across 8 MCP configurations</strong>. Structured JSON beat Markdown docs on accuracy (Markdown ran ~30k tokens per query at 82% coverage, with hallucinations), cut tokens per query by roughly <strong>80%</strong>, and priced out at about a fifth of the annual cost — and the pipeline has since fed over 4,300 AI-generated prototypes in four months. This is the "machine-readable beats human-readable" claim with numbers attached, from a team that measured before believing. Early academic work points the same way — steering generated UIs with explicit preference and design context measurably shifts output toward the target (AlignUI, arXiv:2601.17614; early-stage, re-verify before quoting specifics).</p>
       <p>And one correction we owe our own earlier drafts, because epistemic hygiene is the E7 habit: specific figures for Storybook's MCP benchmark (+12.8% code quality, 2.76× faster, −27% tokens) circulate widely — including in this workbook's research notes — but on re-verification (July 2026) <strong>could not be traced to any published source</strong>. Storybook's published materials (Nguyen, November 2025; the Reshaped RFC, September 2025) make the claim only qualitatively: better quality, faster, fewer tokens. We now cite it in that form — <strong>an unquantified vendor claim</strong> — and have flagged the numbers for removal wherever they appear as fact.</p>
-      <table class="map">
+      <div class="figscroll"><table class="map">
         <tr><th>Source</th><th>What it measured</th><th>Read it as</th></tr>
         <tr><td>Krebs slop audit (Apr 2026)</td><td>1,590 Show HN pages vs 16 deterministic patterns: 22% heavy / 32% mild / 46% clean</td><td>independent practitioner measurement, method published</td></tr>
         <tr><td>Shin et al., arXiv:2603.13036</td><td>63-source review + 6 platform walkthroughs: frictionless generation → homogenization</td><td>independent academic review (qualitative)</td></tr>
@@ -2397,7 +2398,7 @@ footer .verlink:hover{color:var(--cobalt)}
         <tr><td>Indeed (Wolosin, Apr 2026)</td><td>1,056 prompts × 8 MCP configs: JSON metadata → higher accuracy, ~80% fewer tokens, ~5× cheaper</td><td>practitioner benchmark, not peer-reviewed, point-in-time</td></tr>
         <tr><td>Storybook MCP materials</td><td>"better code, faster, fewer tokens" — no published methodology; circulating percentages unsourced</td><td>vendor claim, unquantified</td></tr>
         <tr><td>Affirm via Figma Dev Mode MCP</td><td>"orders of magnitude" speedup</td><td>vendor case-study anecdote</td></tr>
-      </table>
+      </table></div>
       <p>What none of this measures: whether the resulting <em>design</em> is good. Every row above is about conformance, fidelity, cost or convergence — the judgment question is §5's, and it does not have a benchmark.</p>
 
       <h2><span class="n">5</span>The Gherkin of the visual layer — conformance, not judgment</h2>
@@ -2631,7 +2632,7 @@ footer .verlink:hover{color:var(--cobalt)}
 </div>
 
 <footer>
-  <b>v1.18</b> · 2026-07-15 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.19</b> · 2026-07-15 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>

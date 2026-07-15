@@ -203,12 +203,12 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 
       <h2 id="s4"><span class="n">4</span>Requirements red-teaming — the highest-evidence quick win</h2>
       <p>Of everything in this topic, adversarial review of requirements is the job with the strongest quantitative support — and it is P3 on the assistance scale, one step beyond today's mainstream, which makes it the natural next move at a client.</p>
-      <table class="map">
+      <div class="figscroll"><table class="map">
         <tr><th>Evidence</th><th>What was measured</th><th>Result</th></tr>
         <tr><td>Bashir et al., ICSME 2025</td><td>LLM classification of ambiguous requirements on industrial data (Alstom / Westermo; RISE-led)</td><td><strong>+20.2%</strong> average improvement (10-shot vs 0-shot); best F1 67–76% by dataset; expert rating 3.84/5 (four criteria) — an assistant, not an arbiter</td></tr>
         <tr><td>ClarifyGPT, Mu et al., FSE 2024</td><td>Detecting ambiguity and asking clarifying questions before code generation</td><td>GPT-4 Pass@1 on MBPP-sanitized <strong>70.96% → 80.80%</strong>; average <strong>+11.52%</strong> (relative) across benchmarks</td></tr>
         <tr><td>Quattrocchi et al., 2025</td><td>QUS quality of LLM-generated stories (§2)</td><td>Generation is weak on rationale — which is exactly why the <em>critic</em> role outperforms the <em>author</em> role</td></tr>
-      </table>
+      </table></div>
       <p>The asymmetry is the lesson: models are measurably better at <em>finding problems in requirements</em> than at <em>authoring requirements</em>. Finding ambiguity is a pattern-matching task with a checkable answer; authoring rationale requires the product judgment the model does not have. So point the model at the job it is good at: after the PM writes (or edits) a draft, an AI red-team pass hunts for ambiguity, contradictions, missing edge cases, untestable acceptance criteria, and unstated assumptions — and the PM decides which findings matter.</p>
       <div class="callout pine"><div class="t">Packaging it — the backlog-refinement gate</div><p>The deployable form is a checklist gate in backlog refinement: no story leaves refinement until it has had an AI red-team pass and a human disposition of the findings. This is deliberately the same shape as E4's verification-first loop — a challenge step between draft and done — implemented with human judgment where engineering has tests. It is cheap (minutes per story), it produces its own evidence trail, and F1 in the 67–76% range means the human disposition step is structural, not optional.</p></div>
 

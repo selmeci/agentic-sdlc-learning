@@ -226,12 +226,12 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 
       <h3>The same five layers in any harness</h3>
       <p>This document is written in Claude Code vocabulary because that is our reference harness — but the engagement premise is an <em>unknown</em> client stack. The mechanisms above are not product features; they are an abstract taxonomy that any harness either implements or lacks:</p>
-      <table class="map"><tr><th>Control layer</th><th>What it does</th><th>What your harness calls it (examples)</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Control layer</th><th>What it does</th><th>What your harness calls it (examples)</th></tr>
       <tr><td>declarative policy</td><td>static allow/deny/ask rules per tool &amp; pattern</td><td>Claude Code permission rules; Cursor allow/deny command lists</td></tr>
       <tr><td>programmable interceptor</td><td>your code runs before/after each tool call and can block or gate it</td><td>Claude Code PreToolUse/PostToolUse hooks — the layer many harnesses <strong>lack entirely</strong>; without it every rule is advisory-only, which caps the safe autonomy level you can grant (E6)</td></tr>
       <tr><td>OS-level isolation</td><td>bounds what an allowed action can touch (filesystem, processes)</td><td>Seatbelt / bubblewrap sandbox; devcontainer; throwaway VM</td></tr>
       <tr><td>egress control</td><td>network allowlist by domain; severs the exfiltration leg</td><td>sandbox network policy; TLS-inspecting proxy / firewall</td></tr>
-      <tr><td>audit log</td><td>records every consequential action for review &amp; rollback</td><td>PostToolUse log; OpenTelemetry export; CI job logs</td></tr></table>
+      <tr><td>audit log</td><td>records every consequential action for review &amp; rollback</td><td>PostToolUse log; OpenTelemetry export; CI job logs</td></tr></table></div>
       <p>The consultant's first governance question at any client is therefore not "which tool do you use?" but <strong>"which of these five layers does your harness actually have?"</strong> — the answer determines both the rollout design (E7) and the autonomy ceiling (E6).</p>
 
       <h2 id="s3"><span class="n">3</span>Why governance exists: the lethal trifecta</h2>
@@ -241,12 +241,12 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <div class="callout amber"><div class="t">The supply chain is now a governed surface (point-in-time, mid-2026)</div><p>The rules-file backdoor (§1) generalises: everything the agent <em>loads</em> — skills, plugins, MCP servers, tool descriptions — is executable trust, and 2026 guidance treats it as such. The <strong>OWASP Agentic Skills Top&nbsp;10</strong> (AST10, v1.0 2026 — incubator status, so emerging community consensus rather than a settled standard) names the failure modes: malicious skills, typosquatted MCP servers, tool-description poisoning. <strong>Microsoft Security Blog</strong>, <em>"When prompts become shells: RCE vulnerabilities in AI agent frameworks"</em> (May 2026 — vendor research), showed agent frameworks turning injected prompts into remote code execution. And a <strong>Cloud Security Alliance</strong> research note (practitioner synthesis) analysed prompt injection against the Claude Code GitHub Action as a CI/CD supply-chain threat — an agent in your pipeline <em>is</em> part of your supply chain. The governance response is the same five layers pointed at what the agent loads, not just what it does: allowlist skills and MCP servers like dependencies, pin versions, log loads (M7). And the PostToolUse audit log earns double duty here — it is also the evidence artifact for SOC&nbsp;2, ISO&nbsp;42001 and EU AI Act conversations. All names and statuses point-in-time, mid-2026; re-verify.</p></div>
 
       <h2 id="s4"><span class="n">4</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>Governance mechanism</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>Governance mechanism</th><th>What good looks like</th></tr>
       <tr><td>Repo / org setup</td><td>permission baseline</td><td>enterprise managed settings; secrets &amp; destructive commands denied by default</td></tr>
       <tr><td>Implementation</td><td>PreToolUse hooks + sandbox</td><td>writes confined to safe paths; shell bounded; egress allowlisted</td></tr>
       <tr><td>Session boundary</td><td>Stop hook</td><td>suite intact &amp; green verified before the session can end (ties to E4)</td></tr>
       <tr><td>Review / merge</td><td>human "ask" gates</td><td>a person approves intent where all three trifecta legs would combine</td></tr>
-      <tr><td>Operate / audit</td><td>PostToolUse log</td><td>every consequential action recorded; rollback possible; OpenTelemetry export</td></tr></table>
+      <tr><td>Operate / audit</td><td>PostToolUse log</td><td>every consequential action recorded; rollback possible; OpenTelemetry export</td></tr></table></div>
 
       <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Do dev/prod separation, RBAC and secrets hygiene exist at all?</li><li>Is there a place to enforce hooks (or only advisory config)?</li><li>Can we set an egress allowlist / sandbox in their environment?</li><li>Is there an audit trail before anything touches production?</li></ul></div>
