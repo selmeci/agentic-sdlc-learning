@@ -154,6 +154,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
   <a href="#s8"><b>8</b> · Takeaways</a>
   <a href="#s9"><b>9</b> · Further reading</a>
 </nav>
+<main>
       <h2 id="s0"><span class="n">0</span>Why the criteria are the contract's engine</h2>
       <p class="lead">H1 dissected the handoff contract into six components and was blunt about which one carries the proof obligation: component C, the acceptance criteria — "machine-verifiable wherever possible". This deep dive is about the two formats that deliver that clause. <strong>EARS</strong> structures requirements as constrained natural-language rules; <strong>Gherkin</strong> turns rules into concrete, executable examples. Together they walk a criterion down an altitude ladder — from intent a PM can ratify, to a scenario a reviewer can falsify, to a red test the harness can run — and that last rung is the point. E4's verification-first principle says the reviewer's question is never "does this look right" but "what machine said this is right"; criteria written in prose leave that question unanswerable, and the review gate H1 built becomes theatre.</p>
       <p>The reason this matters more for agents than it ever did for humans is the same amnesia argument P3 made for decomposition. A human developer resolves an ambiguous criterion by leaning over to ask; an agent resolves it by <strong>guessing with confidence</strong> — Report 2 calls this intent hallucination, and it is invisible at exactly the moment it happens, because the agent's guess compiles, passes its own improvised tests, and reads plausibly in the diff. The defence is not more prose. It is criteria structured enough that ambiguity has nowhere to hide (EARS) and concrete enough that the claim "done" is a program output, not an opinion (Gherkin).</p>
@@ -291,6 +292,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       </div>
       <p class="closingnote">This deep dive is also available as a standalone downloadable file (H2-ears-gherkin-deepdive.html). Its natural neighbours are H1 (the contract these criteria live in), H3 (how the requirement IDs travel from EARS through scenarios into tests), and E4 (the verification stack that runs what this topic writes).</p>
 
+</main>
 </div>
 </body>
 </html>

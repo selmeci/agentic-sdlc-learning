@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H4 Deep Dive — Feedback Loop &amp; Handoff Anti-Patterns: When Implementation Contradicts the Contract</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edH4{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahH4a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">H4 · DEEP DIVE</span>
+    <h1>Feedback Loop &amp; Handoff Anti-Patterns: When Implementation Contradicts the Contract</h1>
+    <span class="bc">companion to module M3 · Handoff contract</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · Agents don&#39;t ask</a>
+  <a href="#s2"><b>2</b> · The agent as detector</a>
+  <a href="#s3"><b>3</b> · Drift triage</a>
+  <a href="#s4"><b>4</b> · Anti-pattern catalogue</a>
+  <a href="#s5"><b>5</b> · The return channel</a>
+  <a href="#s6"><b>6</b> · Multi-agent pipelines</a>
+  <a href="#s7"><b>7</b> · Loop-health metrics</a>
+  <a href="#s8"><b>8</b> · Five brownfield moves</a>
+  <a href="#s9"><b>9</b> · Framework map</a>
+  <a href="#s10"><b>10</b> · Takeaways</a>
+  <a href="#s11"><b>11</b> · Further reading</a>
+</nav>
+<main>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">Module M3 built the forward path of delegation: H1 the contract, H2 its machine-verifiable criteria, H3 the chain of IDs that keeps the artifacts connected. H4 is the return path — what happens when the implementation <em>contradicts</em> the contract, when a criterion turns out to be impossible, ambiguous or wrong. A contract with no return channel is not a contract; it is a memo thrown over a wall. And the data says the wall is real: when requirements are ambiguous, more than 60% of code-LLM responses generate code anyway rather than ask a clarifying question (HumanEvalComm, ACM TOSEM 2025), and roughly a quarter of agent-authored fix PRs in the wild end up closed without merging — the loop failing at its last hop (arXiv:2602.00164). The feedback loop is where a handoff process either becomes self-correcting or quietly rots.</p>
+      <p>There is also an asymmetry worth naming up front. The engineering layer is structurally the <em>best-placed detector of bad requirements</em> in the whole SDLC: implementation is where vagueness becomes a concrete fork in the road ("should the discount apply before or after tax?" cannot be deferred once you are writing the line). Agents hit those forks earlier, faster and in greater volume than any human team ever did — the question is whether the discovery travels back to the requirement's owner or dies in a session log. M2 ended with the PM as editor and curator (P4); H4 supplies the mechanism that keeps feeding that editor the one input only implementation can produce: evidence about the requirements themselves.</p>
+      <div class="callout"><div class="t">The division of labour with E7</div><p>E7's anti-pattern catalogue (AP1–AP6) covers <strong>rollout failures</strong> — autonomy without guardrails, review bottlenecks, perception-driven decisions. H4's catalogue covers <strong>handoff failures</strong>: the four ways the contract itself goes wrong between product and engineering. Same discipline — every named failure maps to a specific control — different layer of the stack.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The silence is the default — agents don't ask</h2>
+      <p>The naïve assumption behind throw-over-the-wall delegation is that an agent facing a broken requirement will stop and say so. Measured behaviour says otherwise, consistently, across independent benchmarks. HumanEvalComm (Wu et al., ACM TOSEM 2025, arXiv:2406.00215) rewrote 164 HumanEval problems into 762 variants with injected ambiguity, inconsistency or missing information: <strong>over 60% of code-LLM responses produced code instead of a clarifying question</strong>. "Learning to Ask" (Wang et al., EMNLP 2025) found the same reflex in tool-using agents — faced with an instruction missing a required argument, models <em>hallucinate the missing value</em> rather than ask, a behaviour the authors trace to next-token training itself. And MAST, the UC Berkeley-led failure taxonomy of multi-agent systems (arXiv:2503.13657, preprint), puts a number on it in the wild: "fail to ask for clarification" alone accounts for roughly 12% of observed failures.</p>
+      <p>The sharpest result is the newest. HiL-Bench (Scale AI, arXiv:2604.09408, May 2026 — preprint, re-verify) gives agents an explicit <span class="mono">ask_human()</span> tool and withholds one piece of task-critical information: on software-engineering tasks, pass rates (Pass@3) that sit at 67–88% with full information <strong>collapse to 1–9%</strong> when success requires recognising the gap and asking. On those same tasks even the best models detected fewer than half of the blockers — the dominant failure signature is confident execution on wrong beliefs. The capability gap is not writing code; it is <em>knowing when not to</em>. The cost of the silence is also quantified: on ambiguous requirements, Pass@1 drops by ~7.2 percentage points on average and by 31 for the worst ambiguity types, and ambiguity nearly doubles a model's internal self-contradiction rate (Orchid benchmark, arXiv:2604.21505 — preprint, re-verify). A newer interactive line measures the questions themselves and finds detection wildly uneven by defect class — some ambiguity types get caught nearly every time, others barely at all (ClarifyCodeBench, arXiv:2607.00711 — preprint).</p>
+      <div class="io"><div class="box"><div class="lab">What the benchmarks establish</div><ul><li>default behaviour is to proceed, not ask — &gt;60% code-instead-of-question on ambiguous specs (TOSEM 2025)</li><li>the gap is judgment, not skill: 67–88% → 1–9% when asking is required (HiL-Bench, preprint)</li><li>detection is uneven by defect class — some ambiguity types are barely caught (ClarifyCodeBench, preprint)</li><li>guided clarification measurably pays: +11.52% relative from targeted questions (ClarifyGPT, H2)</li></ul></div>
+      <div class="box"><div class="lab">What follows for the harness</div><ul><li>never rely on the agent volunteering doubt — <strong>instruct</strong> it to stop on ambiguity (§5, §8)</li><li>move contradiction-detection upstream into tooling (§2)</li><li>make the escalation path cheaper than the guess: a named channel, a label, an owner (§5)</li><li>treat "no questions asked" on a vague contract as a smell, not a compliment</li></ul></div></div>
+      <p>One caution for client conversations: this is a fast-moving capability, and vendors are attacking it directly — Devin ships confidence-gated question-asking (§5), and 2026 work shows help-seeking is trainable. The load-bearing claim is not "agents will never ask"; it is that <strong>asking is not the default</strong>, so a process that assumes it is has no floor under it. Point-in-time, mid-2026.</p>
+
+      <h2 id="s2"><span class="n">2</span>The agent as detector — verification moves upstream</h2>
+      <p>The same engineering layer that stays silent by default can be made loud by design — and the most concrete existing exhibit is Kiro's Requirements Analysis (announced May 12, 2026, Kiro Applied Science). It runs on the spec <em>before any code is generated</em>, and it is genuinely neurosymbolic rather than "more LLM": in the team's own words, "the analysis automatically encodes the specification into formal logic using LLMs and uses SMT solvers to generate the findings." The pipeline has three stages — refinement rewrites thesis-level sentences into testable ones (emitting new EARS acceptance criteria, the H2 format); auto-formalization translates them into a formal model; logical analysis then finds contradictions and gaps and enumerates concrete counter-examples. This is E4's verification-first principle applied one artifact earlier: the requirement itself gets a failing test.</p>
+      <p>The headline number travels with a caveat: AWS reports — per The New Stack's coverage, not Kiro's own post — that in internal testing across 35 projects with 1,400+ acceptance criteria, <strong>roughly 60% of first-draft requirements needed refinement</strong> before they could be reliably implemented. Unaudited vendor internal testing; cite the mechanism as fact and the percentage as a vendor claim. The direction, though, matches the independent research: ClarifyGPT (H2) showed LLMs can profitably interrogate ambiguous prompts (+11.52% relative), and §1's benchmarks show unaided detection is unreliable and uneven by defect class — which is why delegating contradiction-hunting to an SMT solver rather than to the agent's judgment is the architecturally honest move (E5's advisory→deterministic principle, applied to requirements).</p>
+      <p>The old software-engineering intuition behind all this — defects are cheapest to fix at requirements time — is directionally sound but numerically folkloric: the oft-quoted 100:1 cost-escalation ratio traces, per Laurent Bossavit's <em>The Leprechauns of Software Engineering</em>, to secondary sources citing secondary sources, with reported ratios ranging from ~5:1 to ~100:1. Use the direction, never the multiplier. What has actually changed since Boehm's era is the <em>cost side</em>: a requirements-level check used to mean a review meeting; now it is a solver run that costs cents and minutes. Cheap upstream verification, not a scary multiplier, is the honest argument.</p>
+
+      <h2 id="s3"><span class="n">3</span>Drift triage — the three-way question</h2>
+      <p>When implementation and contract disagree — an agent reports an impossible criterion, a suspect label lands (H3's gate), a red test contradicts the spec — the process needs one disciplined move before any fix: deciding <em>which artifact is wrong</em>. The cleanest formulation is Leonid Bugaev's (reqproof blog, "Source of truth: Code, Spec, or Requirement?", May 2026 — a practitioner building a traceability product, so note the commercial interest in the thesis): <strong>"is the code wrong, is the requirement wrong, or did we learn something?"</strong> — and, crucially, "until that is resolved, something is broken in the process." The question is the whole protocol in one line: every drift event has exactly three exits, each with a different owner and a different artifact to change.</p>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 440" role="img" aria-label="The feedback loop: forward delegation from contract through agent to PR, return signals on contradiction or drift, and the three-way triage decision">
+<defs><marker id="ahH4a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+<text x="20" y="28" class="tg">THE FEEDBACK LOOP — FORWARD DELEGATION, RETURN SIGNALS, THREE-WAY TRIAGE</text>
+<rect x="20" y="60" width="200" height="56" rx="10" class="bxC"/>
+<text x="120" y="84" text-anchor="middle" class="tt">Contract</text>
+<text x="120" y="102" text-anchor="middle" class="ts">REQ-12 · TASK-042 (H1)</text>
+<rect x="270" y="60" width="200" height="56" rx="10" class="bx"/>
+<text x="370" y="84" text-anchor="middle" class="tt">Agent implements</text>
+<text x="370" y="102" text-anchor="middle" class="ts">session — disposable</text>
+<rect x="520" y="60" width="200" height="56" rx="10" class="bxK"/>
+<text x="620" y="84" text-anchor="middle" class="tt">PR + tests</text>
+<text x="620" y="102" text-anchor="middle" class="ts">"Closes REQ-12"</text>
+<rect x="770" y="60" width="190" height="56" rx="10" class="bx"/>
+<text x="865" y="84" text-anchor="middle" class="tt">Review &amp; merge</text>
+<text x="865" y="102" text-anchor="middle" class="ts">human gate (E4/E6)</text>
+<path d="M220 88 L266 88" class="edH4"/>
+<path d="M470 88 L516 88" class="edH4"/>
+<path d="M720 88 L766 88" class="edH4"/>
+<path d="M370 116 L370 166" class="edH4 edD"/>
+<rect x="250" y="170" width="240" height="60" rx="10" class="bxA"/>
+<text x="370" y="194" text-anchor="middle" class="tt">CONTRADICTION FOUND</text>
+<text x="370" y="212" text-anchor="middle" class="ts">impossible AC · ambiguity · conflict</text>
+<path d="M865 116 L865 200 L494 200" class="edH4 edD"/>
+<text x="700" y="192" class="ts">drift → suspect label (H3 gate)</text>
+<path d="M370 230 L370 272 L488 272" class="edH4 edD"/>
+<rect x="492" y="244" width="360" height="60" rx="10" class="bxC"/>
+<text x="672" y="268" text-anchor="middle" class="tt">TRIAGE — the reqproof question</text>
+<text x="672" y="286" text-anchor="middle" class="ts">code wrong? requirement wrong? did we learn something?</text>
+<path d="M560 304 L160 304 L160 366" class="edH4"/>
+<path d="M672 304 L672 366" class="edH4"/>
+<path d="M790 304 L830 304 L830 366" class="edH4"/>
+<rect x="20" y="370" width="280" height="56" rx="10" class="bx"/>
+<text x="160" y="392" text-anchor="middle" class="tt">code wrong → fix code</text>
+<text x="160" y="410" text-anchor="middle" class="ts">criterion becomes a failing test (E4)</text>
+<rect x="340" y="370" width="280" height="56" rx="10" class="bx"/>
+<text x="480" y="392" text-anchor="middle" class="tt">requirement wrong → spec PR</text>
+<text x="480" y="410" text-anchor="middle" class="ts">PM owns; criteria rewritten (H2)</text>
+<rect x="660" y="370" width="300" height="56" rx="10" class="bx"/>
+<text x="810" y="392" text-anchor="middle" class="tt">we learned → update the spec</text>
+<text x="810" y="410" text-anchor="middle" class="ts">normal, not failure (Beck, E8) — log the learning</text>
+</svg></div>
+<figcaption>The feedback loop. Solid: the forward path M3 built. Dashed: the return signals — an agent-detected contradiction mid-implementation, or a suspect label from H3's drift gate at review time. Both land in the same triage question, whose three exits each name a different owner and a different artifact to change.</figcaption></figure>
+      <p>The three exits, operationally. <strong>Code wrong</strong> — the requirement stands; the criterion becomes or remains a failing test (E4) and the fix is an engineering matter; no product decision needed. <strong>Requirement wrong</strong> — the code faithfully implements a mistake; the fix is a spec PR owned by the PM (P4's editor role), with the criteria rewritten in H2's formats and every artifact tracing to the requirement flipped suspect (H3). <strong>We learned something</strong> — the most common and least honoured exit: neither artifact was "wrong" at authoring time, implementation produced knowledge nobody had. This is Kent Beck's point against whole-spec-first development — it "encodes the (to me bizarre) assumption that you aren't going to learn anything during implementation that would change the specification" (Dec 2025). A process that treats every learning as someone's error will hide its learnings; the spec gets updated, the reason gets logged, nobody gets blamed.</p>
+      <p>Two properties make triage work at agent speed. It must be <strong>fast</strong> — the queue grows at generation speed, so the decision is a ten-minute conversation at most, default weekly ritual plus an async lane for blockers (§8). And it must be <strong>owned</strong> — the single most common failure is nobody having the authority to say "the requirement is wrong": engineers patch the code to match a broken spec, or quietly patch the spec to match the code, and both artifacts stay plausible while the drift compounds. Until the question is answered, Bugaev's line applies verbatim: something is broken <em>in the process</em>, not merely in the artifacts.</p>
+
+      <h2 id="s4"><span class="n">4</span>The anti-pattern catalogue</h2>
+      <p>Report 2's four handoff anti-patterns, each with its detection smell and its control. The symmetry worth teaching: the first two are the two ways to get the <em>contract</em> wrong (too much, too little), the second two are the two ways to lose the <em>loop</em> (spec abandoned, signal never returned).</p>
+      <div class="comp"><div class="chead"><span class="cid">HAP1</span><h3>Over-specification</h3><span class="role">controlled by H1 sizing · P3</span></div>
+      <p>The spec outgrows the code and the review burden is relocated, not removed — the tech lead now reviews markdown instead of diffs. The mechanism is measurable: AI-generated review commentary runs ~29.6 tokens per line of code against a human baseline of 4.1 (arXiv:2603.15911) — density, not quality, and someone must read it. Smells: contracts routinely above H1's 10–30 lines; spec-writing time exceeding implementation time on T0/T1 tasks; PMs "spending more time on markdown than on the product." Control: H1's sizing tiers (T0 micro-tasks need an issue ID, not a contract), P3's decomposition heuristic, and Fowler's skeptical question as the standing review filter: would you rather review this pile of markdown, or the code?</p></div>
+      <div class="comp"><div class="chead"><span class="cid">HAP2</span><h3>Under-specification</h3><span class="role">controlled by H1/H2 · §1's instruction rule</span></div>
+      <p>The contract leaves the fork unresolved, and §1 says what happens next: the agent picks a branch silently and executes it with confidence. On ambiguous requirements Pass@1 drops ~7 points on average and 30+ for the worst ambiguity types (Orchid, preprint); practitioners' war stories are all variations of a quick task ballooning into hours of thrash as the agent rewrites around a misread intent (widely reported; no pinnable canonical source — we cite it as an unattributed pattern, not a statistic). Smells: "confidently wrong" green PRs solving a different problem; follow-up-question count rising <em>after</em> merge instead of before work. Control: intent and non-goals written by humans (H1's two irreplaceable components), EARS-formatted criteria (H2), and the standing stop-on-ambiguity instruction from §5.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">HAP3</span><h3>Stale spec — silent drift</h3><span class="role">controlled by H3's suspect gate</span></div>
+      <p>The spec is written, the feature ships, the spec is never touched again — and six weeks later an agent faithfully implements against a document describing a system that no longer exists. The 2026 SDD literature names this "silent spec-code drift": code evolves, the specification does not, and the divergence stays invisible until it is expensive. No mainstream SDD tool detects it today (H3 §4 — Kiro's Sync Files checks task completion, not drift; point-in-time, mid-2026). Smells: spec directories with no commits since the feature merged; agents citing spec lines that contradict current code. Control: H3's git-native suspect gate — a CI grep, not a product — plus M4's rule that specs are durable artifacts riding the same review as code.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">HAP4</span><h3>Throw over the wall</h3><span class="role">controlled by §5's return channel</span></div>
+      <p>The contract is handed off and nobody is listening for the return signal. Downstream, the loop's failure is visible in the merge data: in a study of 8,106 agent-authored fix PRs, 26.1% were closed unmerged — with test failures (18.1%) and incorrect or incomplete fixes (15.3%) leading the study's qualitative sample of closures — "syntactically plausible fixes alone are often insufficient for successful integration" (arXiv:2602.00164, preprint). The mirror finding: across 33,596 agent PRs, <em>reviewer engagement</em> was the strongest merge predictor, and success concentrated in "actionable review loops" where concrete human feedback let the agent converge — iteration volume alone did not (arXiv:2602.19441, MSR 2026). The wall fails in both directions: unreviewed agent output dies, and agent-discovered requirement bugs drown in session logs. Control: the return channel, formalized — §5.</p></div>
+
+      <h2 id="s5"><span class="n">5</span>The return channel — from session log to owned artifact</h2>
+      <p>The topic's open question — how does an agent-discovered ambiguity reach the PM without a human courier? — now has partial product answers, worth surveying precisely because they disagree (all point-in-time, mid-2026; re-verify). <strong>Devin</strong> is the most structured: since the 2.1 release it self-assesses confidence (🟢🟡🔴), and "when Devin doesn't have 🟢 confidence, it will ask clarifying questions" and wait for approval before proceeding — Cognition reports green-confidence tasks are twice as likely to end in a merged PR as red (vendor-reported). Its docs also define an escalation ladder for blockers: investigate, fix if adjacent, note and continue, or escalate with an explanation. <strong>GitHub Copilot's coding agent and OpenAI's Codex</strong> both concentrate clarification in their <em>planning</em> modes — Copilot's plan step emits "open questions for clarification", Codex's plan mode "lets Codex gather context, ask clarifying questions" — but in autonomous execution both largely proceed without asking, and both trackers carry open requests from users asking for ask-by-default. The industry state, compressed: asking exists, but mostly as a mode you must enter, not a reflex you can rely on — which returns the burden to the harness.</p>
+      <div class="comp"><div class="chead"><span class="cid">SYNTHESIS</span><h3>A minimal return-channel protocol</h3><span class="role">ours — flag it as such to the client</span></div>
+      <p>Four rules, tool-agnostic, cheap enough for week one. <strong>(1) A standing instruction</strong> in the agent steering file (CLAUDE.md / AGENTS.md): on a contradictory, impossible or two-way-interpretable criterion, stop and file a question — never pick a branch silently. §1's evidence says this must be instructed; the same evidence (and H3's ID-discipline experience) says instructed agents comply deterministically. <strong>(2) A structured landing place:</strong> the question is an artifact, not a chat line — an issue comment or PR label (<span class="mono">spec-question</span>, carrying the REQ-ID from H3's chain) that routes to the requirement's owner, so it survives the session that raised it. <strong>(3) A named owner and an SLA:</strong> every requirement has exactly one person entitled to answer "the requirement is wrong" (P4's editor); blockers get an async answer, the rest queue for the weekly triage (§3). <strong>(4) The answer lands in the artifact, not the chat:</strong> the resolution is a spec edit, a criterion rewrite or a logged learning — §6's rule that anything decided in a disposable channel gets promoted to a durable one, or it never happened.</p></div>
+      <p>Where should the <em>learning</em> exits of triage land? The emerging convention worth watching is the Agent Decision Record — ADRs extended to decisions an agent made autonomously (library choice, pattern choice, interpretation of an ambiguous criterion), so agent reasoning gets the same traceability as human architecture decisions; early-stage, a proposed convention rather than a standard, but it slots exactly into the gap. The division of labour it implies is clean: the steering file says what must never happen; the decision record says what was decided and why; the spec says what must be true. Everything else — the session transcript, the chat thread — is M4's disposable tier, and treating it as a system of record is how ambiguities drown.</p>
+
+      <h2 id="s6"><span class="n">6</span>Multi-agent pipelines — drift compounds</h2>
+      <p>Everything above assumed one agent and one contract. Chain agents — a planner feeding an implementer feeding a reviewer — and the feedback problem multiplies, because each hop is a fresh interpretation with no human gate between hops. The best empirical map is MAST (arXiv:2503.13657, preprint — a UC Berkeley-led study of 200+ traces across 7 frameworks, 14 failure modes): roughly 42% of failures are specification issues, 37% inter-agent misalignment, 21% weak verification (v2 figures; version-dependent, cite rounded). Read against M3, that distribution is the whole module restated as a failure budget: bad contracts, broken handoffs between workers, missing gates. Structural work on error propagation adds that failures at hub nodes of an agent graph infect most of the pipeline while leaf failures stay local (arXiv:2603.04474 — measured with injected faults, so cite it for topology, not for natural drift rates).</p>
+      <p>The practitioner conclusion has not changed since Cognition's "Don't Build Multi-Agents" (E3): keep writes single-threaded, let other agents contribute intelligence rather than concurrent action. H4 adds the contract-shaped corollary: <strong>every agent→agent handoff inherits the full H1 discipline</strong> — explicit contract, machine-verifiable criteria, IDs, and a return path — because the receiving agent is precisely the "new team member with amnesia" P3 planned for, minus the ability to bump into you at the coffee machine. If a pipeline cannot afford a human triage gate between hops, it must at least afford deterministic verification there (E4/E5); interpretive drift plus seemingly-coherent output is the failure mode with no smell until the end.</p>
+
+      <h2 id="s7"><span class="n">7</span>Loop-health metrics — is the feedback loop working?</h2>
+      <p>The loop is invisible in throughput metrics — you inspect it through rework. The anchor is DORA's 2025 addition of <strong>Rework Rate</strong> as the fifth software-delivery metric: the share of deployments that are unplanned fixes for something that did not work the first time — added precisely because AI-accelerated throughput can look healthy while instability accumulates underneath (strong independent industry research). Around it, three supporting signals, each honestly labelled. GitClear — a code-analytics vendor — reports churn (code revised within two weeks) rising from 3.1% to a projected 5.7% between 2020 and 2024 and duplicated blocks rising ~8×; correlational, no control group, and churn conflates healthy iteration with defect rework, but the direction rhymes with DORA's concern (E7 cites the same data). New Relic's commissioned survey (Hanover Research, June 2026; n=200 US decision-makers — self-reported perception, not telemetry) captures the loop failing in one contradiction: 94% of leaders rate AI code higher-quality <em>at review time</em>, yet 78% report more production incidents and 74% say at least a quarter of AI code needed significant rework within a year — code that grades well at the gate and fails downstream is exactly what a missing feedback loop looks like from above. And the merge-outcome studies from §4 (26.1% of fix PRs closed unmerged; reviewer engagement the strongest merge predictor) give the PR-level view of the same health check.</p>
+      <div class="io"><div class="box"><div class="lab">Track from day 0 (feeds E7's baseline &amp; T2's pilot)</div><ul><li><strong>rework rate</strong> (DORA 2025 definition) — the headline loop metric</li><li>agent-PR outcomes: merged / closed-unmerged / abandoned, per agent and per team</li><li><span class="mono">spec-question</span> count and time-to-answer (the §5 channel's own health)</li><li>spec-change frequency after merge — the "we learned" exits actually landing</li></ul></div>
+      <div class="box"><div class="lab">Read them together, not alone</div><ul><li>zero spec-questions on a vague backlog = §1's silence, not clarity</li><li>rework up + churn up + review praise up = the New Relic contradiction — audit the gate (E4)</li><li>high closed-unmerged share = the wall (HAP4), not "bad agent"</li><li>every number here is a trend instrument, not a target — Goodhart applies (E7)</li></ul></div></div>
+
+      <h2 id="s8"><span class="n">8</span>Five moves for a brownfield client</h2>
+      <p>The loop is the cheapest part of M3 to install — it is mostly agreements, labels and one CI rule. In order:</p>
+      <p><strong>Move 1 — name the owners.</strong> Every requirement gets exactly one person entitled to declare it wrong (usually the PM, P4). Publish the mapping; triage without an owner is a discussion, not a decision.</p>
+      <p><strong>Move 2 — instruct the agent to stop and ask.</strong> One paragraph in the steering file: on contradiction, impossibility or two-way interpretation, file a <span class="mono">spec-question</span> with the REQ-ID and stop. This converts §1's measured silence into a deterministic behaviour — the same inversion H3 found for ID discipline: what humans find effortful, an instructed agent does every time.</p>
+      <p><strong>Move 3 — wire the suspect gate.</strong> H3's two CI greps, so drift surfaces as a PR label while the diff is open. The gate is the loop's sensor; without it, triage only ever sees what the agent volunteers.</p>
+      <p><strong>Move 4 — install the triage ritual.</strong> Fifteen minutes weekly over two queues (<span class="mono">spec-question</span>, <span class="mono">suspect-spec</span>), one agenda item per entry: code wrong, requirement wrong, or did we learn something? Async lane for blockers. The output is always an artifact change — spec PR, criterion rewrite, logged learning — never just a verbal answer.</p>
+      <p><strong>Move 5 — baseline rework before the pilot.</strong> Rework rate, agent-PR merge outcomes, reopened tickets — captured before the first agent task (E7's discipline, T2's pilot design), so six weeks later "the loop works" is a measured claim, not a feeling.</p>
+
+      <h2 id="s9"><span class="n">9</span>How H4 connects the framework</h2>
+      <div class="figscroll"><table class="map">
+        <tr><th>Topic</th><th>Relationship to the feedback loop</th></tr>
+        <tr><td>H1 · contract anatomy</td><td>the artifact the loop corrects; intent + non-goals are what triage re-reads first</td></tr>
+        <tr><td>H2 · EARS/Gherkin</td><td>"requirement wrong" exits land as criterion rewrites in these formats</td></tr>
+        <tr><td>H3 · traceability</td><td>the suspect gate is the loop's sensor; REQ-IDs make the return signal routable</td></tr>
+        <tr><td>P2/P3/P4 · product layer</td><td>upstream masters the loop feeds back into; the PM-as-editor is the triage authority</td></tr>
+        <tr><td>E3 · harness in practice</td><td>recurring spec-questions become steering-file rules — the loop that improves the harness itself</td></tr>
+        <tr><td>E4 · verification-first</td><td>"code wrong" exits become failing tests; upstream, the requirement itself gets a checker (§2)</td></tr>
+        <tr><td>E5 · governance</td><td>stop-on-ambiguity and the suspect gate are deterministic rules, not prose hopes</td></tr>
+        <tr><td>E7 · metrics</td><td>rollout-level anti-pattern catalogue (AP1–AP6) beside H4's handoff-level one; rework metrics live here</td></tr>
+        <tr><td>E8 · SDD workflow</td><td>the loop is SDD's missing half: authoring flows forward, learning must flow back (Beck's objection)</td></tr>
+        <tr><td>M4 · information architecture</td><td>answers land in durable artifacts; session logs are disposable — promote or lose</td></tr>
+        <tr><td>T2 · pilot design</td><td>loop-health metrics are pilot success criteria, baselined before day one</td></tr>
+      </table></div>
+
+      <h2 id="s10"><span class="n">10</span>Takeaways for our engagement</h2>
+      <div class="callout pine"><div class="t">Three sentences to keep</div><p>Agents do not volunteer doubt — across independent benchmarks the default on an ambiguous or contradictory contract is confident silent execution, so the return channel must be instructed, structured and owned, never assumed. Every drift event has exactly three exits — code wrong, requirement wrong, or we learned something — and until someone with authority picks one, the process (not the artifact) is what's broken; the third exit is normal engineering, not failure, and a loop that punishes learning will hide it. The whole apparatus is cheap — a steering-file rule, a label with an owner, two CI greps, fifteen minutes a week — and its health is measurable from day 0 through DORA's rework rate and agent-PR merge outcomes, which is what turns "the handoff works" from a feeling into a number.</p></div>
+
+      <h2 id="s11"><span class="n">11</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Leonid Bugaev — Source of truth: Code, Spec, or Requirement?</div><div class="mt">blog.reqproof.com · May 14, 2026</div><p>The triage question verbatim, and the line this chapter is built on: until it is resolved, "something is broken in the process." Author is building a traceability product — read with that interest in mind.</p></div>
+      <div class="item"><div class="rt">Wu et al. — HumanEvalComm: Benchmarking the Communication Competence of Code Generation</div><div class="mt">ACM TOSEM 2025 · arXiv:2406.00215</div><p>The peer-reviewed anchor for §1: 762 ambiguity-injected problems, &gt;60% of responses code instead of asking. Communication Rate and Good Question Rate as measurable properties of a coding model.</p></div>
+      <div class="item"><div class="rt">Trinh et al. (Scale AI) — HiL-Bench: Do Agents Know When to Ask for Help?</div><div class="mt">arXiv:2604.09408 · May 2026 · preprint</div><p>The judgment gap made vivid: 67–88% pass (Pass@3) with full information, 1–9% when the agent must recognise a gap and ask; blocker recall under 50% on SWE tasks. Confident execution on wrong beliefs as the dominant failure signature.</p></div>
+      <div class="item"><div class="rt">Cemri, Pan, Yang et al. — Why Do Multi-Agent LLM Systems Fail?</div><div class="mt">arXiv:2503.13657 · preprint · MAST taxonomy</div><p>14 failure modes, 3 categories over 200+ traces: ~42% specification issues, ~37% inter-agent misalignment, ~21% weak verification — M3 restated as a failure budget. Percentages vary by paper version; cite rounded.</p></div>
+      <div class="item"><div class="rt">Alam, Mondal &amp; Roy — Why Are AI Agent Involved Pull Requests (Fix-Related) Remain Unmerged?</div><div class="mt">arXiv:2602.00164 · 2026 · 8,106 fix PRs, 5 agents</div><p>The loop failing at its last hop: 26.1% closed unmerged, with test failures and incorrect fixes leading — "syntactically plausible fixes alone are often insufficient for successful integration."</p></div>
+      <div class="item"><div class="rt">Nachuma &amp; Zibran — When AI Teammates Meet Code Review</div><div class="mt">MSR 2026 · arXiv:2602.19441 · 33,596 PRs / 2,807 repos</div><p>Reviewer engagement as the strongest merge predictor; "actionable review loops" beat iteration volume — the empirical case that the human side of the loop is load-bearing.</p></div>
+      <div class="item"><div class="rt">Kiro — Requirements analysis: catching requirement bugs before they become code</div><div class="mt">kiro.dev/blog/deep-spec-analysis · May 12, 2026 · point-in-time</div><p>The neurosymbolic pipeline (LLM formalization + SMT solving) behind §2, from the team's applied scientists. The ~60%-needed-refinement figure is AWS internal testing reported via The New Stack — vendor claim, label it.</p></div>
+      <div class="item"><div class="rt">DORA — State of AI-assisted Software Development 2025</div><div class="mt">dora.dev/dora-report-2025</div><p>Rework Rate as the fifth delivery metric — unplanned deployments fixing what didn't work first time — added to catch the instability that AI-era throughput hides. The loop-health anchor for §7.</p></div>
+      <div class="item"><div class="rt">Laurent Bossavit — The Leprechauns of Software Engineering</div><div class="mt">leanpub.com/leprechauns · 2015</div><p>Why this chapter never quotes the 100:1 defect-cost ratio: the citation trail dissolves under inspection. The model for how to handle folklore numbers — keep the direction, drop the multiplier.</p></div>
+      <div class="item"><div class="rt">Report 2 — the handoff-contract research notes (this workbook)</div><div class="mt">module M3 research notes · the four anti-patterns</div><p>The original synthesis behind §4's catalogue and the module's framing of the engineering layer as product's best requirements detector.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (H4-feedback-anti-patterns-deepdive.html). It completes the M3 deep-dive set. Its natural neighbours in the workbook are H1 (the contract the loop corrects), H2 (the formats the rewrites land in), H3 (the suspect gate that feeds triage), P4 (the PM-as-editor who owns the "requirement wrong" exit), E4/E5 (the deterministic machinery), E7 (the sibling anti-pattern catalogue and the metrics), E8 (the SDD workflow the loop completes), and M4 (where the answers must land to survive).</p>
+
+</main>
+</div>
+</body>
+</html>

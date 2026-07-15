@@ -23,6 +23,16 @@ Use this for open questions, session hand-off notes, and things to check before 
   Storybook MCP benchmark figures +12.8%/2.76×/−27% (no published source found 2026-07-15 —
   reframed as unquantified vendor claim in M6 notes, D3 topic and the D1 deep dive);
   Meta Astryx details (13k apps, component counts — vendor press coverage only, flagged in D1).
+- Verified 2026-07-15 for I1 (primary sources): Ahrefs llms.txt study (137,210 domains, 97%
+  zero traffic May 2026, 1.1% AI-retrieval fetches — point-in-time, re-verify), AGENTS.md
+  stewardship (Agentic AI Foundation / Linux Foundation; "60k+ repos" self-reported,
+  fast-moving), Anthropic memory tool GA (memory_20250818, six ops), Solmaz SimpleDoc
+  (Dec 22 2025), Kiro .kiro/specs + Spec Kit .specify/memory/constitution.md layouts
+  (fast-moving), Tan/Wagner/Treude 28.9%/4.7yr (top-1000 scope), Nygard ADR Nov 15 2011
+  (four statuses incl. Deprecated), Cline Memory Bank six files (official docs).
+- I5 tension to resolve in its session: workbook says CLAUDE.md "under ~300 lines"; official
+  Claude Code docs say "Target under 200 lines. Longer files still load in full but may
+  reduce adherence." Reconcile + attribute when I5's deep dive is written.
 - Verified 2026-07-15 for D1 (primary sources): Krebs slop audit numbers, NN/g State of UX 2026
   exact quote, Design2Code 49%/64% (GPT-4V-specific), DTCG 2025.10 status (CG deliverable, not
   W3C REC), CodeA11y CHI 2025, Code Connect frameworks, Frost quotes ("natural design system
@@ -55,6 +65,25 @@ not because it lacks merit. When picking it up, do it token-first — do NOT `fi
    `scripts/validate.py`. Screenshot both themes at desktop + mobile before shipping.
 
 ## Session hand-off
+- 2026-07-15 (I1 session): **I1 deep dive added (v1.24) — M4 opened.** Outline → 3 teammates
+  (2 fact-verify + 1 discovery) → spot-verification on discovery sources (caught a fabricated
+  ".claudeignore"; two path/mechanism corrections). Load-bearing: the I1 src entry
+  "Anthropic: memory typology (in-context/external/in-weights/cache)" **retired as
+  unpinnable** (no primary source — third-party blogs only; replaced in src). Triad confirmed
+  as Report-3 synthesis → flagged like D1–D5 (precedents: Majors durable/disposable code,
+  records-management retention classes, never-hand-edit tooling conventions). I2 wording
+  fixed: ADR statuses + Deprecated; feature_list.json → "JSON feature-list pattern".
+  **Real bug fixed:** H2/H3/H4 *standalones* lacked `<main>` → desktop grid zigzagged content
+  into the 210px TOC column (verified + fixed in-browser; overlays/mobile were fine, hence
+  unnoticed). New re-verify items below. Validator green.
+- 2026-07-15 (H4 session): **H4 deep dive added (v1.23) — M3 complete.** Outline → 3 teammates
+  (2 fact-verify + 1 discovery) → spot-verification round on discovered sources (caught a
+  misattributed ClarifyCodeBench figure — numbers kept out) → write → assemble per
+  AUTHORING-GUIDE. Retired the unpinnable "30-min→3h" line in all copies; Kiro RA 60% figure
+  relabelled as AWS-internal-via-The-New-Stack; reqproof quotes pinned to Bugaev May 2026.
+  New re-verify items: HiL-Bench/Orchid/fix-PR/MSR-2026 arXiv preprints (point-in-time),
+  Devin 2.1 confidence UX, Copilot/Codex plan-mode asking. CONTENT-MAP companion count fixed
+  (15→19, had drifted since H1). Validator green.
 - 2026-07-15 (design/responsive session): **v1.16 responsive & wayfinding pass.** Design skill +
   1 research teammate (2025–26 study-material/mobile/dark-mode best practice). Rendered the
   workbook at 390px → confirmed the dense SVG diagrams were squished to illegibility (the headline

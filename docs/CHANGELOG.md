@@ -3,6 +3,103 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.24 · 2026-07-15
+
+Added the **I1 deep dive — Artifact Taxonomy: Durable / Derived / Disposable** (topic
+`ia-taxonomy`), opening the M4 deep-dive set: embedded workbook overlay + standalone
+`deep-dives/I1-artifact-taxonomy-deepdive.html`, written after a three-teammate pass
+(2× fact-verification + 1 discovery) **plus a spot-verification round on the discovered
+sources** — which caught a fabricated ".claudeignore" claim (no such file in the official
+Claude Code docs; excluded) and two smaller corrections (settings.local.json is ignored via
+the *global* git excludes file, not project .gitignore; Spec Kit's constitution lives at
+`.specify/memory/constitution.md`).
+
+Load-bearing fact outcomes: the workbook's **"Anthropic: memory typology (in-context /
+external / in-weights / cache)" source was retired as unpinnable** — no Anthropic primary
+source publishes that four-way typology (third-party blogs only); the I1 `src` entry was
+replaced. The **triad itself was confirmed as our Report-3 synthesis** (no external
+framework packages artifacts this way; flagged in the deep dive like D1–D5, with nearest
+precedents cited: Charity Majors' durable/disposable code split, records-management
+retention classes, and the industry's never-hand-edit conventions). Nygard's ADR statuses
+completed with *Deprecated* (I2 wording fixed); AGENTS.md stewardship corrected to the
+Agentic AI Foundation / Linux Foundation (multi-vendor origin), 60k+ repos as point-in-time;
+Anthropic memory tool re-verified as GA (six file operations under /memories); the literal
+"feature_list.json" softened to the JSON feature-list pattern (I2).
+
+Content (11 sections): the triad with decision tests (disappearance / repair / trust);
+durable — the human gate, ADR archetype, agent-facing config as a new durable class, and
+spec-driven layouts converging on repo-resident durables (Kiro `.kiro/specs`, Spec Kit
+`specs/` + constitution, Claude Code's committed-vs-local settings split); derived — the
+never-hand-edit rule and its industry encoding (Go `^// Code generated .* DO NOT EDIT\.$`,
+GitHub `linguist-generated` hiding diffs + excluding stats, committed lockfiles as
+derived-but-versioned — the axis is the change path, not git), plus the
+derived-needs-a-consumer rule anchored by the Ahrefs llms.txt study (137,210 domains, 97%
+zero traffic in May 2026, 1.1% of fetches from AI retrieval bots — "largely decoration");
+disposable — the Anthropic long-running-harness patterns (claude-progress.txt, JSON feature
+list, JSON-over-Markdown as soft write-permission), markdown sprawl as measured default
+behavior with Solmaz's SimpleDoc convention as the fix, pruning as context hygiene (Chroma
+context rot) with records-management disposition as the precedent; the SSOT boundary
+(product vs engineering masters, the pasted-PRD fork, pointer vs labelled digest); grey
+zones (agent-written legacy docs derived-until-promoted, memory files as a governed fourth
+write-mode, Cline Memory Bank as a de facto taxonomy); the brownfield classification sweep
+(five-column table + one-page rule set); framework map; takeaways. Two new SVG figures
+(taxonomy flows with promotion path; the SSOT boundary), marker `ahI1a`, edge `edI1`.
+
+Also fixed a real layout bug found while building: the **H2/H3/H4 standalone files lacked
+the `<main>` wrapper**, so their desktop two-column grid auto-placed content zigzag into
+the 210px TOC column (verified broken in-browser; the workbook overlays were unaffected and
+mobile collapsed to one column, which is why it went unnoticed). All three fixed and
+re-verified in-browser. I1 topic `know/concepts/checks/src` enriched in the workbook.
+
+## v1.23 · 2026-07-15
+
+Added the **H4 deep dive — Feedback Loop & Handoff Anti-Patterns** (topic `hand-feedback`),
+completing the M3 deep-dive set: embedded workbook overlay + standalone
+`deep-dives/H4-feedback-anti-patterns-deepdive.html`, written after a three-teammate
+fact-verification & discovery pass (facts-toolchain, facts-research, discovery) **plus a
+spot-verification round on the discovered sources** — which caught one misattributed figure
+(a "communication rates 76.2/62.8/48.8" triple pinned to ClarifyCodeBench arXiv:2607.00711
+that does not appear in that paper; kept out, the paper re-cited only for its verified
+uneven-by-defect-class finding).
+
+Content (12 sections): the silence data — agents don't ask by default (HumanEvalComm,
+ACM TOSEM 2025, arXiv:2406.00215: >60% of code-LLM responses generate code instead of a
+clarifying question on 762 ambiguity-injected problems; "Learning to Ask", EMNLP 2025:
+models hallucinate missing arguments; HiL-Bench, Scale AI, arXiv:2604.09408, preprint:
+Pass@3 67–88% with full information collapses to 1–9% when asking is required, blocker
+recall <50% on SWE tasks; Orchid, arXiv:2604.21505, preprint: Pass@1 −7.22 pp average,
+−31 pp worst ambiguity type); the agent as upstream detector (Kiro Requirements Analysis,
+primary source May 12 2026 — LLM auto-formalization + SMT solving on EARS criteria before
+code; the ~60%-of-1,400+-AC figure labelled as AWS internal testing reported via
+The New Stack, vendor claim); drift triage on the reqproof question with verified verbatim
+wording (Leonid Bugaev, blog.reqproof.com, May 14 2026 — commercial interest flagged) and
+three owned exits (fix code / spec PR / logged learning, with Beck's Dec-2025 line as the
+third exit's charter); the four handoff anti-patterns (HAP1–HAP4) with detection smells and
+controls, explicitly divided from E7's rollout-level catalogue — over-spec (29.6 vs 4.1
+tokens/LOC review density), under-spec (Orchid costs; the old "30-minute feature balloons to
+3 hours" line **retired as unpinnable** and reframed as an unattributed pattern in all
+copies), stale-spec silent drift, throw-over-the-wall (arXiv:2602.00164: 26.1% of 8,106
+agent fix PRs closed unmerged, verbatim "syntactically plausible fixes alone are often
+insufficient for successful integration"; arXiv:2602.19441, MSR 2026: reviewer engagement
+the strongest merge predictor across 33,596 PRs, Codex 82.6% vs Copilot 43.0% merge rates);
+a minimal return-channel protocol (**our synthesis**, flagged) with the product survey —
+Devin's confidence-gated asking (Devin 2.1, vendor-documented) vs Copilot/Codex clarification
+gated to plan modes (point-in-time, mid-2026) — and Agent Decision Records as an early-stage
+convention; multi-agent drift (MAST arXiv:2503.13657, preprint, v2 figures cited rounded
+~42% specification / ~37% inter-agent misalignment / ~21% verification; hub-node cascade
+topology from arXiv:2603.04474 cited for topology only, injected-fault caveat); loop-health
+metrics (DORA 2025 **Rework Rate** as the anchor — fifth delivery metric, unplanned
+deployments fixing what failed first time; GitClear churn labelled vendor + correlational;
+New Relic June-2026 survey labelled vendor-commissioned perception, n=200 — the
+94%-review-praise vs 78%-more-incidents contradiction); five brownfield moves (owners,
+stop-and-ask instruction, suspect gate, triage ritual, day-0 rework baseline); framework map
+and takeaways.
+
+Fact hygiene beyond the new content: Boehm's 100:1 defect-cost ratio flagged as folklore
+(Bossavit, *Leprechauns of Software Engineering*) — direction kept, multiplier dropped.
+H4 topic `know`/`concepts`/`src`/`checks` and the M3 "Feedback loop" research-notes block
+enriched with the verified evidence; topic `src` now opens the overlay (`#h4-deepdive`).
+
 ## v1.22 · 2026-07-15
 
 Added the **H3 deep dive — Traceability & Spec Modes** (topic `hand-traceability`): embedded

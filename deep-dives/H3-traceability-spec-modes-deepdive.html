@@ -155,6 +155,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
   <a href="#s9"><b>9</b> · Takeaways</a>
   <a href="#s10"><b>10</b> · Further reading</a>
 </nav>
+<main>
       <h2 id="s0"><span class="n">0</span>Why it matters</h2>
       <p class="lead">Every artifact in this module exists so that work can be delegated and still be accountable. H1 built the contract, H2 made its criteria machine-verifiable — H3 is about what happens <em>after</em> the handoff: keeping the chain requirement → spec → task → code → test → PR connected while agents generate most of its links. At human speed, weak traceability is an annoyance that surfaces in a quarterly audit. At agent speed it is structural: an agent produces artifacts faster than anyone can reconstruct their provenance afterwards, so the question "which requirement does this code serve?" stops being an audit question and becomes the operating question of the whole delegation loop. Without the link you cannot review by intent (H1), you cannot re-verify after a change (E4), and you cannot triage drift when spec and code disagree (H4).</p>
       <p>The failure mode is already documented — though so far as vendor narrative, not measurement. Jama Software describes a systems-engineering team that ran a traceability audit about six months into an AI-assisted initiative and found that "a significant share" of agent-generated code had no traceable link back to any documented requirement, alongside orphaned test cases and specified features that were never built (Mario Maldari, Jama blog, May 2026). No percentage is given, and Jama sells traceability tooling — treat it as an illustration with an incentive, not a statistic. But it names the mechanism precisely: the agent built <em>something</em>, tests passed, PRs merged, and only the audit revealed that nobody could say which requirements the code answered to.</p>
@@ -273,6 +274,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       </div>
       <p class="closingnote">This deep dive is also available as a standalone downloadable file (H3-traceability-spec-modes-deepdive.html). Its natural neighbours in the workbook are H1 (the contract components that carry the IDs), H2 (the criteria the links point at), H4 (drift triage), E5 (deterministic gates), E8 (the spec-anchored recommendation) and M4 (specs as durable artifacts).</p>
 
+</main>
 </div>
 </body>
 </html>

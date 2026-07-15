@@ -6,8 +6,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 ## Done
 
 - **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.15)
-- **Deep-dive companions (17)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H2** (M3).
+- **Deep-dive companions (20)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1** (first of M4).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -50,9 +50,25 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     Sync-Files-not-drift-detection precision, Tessl Jan-2026 pivot flagged) and discovery
     sources (AIDev census arXiv:2606.24429, ReqToCode arXiv:2603.13999, RE:FSQ 2025 RAG TLR,
     Assisted-by/Co-authored-by trailer debate, EU AI Act Art. 11). Added a provenance section
-    and the five-move minimal ID scheme (our synthesis). Next in M3: **H4** (feedback loop).
+    and the five-move minimal ID scheme (our synthesis).
+  - ~~**H4** `hand-feedback` — feedback loop & handoff anti-patterns~~ — **done (v1.23)**,
+    completing M3. Three-teammate fact pass + a spot-verification round that caught one
+    misattributed discovery figure (ClarifyCodeBench). Load-bearing new evidence: HumanEvalComm
+    (TOSEM 2025, >60% code-instead-of-asking), HiL-Bench (67–88%→1–9%), Kiro Requirements
+    Analysis primary source (LLM+SMT, May 2026), reqproof triage question pinned (Bugaev,
+    May 2026), unmerged-fix-PR taxonomy (26.1% of 8,106), MSR 2026 reviewer-engagement study,
+    DORA 2025 Rework Rate as loop-health anchor. Retired: the "30-min feature balloons to 3 h"
+    line (unpinnable); Boehm 100:1 flagged folklore. Minimal return-channel protocol added
+    (our synthesis). M3 complete.
 - **M4 Information architecture** (I1–I7): durable/derived/disposable, write-permissions,
   agentic search vs RAG, memory.
+  - ~~**I1** `ia-taxonomy` — artifact taxonomy: durable / derived / disposable~~ — **done
+    (v1.24)**, with a three-teammate fact pass (the "Anthropic memory typology" source
+    retired as unpinnable; triad confirmed as our synthesis and flagged; ADR statuses +
+    AGENTS.md stewardship corrected) and a spot-verified discovery round (Ahrefs llms.txt
+    97%-zero-traffic study, Solmaz SimpleDoc, Kiro/Spec Kit spec layouts, Cline Memory
+    Bank; a fabricated ".claudeignore" caught). Next: **I2** (write-permissions — builds
+    directly on I1) or **I4** (memory).
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
 
