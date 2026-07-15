@@ -6,8 +6,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 ## Done
 
 - **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.15)
-- **Deep-dive companions (15)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6).
+- **Deep-dive companions (16)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1** (first of M3).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -32,6 +32,12 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
 ### 3. M3 / M4 / M5 topic deep dives
 - **M3 Handoff contract** (H1–H4): the contract anatomy + EARS/Gherkin — directly reusable as
   a client template. High practical value.
+  - ~~**H1** `hand-anatomy` — anatomy of the handoff contract~~ — **done (v1.17)**, with a
+    three-agent fact-verification pass (Spec Kit v0.12 template drift, amux retired,
+    "BDD's second chance" → Adzic's verified framing, arXiv:2603.15911 as the 29.6/4.1 source,
+    Kiro GA vs Requirements Analysis timeline split) and new sources (Grove's The New Code,
+    Devin task guidance, Osmani's boundary tiers, SWE-Bench+ audit). Introduced the T0–T2
+    contract sizing tiers (our synthesis). Next in M3: **H2** (EARS/Gherkin).
 - **M4 Information architecture** (I1–I7): durable/derived/disposable, write-permissions,
   agentic search vs RAG, memory.
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,

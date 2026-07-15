@@ -3,6 +3,70 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.17 · 2026-07-15
+**H1 deep-dive companion — Anatomy of the handoff contract** (opens the M3 deep-dive set):
+- New deep dive, embedded overlay + standalone `deep-dives/H1-handoff-contract-anatomy-deepdive.html`:
+  the amnesia test, the six components with per-component failure modes and owners, the spec-review
+  gate (with the 10-minute / seven-question review checklist), three-amigos ownership, the T0–T2
+  contract sizing tiers (answering the topic's minimal-contract open question), and the annotated
+  TASK-042 walkthrough. Two new SVG figures (marker `ahH1a`, edge class `edH1`).
+- **Fact verification pass behind it** (three research agents, 2026-07-15):
+  - The six-part anatomy is explicitly flagged as **Report 2's synthesis** — re-verification showed
+    Spec Kit v0.12.x dropped its dedicated non-goals/out-of-scope section (checklists moved to
+    `/speckit.checklist`), so "converging across tools" was reworded; **amux retired** as a
+    reference (it is a parallel-agent multiplexer, not a contract format) in the M3 research note.
+  - The unattributable **"BDD's second chance" quote retired**; replaced with Gojko Adzic's verified
+    framing ("Specification by Example taken to a new level — or the revenge of Waterfall").
+  - The 29.6-vs-4.1 tokens/line review-density figures now carry their correct source:
+    **arXiv:2603.15911** (2026; 278,790 review conversations, 300 OSS projects; ARA cluster 11.3).
+  - Kiro timeline split precisely: GA (Nov 17, 2025) = property-based testing; the LLM+SMT
+    **Requirements Analysis** contradiction prover is a 2026 addition (~60% of 1,400+ first-draft
+    AC needed refinement, vendor-reported).
+  - DoD provenance corrected to "since the first Scrum Guide (2010); 2020 makes it the Increment's
+    commitment".
+- New sources adopted: Sean Grove's *The New Code* (AI Engineer World's Fair, Jun 2025), Cognition's
+  Devin task guidance, Addy Osmani's three-tier boundaries (always/ask-first/never), the SWE-Bench+
+  weak-oracle audit (arXiv:2410.06992), Fowler's SDD counter-view, agents.md disambiguation.
+- Topic `hand-anatomy` enriched: new know bullet (synthesis provenance + T0–T2 tiers), new concept,
+  deep-dive link as first source.
+- Also repaired five double-encoded UTF-8 characters left over from v1.15 (four em dashes, ×, −).
+
+Validator green: JS parse, HTML balance, all SVGs well-formed, CSS-class coverage, `#h1-deepdive`
+wired ×2 (+1 handler), topic count 52, CONTENT-MAP id match.
+
+## v1.16 · 2026-07-15
+**Responsive & wayfinding pass** (design-led review of the whole artifact set — no content
+or topic-id changes; desktop layout unchanged):
+- **Mobile diagram legibility (the headline fix).** The dense inline SVG diagrams (viewBox
+  860–980 units wide) were being squished to ~350px on phones, rendering their labels at
+  ~3–4px — illegible. Each diagram SVG is now wrapped (via JS) in a `.figwrap > .figscroll`
+  pair: below 760px it keeps a legible min-width (700px for the SDLC/Domain maps, 560px for
+  deep-dive figures) and scrolls horizontally, with a right-edge fade + thin styled scrollbar
+  as the affordance. Captions/prose stay outside the scroller and wrap to the viewport, so the
+  page body never scrolls sideways. Applied in the workbook (map sections + embedded overlays)
+  and mirrored into all 15 standalone deep-dives.
+- **Orientation / wayfinding.** Intersectionless scroll-spy (rAF scroll handler) highlights the
+  module currently in view in the sidebar `.mnav`; a 2.5px reading-position line sits at the top
+  of the sticky header; a floating back-to-top button (46px, reduced-motion aware) appears past
+  640px of scroll. Standalone deep-dives get the back-to-top too.
+- **Touch targets & fluid scale.** Mobile tap targets enlarged toward WCAG 2.2 target-size
+  (status toggles, filter chips, view/data buttons, map tabs); the largest headings
+  (`.mod-head h2`, overlay `.body h2`, standalone `h2`) are now fluid via `clamp()` with
+  `text-wrap:balance`.
+- **Storage / IDs / persistence:** untouched (`agentic-study-v1`, all topic ids frozen).
+- **Dark mode — evaluated, deferred (deliberate).** Research (NN/g, WCAG 2.2, APCA, 2025 studies)
+  supports dark mode as an *opt-in*, with light remaining the right default for a reading-heavy
+  artifact. A *correct* implementation would touch ~150 colour points in the workbook alone
+  (78 CSS + 74 inline SVG fills) plus recolour every diagram, ×16 files — a sizeable, higher-
+  regression initiative. Rather than ship a half-themed diagram set, it is scoped as the next
+  dedicated pass: tokenize the ~34 hardcoded hex into semantic vars, add a `[data-theme]` +
+  `prefers-color-scheme` block (non-pure-black surfaces, desaturated cobalt/amber/pine), a
+  header toggle persisted through the existing `store`, and dark overrides for the diagram
+  CSS classes + `marker path` fills. Tracked in `NOTES.md`.
+
+Validator (`scripts/validate.py`) green: HTML balance, 30 well-formed SVGs, CSS-class coverage,
+deep-dive wiring, topic count 52, CONTENT-MAP id match.
+
 ## v1.15 · 2026-07-15
 **Added the D1 deep-dive companion** (The design system as the third handoff artifact) —
 opening the M6 design-harness set (embedded overlay `#d1-deepdive` + standalone

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H1 Deep Dive — Anatomy of the Handoff Contract</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edH1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahH1a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">H1 · DEEP DIVE</span>
+    <h1>Anatomy of the Handoff Contract</h1>
+    <span class="bc">companion to module M3 · Handoff contract</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it decides delegation</a>
+  <a href="#s1"><b>1</b> · Prompt → contract</a>
+  <a href="#s2"><b>2</b> · The six components</a>
+  <a href="#s3"><b>3</b> · The spec review gate</a>
+  <a href="#s4"><b>4</b> · Who writes it</a>
+  <a href="#s5"><b>5</b> · How big — the tiers</a>
+  <a href="#s6"><b>6</b> · TASK-042, annotated</a>
+  <a href="#s7"><b>7</b> · Framework map</a>
+  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M3</p>
+      <h2 id="s0"><span class="n">0</span>Why the contract decides whether delegation works</h2>
+      <p class="lead">Module M2 ends with decomposed, agent-ready work items (P3); module M1 is the harness that executes them. Between the two, exactly one artifact crosses the boundary — the <strong>handoff contract</strong>. Everything the agent will ever know about <em>why</em> the work exists, <em>where it stops</em>, and <em>how success is proved</em> either rides in that artifact or does not reach the agent at all. A human teammate would fill the gaps from memory, hallway context and the ticket from March; the agent, as P3 put it, has <strong>total amnesia</strong> — it was not in the refinement call and will not lean over to ask the senior at the next desk. H1 dissects the contract itself; its siblings handle the acceptance-criteria formats (H2), the traceability and lifecycle (H3), and the feedback loop with its anti-patterns (H4).</p>
+      <p>This topic also carries direct engagement value: the roadmap marks the contract anatomy as a <strong>directly reusable client template</strong>. What follows is written to be lifted — the six components in §2, the review checklist in §3 and the sizing tiers in §5 are the pieces a client team can adopt in a week.</p>
+      <div class="callout amber"><div class="t">The amnesia test (our synthesis)</div><p>A handoff contract is the smallest durable artifact that lets a competent stranger with <em>no memory of your project</em> build the right thing — and prove it. Every component in §2 exists because some clause of that sentence fails without it: no intent and they build the wrong right-looking thing; no boundaries and they build too much; no executable criteria and nobody can prove anything; no links and they guess the context; no definition of done and "finished" is an opinion.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>From prompt to contract</h2>
+      <p>The clearest statement of the shift this module is built on came from Sean Grove of OpenAI at the AI Engineer World's Fair in June 2025, in a talk titled <em>The New Code</em>: specifications, not prompts and not code, are becoming the fundamental unit of programming. Two of his lines do real work here. First, "code itself is actually a lossy projection from the specification" — the intent is the asset, the diff is one rendering of it. Second, his jab at throwaway prompting: teams "keep the generated code and delete the prompt", which he compares to shredding the source and carefully version-controlling the binary. That is a manifesto, not a measurement — Grove sells a worldview, and we flag it as such — but it names precisely what the contract fixes: the prompt is ephemeral, unreviewed and unowned; the contract is durable, reviewed and owned (M4). His worked example, OpenAI's own Model Spec, is anatomically instructive too: every clause carries a unique ID plus example prompts that act as unit tests for the principle — the same <em>clause = ID + example-as-test</em> pattern our acceptance-criteria component uses (H2) and our traceability chain depends on (H3).</p>
+      <p>The aggressive end of the same argument is Tessl (Guy Podjarny), whose spec-centric thesis says comprehensive specs and tests make the code itself disposable, and whose Spec Registry packages specifications as versioned, dependency-managed artifacts — "npm for specs". Vendor claims, point-in-time, and further along the spec-as-source spectrum than we recommend (H3 argues for spec-anchored) — but useful as evidence that specs are becoming managed artifacts with tooling, not just documents.</p>
+      <div class="io">
+        <div class="box"><div class="lab">The contract is</div><ul>
+          <li>a <strong>durable artifact</strong> (M4): markdown in the repo, versioned, reviewed like code</li>
+          <li>written <em>before</em> implementation and agreed at a review gate (§3)</li>
+          <li>the unit of <strong>delegation</strong> — what an L3 agent (E6) is held accountable to</li>
+          <li>one task's worth of intent, boundaries and proof (10–30 lines, §5)</li>
+        </ul></div>
+        <div class="box"><div class="lab">The contract is not</div><ul>
+          <li>a <strong>prompt</strong> — ephemeral, unreviewed, deleted after use (Grove's shredded source)</li>
+          <li>the <strong>PRD</strong> — wrong altitude; the PRD spans a problem, the contract spans one task, and it <em>cites</em> the PRD rather than copying it (I1: one master, pointers elsewhere)</li>
+          <li>a <strong>ticket written for a colleague</strong> — that format assumes shared context the agent does not have</li>
+          <li><strong>AGENTS.md / CLAUDE.md</strong> — standing repo-level context (build commands, conventions, boundaries), the layer the contract's context links point <em>into</em>; a per-task contract and the standing substrate are complementary layers, not the same artifact (agents.md emerged Aug 2025 as a shared standard across OpenAI, Amp, Google, Cursor, Factory)</li>
+        </ul></div>
+      </div>
+
+      <h2 id="s2"><span class="n">2</span>The six components</h2>
+      <div class="callout amber"><div class="t">Provenance, stated plainly</div><p>The six-part anatomy below is <strong>Report 2's synthesis</strong>, distilled from the 2025 spec-driven tool wave — not an industry standard, and no tool ships all six under these names. Re-verified July 2026: Spec Kit's current template (v0.12.x) structures a spec as user scenarios with priorities, functional requirements, success criteria and assumptions — and has meanwhile <em>dropped</em> its earlier dedicated out-of-scope section (checklists moved to a separate <span class="mono">/speckit.checklist</span> command); Kiro splits the same content across <span class="mono">requirements.md</span> (EARS), <span class="mono">design.md</span> and <span class="mono">tasks.md</span> with explicit <span class="mono">_Requirements: 1.1_</span> back-links; ASDLC frames the handoff as an "objective packet" of intent + constraints. The convergence is one of <em>function</em>, not of field names. The closest in-the-wild mirror is Cognition's guidance for writing Devin tasks — context, numbered checkable acceptance criteria, files not to touch, environment hints, a closing step — which lands on nearly the same six. Tool facts are point-in-time; re-verify.</p></div>
+      <figure>
+      <svg viewBox="0 0 980 452" role="img" aria-label="Anatomy of the handoff contract: six components and what the engineering harness does with each">
+        <defs><marker id="ahH1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="60" y="26" class="tg">THE CONTRACT (ONE MARKDOWN FILE IN THE REPO)</text>
+        <text x="600" y="26" class="tg">WHAT THE ENGINEERING HARNESS DOES WITH IT</text>
+        <rect x="40" y="38" width="330" height="396" rx="12" class="bxG"/>
+        <rect x="56" y="52" width="298" height="30" rx="6" class="bx"/>
+        <text x="66" y="72" class="ts">TASK-042 · handoff contract</text>
+        <rect x="56" y="94" width="298" height="44" rx="6" class="bxC"/>
+        <text x="66" y="112" class="ti">A · Intent / why</text><text x="66" y="128" class="ts">the problem, for whom, why now</text>
+        <rect x="56" y="150" width="298" height="44" rx="6" class="bxC"/>
+        <text x="66" y="168" class="ti">B · Scope &amp; non-goals</text><text x="66" y="184" class="ts">where the task stops; files not to touch</text>
+        <rect x="56" y="206" width="298" height="44" rx="6" class="bxA"/>
+        <text x="66" y="224" class="ti">C · Acceptance criteria</text><text x="66" y="240" class="ts">machine-verifiable — EARS / Gherkin (H2)</text>
+        <rect x="56" y="262" width="298" height="44" rx="6" class="bxA"/>
+        <text x="66" y="280" class="ti">D · Constraints</text><text x="66" y="296" class="ts">perf / security / tech budgets</text>
+        <rect x="56" y="318" width="298" height="44" rx="6" class="bxK"/>
+        <text x="66" y="336" class="ti">E · Context links</text><text x="66" y="352" class="ts">pointers to code · ADR · design · REQ id</text>
+        <rect x="56" y="374" width="298" height="44" rx="6" class="bxK"/>
+        <text x="66" y="392" class="ti">F · Definition of done</text><text x="66" y="408" class="ts">the standing merge bar</text>
+        <line x1="354" y1="116" x2="586" y2="116" class="edH1"/>
+        <line x1="354" y1="172" x2="586" y2="172" class="edH1"/>
+        <line x1="354" y1="228" x2="586" y2="228" class="edH1"/>
+        <line x1="354" y1="284" x2="586" y2="284" class="edH1"/>
+        <line x1="354" y1="340" x2="586" y2="340" class="edH1"/>
+        <line x1="354" y1="396" x2="586" y2="396" class="edH1"/>
+        <rect x="590" y="94" width="350" height="44" rx="6" class="bx"/>
+        <text x="602" y="112" class="ti">spec review judges wrong-but-plausible</text><text x="602" y="128" class="ts">intent validated on paper (§3, E8)</text>
+        <rect x="590" y="150" width="350" height="44" rx="6" class="bx"/>
+        <text x="602" y="168" class="ti">bounded diff — no scope creep</text><text x="602" y="184" class="ts">the agent stops where the task stops</text>
+        <rect x="590" y="206" width="350" height="44" rx="6" class="bx"/>
+        <text x="602" y="224" class="ti">failing tests first — executable oracle</text><text x="602" y="240" class="ts">agent implements to green (E4)</text>
+        <rect x="590" y="262" width="350" height="44" rx="6" class="bx"/>
+        <text x="602" y="280" class="ti">hooks, budgets, CI gates</text><text x="602" y="296" class="ts">deterministic where possible (E5)</text>
+        <rect x="590" y="318" width="350" height="44" rx="6" class="bx"/>
+        <text x="602" y="336" class="ti">fresh context assembled per session</text><text x="602" y="352" class="ts">pointers, not payloads (E2)</text>
+        <rect x="590" y="374" width="350" height="44" rx="6" class="bx"/>
+        <text x="602" y="392" class="ti">the merge gate</text><text x="602" y="408" class="ts">PR checklist + traceability ids (H3)</text>
+      </svg>
+      <figcaption>Each component exists to drive a specific harness mechanism. Reading the arrows right-to-left is the review question: if a harness stage keeps failing, which contract field is starving it?</figcaption>
+      </figure>
+
+      <div class="comp"><div class="chead"><span class="cid">A</span><h3>Intent / why</h3></div>
+      <p>What problem, for whom, and why now — two or three sentences, not a section. Without it the agent optimizes the letter of the acceptance criteria, and the reviewer loses the one lens that distinguishes a <em>plausible-wrong</em> solution from a right one; interpretive drift then compounds silently downstream (H4). The evidence says this is exactly the component to guard: Quattrocchi, Pasquale, Spoletini &amp; Baresi (arXiv:2507.15157) had three annotators score 153 user stories on the QUS framework's semantic dimensions and found <strong>Rationale Clarity</strong> the systematic weak spot of LLM-generated stories — GPT-4 scored 1.54 and GPT-3.5 1.25 against 2.66 for ground truth and 2.68 for students — structurally sound stories with hollow whys. The why is the field a human writes, or at minimum verifies word by word. <span class="mono">owner: PM</span></p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">B</span><h3>Scope &amp; non-goals</h3></div>
+      <p>Where the task stops: what is explicitly out, which files must not change, what the follow-up task will handle instead. The failure mode when it is missing — the agent defaulting to a "maximally complete implementation" and over-engineering — is <em>practitioner synthesis</em>, not a measured result; but scope creep is a consistently named failure mode across 2026 practitioner write-ups and Anthropic's 2026 Agentic Coding Trends report, and Cognition's Devin guidance is blunt about the mechanism: name what must not be touched or the agent will "tidy things you did not ask it to". Non-goals are also the cheapest schedule protection the contract offers — H4's ballooning 30-minute feature usually traces back to a boundary nobody wrote down. <span class="mono">owner: PM (product boundary) + tech lead (technical blast radius)</span></p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">C</span><h3>Acceptance criteria</h3></div>
+      <p>The proof obligation, machine-verifiable wherever possible: EARS at the requirements level, Gherkin at the criteria level, failing tests as the handoff itself (H2 covers the formats). Two crafts distinguish a good set. First, <strong>define the failure paths</strong>, not just the happy one — what the system shows when the service is down, what the agent outputs when the result set is empty. One such line prevents an entire category of silent failures (TASK-042's network scenario in §6 is the worked example). Second, respect that <strong>criteria quality is test quality</strong>: the SWE-Bench+ audit (arXiv:2410.06992) found 32.67% of claimed benchmark passes tainted by solution leakage and another 31.08% passing only because the tests were weak — a weak oracle returns confident false greens, which is why E4's verification-first stance and B3's mutation gate back this component. <span class="mono">owner: collaborative — tester lens drafts boundary/negative scenarios, tech lead ratifies verifiability</span></p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">D</span><h3>Constraints</h3></div>
+      <p>The budgets and prohibitions the solution must respect: "validation &lt; 300 ms", "fail-safe on timeout", "never log full codes". Two upgrades make a flat constraints list work harder. Addy Osmani's three-tier boundary pattern (Jan 2026) grades them — <em>always allowed</em> · <em>ask first</em> · <em>never</em> — which tells the agent not just what the rules are but how autonomous it may be near them. And E5's advisory-versus-deterministic principle applies verbatim: any constraint that <em>can</em> be checked mechanically belongs in a hook or CI gate, not only in prose — the "never" tier is the natural hook candidate. Constraints the harness enforces are constraints the reviewer can stop re-litigating. <span class="mono">owner: tech lead</span></p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">E</span><h3>Context links</h3></div>
+      <p>Pointers, not payloads (E2): the code paths involved, the ADR that explains the standing decision, the design reference, the requirement ID. Report 2's observed failure mode for items shipped without context is that agents <em>reverse-engineer intent from code comments</em> — they excavate whatever fragments the repo contains and guess the rest. Links let the agent assemble fresh, correct context per session instead; they also keep the contract honest about masters — the PRD stays in its system of record, the contract cites it (I1's one-master rule) — and they make traceability nearly free, because the cited requirement ID is the same one that travels into branch, commit and PR (H3). <span class="mono">owner: whoever owns each linked artifact; the contract only points</span></p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">F</span><h3>Definition of done</h3></div>
+      <p>The standing quality bar, distinct from the task's acceptance criteria: AC prove <em>this task's</em> behavior; the DoD is what <em>every</em> task must clear — tests green, edge cases addressed, traceability links present, docs touched if interfaces moved. The provenance is worth citing precisely: the Definition of Done has been part of Scrum since the first Scrum Guide (2010), and the 2020 revision made it formally the <em>commitment attached to the Increment</em> — for agent work, read: the Increment's commitment becomes the PR's merge gate. Because it is standing, it belongs in the repo once (referenced from each contract, never copy-pasted into it) — a derived duplicate would drift (I1). <span class="mono">owner: tech lead; stable across tasks</span></p></div>
+
+      <h2 id="s3"><span class="n">3</span>The gate inversion — reviewing the spec before the code</h2>
+      <p>The structural bet of the whole M3 module: with an agent implementing, the highest-leverage human review moves <em>left</em> — from the diff to the contract. Both SDD reference tools embody it (Kiro's phases each end in an approval gate; Spec Kit's workflow agrees a spec before <span class="mono">/speckit.implement</span>), and Report 2 adopted it as the "key inversion": spec review precedes — and partially displaces — code review as the primary quality gate. Say it precisely, though: <strong>neither GitHub nor AWS states that spec review replaces code review</strong>; the inversion is an emerging practitioner claim, and code review does not disappear — it gets lighter because intent questions were settled while they were still cheap to settle.</p>
+      <figure>
+      <svg viewBox="0 0 980 250" role="img" aria-label="The gate inversion: spec review before implementation, code review lighter after">
+        <text x="20" y="26" class="tg">WHERE THE PRIMARY HUMAN GATE SITS</text>
+        <rect x="16" y="60" width="120" height="46" rx="8" class="bxG"/>
+        <text x="30" y="79" class="ti">PRD</text><text x="30" y="95" class="ts">problem level (P2)</text>
+        <rect x="152" y="60" width="128" height="46" rx="8" class="bxG"/>
+        <text x="166" y="79" class="ti">decompose</text><text x="166" y="95" class="ts">agent-ready items (P3)</text>
+        <rect x="296" y="60" width="140" height="46" rx="8" class="bxC"/>
+        <text x="310" y="79" class="ti">contract</text><text x="310" y="95" class="ts">six components (H1)</text>
+        <rect x="452" y="52" width="150" height="62" rx="8" class="bxA"/>
+        <text x="466" y="74" class="ti">SPEC REVIEW</text><text x="466" y="90" class="ts">the gate — 10 minutes,</text><text x="466" y="103" class="ts">checklist below</text>
+        <rect x="618" y="60" width="140" height="46" rx="8" class="bxG"/>
+        <text x="632" y="79" class="ti">agent implements</text><text x="632" y="95" class="ts">to green (E1–E4)</text>
+        <rect x="774" y="60" width="120" height="46" rx="8" class="bxG"/>
+        <text x="788" y="79" class="ti">code review</text><text x="788" y="95" class="ts">lighter, not gone</text>
+        <line x1="136" y1="83" x2="148" y2="83" class="edH1"/>
+        <line x1="280" y1="83" x2="292" y2="83" class="edH1"/>
+        <line x1="436" y1="83" x2="448" y2="83" class="edH1"/>
+        <line x1="602" y1="83" x2="614" y2="83" class="edH1"/>
+        <line x1="758" y1="83" x2="770" y2="83" class="edH1"/>
+        <path d="M688 106 C688 170 420 176 372 176 C366 176 366 140 366 112" class="edH1 edD"/>
+        <text x="452" y="196" class="ts">contradiction / impossible AC found mid-implementation → signal back to the contract (H4)</text>
+        <text x="452" y="236" class="tg">REVIEW EFFORT MOVES LEFT; DEFECTS GET CAUGHT WHERE THEY ARE CHEAPEST</text>
+      </svg>
+      <figcaption>The inversion in one line: validate intent on paper, then let the harness prove the implementation. The dashed return path is H4's feedback loop — the engineering layer is the best detector of bad requirements.</figcaption>
+      </figure>
+      <p>Does the gate actually catch defects, or is it ceremony? The strongest available number is vendor-reported but of the right kind: Kiro's <strong>Requirements Analysis</strong> (a 2026 addition, announced around AWS Summit New York in June 2026 — distinct from the Nov 17, 2025 GA, whose spec-verification feature was property-based testing) pairs an LLM with an SMT solver to translate EARS requirements into formal logic and prove contradictions and gaps before code; across 35 internal AWS projects and 1,400+ acceptance criteria, roughly <strong>60% of first-draft requirements needed refinement</strong>. Spec Kit ships the same instinct as <span class="mono">/speckit.checklist</span> — generated checklists it describes as "unit tests for requirements writing". And the lightweight, no-new-tool version is Anthropic's own workflow guidance: interview the human until the questions run dry, write a complete SPEC.md, review it, then execute in a fresh session. All point-in-time tool facts; re-verify.</p>
+      <div class="callout pine"><div class="t">The counter-view — take it seriously</div><p>Martin Fowler, after trying all three SDD tools: "To be honest, I'd rather review code than all these markdown files." The gate can <em>relocate</em> review burden instead of removing it — the same pathology H4 files under over-specification, and the review-density numbers make it concrete: AI-generated review commentary runs ~29.6 tokens per line of code against ~4.1 for human reviewers (arXiv:2603.15911 — a 2026 study of 278,790 review conversations across 300 open-source projects; AI-reviewing-AI sits between at 11.3). The defense is discipline, not enthusiasm: contracts stay 10–30 lines (§5), the spec review stays ten minutes, and the checklist stays seven questions.</p></div>
+      <div class="callout amber"><div class="t">The 10-minute spec review — seven questions</div><p>1 · Is the <em>why</em> present and would a stranger act differently for knowing it? 2 · Are non-goals explicit — could the agent know what <em>not</em> to build? 3 · Is every acceptance criterion falsifiable, and executable where possible? 4 · Are failure paths specified (empty result, timeout, unavailable dependency)? 5 · Which constraints can be enforced deterministically — and are they wired into hooks/CI rather than prose? 6 · Do the context links resolve, and is nothing copy-pasted from a master? 7 · Does done mean the standing DoD — not a per-task improvisation?</p></div>
+
+      <h2 id="s4"><span class="n">4</span>Who writes it — ownership without a new silo</h2>
+      <p>Report 2's split holds up: the <strong>PM owns what and why</strong> — intent, scope, the product half of non-goals; the <strong>tech lead owns verifiability and the DoD</strong> — that criteria are executable, constraints enforceable, links correct. Writing is collaborative, and the pattern for that collaboration is older than the tools: George Dinwiddie's <em>Three Amigos</em> (coined ~2009) — business, developer and tester examining a story together — maps one-to-one onto the contract's fields: the business lens supplies intent and scope, the developer lens supplies constraints and context links, the tester lens supplies the boundary and negative scenarios that make the acceptance criteria worth executing.</p>
+      <p>The honest caveat comes from the practitioner who owns this territory. Gojko Adzic — whose <em>Specification by Example</em> is the direct ancestor of spec-driven development — frames today's SDD as either that lineage "taken to a new level" or "the revenge of Waterfall", and warns it "could re-introduce some of the rigidity agile methods sought to escape". The variable that decides which, in his telling and ours, is exactly this section: whether the contract is the <em>record of a collaboration</em> (three lenses, one conversation) or a requirements document thrown over the wall with better formatting (H4's oldest anti-pattern). P4's editor-and-curator PM is the product-side half of the same discipline; P2's kill/keep habit applies to specs as much as PRDs.</p>
+
+      <h2 id="s5"><span class="n">5</span>How big — the tiered contract</h2>
+      <p>The sizing heuristic carried over from P3 (practitioner synthesis, not a measured result): a work-item spec of roughly <strong>10–30 lines</strong>. Under ~10, constraints and non-goals are usually the components that go missing — the agent fills the gaps with guesses. Over ~50, the spec starts to exceed the code it describes and the review burden has been relocated, not removed (§3's counter-view, H4's over-specification). Below the artifact threshold entirely: tasks under ~15 minutes deserve a conversational instruction, not a contract — process must not smother small changes.</p>
+      <p>That answers this topic's standing open question — <em>what is the minimal contract for a 30-minute task?</em> — with a tier, not a number (our synthesis). The tier follows <strong>autonomy level and blast radius, not the calendar estimate</strong>: what can go wrong unattended, and how far it can spread, decides how much contract the task needs. Osmani's "one task focus" points the same way — feed the agent the relevant slice, not the binder; instructions compete with each other for attention.</p>
+      <div class="io">
+        <div class="box"><div class="lab">The three tiers (our synthesis)</div><ul>
+          <li><strong>T0 — conversational.</strong> Pairing-mode work (L2, &lt;~15 min): say it, watch it, no artifact.</li>
+          <li><strong>T1 — light contract.</strong> The 30-minute task: one intent sentence, two or three checkable criteria, one non-goals line, links. Five to ten lines; still versioned if the diff is.</li>
+          <li><strong>T2 — full contract.</strong> Delegated L3+ work, multi-hour or cross-file: all six components, spec review gate, traceability IDs.</li>
+        </ul></div>
+        <div class="box"><div class="lab">Mis-sizing, diagnosed from symptoms (H4)</div><ul>
+          <li><em>Too small:</em> the agent asks basic questions per session; confidently-wrong PRs that solve a different problem; non-goals discovered during code review.</li>
+          <li><em>Too big:</em> spec longer than the diff; review time dominated by markdown; the PM spends more time on task documents than on the product.</li>
+        </ul></div>
+      </div>
+
+      <h2 id="s6"><span class="n">6</span>TASK-042, annotated</h2>
+      <p>Report 2's worked template — the discount-code task reproduced in full in the M3 research notes below — is short enough to read in a minute and complete enough to exercise every component. What each block is doing:</p>
+      <div class="figscroll"><table class="map">
+        <tr><th>Component</th><th>In TASK-042</th><th>The work it does</th></tr>
+        <tr><td>A · intent</td><td>"customer wants the advertised price… raises conversion during promos"</td><td>lets the reviewer judge every later choice against a purpose, not a hunch</td></tr>
+        <tr><td>B · non-goals</td><td>"code generation (separate task); multi-code stacking (explicitly out)"</td><td>kills the two most tempting over-builds before they start</td></tr>
+        <tr><td>C · AC</td><td>three Gherkin scenarios — valid, expired, <em>network failure</em></td><td>the third scenario is the failure-path craft from §2C: it defines behavior when the happy path is unavailable, closing the silent-failure class</td></tr>
+        <tr><td>D · constraints</td><td>"validation &lt; 300 ms; fail-safe on timeout; never log full codes"</td><td>one perf budget, one resilience rule, one security prohibition — the "never" is a hook candidate (E5)</td></tr>
+        <tr><td>E · links</td><td>CartService.ts · Figma ref · ADR-017 · REQ-3.2</td><td>fresh context per session (E2); ADR-017 answers "why single-use" so the agent never re-litigates it</td></tr>
+        <tr><td>F · DoD</td><td>"scenarios green · edge cases covered · PR links REQ-3.2 and TASK-042"</td><td>the merge gate; the last checkbox is H3's traceability chain doing its work</td></tr>
+      </table></div>
+      <p>Note what the template does <em>not</em> contain: no implementation plan, no file-by-file instructions, no architecture. Those belong to the agent's plan (E8's plan phase) — the contract constrains outcomes, not methods. That restraint is what keeps it at 30 lines.</p>
+
+      <h2 id="s7"><span class="n">7</span>How H1 connects the framework</h2>
+      <div class="figscroll"><table class="map">
+        <tr><th>Topic</th><th>Relationship to the contract</th></tr>
+        <tr><td>P2 · PRD</td><td>the upstream master the contract cites — never copies (I1's one-master rule)</td></tr>
+        <tr><td>P3 · decomposition</td><td>produces the agent-ready items the contract wraps; INVEST + the 10–30 line heuristic</td></tr>
+        <tr><td>H2 · EARS/Gherkin</td><td>the formats that make component C machine-verifiable</td></tr>
+        <tr><td>H3 · traceability</td><td>the IDs in components E and F travel into branch/commit/PR; spec-anchored is the recommended mode</td></tr>
+        <tr><td>H4 · feedback loop</td><td>the return path when implementation contradicts the contract; the anti-pattern catalogue for §5's mis-sizing</td></tr>
+        <tr><td>E2 · context engineering</td><td>context links = pointers the agent expands into fresh per-session context</td></tr>
+        <tr><td>E4 · verification-first</td><td>acceptance criteria become failing tests — the executable oracle; weak tests = false greens</td></tr>
+        <tr><td>E5 · governance</td><td>constraints go deterministic (hooks/CI) wherever possible; advisory prose is the fallback</td></tr>
+        <tr><td>E6 / E8 · autonomy &amp; SDD</td><td>the contract is what an L3 agent is accountable to; E8 is the workflow that authors and reviews it</td></tr>
+        <tr><td>D1 · design system</td><td>the third artifact standing beside the contract when the work has a screen</td></tr>
+      </table></div>
+
+      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <div class="callout pine"><div class="t">Three sentences to keep</div><p>The contract, not the prompt, is the unit of delegation — durable, versioned in the repo, reviewed like code; Grove named the shift, M4 makes it operational. The six components are Report 2's synthesis, and the two that decide success are the two humans must write themselves: intent (where LLM drafts measurably fail — Rationale Clarity) and non-goals (where agents measurably wander); criteria must be executable or the gate is theatre. Size by autonomy and blast radius — T0/T1/T2 — because the spec review gate only pays while contracts stay at 10–30 lines and the review stays at ten minutes; otherwise you have rebuilt Fowler's pile of markdown.</p></div>
+
+      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Sean Grove — The New Code</div><div class="mt">AI Engineer World's Fair, San Francisco · June 2025 · youtube.com/watch?v=8rABwKRsec4</div><p>The manifesto for specs as the fundamental unit: "code is a lossy projection from the specification", the shredded-prompt argument, and the Model Spec's clause = ID + example-as-test pattern. A worldview, not evidence — cite as such.</p></div>
+      <div class="item"><div class="rt">Quattrocchi, Pasquale, Spoletini &amp; Baresi — Can LLMs generate user stories and assess their quality?</div><div class="mt">arXiv:2507.15157 · July 2025</div><p>The evidence behind §2A: 153 stories, QUS semantic dimensions, Rationale Clarity the systematic LLM weak spot (GPT-4 1.54 vs ground truth 2.66) — the why is the human's field.</p></div>
+      <div class="item"><div class="rt">Human-AI Synergy in Agentic Code Review</div><div class="mt">arXiv:2603.15911 · 2026 · 278,790 review conversations, 300 OSS projects</div><p>The review-density clusters behind §3's counter-view: AI-on-human 29.6 tokens/LOC, AI-on-AI 11.3, human 4.1 — density, not quality; the reading-burden argument for keeping contracts and reviews short.</p></div>
+      <div class="item"><div class="rt">Martin Fowler — Understanding Spec-Driven Development: Kiro, spec-kit, and Tessl</div><div class="mt">martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html</div><p>The informed skeptic: "I'd rather review code than all these markdown files." Read alongside §3 as the check on gate enthusiasm; also the best comparative tour of the three tools.</p></div>
+      <div class="item"><div class="rt">Cognition — writing tasks for Devin</div><div class="mt">docs.devin.ai · practitioner guidance, point-in-time</div><p>The in-the-wild mirror of the six components: acceptance criteria as numbered checkable conditions, files not to touch, environment hints, a defined closing step — "dramatically more useful if you already work in tickets with acceptance criteria".</p></div>
+      <div class="item"><div class="rt">Addy Osmani — How to write a good spec for AI agents</div><div class="mt">addyosmani.com/blog/good-spec · Jan 13, 2026</div><p>The three-tier boundary pattern (always / ask first / never) adopted in §2D, the PRD+SRS blend, and "one task focus" — feed the slice, not the binder.</p></div>
+      <div class="item"><div class="rt">Kiro — specs docs &amp; Requirements Analysis</div><div class="mt">kiro.dev/docs/specs · GA Nov 17, 2025 · Requirements Analysis announced 2026</div><p>The tightest tool coupling of contract to verification: EARS in requirements.md, _Requirements: 1.1_ back-links, property-based testing at GA, and the LLM+SMT contradiction prover (~60% of 1,400+ first-draft AC needed refinement — vendor-reported). Point-in-time; re-verify.</p></div>
+      <div class="item"><div class="rt">Report 2 — the handoff-contract research notes (this workbook)</div><div class="mt">module M3 research notes · TASK-042 template in full</div><p>The original synthesis this deep dive expands, including the complete task template ready to copy into a client repo, the story→EARS→Gherkin→failing-tests flow, and the phased adoption recommendations.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (H1-handoff-contract-anatomy-deepdive.html). It opens the M3 deep-dive set. Its natural neighbours in the workbook are H2 (EARS &amp; Gherkin — the formats behind component C), H3 (traceability &amp; spec modes — where the IDs travel), H4 (the feedback loop and the anti-patterns §5 diagnoses), P2/P3 (the upstream product artifacts), E2/E4/E5 (the harness layers each component drives), E8 (the SDD workflow that authors and reviews the contract), and D1 (the design system standing beside it when the work has a screen).</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>

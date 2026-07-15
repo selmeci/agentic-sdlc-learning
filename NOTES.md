@@ -28,7 +28,42 @@ Use this for open questions, session hand-off notes, and things to check before 
   W3C REC), CodeA11y CHI 2025, Code Connect frameworks, Frost quotes ("natural design system
   consumer" 2023; "machine-readable infrastructure" Dec 2025 — "AI is a new user" is NOT his).
 
+## Next scoped initiative — DARK MODE (evaluated in v1.16, deliberately deferred)
+Research backs dark mode as an **opt-in** (light stays default for a reading-heavy artifact;
+NN/g + a 2025 tablet study find no fatigue win, and extended-reading legibility slightly favours
+light). It was deferred in v1.16 because a *correct* build is a sizeable, higher-regression pass,
+not because it lacks merit. When picking it up, do it token-first — do NOT `filter:invert()`:
+1. **Tokenize the hardcoded colour.** ~34 unique hex (78 occurrences) live outside `:root` in the
+   workbook `<style>` (e.g. `.gbar #DDE4EA`, `.seg #DCE3E9`, `.check #F7F9FB`, `.rc pre #10161C`,
+   `.tid #EBEFFA/#D6DDF3`, the `.dmap`/`.e1ov` SVG fill classes `.fA/.fC/.fK/.fG/.fW`,
+   `.bxC/.bxA/...`). Promote each to a semantic var on `:root` (`--surface`, `--surface-2`,
+   `--code-bg`, `--diagram-*` …). Component CSS already mostly uses vars — this closes the gap.
+2. **Add the dark block.** Redefine the token *values* under `@media (prefers-color-scheme:dark)`
+   AND `:root[data-theme="dark"]` / `[data-theme="light"]` (toggle must beat the media query both
+   ways). Non-pure-black surface (#121212–#1E1E1E, lighter with elevation); desaturate + lighten
+   cobalt/amber/pine or they read neon. Verify body ≥4.5:1 (WCAG 2.2 AA), sanity-check with APCA
+   (Lc 60–75), 3:1 for large text / UI / focus rings.
+3. **Diagrams.** The 74 inline SVG `fill=/stroke=` in body markup are the ragged edge; the arrow
+   `marker path` fills (#57656F) can be overridden in CSS (`svg marker path{fill:var(--…)}` beats
+   the presentation attribute). The `.dmap`/`.e1ov` fill classes are already CSS — just add dark
+   values. Budget for re-checking every diagram in dark.
+4. **Toggle + persistence.** A header toggle (near the version button), persisted through the
+   existing `store` backend (key `agentic-study-v1`, add a `theme` field) — never scatter raw
+   localStorage. Set `data-theme` on `<html>` early (inline head script) to avoid a flash.
+5. **×16 files.** Workbook + 15 standalones share the `<head>` tokens — script the token/dark-block
+   insertion (mind the Python-apostrophe + brace-expansion build gotchas in CLAUDE.md) and re-run
+   `scripts/validate.py`. Screenshot both themes at desktop + mobile before shipping.
+
 ## Session hand-off
+- 2026-07-15 (design/responsive session): **v1.16 responsive & wayfinding pass.** Design skill +
+  1 research teammate (2025–26 study-material/mobile/dark-mode best practice). Rendered the
+  workbook at 390px → confirmed the dense SVG diagrams were squished to illegibility (the headline
+  problem). Fix: JS wraps every diagram SVG in `.figwrap>.figscroll`; <760px they keep a legible
+  min-width and scroll horizontally (fade + scrollbar cue), captions stay outside. Added scroll-spy
+  nav highlight, top reading-progress line, back-to-top; bigger mobile tap targets; fluid `clamp()`
+  headings. Mirrored diagram-fix + back-to-top into all 15 standalones. Validator green; desktop
+  pixel-unchanged (min-width only engages on narrow screens). Dark mode evaluated & deferred (see
+  the scoped initiative above).
 - 2026-07-15 (later session): **D1 deep dive added (v1.15)** — outline → 3 research teammates
   (2 fact-verification, 1 discovery) → write → assemble per AUTHORING-GUIDE. Fact corrections
   applied workbook-wide (Storybook figures, Frost quote, CodeA11y). New sources adopted:
