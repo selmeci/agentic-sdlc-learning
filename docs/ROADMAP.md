@@ -5,8 +5,9 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 
 ## Done
 
-- **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.13)
-- **Deep-dive companions (14)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2).
+- **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.15)
+- **Deep-dive companions (15)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -23,6 +24,10 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 Highest-novelty area because **D1–D5 is our original synthesis** — the deep dives are where we
 justify it carefully and keep flagging it as non-standard. D2 (DTCG tokens) and D5 (design
 harness: Stylelint/visual-regression/axe-core) are the most concrete.
+- ~~**D1** `des-artifact` — the design system as the third handoff artifact~~ — **done (v1.15)**,
+  with a fact re-verification pass (Frost quotes, Krebs audit, Storybook figures unsourced →
+  reframed) and new sources (Indeed/Wolosin benchmark, Meta Astryx, arXiv:2603.13036).
+- Next: **D2** (tokens/DTCG) or **D5** (the harness) — the two most concrete.
 
 ### 3. M3 / M4 / M5 topic deep dives
 - **M3 Handoff contract** (H1–H4): the contract anatomy + EARS/Gherkin — directly reusable as

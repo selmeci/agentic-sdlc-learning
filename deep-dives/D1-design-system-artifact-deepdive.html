@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D1 Deep Dive — The Design System as the Third Handoff Artifact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edD1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD1a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">D1 · DEEP DIVE</span>
+    <h1>The Design System as the Third Handoff Artifact</h1>
+    <span class="bc">companion to module M6 · Design harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why a third artifact</a>
+  <a href="#s1"><b>1</b> · Library → infrastructure</a>
+  <a href="#s2"><b>2</b> · AI slop &amp; convergence</a>
+  <a href="#s3"><b>3</b> · Anatomy: five layers</a>
+  <a href="#s4"><b>4</b> · The evidence</a>
+  <a href="#s5"><b>5</b> · Conformance, not judgment</a>
+  <a href="#s6"><b>6</b> · Selling it to the client</a>
+  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s8"><b>8</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M6</p>
+      <h2 id="s0"><span class="n">0</span>Why the handoff needs a third artifact</h2>
+      <p class="lead">The handoff to an agent, as modules M1–M3 built it, runs on two artifacts. The <strong>handoff contract</strong> (H1) tells the agent <em>what to build</em>: intent, machine-verifiable acceptance criteria in EARS or Gherkin, constraints, non-goals. The <strong>codebase with its engineering harness</strong> (E1, E4) tells it <em>how to build and how to prove it</em>: conventions, tests, CI, lint, hooks. For a service endpoint or a data migration, those two are the whole story. The moment the work has a screen, a third question appears that neither artifact answers: <strong>what must the result look like?</strong> This topic's thesis — and the thesis of module M6 — is that the design system is the third handoff artifact, with one sharp caveat: it only functions as one in a specific form — machine-readable in what it offers the agent, machine-checkable in what it forbids.</p>
+      <p>Positioning, stated plainly and with the same flag as the D1–D5 scale: <strong>"the design system as the third handoff artifact" is Report 5's synthesis — our framing, not an industry term</strong>. What is not synthesis is the movement underneath it. Brad Frost — who named atomic design — wrote in December 2025 that design systems must "evolve into machine-readable infrastructure—or risk becoming artifacts of a bygone era," and had already called AI "a natural design system consumer" back in February 2023. The industry exhibits in §1 show Meta, Indeed and the open-source default all converging on the same conclusion from three different directions. The framing is ours; the direction of travel is not.</p>
+      <div class="callout amber"><div class="t">The delegation test</div><p>A UI task delegated without the third artifact fails in one of two ways: the agent invents the visual answers itself — §2 measures what that convergence looks like — or it interrupts a human for every choice, which is not delegation. The design system is what makes visual work <em>delegable at all</em>: it plays for the look of the product the role the test suite plays for its logic (E4). No suite, no delegation; no system, no visual delegation.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>From human library to machine-readable infrastructure</h2>
+      <p>The classical design system was built for people: a component library, a documentation site, a Figma library, and the shared understanding that grows around them. Its economics were justified by human reuse — fewer redesigns of the same button, faster onboarding, brand consistency across teams. Agents change the audience. In the Storybook/Chromatic webinar <em>Agentic Design Systems in 2026</em> (December 12, 2025 — spoken remarks, not a written paper), Frost and Chromatic co-founder Dominic Nguyen reduced agentic success to two pillars: <strong>Coverage</strong> — giving agents clear examples, states and constraints they can reuse — and <strong>Validation</strong> — tests plus human sign-off guaranteeing that what an agent generated is correct and safe to ship. Note what those two pillars are: Coverage is <em>context engineering</em> (E2) and Validation is <em>the verification loop</em> (E4), applied to the visual layer. The design system stops being a library with documentation and becomes the same kind of thing the engineering harness is — infrastructure that constrains and verifies a generator.</p>
+      <div class="io">
+        <div class="box"><div class="lab">Built for humans (before)</div><ul>
+          <li>Figma library + docs site; knowledge in prose and heads</li>
+          <li>usage guidance as narrative ("prefer the primary button for…")</li>
+          <li>consistency enforced by design review, after the fact</li>
+          <li>value = human reuse and onboarding speed</li>
+        </ul></div>
+        <div class="box"><div class="lab">Readable by machines (after)</div><ul>
+          <li>tokens as versioned DTCG JSON in git (D2)</li>
+          <li>component APIs + metadata: props, variants, states, deprecations</li>
+          <li>code mappings (Code Connect) + stories as runnable examples (D3)</li>
+          <li>consistency enforced by lint, visual regression, axe — in CI (D5)</li>
+        </ul></div>
+        <div class="box sdlc"><div class="lab">SDLC placement</div><ul>
+          <li>the third artifact enters at the same gate as the contract: before implementation — and its checks run in the same place as the test suite: on every PR</li>
+        </ul></div>
+      </div>
+      <p>This is no longer a designer-blog aspiration; the named exhibits span three different corners of the industry, all point-in-time mid-2026. <strong>Meta's Astryx</strong> (public beta June 2026) ships an eight-year-internal React/StyleX design system explicitly as agent infrastructure: a CLI, an MCP server, and a self-describing JSON manifest of every command and response type — "an OpenAPI spec for the CLI" — so agents read structure instead of scraping help text (vendor announcement; verify details before quoting numbers). <strong>Indeed</strong> parsed 77 components from MDX docs into JSON metadata — purpose, variants, tokens, relationships and, notably, <em>explicit anti-patterns</em> — after benchmarking showed structured JSON beat Markdown docs on accuracy and token cost (§4). And <strong>shadcn/ui</strong>, the de-facto default of every vibe-coding tool, positions "open code the LLM can read" as its core selling point, publishing component schemas and agent skills so models know what exists and how to compose it. The strategic implication of the third exhibit cuts both ways: agents ship <em>somebody's</em> design system by default — if yours is not equally machine-legible, the default wins and it is not yours (§2, §6).</p>
+      <figure>
+      <svg viewBox="0 0 860 350" role="img" aria-label="The three handoff artifacts: contract, codebase plus harness, and design system, each feeding the agent a different kind of constraint">
+        <defs><marker id="ahD1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="26" class="tg">THE THREE HANDOFF ARTIFACTS — WHAT EACH ONE TELLS THE AGENT</text>
+        <rect x="30" y="48" width="230" height="76" rx="10" class="bxK"/>
+        <text x="44" y="70" class="tt">1 · Handoff contract</text>
+        <text x="44" y="88" class="ts">WHAT to build — intent, EARS/Gherkin</text>
+        <text x="44" y="101" class="ts">AC, constraints (M3 · Report 2)</text>
+        <rect x="30" y="140" width="230" height="76" rx="10" class="bxC"/>
+        <text x="44" y="162" class="tt">2 · Codebase + eng. harness</text>
+        <text x="44" y="180" class="ts">HOW to build &amp; verify — tests, CI,</text>
+        <text x="44" y="193" class="ts">lint, hooks (M1 · Report 1)</text>
+        <rect x="30" y="232" width="230" height="76" rx="10" class="bxA"/>
+        <text x="44" y="254" class="tt">3 · Design system</text>
+        <text x="44" y="272" class="ts">WHAT IT MUST LOOK LIKE — tokens,</text>
+        <text x="44" y="285" class="ts">component APIs, mappings, stories</text>
+        <line x1="260" y1="86" x2="392" y2="160" class="edD1"/>
+        <line x1="260" y1="178" x2="392" y2="178" class="edD1"/>
+        <line x1="260" y1="270" x2="392" y2="196" class="edD1"/>
+        <rect x="396" y="146" width="150" height="64" rx="10" class="bx"/>
+        <text x="412" y="172" class="tt">Agent</text>
+        <text x="412" y="190" class="ts">generates UI work</text>
+        <line x1="546" y1="178" x2="640" y2="178" class="edD1"/>
+        <rect x="644" y="120" width="196" height="116" rx="10" class="bxG"/>
+        <text x="658" y="142" class="ts">deterministic gates</text>
+        <text x="658" y="162" class="ts">· tests + CI (artifact 2)</text>
+        <text x="658" y="177" class="ts">· Stylelint token bans</text>
+        <text x="658" y="192" class="ts">· visual regression</text>
+        <text x="658" y="207" class="ts">· axe-core a11y</text>
+        <text x="658" y="222" class="ts">(artifact 3 → D5)</text>
+        <path d="M740 236 C740 290 520 296 475 296 C455 296 470 250 470 214" class="edD1 edD"/>
+        <text x="560" y="316" class="ts">fail → agent iterates before a human ever reviews</text>
+        <text x="30" y="336" class="ts">without artifact 3: no visual constraint → distributional convergence → "AI slop" (§2)</text>
+      </svg>
+      <figcaption>The two established artifacts answer "what" and "how + prove it"; the design system answers "what it must look like" — and, critically, feeds the same deterministic gate loop the engineering harness runs. An agent that fails a token-lint or visual-regression check iterates before a human reviews anything. The "third artifact" framing is Report 5's synthesis.</figcaption>
+      </figure>
+
+      <h2 id="s2"><span class="n">2</span>Without it: distributional convergence and AI slop</h2>
+      <p>What happens when the third artifact is missing is not random ugliness — it is <strong>convergence</strong>. A model given no visual direction does not improvise; it samples the statistical centre of its training distribution, and the centre is the same for everyone: Inter, indigo-to-purple gradients, glassmorphism, a grid of feature cards with an icon on top. The community named the result "AI slop," but the mechanism matters more than the insult: slop is what <em>maximum-likelihood design</em> looks like.</p>
+      <p>The best independent measurement to date is Adrian Krebs's audit (adriankrebs.ch, April 20, 2026 — Krebs is Kadoa's co-founder, but the audit is method-published and deterministic): a Playwright script walked <strong>1,590 Show HN landing pages</strong> and checked computed styles against <strong>16 deterministic DOM/CSS patterns</strong>. Result: <strong>22% heavy slop</strong> (4+ patterns), <strong>32% mild</strong> (2–3), <strong>46% clean</strong> (0–1). The most common tells: permanent dark theme with medium-grey body text (34%), gradient backgrounds (27%), identical icon-card feature grids (22%). Over half of everything shipped showed measurable convergence. The academic literature backs the mechanism: Shin et al.'s review of design homogenization in vibe coding (arXiv:2603.13036, March 2026; 63 sources plus walkthroughs of six platforms) argues that <em>frictionless</em> generation actively enables homogenization — models regress to dominant, Western-centric conventions and override regional norms, and the authors propose reintroducing "productive friction." Which is, read through this workbook's lens, exactly what a design system with deterministic gates is.</p>
+      <p>The instinctive fix — "write a better prompt" — fails for a reason this programme has already named twice (E5, S3): <strong>a prompt is advisory</strong>. It is re-interpreted every session, it drifts, it loses to whatever defaults are baked into the tool (v0 is welded to shadcn + Tailwind; Lovable only respects your system if you hand it a machine-readable <span class="mono">design-system.json</span>). Style constraints stated in prose share the fate of every advisory rule in the harness: followed usually, violated silently, unenforceable at scale. The only reliable form is the pairing the engineering harness uses — explicit machine-readable direction (tokens, components, DESIGN.md) plus deterministic gates that reject violations (Stylelint token bans, visual regression, axe — D5).</p>
+      <div class="callout"><div class="t">Slop is a symptom, not a model defect</div><p>Krebs's 46% clean pages came from the same generation of models as the 22% heavy-slop ones. The variable is not the model; it is whether anything constrained it. Diagnose slop as <strong>a missing-constraint symptom</strong> — the visual-layer equivalent of an agent hallucinating architecture in a repo with no CLAUDE.md, no types and no tests. The cure is the same class of thing: infrastructure, not exhortation. (Synthesis — our reading of the audit plus the homogenization literature.)</p></div>
+
+      <h2 id="s3"><span class="n">3</span>Anatomy of the third artifact — five layers</h2>
+      <p>"Design system" covers everything from a Figma file to a component monorepo, so the thesis needs precision: what exactly must exist for the system to function as a handoff artifact? Five layers, ordered from most machine-checkable to least. The first four are what Frost's "machine-readable infrastructure" concretely means; the fifth is the layer that stays irreducibly human.</p>
+      <div class="comp"><div class="chead"><span class="cid">LAYER 1</span><h3>Design tokens — the vocabulary</h3><span class="role">gate: Stylelint / build</span></div><p>Named, typed values for color, type, spacing, elevation — the atoms every visual decision must be spelled in. The W3C Design Tokens Community Group shipped its first stable format version <strong>2025.10</strong> on October 28, 2025: vendor-neutral JSON with <span class="mono">$value</span>/<span class="mono">$type</span>, aliases and theming. (Precision, because we teach source hygiene: a Community Group deliverable under a Final Specification Agreement — <strong>not</strong> a W3C Recommendation or formal standard.) Tokens are the layer with the cleanest deterministic gate: a Stylelint ban on hardcoded hex plus an allowed-list forcing <span class="mono">var(--…)</span> makes "use the vocabulary" a build failure instead of a review comment. Full treatment: D2.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LAYER 2</span><h3>Component APIs &amp; metadata — the grammar</h3><span class="role">gate: types / interaction tests</span></div><p>Props, variants, states and deprecations as typed contracts. For the agent this is the difference between "there is a Button" and "Button takes <span class="mono">variant: primary|secondary|danger</span>, never a color prop" — TypeScript and interaction tests fail on a hallucinated prop the way a unit test fails on a wrong return value. Deprecation metadata matters as much as the API itself: agents must be able to see what is <em>no longer</em> current, or they resurrect it (governance and versioning: D4).</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LAYER 3</span><h3>Code mappings — the bridge</h3><span class="role">gate: import lint / build</span></div><p>The mapping from design artifact to <em>your actual code</em>. Figma Code Connect maps a Figma component to the real component — exact import path, prop mappings — for React and React Native, SwiftUI, Jetpack Compose and HTML (the HTML integration covering Web Components, Angular and Vue), plus Storybook. This layer kills the two worst agent failure modes at once: hallucinating components that do not exist and re-implementing ones that do. Paired with <span class="mono">no-restricted-imports</span>, "use the system's Button" becomes checkable. Consumption channels in depth: D3.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LAYER 4</span><h3>Examples &amp; stories — the coverage</h3><span class="role">gate: run-story-tests / axe</span></div><p>Stories are the Coverage pillar made concrete: runnable, testable usage examples an agent can read <em>and execute</em> — Storybook's MCP addon exposes component manifests and can run story tests including accessibility checks, closing a generate → test → fix loop before human review. Indeed's version of this layer is instructive: each component's JSON metadata carries purpose, variants, token references, relationships and <strong>explicit anti-patterns</strong> — the system says not only what to do but what it has seen go wrong. Coverage is what stops an agent from guessing; §4 shows it is also where the measurable wins live.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LAYER 5</span><h3>Direction — the taste layer</h3><span class="role">gate: designer review only</span></div><p>Aesthetic direction, brand intent, the reasons behind the choices — typically a <span class="mono">DESIGN.md</span> next to the code. This layer is <strong>irreducibly advisory</strong>: no lint rule checks "feels like our brand." It still belongs in the artifact — it is the difference between an agent that stays inside the system and one that understands roughly why — but everything it governs must eventually pass the one gate that can judge it: a designer (D5, D6). Do not pretend this layer is machine-checkable; that honesty is what keeps the rest of the thesis credible.</p></div>
+      <p>Write-permission mapping, in one line (the D4/Report 3 taxonomy): layers 1–4 are <strong>durable</strong> — versioned in git, changed only by PR through a human gate, the agent proposes; generated CSS, Storybook builds and docs sites are <strong>derived</strong> — regenerate freely, never hand-edit; drafts and one-shot prototypes are <strong>disposable</strong>. The design system earns "artifact" status exactly to the degree its durable core is governed like source code.</p>
+
+      <h2 id="s4"><span class="n">4</span>What the evidence shows — and what it doesn't</h2>
+      <p>The claim "structured design context measurably improves agent output" has evidence behind it — of sharply varying quality, so we sort it the way E7 taught. The ceiling without structure first: <strong>Design2Code</strong> (Si et al., arXiv:2403.03163; 484 real webpages curated from C4) had annotators judge <strong>GPT-4V</strong> screenshot-to-code output <em>exchangeable</em> with the reference in <strong>49%</strong> of cases and <em>preferred</em> in <strong>64%</strong> — with the authors' own hedge that the preference may reflect models having absorbed "more modern and popular webpage design principles," and with failure concentrated in visual-element recall and layout. Read precisely: these are GPT-4V-era (early 2024) numbers on <em>reproducing a given page</em> — they measure raw capability without a system, and they say nothing about consistency across a product, which is what a design system is for.</p>
+      <p>The strongest practitioner data is <strong>Indeed's</strong> (Diana Wolosin; written up by Into Design Systems, April 2026 — practitioner benchmark, methodology described but not peer-reviewed, point-in-time): 77 components parsed from MDX into JSON metadata, then <strong>1,056 prompts benchmarked across 8 MCP configurations</strong>. Structured JSON beat Markdown docs on accuracy (Markdown ran ~30k tokens per query at 82% coverage, with hallucinations), cut tokens per query by roughly <strong>80%</strong>, and priced out at about a fifth of the annual cost — and the pipeline has since fed over 4,300 AI-generated prototypes in four months. This is the "machine-readable beats human-readable" claim with numbers attached, from a team that measured before believing. Early academic work points the same way — steering generated UIs with explicit preference and design context measurably shifts output toward the target (AlignUI, arXiv:2601.17614; early-stage, re-verify before quoting specifics).</p>
+      <p>And one correction we owe our own earlier drafts, because epistemic hygiene is the E7 habit: specific figures for Storybook's MCP benchmark (+12.8% code quality, 2.76× faster, −27% tokens) circulate widely — including in this workbook's research notes — but on re-verification (July 2026) <strong>could not be traced to any published source</strong>. Storybook's published materials (Nguyen, November 2025; the Reshaped RFC, September 2025) make the claim only qualitatively: better quality, faster, fewer tokens. We now cite it in that form — <strong>an unquantified vendor claim</strong> — and have flagged the numbers for removal wherever they appear as fact.</p>
+      <table class="map">
+        <tr><th>Source</th><th>What it measured</th><th>Read it as</th></tr>
+        <tr><td>Krebs slop audit (Apr 2026)</td><td>1,590 Show HN pages vs 16 deterministic patterns: 22% heavy / 32% mild / 46% clean</td><td>independent practitioner measurement, method published</td></tr>
+        <tr><td>Shin et al., arXiv:2603.13036</td><td>63-source review + 6 platform walkthroughs: frictionless generation → homogenization</td><td>independent academic review (qualitative)</td></tr>
+        <tr><td>Design2Code, arXiv:2403.03163</td><td>GPT-4V screenshot-to-code on 484 pages: 49% exchangeable / 64% preferred</td><td>academic benchmark, GPT-4V era, no design system involved</td></tr>
+        <tr><td>Indeed (Wolosin, Apr 2026)</td><td>1,056 prompts × 8 MCP configs: JSON metadata → higher accuracy, ~80% fewer tokens, ~5× cheaper</td><td>practitioner benchmark, not peer-reviewed, point-in-time</td></tr>
+        <tr><td>Storybook MCP materials</td><td>"better code, faster, fewer tokens" — no published methodology; circulating percentages unsourced</td><td>vendor claim, unquantified</td></tr>
+        <tr><td>Affirm via Figma Dev Mode MCP</td><td>"orders of magnitude" speedup</td><td>vendor case-study anecdote</td></tr>
+      </table>
+      <p>What none of this measures: whether the resulting <em>design</em> is good. Every row above is about conformance, fidelity, cost or convergence — the judgment question is §5's, and it does not have a benchmark.</p>
+
+      <h2 id="s5"><span class="n">5</span>The Gherkin of the visual layer — conformance, not judgment</h2>
+      <p>H2 established why the handoff contract writes acceptance criteria in EARS or Gherkin: a requirement phrased as a machine-checkable pattern turns review from debate into pass/fail. The third artifact does the same for the visual layer, and the parallel is worth drawing exactly. "Use <span class="mono">color.action.primary</span>" is enforceable by lint the way "WHEN the user submits THEN…" is enforceable by a test runner. A component API is a typed contract; an unknown prop fails like a failed assertion. A visual-regression baseline plus axe-core in CI gives UI work the deterministic red/green loop that Report 1 made the heart of the whole method. This is why the design system deserves the name <em>artifact</em> in the same sense as the contract: not decoration around the work, but the checkable specification of part of it.</p>
+      <p>And here is where the analogy must be cut off honestly, because overselling it would break the module's credibility. The gates verify <strong>conformance</strong> — stayed inside the vocabulary, used real components, broke no baseline, met WCAG rules. They cannot verify <strong>judgment</strong> — whether the hierarchy guides the eye, whether the composition fits the brand, whether the design is <em>good</em>. Pixel-diff detects change, not quality; LLM-as-judge agrees with experts on specific UI behaviors, not holistic taste (D5 covers the FrontendBench evidence). Accessibility is the sharpest illustration of why the deterministic side must nonetheless be maximal: the CHI 2025 CodeA11y study (Mowar et al., DOI 10.1145/3706598.3713335) found AI assistants <strong>routinely omit accessibility features by default</strong> — alt text, semantic landmarks, labeled controls — and that developers neither prompt for them nor verify them (16-developer formative study). Everything checkable must be checked by a machine, precisely so the scarce human gate — the designer, sitting at the same L3-style review position as the engineer in E6 and the PM in P5 — spends its capacity on the one thing only it can do: judgment. The designer-as-curator role this implies is D6's subject.</p>
+      <div class="callout pine"><div class="t">The precise scope of the thesis</div><p>The design system is the third handoff artifact <em>for conformance</em>: it makes "stayed inside the system" machine-verifiable, which is what makes visual work delegable to an agent at any autonomy level above assisted drafting. It is not, and will not become, an oracle for design quality — that verification stays human, which is why every D-level in this module keeps a designer gate (D6) and why D5-the-level (autonomous design) remains an anti-pattern.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>Selling the third artifact to a brownfield client</h2>
+      <p>The objection arrives on schedule: <em>"A design system is a designer luxury — we'll invest after the AI rollout proves itself."</em> That ordering is exactly backwards, and the reframe is the point of this section: for agentic frontend work the design system is not a design deliverable, it is <strong>agent infrastructure</strong> — the cheapest source of deterministic gates the UI layer can have. Three arguments, in the order that lands: <strong>(1) The slop bill.</strong> Unconstrained generation measurably converges (54% of Krebs's sample showed slop patterns), and every convergence the client does not want is caught, if at all, by the most expensive instrument they have — human review — one PR at a time. <strong>(2) Agent-speed drift.</strong> E6's review-capacity rule does not bend for the visual layer: agents produce UI faster than any design review scales, so without machine gates the choice is drift or bottleneck. <strong>(3) Verification-first economics.</strong> E4's argument, transplanted: tokens + lint + visual regression + axe convert visual review from subjective debate into red/green, and the agent iterates against red <em>before</em> a human looks. The engineering harness was sellable for the same three reasons; this is the identical pitch one artifact later.</p>
+      <p>Two honest boundaries keep the pitch trustworthy. When <strong>not</strong> to push it: a client with no meaningful UI surface, or work that is genuinely disposable prototyping (the D4 taxonomy's third tier — nothing durable depends on it). And never as a big-bang: the entry path on brownfield is D7's design archaeology — audit the CSS that exists (Project Wallace-style token extraction), snapshot the current state as a golden master, and <em>then</em> consolidate — F0 before F1, read before write, exactly like Report 4's bootstrap ordering. A client who hears "we start by measuring what you already have" trusts the rest.</p>
+      <div class="io">
+        <div class="box"><div class="lab">Assess (F0 questions)</div><ul>
+          <li>does a design system exist in any form — Figma library, component folder, tokens?</li>
+          <li>how many de-facto colors/spacings does the CSS actually contain vs how many are intended?</li>
+          <li>can an agent today discover what components exist (stories? types? manifest?)</li>
+          <li>who would hold the designer gate — and does design review exist at all?</li>
+        </ul></div>
+        <div class="box"><div class="lab">Build (F1 seeds)</div><ul>
+          <li>tokens as DTCG JSON in git; Style Dictionary pipeline to outputs</li>
+          <li>Stylelint hex ban + no-restricted-imports as the first two CI gates</li>
+          <li>stories (or metadata JSON) for the 10 most-used components first</li>
+          <li>DESIGN.md — one page of direction; the advisory layer, honestly labeled</li>
+        </ul></div>
+      </div>
+
+      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <p>The tie-backs, compactly: the third artifact enters the SDLC at the same gate as the handoff contract (H1) and verifies in the same place as the test suite (E4); its prose layers are advisory and its gate layers deterministic (E5); it is what lets the D-scale exist at all — every level above assisted drafting presumes it (D6); and on brownfield it is bootstrapped by archaeology, not decree (D7, Report 4). Its detailed layers are the rest of this module: tokens (D2), consumption (D3), governance (D4), the harness (D5).</p>
+      <div class="callout"><div class="t">Three sentences to remember D1 by</div><p>Agent handoff runs on three artifacts — the contract says <em>what</em>, the codebase-plus-harness says <em>how and prove it</em>, and the design system says <em>what it must look like</em> — but the third only works as machine-readable infrastructure with deterministic gates, a framing that is Report 5's synthesis even though Frost, Meta, Indeed and shadcn are all converging on it independently. Without it, generation converges to the training-data mean — measurably: 22% heavy slop and only 46% clean across 1,590 audited pages — and no prompt fixes that, because prompts are advisory and defaults are baked into the tools. The system is a contract for <strong>conformance</strong> (tokens, APIs, mappings, coverage — all machine-checkable), never for <strong>judgment</strong> — taste stays behind a designer gate, which is exactly what makes the rest safely delegable.</p></div>
+
+      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Brad Frost — Design systems in the time of AI · Agentic Design Systems in 2026</div><div class="mt">bradfrost.com · Feb 2023 / Dec 2025 · webinar with Dominic Nguyen (Chromatic), Dec 12, 2025</div><p>The arc in primary sources: "AI is a natural design system consumer" (2023) to "machine-readable infrastructure—or risk becoming artifacts of a bygone era" (2025), and the Coverage/Validation pillars — spoken remarks from the webinar, cite as such.</p></div>
+      <div class="item"><div class="rt">Adrian Krebs — The rise of design slop</div><div class="mt">adriankrebs.ch · Apr 20, 2026</div><p>The audit behind §2: 1,590 Show HN pages, Playwright, 16 deterministic patterns, 22/32/46. Method published; the numbers this module quotes are verified against it.</p></div>
+      <div class="item"><div class="rt">Shin, Gao, Pang, Lee, Reinecke &amp; Tseng — Interrogating design homogenization in web vibe coding</div><div class="mt">arXiv:2603.13036 · Mar 2026</div><p>The academic backbone: frictionless generation enables homogenization; Western-centric defaults override regional norms; "productive friction" as the countermeasure — which is what a gated design system is.</p></div>
+      <div class="item"><div class="rt">Si et al. — Design2Code: how far are we from automating front-end engineering?</div><div class="mt">arXiv:2403.03163 · 484 real pages · GPT-4V era</div><p>The no-system ceiling: 49% exchangeable, 64% preferred (with the authors' own hedge). Capability without consistency — the gap the third artifact exists to close.</p></div>
+      <div class="item"><div class="rt">Into Design Systems — How Indeed made their design system machine-readable (Diana Wolosin)</div><div class="mt">intodesignsystems.com · Apr 2026</div><p>The strongest practitioner numbers in §4: 77 components to JSON metadata, 1,056 prompts across 8 MCP configs, ~80% fewer tokens, anti-patterns as first-class metadata. Point-in-time; not peer-reviewed.</p></div>
+      <div class="item"><div class="rt">W3C Design Tokens CG — first stable version (2025.10) · Mowar et al. — CodeA11y</div><div class="mt">w3.org/community/design-tokens · Oct 28, 2025 · CHI 2025, DOI 10.1145/3706598.3713335</div><p>The vocabulary standard (a Community Group deliverable, not a W3C Recommendation — say it precisely) and the a11y evidence: assistants routinely omit accessibility features by default, which is why axe-core is a non-negotiable gate.</p></div>
+      <div class="item"><div class="rt">Report 5 — the design-harness research notes (this workbook)</div><div class="mt">module M6 research notes · D2–D7 deep dives as they land</div><p>The original synthesis this deep dive expands: tokens, consumption channels, governance, the harness, the D1–D5 scale and design archaeology — with the honest-caveats section that separates strong evidence from vendor claims.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (D1-design-system-artifact-deepdive.html). It opens the M6 deep-dive set. Its natural neighbours in the workbook are D2 (tokens as the visual contract), D3 (how agents consume design context), D4 (governance and SSOT), D5 (the design harness), D6 (the D1–D5 scale and the designer as curator), D7 (design archaeology and F0–F4), H1/H2 (the contract it stands beside), E4/E5 (verification-first and advisory-vs-deterministic — the principles it transplants), and S7 (the design-file injection surface).</p>
+</main>
+</div>
+</body>
+</html>

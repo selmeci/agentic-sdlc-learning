@@ -3,6 +3,31 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.15 · 2026-07-15
+**Added the D1 deep-dive companion** (The design system as the third handoff artifact) —
+opening the M6 design-harness set (embedded overlay `#d1-deepdive` + standalone
+`deep-dives/D1-design-system-artifact-deepdive.html`):
+- The third-artifact thesis (contract = what, codebase+harness = how/prove, design system =
+  what it must look like), explicitly flagged as Report 5's original synthesis.
+- Machine-readable infrastructure with verified primary-source Frost quotes; the Coverage +
+  Validation pillars cited precisely as spoken remarks (Storybook/Chromatic webinar, Dec 2025).
+- AI slop: Krebs audit (all numbers re-verified against adriankrebs.ch, Apr 2026) + the
+  design-homogenization review (Shin et al., arXiv:2603.13036) as the academic backbone.
+- The five layers of the artifact (tokens / APIs / mappings / stories / direction), each with
+  its deterministic gate; evidence table incl. the new Indeed/Wolosin machine-readable
+  benchmark (1,056 prompts × 8 MCP configs) and Meta Astryx + shadcn/ui exhibits.
+- Conformance-vs-judgment as the thesis's precise scope; CodeA11y (CHI 2025) correctly cited.
+
+**Fact re-verification pass** (3 research agents, primary sources, 2026-07-15) applied
+workbook-wide:
+- Storybook MCP benchmark figures (+12.8% / 2.76× / −27%) could not be traced to any published
+  source — reframed as an unquantified vendor claim in the M6 research notes and D3 topic.
+- Brad Frost "AI is a new user" corrected to the verified "AI is a natural design system
+  consumer" (Feb 2023) / "machine-readable infrastructure" (Dec 2025); NN/g State of UX 2026
+  quote tightened to the exact wording.
+- CHI 2025 a11y finding precisely attributed: CodeA11y (Mowar et al.), "routinely omit
+  accessibility features", not "systematically generate inaccessible markup".
+
 ## v1.14 · 2026-07-15
 **Quality-review pass** across the workbook + all deep dives (four parallel review agents +
 a web fact-currency sweep), followed by four approved improvement packages:

@@ -1,7 +1,7 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.13):
-8 modules, 52 topics, 6 research reports, 2 inline map sections, 14 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.15):
+8 modules, 52 topics, 6 research reports, 2 inline map sections, 15 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -69,15 +69,15 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 ### M6 · Design harness (id `m7`) — Report 5; 6 research-note sections
 > **D1–D5 is an original synthesis, not an industry standard — flag it wherever it appears.**
 
-| Topic | id |
-|---|---|
-| D1 Design system as the third handoff artifact | `des-artifact` |
-| D2 Design tokens as the visual contract (DTCG) | `des-tokens` |
-| D3 How agents consume design context | `des-consumption` |
-| D4 Governance & SSOT in the design world | `des-governance` |
-| D5 The design harness: verification loops & guardrails | `des-harness` |
-| D6 D1–D5 scale & the designer as curator | `des-scale` |
-| D7 Design archaeology & the F0–F4 rollout | `des-brownfield` |
+| Topic | id | Deep dive |
+|---|---|---|
+| D1 Design system as the third handoff artifact | `des-artifact` | ✅ embedded + standalone |
+| D2 Design tokens as the visual contract (DTCG) | `des-tokens` | |
+| D3 How agents consume design context | `des-consumption` | |
+| D4 Governance & SSOT in the design world | `des-governance` | |
+| D5 The design harness: verification loops & guardrails | `des-harness` | |
+| D6 D1–D5 scale & the designer as curator | `des-scale` | |
+| D7 Design archaeology & the F0–F4 rollout | `des-brownfield` | |
 
 ### M7 · Security — cross-cutting (id `m8sec`) — Report 6; 8 research-note sections
 | Topic | id |
@@ -112,7 +112,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (14)
+## Deep-dive companions (15)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
@@ -120,8 +120,8 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `E3-harness-in-practice` · `E4-verification-first` · `E5-governance` ·
 `E6-autonomy-levels` · `E7-metrics-anti-patterns` · `E8-spec-driven-development` ·
 `P1-ai-assisted-discovery` · `P2-prds-with-ai` · `P3-decomposition` · `P4-pm-role` ·
-`P5-assistance-scale`
+`P5-assistance-scale` · `D1-design-system-artifact`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e8-deepdive`,
-`#p1-deepdive` … `#p5-deepdive` (each appears exactly twice: the "Go deeper" link + the JS
+`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive` (each appears exactly twice: the "Go deeper" link + the JS
 open handler).
