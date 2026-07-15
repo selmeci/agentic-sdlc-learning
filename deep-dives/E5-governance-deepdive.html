@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E5 Deep Dive — Governance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edE5{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE5a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E5 · DEEP DIVE</span>
+    <h1>Governance</h1>
+    <span class="bc">companion to module M1 · topic E5</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why governance makes safety real</a>
+  <a href="#s1"><b>1</b> · Advisory vs deterministic</a>
+  <a href="#s2"><b>2</b> · The mechanisms</a>
+  <a href="#s3"><b>3</b> · Why governance exists: the trifecta</a>
+  <a href="#s4"><b>4</b> · Mapping to the SDLC</a>
+  <a href="#s5"><b>5</b> · Takeaways</a>
+  <a href="#s6"><b>6</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion</p>
+      <h2 id="s0"><span class="n">0</span>Why governance is where safety becomes real</h2>
+      <p class="lead">E1–E4 built a capable, verifying agent. E5 is the component that decides what that agent is <em>allowed</em> to do — and, crucially, enforces it in a way the model cannot talk its way around. Governance is the difference between "we asked the agent nicely not to touch production" and "the agent physically cannot touch production." Everything we learned about prompt injection (M7) lands here: when the model is compromised, governance is the layer still standing.</p>
+      <p>For our engagement this is the component that converts autonomy from a liability into a bounded, insurable activity. A client will (rightly) ask "what stops it from doing something catastrophic?" The honest answer is never "the prompt tells it not to" — it is the deterministic governance layer described here. This document draws the single most important line in the whole framework: <strong>advisory vs deterministic</strong>.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>An instruction the model <em>interprets</em> is advisory; a rule the harness <em>enforces</em> is deterministic. Under normal conditions both seem to work. Under pressure, ambiguity, or injection, only the deterministic layer holds. Governance is the discipline of putting every safety- or consistency-critical rule on the deterministic side of that line.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The defining distinction: advisory vs deterministic</h2>
+      <p>This is the concept E5 exists to teach. Two mechanisms look similar in a demo and could not be more different in production:</p>
+      <div class="io"><div class="box"><div class="lab">Advisory — the model decides</div><ul><li>text in context: CLAUDE.md / AGENTS.md, system prompt, rules files</li><li>the model reads it and <em>usually</em> complies</li><li>can be ignored under load, ambiguity, or injection</li><li>is itself an attack surface (rules-file backdoor, M7)</li></ul></div>
+      <div class="box"><div class="lab">Deterministic — the harness decides</div><ul><li>permission rules, pre/post-tool hooks, OS sandbox, network policy</li><li>executed by the harness, not interpreted by the model</li><li>holds regardless of what the model "wants"</li><li>the actual security &amp; consistency boundary</li></ul></div>
+      <div class="box sdlc"><div class="lab">The litmus test we apply to every rule</div><ul><li>"What the model should <em>know</em>" (style, conventions, preferences) → advisory (prompt).</li><li>"What must <em>never happen</em> / must <em>always happen</em>" (block rm -rf, deny .env, run tests before commit) → deterministic (hook/permission).</li></ul></div></div>
+      <p>Note this is the same ladder E4 used to protect tests (advisory rule → deterministic hook → verification gate) and the same one M7 uses for security. Governance is not a new idea bolted on; it is the general form of a pattern that recurs across the whole framework.</p>
+
+      <h2 id="s2"><span class="n">2</span>The mechanisms — inputs &amp; outputs</h2>
+      <p>Read the diagram first: governance sits at the boundary between the model's intent and any real effect on the world. Every proposed action passes through it before it can happen.</p>
+      <figure>
+      <svg viewBox="0 0 860 300" role="img" aria-label="Governance as the gate between model intent and real effects">
+        <defs><marker id="ahE5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="20" y="110" width="150" height="60" rx="10" class="bxC"/><text x="30" y="134" class="ti">Model proposes</text><text x="30" y="152" class="ts">a tool call / action</text>
+        <rect x="250" y="60" width="180" height="70" rx="10" class="bx"/><text x="260" y="84" class="ti">Permission rule</text><text x="260" y="102" class="ts">allow / deny / ask</text><text x="260" y="118" class="ts">per tool &amp; pattern</text>
+        <rect x="250" y="150" width="180" height="70" rx="10" class="bx"/><text x="260" y="174" class="ti">PreToolUse hook</text><text x="260" y="192" class="ts">deterministic check;</text><text x="260" y="208" class="ts">can block even in bypass</text>
+        <rect x="480" y="110" width="170" height="60" rx="10" class="bxG"/><text x="490" y="134" class="ti">Sandbox + egress</text><text x="490" y="152" class="ts">FS / network limits</text>
+        <rect x="700" y="60" width="140" height="52" rx="10" class="bxK"/><text x="710" y="83" class="ti">Effect happens</text><text x="710" y="100" class="ts">bounded &amp; logged</text>
+        <rect x="700" y="150" width="140" height="52" rx="10" class="bx" style="stroke:#B3362B"/><text x="710" y="173" class="ti">Blocked ✗</text><text x="710" y="190" class="ts">denied / gated to human</text>
+        <line x1="170" y1="130" x2="250" y2="95" class="edE5"/><line x1="170" y1="140" x2="250" y2="185" class="edE5"/>
+        <line x1="430" y1="140" x2="480" y2="140" class="edE5"/>
+        <path d="M650 128 C 675 115, 685 95, 700 88" class="edE5" fill="none"/>
+        <path d="M430 200 C 560 250, 620 210, 700 180" class="edE5" fill="none"/><text x="540" y="245" class="ts">hook denies</text>
+        <rect x="250" y="245" width="400" height="34" rx="8" fill="#EDF1F4" opacity="0.6" stroke="#9AA7B1"/><text x="264" y="266" class="ts">PostToolUse hook + audit log — records what happened, enables rollback</text>
+      </svg>
+      <figcaption>Governance is a gate, not a suggestion. A proposed action is checked by permission rules and PreToolUse hooks; if it passes, the sandbox and egress policy bound what it can actually touch; a PostToolUse hook and audit log record it. Anything unsafe is denied or escalated to a human before it can have an effect.</figcaption>
+      </figure>
+
+      <div class="comp"><div class="chead"><span class="cid">A</span><h3>Permission rules</h3><span class="role">allow / deny / ask</span></div>
+      <p>The first, declarative layer: per-tool and per-pattern rules deciding whether an action is allowed outright, denied outright, or requires a human "ask." The everyday posture — read/plan freely, ask before writes, deny the truly dangerous.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>a policy: what is always allowed / denied / gated</li><li>tool &amp; path patterns (e.g. deny <span class="mono">.env</span>, <span class="mono">*.pem</span>)</li><li>a settings hierarchy (enterprise → user → project → local)</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a first-pass allow/deny/ask decision per action</li><li>a low-friction default posture for a repo</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Configured at repo/org setup (Phase 1); enforced every action at runtime.</li></ul></div></div>
+      <p><strong>For our rollout:</strong> push a locked-down baseline via <em>enterprise managed settings</em> so teams inherit it and cannot silently weaken it. Deny secrets and destructive commands; "ask" on writes for sensitive repos; disable bypass mode outside isolated sandboxes.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">B</span><h3>Hooks (PreToolUse / PostToolUse / Stop)</h3><span class="role">programmable enforcement</span></div>
+      <p>The programmable layer that runs your own code at defined points in the loop. A <strong>PreToolUse</strong> hook can inspect a proposed action and block it — even in bypass mode; a <strong>PostToolUse</strong> hook can react after (format, lint, log); a <strong>Stop</strong> hook can gate session end (e.g. verify the suite is intact, E4-L3).</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>the events to hook and scripts to run</li><li>a fail-safe design (deny by default for cases the hook doesn't opine on)</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>hard, programmable guarantees at tool boundaries</li><li>auto-remediation (format/lint) and end-of-session gates</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Runtime, at each tool call and session boundary; the enforcement engine behind E3's controlled write-surfaces and E4's protected tests.</li></ul></div></div>
+      <p><strong>For our rollout:</strong> one gotcha — <strong>hooks override permission rules</strong>. A PreToolUse hook that exits "allow" lets through even a denied command, so hooks must fall back to the normal permission flow for cases they don't explicitly handle. Over-hooking is itself an anti-pattern; hook only what matters.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">C</span><h3>Sandboxing &amp; network policy</h3><span class="role">bounding the blast radius</span></div>
+      <p>The OS-level layer: filesystem, process, and network isolation so that even an action that <em>is</em> allowed can only touch a bounded surface. The network egress allowlist is the highest-leverage control in the whole security story (M7) — it severs the exfiltration leg of the lethal trifecta.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>an OS sandbox (e.g. Seatbelt / bubblewrap)</li><li>an egress allowlist (proxy / firewall by domain)</li><li>credentials kept <em>out</em> of the sandbox</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a bounded, observable, reversible blast radius</li><li>exfiltration blocked even after a successful injection</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Platform layer spanning dev, CI and deploy; the last line that holds when the model layer is fully compromised.</li></ul></div></div>
+      <p><strong>For our rollout:</strong> caveat — an OS sandbox typically covers shell/subprocess only; file-read/edit and web-fetch may not be covered, so pair it with read/edit deny rules and a fetch allowlist. Non-TLS-inspecting proxies are bypassable, so the egress allowlist is strong but not absolute.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>Why governance exists: the lethal trifecta</h2>
+      <p>Governance is not bureaucracy for its own sake — it is the answer to a specific, unsolved problem. Because a model cannot separate trusted instructions from untrusted data (prompt injection, M7), any agent that simultaneously holds <strong>untrusted input</strong>, <strong>access to sensitive data</strong>, and the <strong>ability to communicate externally</strong> can be turned against you. Simon Willison named this the <em>lethal trifecta</em>.</p>
+      <div class="callout"><div class="t">The Rule of Two, enforced by governance</div><p>Meta's "Agents Rule of Two": until injection is solved, an agent should hold at most two of those three properties in a session; the third must be dropped or human-gated. Governance is <em>how</em> you enforce that — permission rules and sandboxing remove a leg (e.g. egress allowlist severs external communication), and human "ask" gates re-insert a person when all three would otherwise combine. Advisory text cannot enforce the Rule of Two; only the deterministic layer can.</p></div>
+      <p>This is the through-line of the whole framework: E1 named governance as a component, E4 used its mechanisms to protect tests, M7 maps the full threat surface — and E5 is where the enforcement actually lives. When we tell a client "assume the agent will be compromised and bound the damage," governance is the concrete set of controls that makes that posture real.</p>
+
+      <h2 id="s4"><span class="n">4</span>Mapping to the SDLC</h2>
+      <table class="map"><tr><th>SDLC stage</th><th>Governance mechanism</th><th>What good looks like</th></tr>
+      <tr><td>Repo / org setup</td><td>permission baseline</td><td>enterprise managed settings; secrets &amp; destructive commands denied by default</td></tr>
+      <tr><td>Implementation</td><td>PreToolUse hooks + sandbox</td><td>writes confined to safe paths; shell bounded; egress allowlisted</td></tr>
+      <tr><td>Session boundary</td><td>Stop hook</td><td>suite intact &amp; green verified before the session can end (ties to E4)</td></tr>
+      <tr><td>Review / merge</td><td>human "ask" gates</td><td>a person approves intent where all three trifecta legs would combine</td></tr>
+      <tr><td>Operate / audit</td><td>PostToolUse log</td><td>every consequential action recorded; rollback possible; OpenTelemetry export</td></tr></table>
+
+      <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Do dev/prod separation, RBAC and secrets hygiene exist at all?</li><li>Is there a place to enforce hooks (or only advisory config)?</li><li>Can we set an egress allowlist / sandbox in their environment?</li><li>Is there an audit trail before anything touches production?</li></ul></div>
+      <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>enterprise managed permission baseline (deny secrets + destructive)</li><li>PreToolUse hooks for protected paths; Stop hook for the suite</li><li>OS sandbox + network egress allowlist (highest leverage)</li><li>PostToolUse audit log; human "ask" gates on the trifecta</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember E5 by</div><p>Governance is the deterministic layer — permission rules, hooks, sandbox, egress — that the harness enforces regardless of what the model decides, and it is the only thing still standing when the model is compromised. The litmus test for every rule: "what the model should know" is advisory (prompt); "what must never happen" is deterministic (hook/permission). It exists to answer the lethal trifecta, so its job is to remove a leg or re-insert a human, and thereby keep the blast radius bounded, observable and reversible.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Claude Code — hooks guide &amp; secure deployment</div><div class="mt">code.claude.com/docs — hooks-guide &amp; agent-sdk/secure-deployment</div><p>The primary reference for permission rules, PreToolUse/PostToolUse/Stop hooks, the settings hierarchy, sandboxing and the "hooks override rules" gotcha. Start here.</p></div>
+      <div class="item"><div class="rt">The lethal trifecta &amp; prompt-injection series</div><div class="mt">Simon Willison · simonwillison.net/series/prompt-injection</div><p>Why governance exists — the trifecta framing that every deterministic control is designed to break.</p></div>
+      <div class="item"><div class="rt">Agents Rule of Two</div><div class="mt">Meta AI (2025)</div><p>The concrete policy governance enforces: at most two of {untrusted input, sensitive data, external comms} per session.</p></div>
+      <div class="item"><div class="rt">Building effective agents / effective harnesses</div><div class="mt">Anthropic Engineering · anthropic.com/engineering</div><p>Governance in the context of the whole harness; controlled write-surfaces and the advisory-vs-deterministic split in practice.</p></div>
+      <div class="item"><div class="rt">Report 6 — Security (module M7)</div><div class="mt">this workbook</div><p>The full cross-cutting threat model; E5 is the enforcement layer for everything M7 maps. Read them together.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (E5-governance-deepdive.html). Its natural neighbours in the workbook are E3 (controlled write-surfaces), E4 (protected tests / the three-layer defence), E6 (autonomy levels), and the whole of M7 (Security), for which E5 is the enforcement layer.</p>
+
+</main>
+</div>
+</body>
+</html>

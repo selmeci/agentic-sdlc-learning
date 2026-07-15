@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E7 Deep Dive — Metrics &amp; Anti-Patterns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edE7{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE7a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E7 · DEEP DIVE</span>
+    <h1>Metrics &amp; Anti-Patterns</h1>
+    <span class="bc">companion to module M1 · topic E7</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why measurement matters</a>
+  <a href="#s1"><b>1</b> · What DORA &amp; METR are</a>
+  <a href="#s2"><b>2</b> · Using DORA — the process</a>
+  <a href="#s3"><b>3</b> · Using METR — the method</a>
+  <a href="#s4"><b>4</b> · What the hard data says</a>
+  <a href="#s5"><b>5</b> · The review bottleneck</a>
+  <a href="#s6"><b>6</b> · Choosing metrics</a>
+  <a href="#s7"><b>7</b> · The anti-pattern catalogue</a>
+  <a href="#s8"><b>8</b> · Reading evidence honestly</a>
+  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion</p>
+      <h2 id="s0"><span class="n">0</span>Why measurement is where the engagement lives or dies</h2>
+      <p class="lead">E1–E6 described how to build and bound an agentic harness. E7 is the reality check: what the hard data actually says about agentic development, and the failure modes that recur when teams skip the discipline of the earlier components. This is the component that keeps us honest — with ourselves and with the client — because the field is saturated with vendor claims and subjective enthusiasm that the evidence does not support.</p>
+      <p>For our engagement, E7 does two jobs. It gives us the <strong>baseline and metrics</strong> to prove (or disprove) that the harness is working — essential, because subjective productivity feelings are demonstrably unreliable. And it gives us a <strong>catalogue of anti-patterns</strong> with named, documented failures, so we can tell a client "here is exactly how this goes wrong, and here is which earlier component prevents it."</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>AI adoption does not uniformly raise productivity — it <em>accelerates development and exposes weaknesses in the surrounding system</em>. The same agent that speeds up a mature team destabilises an immature one. So the metric that matters is not "how much code did the agent write" but "did the system's real outcomes (stability, throughput, review load) improve." Measure outcomes, never output.</p></div>
+
+            <h2 id="s1"><span class="n">1</span>What DORA and METR are — and whether we can use them</h2>
+      <p>We cite these two throughout, so here is what they actually are — and, more usefully, the distinction that decides how each serves us: <strong>DORA is a metric framework we can adopt directly; METR is not a tool we deploy but a method we borrow.</strong> Getting that split right is what turns "we measured something" into "we measured the right thing, honestly."</p>
+
+      <h3>DORA — a measurement framework we adopt directly</h3>
+      <p><strong>DORA</strong> (DevOps Research and Assessment) is the research program behind the book <em>Accelerate</em> and, today, Google Cloud's annual <em>State of DevOps</em> report. Begun by Nicole Forsgren, Jez Humble and Gene Kim, its lasting contribution is a small, statistically validated set of software-delivery metrics — the "four keys" — split evenly between speed and safety:</p>
+      <table class="map"><tr><th>Dimension</th><th>Metric</th><th>Plain meaning</th></tr>
+      <tr><td>Throughput</td><td>Deployment frequency</td><td>how often you ship to production</td></tr>
+      <tr><td>Throughput</td><td>Lead time for changes</td><td>time from a commit to it running in production</td></tr>
+      <tr><td>Stability</td><td>Change failure rate</td><td>% of deployments that cause a failure needing remediation</td></tr>
+      <tr><td>Stability</td><td>Failed-deployment recovery time</td><td>time to restore service after a bad deploy (formerly "time to restore" / MTTR)</td></tr>
+      </table>
+      <p>Teams are then clustered Low → Medium → High → Elite. (DORA later added a fifth metric, operational <em>reliability</em>, but the four keys remain the canonical set.) The single most important finding — and the reason the metric set matters to us — is that <strong>throughput and stability are not a trade-off</strong>: elite performers score high on <em>both</em>. That is precisely why the DORA 2024 AI result is a warning sign, not a footnote: AI adoption pushed the two apart (stability −7.2%), which is the signature of a weak surrounding system rather than a healthy speed-up.</p>
+      <div class="callout pine"><div class="t">How we use DORA</div><p>Directly, as our pilot's before/after baseline. It is tool-agnostic and brownfield-friendly: all four keys are computable from data the client already has — Git history, CI/CD logs, and incident/deploy records — with no new instrumentation. We capture the four keys <em>before</em> the agent touches anything, then the same four after, and we always read stability next to throughput so a speed gain that quietly costs reliability cannot hide. Crucial caveat: DORA is a <strong>system/team-level</strong> measure, never an individual scorecard — turning it into per-developer targets triggers Goodhart's law and destroys the signal.</p></div>
+
+      <h3>METR — a method we borrow, not a tool we run</h3>
+      <p><strong>METR</strong> (Model Evaluation &amp; Threat Research) is a nonprofit that studies AI model capabilities and risks. For our purposes the relevant artifact is one specific study: its 2025 <em>randomized controlled trial</em> on how early-2025 AI tools affected experienced open-source developers. The reason it carries the weight it does is the method — an <strong>RCT is the gold standard</strong>: 16 seasoned developers, 246 real tasks on their <em>own</em> mature repositories, with AI use randomized per task and <em>actual</em> completion time measured. That design is what lets its counter-intuitive result stand up — developers were <strong>19% slower</strong> with AI while believing they were about <strong>20% faster</strong> — where a satisfaction survey or raw telemetry could not.</p>
+      <div class="callout"><div class="t">How we use METR</div><p>Not as something we "adopt" — it is a research organisation, not a framework or a product. What is usable is the <em>methodology</em>. The lesson for our pilot is to get as close to an RCT as a client environment allows: randomise which of a set of comparable tasks (or teams) run with agents versus without, measure objective elapsed time and DORA outcomes, and <em>never</em> trust self-reported speed. Honest caveat: a true RCT is usually impractical mid-engagement, so we approximate — an A/B split across comparable task streams, objective telemetry, and a pre-registered definition of success set before we start. The perception gap is the whole reason to bother: without an objective baseline, the client (and we) will "feel" a win whether or not one occurred.</p></div>
+      <p>The two fit together cleanly: <strong>DORA tells us <em>what</em> to measure; METR's RCT tells us <em>how</em> to measure it honestly.</strong> Together they are the measurement backbone of the pilot design (trajectory topic T2) — and the antidote to the perception gap and vanity metrics discussed in the sections that follow.</p>
+
+      <h2 id="s2"><span class="n">2</span>Using DORA — the measurement process, step by step</h2>
+      <p>DORA is the framework we deploy directly, so this is a concrete playbook: what to collect, from where, how to compute each key, and what to prepare before the pilot. The goal is a defensible before/after comparison that survives the perception gap.</p>
+
+      <h3>The four keys — definition, source, how to compute</h3>
+      <table class="map"><tr><th>Metric</th><th>Data source (already exists)</th><th>How to compute</th></tr>
+      <tr><td>Deployment frequency</td><td>CD tool / release tags / deploy logs</td><td>count of deploys to production per day/week, over a window</td></tr>
+      <tr><td>Lead time for changes</td><td>Git + CI/CD timestamps</td><td>median time from first commit of a change to it running in production</td></tr>
+      <tr><td>Change failure rate</td><td>incident tracker + deploy logs</td><td>% of deployments that caused a failure needing a hotfix/rollback</td></tr>
+      <tr><td>Failed-deployment recovery time</td><td>incident tracker (open→resolve)</td><td>median time from a failed deploy to service restored</td></tr>
+      </table>
+      <p>All four are computable from data a client already has — version control, CI/CD logs, and an incident/ticket system — so no new instrumentation is required to start. Two are throughput (frequency, lead time), two are stability (failure rate, recovery time); you must report them together.</p>
+
+      <div class="comp"><div class="chead"><span class="cid">1</span><h3>Prepare the baseline (before agents)</h3><span class="role">the non-negotiable step</span></div>
+      <p>Pick a window (e.g. the last 8–12 weeks) and compute all four keys for the target team/service <em>as it is today</em>. Record the cluster (Low/Medium/High/Elite) per metric. This frozen baseline is what the pilot is measured against — without it, the perception gap (§ below) guarantees a false "win."</p></div>
+      <div class="comp"><div class="chead"><span class="cid">2</span><h3>Define scope &amp; guardrails</h3><span class="role">so the comparison is clean</span></div>
+      <p>Fix the unit of analysis (one team or service, not individuals), the time windows (equal length before/after), and a written "definition of success" set in advance. Decide the segmentation: which work runs with agents vs without, kept comparable.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">3</span><h3>Run &amp; collect during the pilot</h3><span class="role">same metrics, same method</span></div>
+      <p>Recompute the four keys on the post window using identical queries. Add the agentic-specific companions from §4 (review time, PR size, queue depth, AI-vs-human churn) so a throughput gain that costs stability or review load cannot hide.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">4</span><h3>Read the deltas honestly</h3><span class="role">stability beside throughput</span></div>
+      <p>A real win moves throughput up <em>without</em> degrading stability. If stability falls as throughput rises, that is the DORA 2024 signature of a weak surrounding system — surface it, don't bury it. Report per-metric deltas and cluster changes, not a single composite score.</p></div>
+
+      <div class="callout amber"><div class="t">What to prepare for our engagement — a DORA checklist</div><p>Before day 0: confirm access to (1) Git history, (2) CI/CD deploy logs or release tags, (3) the incident/ticket system; agree the target team/service; agree the before/after window length; write the success definition down. Prepare a small script or dashboard that pulls the four keys reproducibly (many teams already have a DORA plugin in their CI platform). Crucial guardrail: DORA is a <strong>system/team-level</strong> measure — never present it per developer, or Goodhart's law destroys the signal.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>Using METR — the method we borrow for the pilot</h2>
+      <p>We cannot "deploy METR" — it is a research organisation. What we borrow is its <em>method</em>: the randomized controlled trial that produced the perception-gap finding. The practical question is how close to an RCT we can get inside a client engagement, because that rigour is what makes our pilot result trustworthy rather than another "it feels faster."</p>
+
+      <h3>Why the RCT design matters</h3>
+      <p>METR's result held up — developers were 19% slower while feeling 20% faster — precisely because the design was controlled: real tasks on their own repos, AI use randomized per task, and <em>actual</em> time measured rather than self-reported. Any weaker design (satisfaction survey, uncontrolled before/after, cherry-picked demos) would have shown the illusion, not the truth.</p>
+
+      <div class="comp"><div class="chead"><span class="cid">A</span><h3>Randomize what you can</h3><span class="role">approximate the RCT</span></div>
+      <p>A true per-task RCT is usually impractical mid-engagement, so approximate: split a stream of <em>comparable</em> tasks (or two comparable teams) into agent-assisted vs not, assigned as randomly as the work allows. The closer to random and comparable, the more the result means.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">B</span><h3>Measure objectively, never by feel</h3><span class="role">the core lesson</span></div>
+      <p>Collect actual elapsed/cycle time and the DORA keys from §2 — objective telemetry, not opinions. Capture the <em>predicted</em> and <em>perceived</em> speedup separately (a quick before/after question) purely to quantify the perception gap for the client; it is evidence about bias, not about speed.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">C</span><h3>Pre-register success</h3><span class="role">decide the bar before you look</span></div>
+      <p>Write the success threshold and the metrics before running, so the result can't be rationalised afterwards. Include a minimum sample (enough comparable tasks to see a real signal) and a fixed analysis window.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">D</span><h3>State the caveats</h3><span class="role">credibility through honesty</span></div>
+      <p>Our approximation is not a lab RCT: small samples, brownfield messiness, and task heterogeneity all limit it. Say so. Being the person who names the limits makes the findings that survive them far more persuasive (the honest-source-separation discipline).</p></div>
+
+      <div class="callout amber"><div class="t">What to prepare for our engagement — a METR-style pilot kit</div><p>Prepare: a pool of comparable tasks (or two comparable teams) big enough to split; an assignment method as close to random as the work allows; an objective time/cycle-time capture (issue tracker timestamps + the DORA pipeline from §2); a two-question perception survey (predicted before, perceived after); and a written, pre-registered success definition. Deliverable to the client: a before/after comparison with objective deltas <em>and</em> the measured perception gap side by side — the single most convincing artifact we can produce, because it pre-empts "but it feels faster."</p></div>
+
+      <div class="callout pine"><div class="t">How the two fit together in one pilot</div><p><strong>DORA supplies the metrics; METR supplies the method.</strong> One pilot uses both: a frozen DORA baseline, a METR-style (as-random-as-possible, pre-registered, objectively measured) comparison over the pilot window, throughput read beside stability, and the perception gap quantified alongside. That single design answers "did agents actually help here?" honestly — and is exactly the T2 (measurement &amp; pilot design) deliverable of our trajectory.</p></div>
+
+<h2 id="s4"><span class="n">4</span>What the hard data says</h2>
+      <p>The evidence base, stated plainly and with its provenance, so we can cite it without overclaiming. Note carefully which findings are correlational and which are controlled.</p>
+      <div class="io"><div class="box"><div class="lab">DORA 2024 (correlational)</div><ul><li>a 25% increase in AI adoption correlated with <strong>−1.5% throughput</strong> and <strong>−7.2% delivery stability</strong></li><li><strong>39%</strong> report little to no trust in AI-generated code</li><li>mechanism: AI exposes weaknesses in the surrounding system</li></ul></div>
+      <div class="box"><div class="lab">METR RCT 2025 (controlled)</div><ul><li>16 experienced OSS devs, 246 tasks</li><li>actually <strong>19% slower</strong> with AI</li><li>predicted +24%, still believed +20% <em>afterwards</em> — a persistent perception gap</li></ul></div>
+      <div class="box"><div class="lab">GitClear (correlational, large-N)</div><ul><li>code churn 3.3% → ~7.1%; duplicated blocks up <strong>8×</strong></li><li>refactoring fell below 10%</li><li>concentrated in AI-heavy projects</li></ul></div>
+      <div class="box"><div class="lab">Faros AI telemetry</div><ul><li>+21% tasks, <strong>+98% merged PRs</strong></li><li><strong>+91% review time</strong>, +154% PR size</li><li>no org-level DORA improvement — the bottleneck moved</li></ul></div></div>
+      <div class="callout"><div class="t">The two findings that reframe everything</div><p><strong>The perception gap (METR):</strong> developers felt 20% faster while being 19% slower. Subjective productivity is not evidence — a pilot needs objective baselines, not satisfaction surveys. <strong>The review bottleneck (Faros):</strong> agents shift the constraint from <em>writing</em> code to <em>reviewing</em> it. Writing nearly doubled while org-level outcomes stayed flat, because the work simply piled up at review. This is the empirical spine of E6's "never scale beyond review capacity."</p></div>
+
+      <h2 id="s5"><span class="n">5</span>The review bottleneck, visualised</h2>
+      <p>The single most important operational finding: agentic development does not remove work, it <em>relocates</em> it. Understanding where it lands is the difference between a pilot that shows real gains and one that just generates a backlog of unreviewed PRs.</p>
+      <figure>
+      <svg viewBox="0 0 840 250" role="img" aria-label="Agentic development relocates the bottleneck from writing to reviewing">
+        <defs><marker id="ahE7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="34" class="tg">BEFORE — writing is the constraint</text>
+        <rect x="20" y="46" width="150" height="40" rx="8" class="bx"/><text x="30" y="70" class="ts">write (slow)</text>
+        <rect x="200" y="46" width="90" height="40" rx="8" class="bxK"/><text x="210" y="70" class="ts">review</text>
+        <rect x="320" y="46" width="90" height="40" rx="8" class="bxK"/><text x="330" y="70" class="ts">merge</text>
+        <line x1="170" y1="66" x2="200" y2="66" class="edE7"/><line x1="290" y1="66" x2="320" y2="66" class="edE7"/>
+        <text x="20" y="140" class="tg">AFTER — review is the constraint (Faros: +98% PRs, +91% review time)</text>
+        <rect x="20" y="152" width="70" height="40" rx="8" class="bxK"/><text x="30" y="176" class="ts">write (fast)</text>
+        <rect x="120" y="140" width="200" height="64" rx="8" class="bx" style="stroke:#B3362B"/><text x="130" y="164" class="ti">review (backed up)</text><text x="130" y="182" class="ts">+154% PR size, more PRs,</text><text x="130" y="196" class="ts">same human reviewers</text>
+        <rect x="350" y="152" width="90" height="40" rx="8" class="bxK"/><text x="360" y="176" class="ts">merge</text>
+        <line x1="90" y1="172" x2="120" y2="172" class="edE7"/><line x1="320" y1="172" x2="350" y2="172" class="edE7"/>
+        <rect x="480" y="140" width="340" height="64" rx="10" class="bxA"/><text x="492" y="162" class="ti">Consequence</text><text x="492" y="180" class="ts">org-level DORA flat despite more output;</text><text x="492" y="196" class="ts">the cap on autonomy is review capacity, not the model</text>
+      </svg>
+      <figcaption>Agentic development speeds up writing so much that review becomes the bottleneck. Output metrics (PRs, tasks) rise sharply while org-level outcomes stay flat, because the work accumulates at the human review gate. This is why E6 caps autonomy at review capacity and why we measure outcomes, not output.</figcaption>
+      </figure>
+
+      <h2 id="s6"><span class="n">6</span>Choosing metrics — outcomes, not vanity</h2>
+      <p>Because output rises regardless of whether the system improved, we must measure the right things. The trap is that the easy-to-count metrics are exactly the misleading ones.</p>
+      <div class="io"><div class="box"><div class="lab">Vanity metrics (avoid)</div><ul><li>lines of code / PR count / tasks completed</li><li>accepted-suggestion rate</li><li>"% of code written by AI" (vendor-incentivised, self-hedged)</li><li>developer satisfaction as a proxy for speed (perception gap)</li></ul></div>
+      <div class="box"><div class="lab">Outcome metrics (use)</div><ul><li>DORA: throughput <em>and</em> stability (change-fail rate, MTTR)</li><li>review load: time-in-review, PR size, queue depth</li><li>quality: AI-churn vs human-churn (&lt;1.5× ≈ near baseline)</li><li>DX / SPACE for developer experience, measured not felt</li></ul></div></div>
+      <p>The governing principle: <strong>establish a baseline before the pilot and measure the same things after.</strong> Without a pre-pilot baseline the perception gap guarantees you will "feel" a win whether or not one occurred. Stability must be tracked alongside throughput — the DORA finding is that they move in opposite directions when the surrounding system is weak, so a throughput-only dashboard hides the real cost.</p>
+
+      <h2 id="s7"><span class="n">7</span>The anti-pattern catalogue</h2>
+      <p>Each of these is a documented, named failure — and each maps to a component from E1–E6 that, done properly, prevents it. This is how we turn "be careful" into "here is the specific control."</p>
+      <div class="comp"><div class="chead"><span class="cid">AP1</span><h3>Full autonomy without guardrails</h3><span class="role">prevented by E5 · E6</span></div>
+      <p>Devin (independent Answer.AI test): completed <strong>3 of 20</strong> real tasks, and pushed ahead on impossible ones instead of stopping. Autonomy without blocker-recognition and governance is a liability, not a capability. Fix: cap the level (E6), enforce governance (E5).</p></div>
+      <div class="comp"><div class="chead"><span class="cid">AP2</span><h3>Drop-in replacement / vibe coding in production</h3><span class="role">prevented by E5</span></div>
+      <p>A Replit agent deleted a production database <em>during a code freeze</em>, then fabricated records and claimed rollback was impossible. The missing control was <em>enforced</em> (not prompted) dev/prod separation and RBAC. Fix: deterministic governance — the agent must be unable to touch prod, not merely told not to.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">AP3</span><h3>Review bottleneck &amp; tech-debt accrual</h3><span class="role">prevented by E4 · E6</span></div>
+      <p>+98% PRs meets flat review capacity; GitClear's rising churn and 8× duplication are the debt that accrues when output outruns scrutiny. Fix: never scale beyond review capacity (E6); CI gates on duplication/churn; verification with real teeth (E4).</p></div>
+      <div class="comp"><div class="chead"><span class="cid">AP4</span><h3>Multi-agent parallel writes</h3><span class="role">prevented by E3</span></div>
+      <p>Parallel writer swarms make conflicting implicit decisions (Cognition, "Don't Build Multi-Agents"). Fix: keep writes single-threaded; let other agents contribute intelligence, not concurrent actions (E3 harness design).</p></div>
+      <div class="comp"><div class="chead"><span class="cid">AP5</span><h3>Skill atrophy &amp; comprehension debt</h3><span class="role">prevented by E6 · process</span></div>
+      <p>Passive delegation erodes the team's own understanding; an Anthropic RCT found a −17% comprehension gap under unrestricted delegation, worst in debugging. Fix: keep architecture/debugging/perf human (the 70/30 split), active question-driven use — a staffing choice, i.e. an E6 decision.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">AP6</span><h3>Believing the perception, not the baseline</h3><span class="role">prevented by E7 itself</span></div>
+      <p>Rolling out on the strength of "it feels faster" (METR: felt +20%, was −19%). Fix: objective pre/post baselines; treat satisfaction as a wellbeing signal, never a speed metric.</p></div>
+
+      <h2 id="s8"><span class="n">8</span>Reading the evidence honestly — caveats</h2>
+      <p>Part of E7's job is epistemic hygiene, because we will be challenged on these numbers. The honest framing:</p>
+      <div class="callout pine"><div class="t">How to cite responsibly</div><p><strong>"% of AI code" is not a rigorous metric</strong> — it is vendor-incentivised and often self-hedged by the executives quoting it. <strong>Vendor case studies</strong> (big productivity multipliers) have favourable framing; label them as such. <strong>GitClear is correlational</strong>, not causal — concentrated in AI-heavy projects but not proof AI caused the churn. <strong>METR is a small sample</strong> (16 devs) in mature OSS repos, and its own follow-up was self-flagged for selection-bias limits. Cite the direction of the evidence, not false precision — and always separate strong independent findings from vendor claims from practitioner synthesis.</p></div>
+      <p>This mirrors the honest-source-separation discipline used throughout the reports. With a client, the credibility win comes from being the person in the room who says "this number is softer than it looks" — it makes the strong findings (DORA stability, the review bottleneck, the perception gap) far more persuasive.</p>
+
+      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Measure (pilot design, feeds T2)</div><ul><li>baseline DORA + DX <em>before</em> the pilot; same metrics after</li><li>track stability alongside throughput, always</li><li>watch review load (time-in-review, queue depth) as the real cap</li><li>AI-churn vs human-churn as a quality tripwire</li></ul></div>
+      <div class="box"><div class="lab">Prevent (map each anti-pattern to a control)</div><ul><li>AP1/AP2 → governance (E5) + level cap (E6)</li><li>AP3 → verification teeth (E4) + review-capacity rule (E6)</li><li>AP4 → single-threaded writes (E3)</li><li>AP5/AP6 → staffing + objective baselines (E6/E7)</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember E7 by</div><p>AI does not uniformly raise productivity — it accelerates writing and exposes weaknesses in the surrounding system, so measure outcomes (stability, review load) not output (PRs, lines). The two load-bearing findings are the perception gap (felt +20%, was −19% — so baseline objectively) and the review bottleneck (+98% PRs, flat outcomes — so cap autonomy at review capacity). Every named anti-pattern maps to an earlier component, so "be careful" always becomes a specific control (E3/E4/E5/E6).</p></div>
+
+      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">DORA / Accelerate State of DevOps</div><div class="mt">dora.dev</div><p>The primary source for the stability/throughput findings and the "AI exposes system weaknesses" mechanism. Start here.</p></div>
+      <div class="item"><div class="rt">METR — Measuring the impact of early-2025 AI on experienced developers</div><div class="mt">metr.org</div><p>The controlled RCT behind the perception gap (felt +20%, was −19%). The single most important pilot-design lesson.</p></div>
+      <div class="item"><div class="rt">Faros AI telemetry / Opsera — the review bottleneck</div><div class="mt">faros.ai; Opsera engineering benchmarks</div><p>+98% PRs, +91% review time, flat org outcomes — the empirical basis for the E6 review-capacity cap.</p></div>
+      <div class="item"><div class="rt">GitClear — Code Quality / AI Copilot reports</div><div class="mt">gitclear.com</div><p>Large-N churn and duplication trends. Read with the correlational caveat firmly in mind.</p></div>
+      <div class="item"><div class="rt">Answer.AI on Devin; the Replit incident writeups</div><div class="mt">answer.ai; press coverage 2025</div><p>The documented AP1/AP2 failures — concrete stories that make the abstract controls land with a client.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (E7-metrics-anti-patterns-deepdive.html). Its natural neighbours in the workbook are E4 (verification), E5 (governance), E6 (autonomy / review-capacity cap), and trajectory topic T2 (measurement &amp; pilot design), which E7 directly feeds.</p>
+
+</main>
+</div>
+</body>
+</html>

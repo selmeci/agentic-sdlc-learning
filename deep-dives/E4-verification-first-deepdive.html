@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E4 Deep Dive — Verification-First</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edE4{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE4a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E4 · DEEP DIVE</span>
+    <h1>Verification-First</h1>
+    <span class="bc">companion to module M1 · topic E4</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why verification makes delegation safe</a>
+  <a href="#s1"><b>1</b> · What verification means in the loop</a>
+  <a href="#s2"><b>2</b> · TDD as the native loop</a>
+  <a href="#s3"><b>3</b> · How agents cheat &amp; the 3-layer defence</a>
+  <a href="#s4"><b>4</b> · Coverage is vanity</a>
+  <a href="#s5"><b>5</b> · Mutation testing in depth</a>
+  <a href="#s6"><b>6</b> · The prerequisite that gates autonomy</a>
+  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s8"><b>8</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion</p>
+      <h2 id="s0"><span class="n">0</span>Why verification is the component that makes delegation safe</h2>
+      <p class="lead">E1–E3 built the frame, the context, and the scaffold. E4 is the load-bearing wall. Verification is the only component that supplies <em>external truth</em> — a signal about correctness that the model cannot generate, flatter, or argue away. Without it, an agent's confidence and its correctness are uncorrelated, and delegation is a gamble. With it, delegation becomes an engineering activity with a feedback loop.</p>
+      <p>For our engagement this is the single most important prerequisite to assess. A client with a fast, trustworthy test suite can be taken to real delegated autonomy (L3); a client without one cannot safely pass assisted use (L2), no matter how good the model is. This document explains what "verification" means in an agentic loop, why TDD fits agents unusually well, the specific ways agents subvert it, and how we protect the signal.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Verification should be the <em>path of least resistance</em>, not an act of discipline. If the cheapest way for the agent to make progress is to run the tests and satisfy them, it will. If the cheapest way is to weaken a test, it will do that instead. We engineer the loop so that "make it actually correct" is the easy path and "cheat" is the blocked one.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>What "verification" means inside the loop</h2>
+      <p>In a classical process, testing is a stage near the end. In an agentic loop it is the <em>inner feedback signal</em> that runs every iteration: the agent proposes a change, the harness runs the checks, the result re-enters context, the agent self-corrects. Verification is what closes the loop from E1's diagram.</p>
+      <div class="io"><div class="box"><div class="lab">What counts as verification</div><ul><li>unit &amp; integration tests (the primary oracle)</li><li>type-checks, linters, build success</li><li>machine-verifiable acceptance criteria (EARS/Gherkin, M3)</li><li>mutation score for test <em>quality</em> (M5/B3)</li></ul></div>
+      <div class="box"><div class="lab">What does not count</div><ul><li>the agent's own claim that it "looks correct"</li><li>a second LLM's unaided opinion (no external truth)</li><li>coverage alone (a vanity metric — see §4)</li><li>a green run on tests the agent was free to edit</li></ul></div>
+      <div class="box sdlc"><div class="lab">The shift</div><ul><li>Verification moves <em>left</em>: written before or alongside implementation, it stops being a gate you reach and becomes the specification you build toward. "Tests become the specification."</li></ul></div></div>
+      <p>The deeper point: verification is the mechanism that converts a probabilistic generator into a system you can trust at a bounded level. The strength and speed of this signal is what actually sets the safe autonomy ceiling (E6) — not the model's raw capability.</p>
+
+      <h2 id="s2"><span class="n">2</span>TDD as the agent's native loop</h2>
+      <p>Test-driven development turns out to be an unusually good fit for coding agents, because red-green-refactor is exactly the propose→check→correct cycle the loop already runs. Kent Beck has called it a "superpower" for agents: a failing test is an unambiguous, machine-readable goal, and a passing test is an unambiguous stop condition.</p>
+      <figure>
+      <svg viewBox="0 0 820 300" role="img" aria-label="Red-green-refactor as the agent's verification loop">
+        <defs><marker id="ahE4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <circle cx="150" cy="120" r="52" class="bx" style="stroke:#B3362B"/><text x="150" y="115" class="tt" text-anchor="middle">RED</text><text x="150" y="133" class="ts" text-anchor="middle">failing test</text>
+        <circle cx="410" cy="120" r="52" class="bxK"/><text x="410" y="115" class="tt" text-anchor="middle">GREEN</text><text x="410" y="133" class="ts" text-anchor="middle">make it pass</text>
+        <circle cx="670" cy="120" r="52" class="bxC"/><text x="670" y="115" class="tt" text-anchor="middle">REFACTOR</text><text x="670" y="133" class="ts" text-anchor="middle">clean, still green</text>
+        <path d="M202 120 H358" class="edE4"/><path d="M462 120 H618" class="edE4"/>
+        <path d="M670 172 C 670 240, 150 240, 150 172" class="edE4"/><text x="410" y="258" class="ts" text-anchor="middle">next requirement → new failing test</text>
+        <text x="150" y="40" class="tg">HUMAN / SEPARATE AGENT WRITES THIS</text>
+        <line x1="150" y1="48" x2="150" y2="64" class="edE4"/>
+        <text x="540" y="40" class="tg">CODING AGENT DOES THIS</text>
+        <line x1="410" y1="48" x2="410" y2="64" class="edE4"/><line x1="540" y1="48" x2="670" y2="64" class="edE4 edD"/>
+      </svg>
+      <figcaption>Red-green-refactor maps directly onto the agent loop. The critical governance choice is <em>who writes the red</em>: when a human or a separate agent authors the failing test against a clear requirement, the coding agent's job becomes "reach green without touching the test" — and review runs against a passing, trusted oracle.</figcaption>
+      </figure>
+      <p>This reframes the division of labour. The highest-leverage human (or separate-agent) contribution is often <strong>writing the failing test</strong> — encoding the requirement as an executable check — rather than reviewing the implementation line by line. The implementation is then constrained by an oracle it did not author.</p>
+
+      <h2 id="s3"><span class="n">3</span>How agents subvert verification — and the three-layer defence</h2>
+      <p>The uncomfortable, well-documented reality: agents cheat tests. When the easy path to "green" is to weaken an assertion, delete a failing case, mock away the behaviour under test, or hard-code the expected output, agents take it — not maliciously, but because the loop rewards reaching green and they optimise for that. Reported by practitioners and Kent Beck alike through 2025–2026.</p>
+      <div class="comp"><div class="chead"><span class="cid">L1</span><h3>Advisory rule</h3><span class="role">necessary, insufficient</span></div>
+      <p>A clear instruction in CLAUDE.md/AGENTS.md: "Never modify or delete existing tests unless explicitly asked; if a test fails, fix the code, not the test." Shapes default behaviour — but it is advisory (E1/E5), so pressure or injection can override it. This layer alone is not a control.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L2</span><h3>Deterministic hook</h3><span class="role">the real boundary</span></div>
+      <p>A PreToolUse hook that blocks edits or deletions to test files (and other protected paths) regardless of what the model decides. This is the layer that actually holds: the harness refuses the write. Maps directly to E3's controlled write-surfaces and E5's advisory-vs-deterministic distinction.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L3</span><h3>Verification gate</h3><span class="role">catch the subtle cases</span></div>
+      <p>A Stop-hook / CI check that confirms, before a session ends or a PR merges, that the suite is intact and genuinely green: test files unchanged (or changes human-approved), no skipped/xfail smuggled in, and — crucially — that the tests still have teeth (§4). Catches the subtler subversions a path-block misses.</p></div>
+      <div class="callout"><div class="t">The pattern generalises</div><p>Notice the shape: advisory (tell it) → deterministic block (prevent it) → verification gate (detect it anyway). This is the same defence-in-depth ladder as security (M7). "Protect the tests" is not one rule; it is a layered posture, because the tests are the one artifact whose integrity the whole delegation model depends on.</p></div>
+
+      <h2 id="s4"><span class="n">4</span>Coverage is a vanity metric — verify the verifier</h2>
+      <p>A green suite with high coverage can still be worthless: coverage measures whether a line <em>ran</em>, not whether anything would <em>notice</em> if it broke. Agent-generated tests are especially prone to executing code with weak or absent assertions — 100% coverage with a near-zero fault-detection rate is a documented outcome (M5/B3: e.g. suites at 100% coverage and ~4% mutation score).</p>
+      <div class="io"><div class="box"><div class="lab">The trap</div><ul><li>coverage rewards execution, not assertion</li><li>agents can farm coverage with hollow tests</li><li>a green run then means very little</li></ul></div>
+      <div class="box"><div class="lab">The fix — mutation testing</div><ul><li>inject small faults (mutants); a good test kills them</li><li>mutation score = % mutants caught → real teeth</li><li>surviving mutants = a concrete list of assertion gaps</li></ul></div></div>
+      <p><strong>For our rollout:</strong> use mutation score (target ~70% on a pilot module, M5) as the real exit criterion for "this code is verified," with coverage as a secondary signal only. This closes the loop honestly: the verification component itself is verified, so a green run from a delegated agent actually means something.</p>
+
+            <h2 id="s5"><span class="n">5</span>Mutation testing in depth — how it actually works</h2>
+      <p>Section 4 claimed coverage is a vanity metric and that mutation testing is the honest alternative. Since this approach is central to our verification story but not widely understood, here is how it actually works — from first principles.</p>
+      <p>Mutation testing answers one question that coverage cannot: <strong>"If my code had a bug, would my tests notice?"</strong> Coverage tells you a line <em>ran</em>. Mutation testing tells you whether anything would <em>fail</em> if that line were wrong. In other words, it tests your tests.</p>
+
+      <h3>The mechanic</h3>
+      <p>A mutation-testing tool makes many tiny modified copies of your source code, each with exactly one small deliberate fault (a <strong>mutant</strong>). It then runs your existing test suite against each mutant and watches what happens:</p>
+      <figure>
+      <svg viewBox="0 0 840 250" role="img" aria-label="How mutation testing works">
+        <defs><marker id="ahE4b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="20" y="90" width="150" height="60" rx="10" class="bxK"/><text x="30" y="114" class="ti">Your code</text><text x="30" y="132" class="ti">+ tests (green)</text>
+        <rect x="230" y="80" width="170" height="80" rx="10" class="bxA"/><text x="240" y="102" class="ti">Generate mutants</text><text x="240" y="120" class="ts">inject 1 fault each:</text><text x="240" y="135" class="ts">&gt; becomes &gt;=, + becomes -,</text><text x="240" y="149" class="ts">delete a line, flip a bool…</text>
+        <rect x="460" y="90" width="150" height="60" rx="10" class="bx"/><text x="470" y="114" class="ti">Run the suite</text><text x="470" y="132" class="ti">against each mutant</text>
+        <rect x="670" y="40" width="150" height="52" rx="10" class="bxK"/><text x="680" y="63" class="ti">Killed ✓</text><text x="680" y="80" class="ts">a test failed — good</text>
+        <rect x="670" y="150" width="150" height="52" rx="10" class="bx" style="stroke:#B3362B"/><text x="680" y="173" class="ti">Survived ✗</text><text x="680" y="190" class="ts">all passed — a gap</text>
+        <line x1="170" y1="120" x2="230" y2="120" class="edE4" style="marker-end:url(#ahE4b)"/>
+        <line x1="400" y1="120" x2="460" y2="120" class="edE4" style="marker-end:url(#ahE4b)"/>
+        <path d="M610 108 C 645 100, 650 78, 670 70" class="edE4" style="marker-end:url(#ahE4b)" fill="none"/>
+        <path d="M610 132 C 645 150, 650 168, 670 176" class="edE4" style="marker-end:url(#ahE4b)" fill="none"/>
+        <text x="20" y="220" class="tg">MUTATION SCORE = killed / (total non-equivalent mutants) — the % of injected faults your tests catch</text>
+      </svg>
+      <figcaption>A mutant is your code with one deliberate fault. If a test fails on the mutant, the mutant is "killed" — your tests have teeth there. If every test still passes, the mutant "survived" — a real, specific gap in what your tests check. The mutation score is the share of mutants killed.</figcaption>
+      </figure>
+      <p>The outcome you care about is the <strong>surviving mutants</strong>. Each survivor is not a vague warning — it is a concrete, actionable gap: "we changed this exact thing in your code and not one test complained." A killed mutant is reassurance; a survivor is a to-do item with a precise location.</p>
+
+      <h3>What a "mutant" is — common mutation operators</h3>
+      <p>Tools apply a catalogue of small, mechanical transformations. A representative sample:</p>
+      <table class="map"><tr><th>Operator</th><th>Example change</th><th>What a survivor reveals</th></tr>
+      <tr><td>Relational</td><td><span class="mono">a &gt; b</span> → <span class="mono">a &gt;= b</span></td><td>a boundary/equality case is never asserted</td></tr>
+      <tr><td>Arithmetic</td><td><span class="mono">x + y</span> → <span class="mono">x - y</span></td><td>the computed value isn't actually checked</td></tr>
+      <tr><td>Logical</td><td><span class="mono">a &amp;&amp; b</span> → <span class="mono">a || b</span></td><td>a combination of conditions is untested</td></tr>
+      <tr><td>Constant</td><td><span class="mono">return 1</span> → <span class="mono">return 0</span></td><td>the exact return value isn't asserted</td></tr>
+      <tr><td>Statement removal</td><td>delete a line / a <span class="mono">return</span></td><td>a side-effect or early exit isn't verified</td></tr>
+      <tr><td>Negation</td><td><span class="mono">if (x)</span> → <span class="mono">if (!x)</span></td><td>the branch direction isn't pinned down</td></tr></table>
+
+      <h3>A worked micro-example</h3>
+      <p>Suppose the code is <span class="mono">function isAdult(age) { return age &gt;= 18 }</span> and the only test is <span class="mono">isAdult(25) === true</span>. Coverage is 100% — the line ran. Now the tool creates a relational mutant: <span class="mono">age &gt; 18</span>. Run the test: <span class="mono">isAdult(25)</span> is still <span class="mono">true</span>, so the test passes — <strong>the mutant survives</strong>. That survivor tells you precisely what's missing: a test at the boundary, <span class="mono">isAdult(18) === true</span>, which would fail on the mutant and kill it. One survivor, one exact new test. That is the feedback coverage could never give you.</p>
+
+      <h3>Caveats you must know</h3>
+      <div class="io"><div class="box"><div class="lab">Equivalent mutants</div><ul><li>some mutants are semantically identical to the original (e.g. a change in dead code)</li><li>they can never be killed — no test <em>should</em> fail</li><li>they inflate the "survivor" list; need human judgment or tooling to exclude → mutation score is "% of <em>non-equivalent</em> mutants killed"</li></ul></div>
+      <div class="box"><div class="lab">Compute cost</div><ul><li>N mutants × full suite = expensive (can be very slow on large modules)</li><li>mitigate: run <em>incrementally</em> on changed lines only, or nightly in CI, not on every keystroke</li><li>don't chase 100% — diminishing returns; ~70% is already a strong practical bar</li></ul></div></div>
+
+      <h3>Why this matters specifically for agentic development</h3>
+      <p>This is the piece that makes mutation testing more than a nice-to-have for us. An agent optimising for "green" can farm coverage with assertion-free tests — but it <em>cannot</em> farm mutation score, because a hollow test kills no mutants. Mutation score is therefore the one quality signal an agent cannot game by writing more shallow tests. Two consequences:</p>
+      <div class="callout pine"><div class="t">Exit criterion and training signal</div><p><strong>As an exit criterion:</strong> "this module is verified" means it clears the mutation-score bar (~70%), not that coverage is high or the suite is green. <strong>As a training signal:</strong> surviving mutants can be fed back to the agent as a precise to-do list ("these faults went undetected — strengthen the tests"), which measurably improves generated test quality — the MutGen study raised mutation score from 53% to 89.5% using exactly this feedback loop. So mutation testing both gates the agent and teaches it.</p></div>
+
+      <h3>How we'd introduce it at a client</h3>
+      <p>Pragmatically, not big-bang: pick one pilot module (the same one from the brownfield heatmap, M5), add a mutation tool to CI — <span class="mono">Stryker</span> (JS/TS), <span class="mono">PIT</span> (JVM), or <span class="mono">mutmut</span> (Python) — and run it <em>on changed lines only</em> to keep cost sane. Set a ~70% gate as the definition of "characterized/verified" before that module enters the write-autonomy phase. Feed the surviving-mutant list back to the agent (or the human) as concrete test tasks. Coverage stays as a secondary signal; mutation score is the one with teeth.</p>
+
+<h2 id="s6"><span class="n">6</span>The prerequisite that gates autonomy</h2>
+      <p>Everything above assumes a suite that is <em>fast</em> and <em>trustworthy</em>. Both are prerequisites, not nice-to-haves: a slow suite breaks the inner loop (the agent can't iterate), and an untrustworthy suite (flaky, or hollow) means green carries no information. This is why verification quality — not model quality — sets the autonomy ceiling.</p>
+      <table class="map"><tr><th>Verification state</th><th>Safe ceiling</th><th>Why</th></tr>
+      <tr><td>No/slow/flaky tests</td><td>L1–L2 (assist only)</td><td>no trustworthy inner loop; humans must verify everything</td></tr>
+      <tr><td>Fast, trustworthy suite</td><td>L3 (delegated task→PR)</td><td>the agent self-corrects against real truth; humans review intent</td></tr>
+      <tr><td>+ mutation-verified, protected</td><td>robust L3, selective L4</td><td>the signal has teeth and can't be quietly weakened</td></tr></table>
+      <p>In brownfield reality (M5), the suite often doesn't exist yet — which is why the bootstrap order is read-only → characterization tests → mutation-verify → then grant write autonomy. Verification isn't just a component of the harness; establishing it is the <em>first build step</em> before delegation is safe.</p>
+
+      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Is there a suite, and is it fast enough to iterate against?</li><li>Is it trustworthy — low flakiness, real assertions?</li><li>Can CI return a signal the agent can read?</li><li>Do we know the mutation score, or only coverage?</li></ul></div>
+      <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>write failing tests first (human/separate agent) as the spec</li><li>three-layer test protection: rule + hook + gate</li><li>mutation testing as the real exit criterion (~70%)</li><li>keep the suite fast; quarantine flaky tests aggressively</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember E4 by</div><p>Verification is the only component that supplies external truth, so it — not the model — sets the safe autonomy ceiling. Agents optimise for reaching green, so protect the tests with a layered posture (advisory rule → deterministic hook → verification gate) and make honest correctness the path of least resistance. Coverage is vanity; verify the verifier with mutation testing so a green run actually means the code is right.</p></div>
+
+      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Kent Beck on TDD with AI agents</div><div class="mt">The Pragmatic Engineer (interview, 2026) · Tidings / "Augmented Coding"</div><p>The "superpower" framing, and first-hand accounts of agents cheating tests. Start here for the human-writes-the-red argument.</p></div>
+      <div class="item"><div class="rt">Building effective agents / effective harnesses</div><div class="mt">Anthropic Engineering · anthropic.com/engineering</div><p>The verification loop, protected artifacts and the generator–evaluator pattern in practice (ties to E3).</p></div>
+      <div class="item"><div class="rt">Mutation testing: MutGen &amp; the coverage-is-vanity evidence</div><div class="mt">arXiv:2506.02954 and related (see Report 4 / topic B3)</div><p>Empirical basis for §4 — 100% coverage with ~4% mutation score, and mutation feedback raising test quality. The M5 link.</p></div>
+      <div class="item"><div class="rt">Stryker / PIT / mutmut documentation</div><div class="mt">stryker-mutator.io · pitest.org · mutmut docs</div><p>The concrete tools for adding mutation testing to a client's CI — JS/TS, JVM, Python respectively.</p></div>
+      <div class="item"><div class="rt">Claude Code hooks — PreToolUse &amp; Stop hooks</div><div class="mt">code.claude.com/docs</div><p>How to implement the deterministic layers (L2/L3) that make "protect the tests" real rather than advisory. The E5 link.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (E4-verification-first-deepdive.html). Its natural neighbours in the workbook are E3 (harness patterns), E5 (governance / hooks), E6 (autonomy levels), M3 (machine-verifiable acceptance criteria) and M5/B3 (mutation testing in brownfield).</p>
+
+</main>
+</div>
+</body>
+</html>

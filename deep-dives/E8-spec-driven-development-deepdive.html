@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E8 Deep Dive — Spec-Driven Development</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edE8{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE8a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E8 · DEEP DIVE</span>
+    <h1>Spec-Driven Development</h1>
+    <span class="bc">companion to module M1 · topic E8</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why SDD, and why with care</a>
+  <a href="#s1"><b>1</b> · What SDD actually is</a>
+  <a href="#s2"><b>2</b> · The tools — three points</a>
+  <a href="#s3"><b>3</b> · Superpowers &amp; Compound Engineering</a>
+  <a href="#s4"><b>4</b> · Fowler's critique &amp; when it's overkill</a>
+  <a href="#s5"><b>5</b> · How SDD connects the framework</a>
+  <a href="#s6"><b>6</b> · Mapping to the SDLC</a>
+  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s8"><b>8</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion</p>
+      <h2 id="s0"><span class="n">0</span>Why spec-driven development, and why with care</h2>
+      <p class="lead">E1–E7 built and measured the harness. E8 is about the workflow that feeds it: spec-driven development (SDD) turns intent into an explicit, reviewable specification that becomes the primary quality gate <em>before</em> code exists. It is the engineering-side counterpart to the handoff contract (M3) — the discipline that decides whether an agent builds the right thing or faithfully builds the wrong one.</p>
+      <p>But E8 comes with a deliberate double message. SDD is genuinely powerful for the cases it fits, and actively counter-productive for the cases it doesn't. Our job in the engagement is not to sell "adopt SDD wholesale" — it is to help the client apply it where the leverage is real (greenfield, legacy modernization, multi-task features) and avoid the sledgehammer-on-a-thumbtack failure mode Fowler warns about.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>"Intent is the source of truth." SDD's core move is to make the specification — not the code — the thing you review, version, and hold agents accountable to. That inverts the classic gate: <strong>spec review precedes (or replaces) code review as the primary quality control.</strong> The prize is catching a wrong intent on paper; the risk is drowning a small task in ceremony.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>What SDD actually is</h2>
+      <p>SDD is a workflow in which a structured specification is authored first, reviewed and agreed, and then drives implementation — with the agent building toward the spec rather than improvising intent from a terse ticket. The spec is executable-adjacent: precise enough that acceptance criteria (EARS/Gherkin, M3) can be derived and checked.</p>
+      <figure>
+      <svg viewBox="0 0 860 250" role="img" aria-label="The spec-driven development flow">
+        <defs><marker id="ahE8a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="20" y="96" width="120" height="52" rx="10" class="bxG"/><text x="30" y="120" class="ti">Constitution</text><text x="30" y="137" class="ts">non-negotiables</text>
+        <rect x="168" y="96" width="120" height="52" rx="10" class="bxA"/><text x="178" y="120" class="ti">Specify</text><text x="178" y="137" class="ts">what &amp; why</text>
+        <rect x="316" y="96" width="120" height="52" rx="10" class="bxC"/><text x="326" y="120" class="ti">Plan</text><text x="326" y="137" class="ts">how (technical)</text>
+        <rect x="464" y="96" width="120" height="52" rx="10" class="bxC"/><text x="474" y="120" class="ti">Tasks</text><text x="474" y="137" class="ts">decomposed</text>
+        <rect x="612" y="96" width="120" height="52" rx="10" class="bx"/><text x="622" y="120" class="ti">Implement</text><text x="622" y="137" class="ts">agent builds</text>
+        <rect x="612" y="40" width="120" height="40" rx="10" class="bxK"/><text x="622" y="64" class="ts">tests / CI (E4)</text>
+        <line x1="140" y1="122" x2="168" y2="122" class="edE8"/><line x1="288" y1="122" x2="316" y2="122" class="edE8"/><line x1="436" y1="122" x2="464" y2="122" class="edE8"/><line x1="584" y1="122" x2="612" y2="122" class="edE8"/>
+        <line x1="672" y1="96" x2="672" y2="80" class="edE8"/>
+        <rect x="168" y="184" width="416" height="34" rx="8" fill="#EBEFFA" opacity="0.5" stroke="#4A63C8"/><text x="180" y="205" class="ts" fill="#20389E">SPEC REVIEW GATE — the primary quality control, before code exists</text>
+        <path d="M228 148 V184" class="edE8"/><path d="M376 148 V184" class="edE8"/>
+      </svg>
+      <figcaption>The SDD flow (Spec Kit's shape): a constitution fixes non-negotiables, then specify → plan → tasks → implement. The decisive difference from ad-hoc prompting is the spec review gate: the specification is reviewed and agreed before implementation, so intent is validated on paper rather than discovered in a PR.</figcaption>
+      </figure>
+      <p>The contrast with "just prompt the agent" is that intent becomes a durable artifact (M4) with an owner and a review, rather than ephemeral text in a chat. For an L3 delegated workflow (E6), that artifact is what the agent is held accountable to and what the human reviews.</p>
+
+      <h2 id="s2"><span class="n">2</span>The tools — three points on a spectrum</h2>
+      <p>We care about methodology over tools, but the three reference implementations usefully mark out the design space, from lightweight-and-portable to full-team simulation.</p>
+      <div class="comp"><div class="chead"><span class="cid">A</span><h3>GitHub Spec Kit</h3><span class="role">lightweight, portable</span></div>
+      <p>A slash-command workflow: <span class="mono">/constitution</span> → <span class="mono">/specify</span> → <span class="mono">/clarify</span> → <span class="mono">/plan</span> → <span class="mono">/tasks</span> → <span class="mono">/analyze</span> → <span class="mono">/implement</span>. The <span class="mono">constitution.md</span> holds non-negotiable project principles; the philosophy is "intent is the source of truth." Strongest on greenfield and legacy modernization; deliberately minimal and tool-agnostic.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">B</span><h3>Amazon Kiro</h3><span class="role">agentic IDE, gated phases</span></div>
+      <p>Three phases with approval gates: <span class="mono">requirements.md</span> (user stories with EARS acceptance criteria) → <span class="mono">design.md</span> → <span class="mono">tasks.md</span> (numbered checklist). Bakes EARS directly into requirements and runs automated-reasoning checks for contradictions before code — the tightest coupling of spec to machine-verifiability.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">C</span><h3>BMAD-METHOD</h3><span class="role">full-team simulation</span></div>
+      <p>An MIT-licensed, bring-your-own-model framework distributed as files (agent personas in Markdown/YAML + workflows, templates, a CLI installer) that drop into your existing AI IDE — not a product or service. It simulates 12+ specialized agent roles (analyst, PM, architect, dev, QA, scrum master…), each a self-contained "Agent-as-Code" definition, running a four-phase cycle (Analysis → Planning → Solutioning → Implementation) with explicit artifact handoffs and <em>document sharding</em> (large PRD/architecture docs are split into small "story files" that pack exactly what one agent needs, fighting context loss). Its defining stance: <strong>documentation is the source of truth, code is a downstream derivative</strong> ("docs-as-code") — the aggressive spec-as-source end of the §4 spectrum. The heaviest end: powerful for complex work, but the most ceremony and the easiest to over-apply. Currently on V6 (Skills Architecture, sub-agents, Dev Loop Automation) and evolving fast — verify specifics before relying on them.</p></div>
+      <div class="callout"><div class="t">What we extract</div><p>The methodology is portable even if the tool is not: a constitution of non-negotiables, an explicit spec authored and reviewed first, EARS/Gherkin acceptance criteria, and a decomposition into agent-ready tasks. We can assemble that lightweight pipeline for a client without adopting any single vendor tool — which is also how we avoid lock-in.</p></div>
+
+      <h3>BMAD on an existing system — the brownfield path</h3>
+      <p>Because our engagement targets an <em>existing</em> codebase, BMAD's brownfield workflow is the part most relevant to us — and it is more thought-through than the other SDD tools. It is worth knowing in detail even if we only borrow pieces of it.</p>
+      <div class="io"><div class="box"><div class="lab">How BMAD handles brownfield</div><ul><li><strong>Document-first is mandatory.</strong> The <span class="mono">*document-project</span> workflow scans the whole codebase and writes AI-optimised docs (overview, architecture, source-tree) into <span class="mono">docs/</span> — the required first step when docs are missing or stale.</li><li><strong>Two routes by size.</strong> PRD-First (large codebases: write the PRD, then document only the areas it touches) vs Document-First (smaller: document everything, then PRD).</li><li><strong>Respects conventions.</strong> Auto-detects the stack and explicitly asks whether to follow existing patterns or set new ones.</li><li><strong>Regression safety.</strong> A Test Architect (QA) role is mandatory when a change touches legacy code: <span class="mono">*risk</span> → regression potential, <span class="mono">*design</span> → test coverage, <span class="mono">*review</span> → verify nothing broke.</li><li><strong>Quick Flow for small work.</strong> Bug fixes / small increments skip the ceremony: short spec, implement, self-review against the codebase.</li></ul></div>
+      <div class="box"><div class="lab">How it maps to our framework</div><ul><li><span class="mono">*document-project</span> = our brownfield bootstrap (Report 4: read-only → characterize) and durable artifacts (M4)</li><li>"respect existing conventions" = the agent adapts to the estate rather than rewriting it (our brownfield principle)</li><li>Test Architect <span class="mono">*risk/*design/*review</span> = verification-first (E4) + blast-radius thinking, wrapped as a role</li><li>doc sharding + resumable state = context-rot management (E2) + progress/clean-state (E3)</li><li>Quick Flow = the answer to Fowler's "sledgehammer on a thumbtack" (§4)</li></ul></div></div>
+      <div class="callout pine"><div class="t">What we borrow for our engagement</div><p>Don't adopt BMAD wholesale — it is the most ceremony-heavy option, it pushes docs-as-source (we recommend spec-<em>anchored</em>, not spec-as-source), and it moves fast (V6, high churn). Instead borrow the mechanics that map cleanly onto our framework: <strong>the <span class="mono">*document-project</span> step as a brownfield bootstrap</strong> that produces durable, reviewable docs; <strong>brownfield PRD/architecture as durable artifacts</strong> (M4); and a <strong>mandatory regression gate on any legacy touch</strong> (Test Architect's <span class="mono">*risk/*design/*review</span> = our E4). That gives a client BMAD's real brownfield value — structure and regression safety when modifying an existing system — without lock-in to a single fast-moving tool.</p></div>
+
+            <h2 id="s3"><span class="n">3</span>Two plugin approaches: Superpowers &amp; Compound Engineering</h2>
+      <p>Spec Kit, Kiro and BMAD are spec <em>authoring</em> tools. But two of the most-adopted 2025–2026 Claude Code plugins go further — they package a whole methodology as auto-triggering skills, and they differ most instructively in one dimension the earlier tools barely touch: <strong>whether the system learns between tasks</strong>. Both are worth knowing because a client may already be using one, and they embody two distinct philosophies of the same loop.</p>
+      <div class="comp"><div class="chead"><span class="cid">SP</span><h3>Superpowers</h3><span class="role">Jesse Vincent — discipline enforcement</span></div>
+      <p>A skills framework (accepted into Anthropic's official plugin marketplace, Jan 2026) that forces a coding agent through disciplined phases instead of its default "jump straight to code" instinct. A master dispatcher skill auto-activates at session start and routes the task through the right skills; nothing needs to be invoked manually.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">CE</span><h3>Compound Engineering</h3><span class="role">Kieran Klaassen / Every — the system learns</span></div>
+      <p>A plugin (from Every; the workflow they use to run five products with near single-person engineering teams) built on one thesis: <em>"each unit of engineering work should make subsequent units easier, not harder."</em> It ships the plan→work→review loop like Superpowers, but adds a step the others don't have — an explicit <strong>compound</strong> step that writes learnings back into the system so the next task starts smarter.</p></div>
+
+      <h3>The same loop, seen through three lenses</h3>
+      <p>Comparing them on planning, execution and feedback-learning is the useful exercise — it isolates what actually differs.</p>
+      <table class="map"><tr><th>Dimension</th><th>Superpowers</th><th>Compound Engineering</th></tr>
+      <tr><td>Planning</td><td>Socratic brainstorming → design sign-off → a plan of bite-sized tasks (2–5 min each) with exact file paths and complete code, written for "an enthusiastic junior with no context"</td><td>brainstorm → plan where sub-agents research the codebase, edge cases and past learnings <em>in parallel</em>; the ratio is stated as ~80% planning+review, 20% execution</td></tr>
+      <tr><td>Execution</td><td>subagent-driven development: a fresh subagent per task with two-stage review (spec compliance, then code quality); enforced red-green TDD, YAGNI, DRY</td><td>/ce-work implements the plan (asks clarifying questions first, writes tests), then a simplify pass; specialist reviewer agents fan out (security, architecture, performance…)</td></tr>
+      <tr><td>Feedback learning</td><td>largely <em>within</em> a run (reviews, checkpoints); learning across tasks is not the core loop — the discipline resets each session</td><td><strong>the defining feature</strong>: /ce-compound codifies what was learned into CLAUDE.md / docs (ADRs, solutions, new agents) so future brainstorms and plans read it as grounding</td></tr>
+      </table>
+
+      <div class="callout pine"><div class="t">The one difference that matters most</div><p>Superpowers makes a single task go well by enforcing discipline; <strong>Compound Engineering makes the next task go better</strong> by turning each finished task into durable, machine-readable institutional knowledge. Superpowers is a <em>within-task</em> quality system; Compound Engineering adds a <em>between-task</em> learning loop. That "compound" step — capture the lesson, make it findable (tags/frontmatter), update CLAUDE.md, verify the system would now catch it automatically — is exactly the feedback dimension the classical SDD tools (Spec Kit/Kiro/BMAD) leave out.</p></div>
+
+      <figure>
+      <svg viewBox="0 0 860 250" role="img" aria-label="Within-task discipline versus between-task compounding">
+        <defs><marker id="ahE8b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="30" class="tg">SUPERPOWERS — within-task discipline (resets each session)</text>
+        <rect x="20" y="44" width="120" height="40" rx="8" class="bxA"/><text x="30" y="68" class="ts">brainstorm</text>
+        <rect x="170" y="44" width="120" height="40" rx="8" class="bxC"/><text x="180" y="68" class="ts">plan (tiny tasks)</text>
+        <rect x="320" y="44" width="150" height="40" rx="8" class="bx"/><text x="330" y="68" class="ts">subagent + 2× review</text>
+        <line x1="140" y1="64" x2="170" y2="64" style="marker-end:url(#ahE8b)" stroke="#57656F" stroke-width="1.3"/>
+        <line x1="290" y1="64" x2="320" y2="64" style="marker-end:url(#ahE8b)" stroke="#57656F" stroke-width="1.3"/>
+        <text x="500" y="68" class="ts" fill="#B3362B">↺ next session starts fresh</text>
+        <text x="20" y="140" class="tg">COMPOUND ENGINEERING — adds a between-task learning loop</text>
+        <rect x="20" y="154" width="110" height="40" rx="8" class="bxA"/><text x="30" y="178" class="ts">brainstorm</text>
+        <rect x="160" y="154" width="90" height="40" rx="8" class="bxC"/><text x="170" y="178" class="ts">plan</text>
+        <rect x="280" y="154" width="90" height="40" rx="8" class="bx"/><text x="290" y="178" class="ts">work</text>
+        <rect x="400" y="154" width="90" height="40" rx="8" class="bx"/><text x="410" y="178" class="ts">review</text>
+        <rect x="520" y="154" width="130" height="40" rx="8" class="bxK"/><text x="530" y="178" class="ts">compound → docs</text>
+        <line x1="130" y1="174" x2="160" y2="174" style="marker-end:url(#ahE8b)" stroke="#57656F" stroke-width="1.3"/>
+        <line x1="250" y1="174" x2="280" y2="174" style="marker-end:url(#ahE8b)" stroke="#57656F" stroke-width="1.3"/>
+        <line x1="370" y1="174" x2="400" y2="174" style="marker-end:url(#ahE8b)" stroke="#57656F" stroke-width="1.3"/>
+        <line x1="490" y1="174" x2="520" y2="174" style="marker-end:url(#ahE8b)" stroke="#57656F" stroke-width="1.3"/>
+        <path d="M585 154 C 585 110, 75 110, 75 154" style="marker-end:url(#ahE8b)" fill="none" stroke="#3C8A63" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <text x="330" y="122" class="ts" fill="#3C8A63">learnings become grounding for the next plan</text>
+      </svg>
+      <figcaption>Both plugins enforce plan-before-code and review-before-done. The structural difference is the green return arrow: Compound Engineering's /ce-compound writes each task's lessons into CLAUDE.md and docs, so the next cycle's planning reads them as grounding — the system improves with use, rather than resetting.</figcaption>
+      </figure>
+
+      <h3>How they map onto our framework</h3>
+      <p>Neither is a new idea so much as a packaging of components we already have — which is exactly why they are useful reference points, not dependencies:</p>
+      <div class="io"><div class="box"><div class="lab">What they operationalise</div><ul><li>plan-before-code = the SDD spec-review gate (this topic)</li><li>enforced TDD + two-stage review = verification (E4)</li><li>subagent-per-task, single-threaded = harness patterns (E3)</li><li>auto-triggering skills = progressive disclosure (M4/I5)</li></ul></div>
+      <div class="box"><div class="lab">Where Compound's "compound" step lands</div><ul><li>it is the feedback loop of information architecture (M4) made routine</li><li>learnings → CLAUDE.md/ADRs = durable artifacts with provenance</li><li>caution: writing to CLAUDE.md/memory is also a poisoning surface (M7) — the learnings need review, not blind append</li></ul></div></div>
+      <p><strong>For our rollout:</strong> we don't have to adopt either wholesale (both are opinionated, single-vendor, fast-moving — v-numbers change weekly). The lesson to carry to a client is the <em>compound</em> principle itself: build the between-task learning loop deliberately (codify review findings and fixes back into CLAUDE.md/ADRs/skills), because that is what turns a one-off productivity bump into a system that compounds — while keeping a human gate on what gets written back, per M7. Superpowers teaches the within-task discipline; Compound Engineering teaches that the discipline should also make the system smarter each time.</p>
+
+<h2 id="s4"><span class="n">4</span>Fowler's critique — and when SDD is overkill</h2>
+      <p>Part of E8's value is knowing the failure mode. Martin Fowler and others have documented SDD's downsides candidly, and we should carry the critique openly rather than as evangelists.</p>
+      <div class="io"><div class="box"><div class="lab">The critique</div><ul><li>generates piles of repetitive markdown that review <em>worse</em> than code</li><li>a sledgehammer for small tasks (Kiro turned a small bug into 4 stories + 16 acceptance criteria)</li><li>brownfield enterprise is the weak spot — specs assume clean intent</li><li>ceremony can relocate review burden rather than remove it</li></ul></div>
+      <div class="box"><div class="lab">When SDD genuinely fits</div><ul><li>greenfield features spanning multiple agent tasks</li><li>legacy modernization (capture business logic into a spec)</li><li>anything where the spec is the durable contract &amp; review artifact</li><li>work where getting intent wrong is expensive</li></ul></div></div>
+      <p><strong>The heuristic:</strong> a task under ~15 minutes needs no spec; a one-line bugfix drowned in 16 acceptance criteria is the anti-pattern, not the ideal. Keep specs minimal (the M3 sizing: ~10–30 lines) and portable. SDD is a tool you reach for when intent is non-trivial and the work is delegated — not a universal process to impose on every ticket.</p>
+
+      <h2 id="s5"><span class="n">5</span>How SDD connects the whole framework</h2>
+      <p>SDD is not a standalone practice; it is the connective tissue between several components we have already studied. Seeing those links is what makes it usable rather than a buzzword.</p>
+      <table class="map"><tr><th>SDD element</th><th>Connects to</th><th>How</th></tr>
+      <tr><td>Constitution</td><td>governance (E5)</td><td>non-negotiables encode advisory principles; the deterministic ones become hooks</td></tr>
+      <tr><td>Specify / acceptance criteria</td><td>handoff contract (M3)</td><td>the spec is the engineering face of the contract; EARS/Gherkin make it verifiable</td></tr>
+      <tr><td>Spec review gate</td><td>autonomy (E6)</td><td>a reviewed spec is what makes L3 delegation accountable</td></tr>
+      <tr><td>Spec as artifact</td><td>information architecture (M4)</td><td>durable, versioned, owned — not ephemeral chat text</td></tr>
+      <tr><td>Tasks → implement</td><td>verification (E4)</td><td>acceptance criteria become the failing tests the agent builds toward</td></tr></table>
+      <div class="callout pine"><div class="t">The spec-anchored recommendation</div><p>Fowler distinguishes spec-<em>first</em> (spec guides, code stays primary), spec-<em>anchored</em> (spec is a living governing contract), and spec-<em>as-source</em> (code is a disposable byproduct). For a brownfield client we recommend <strong>spec-anchored</strong>: it works with human review and imperfect specs, whereas spec-as-source presumes complete, always-current specs and fully reliable regeneration — which today's reality (Beck: "you learn during implementation; the spec changes") does not support.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>Mapping to the SDLC</h2>
+      <table class="map"><tr><th>SDLC stage</th><th>SDD activity</th><th>What good looks like</th></tr>
+      <tr><td>Inception</td><td>constitution</td><td>non-negotiable principles agreed once, referenced everywhere</td></tr>
+      <tr><td>Requirements</td><td>specify + clarify</td><td>intent explicit, ambiguities surfaced before code; EARS acceptance criteria</td></tr>
+      <tr><td>Design</td><td>plan</td><td>technical approach reviewed against the spec, not improvised</td></tr>
+      <tr><td>Refinement</td><td>tasks</td><td>decomposed into right-sized, agent-ready items (M3 sizing)</td></tr>
+      <tr><td>Implementation</td><td>implement</td><td>agent builds toward acceptance criteria; spec is the accountability anchor</td></tr></table>
+
+      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>where is intent non-trivial and delegated (SDD pays off)?</li><li>where are tasks tiny (SDD is overkill)?</li><li>is there appetite to review specs, not just code?</li><li>can we extract a lightweight pipeline without tool lock-in?</li></ul></div>
+      <div class="box"><div class="lab">Build (feeds E7 rollout)</div><ul><li>a minimal constitution of non-negotiables</li><li>spec-anchored workflow; specs versioned in the repo (M4)</li><li>EARS/Gherkin acceptance criteria feeding tests (E4)</li><li>spec review as the gate for L3 delegation (E6)</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember E8 by</div><p>SDD makes intent the source of truth: an explicit spec is authored and reviewed first, so spec review becomes the primary quality gate before code exists. It is powerful for greenfield, legacy modernization and multi-task delegated features — but overkill for small tasks, so keep specs minimal (10–30 lines) and reach for it only when getting intent wrong is expensive. Recommend spec-anchored (a living contract with human review), not spec-as-source, and wire the constitution to governance, the acceptance criteria to verification, and the spec review to L3 autonomy.</p></div>
+
+      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">GitHub Spec Kit</div><div class="mt">github.com/github/spec-kit</div><p>The lightweight, tool-agnostic reference workflow (constitution → specify → plan → tasks → implement). Start here for the portable methodology.</p></div>
+      <div class="item"><div class="rt">Amazon Kiro</div><div class="mt">kiro.dev</div><p>The gated-phase agentic IDE with EARS baked into requirements and contradiction checks before code — the tightest spec-to-verifiability coupling.</p></div>
+      <div class="item"><div class="rt">Martin Fowler / ThoughtWorks — the SDD critique &amp; spec modes</div><div class="mt">martinfowler.com</div><p>The honest downside case, and the spec-first / spec-anchored / spec-as-source distinction behind our recommendation.</p></div>
+      <div class="item"><div class="rt">BMAD-METHOD</div><div class="mt">github (BMAD-METHOD)</div><p>The full-team-simulation end of the spectrum — useful to understand the ceiling of ceremony, and when it is (rarely) justified.</p></div>
+      <div class="item"><div class="rt">Report 2 (handoff contract) &amp; topic H2 (EARS/Gherkin)</div><div class="mt">this workbook — module M3</div><p>The machine-verifiable acceptance criteria that turn a spec into something an agent can be held to. Read alongside E8.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (E8-spec-driven-development-deepdive.html). Its natural neighbours in the workbook are M3 (the handoff contract &amp; EARS/Gherkin), E4 (verification), E5 (governance / constitution), E6 (autonomy / spec review as the L3 gate) and M4 (spec as a durable artifact).</p>
+
+</main>
+</div>
+</body>
+</html>

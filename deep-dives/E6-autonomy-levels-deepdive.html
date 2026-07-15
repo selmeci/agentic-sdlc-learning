@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E6 Deep Dive — Autonomy Levels L1–L5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edE6{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE6a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E6 · DEEP DIVE</span>
+    <h1>Autonomy Levels L1–L5</h1>
+    <span class="bc">companion to module M1 · topic E6</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why an autonomy taxonomy matters</a>
+  <a href="#s1"><b>1</b> · The five levels</a>
+  <a href="#s2"><b>2</b> · Component prerequisites</a>
+  <a href="#s3"><b>3</b> · How to choose the level</a>
+  <a href="#s4"><b>4</b> · The parallel scales L/P/D</a>
+  <a href="#s5"><b>5</b> · Mapping to the SDLC</a>
+  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion</p>
+      <h2 id="s0"><span class="n">0</span>Why an autonomy taxonomy matters</h2>
+      <p class="lead">E1–E5 built the components of a capable, verifying, governed agent. E6 answers the question a client actually cares about: <em>how much do we let it do on its own?</em> The L1–L5 taxonomy gives us a shared vocabulary for that decision — and, more importantly, reframes it. Autonomy level is not a measure of how good the model is; it is a <strong>staffing decision</strong> about how much judgment we delegate and how much we keep.</p>
+      <p>For our engagement this is the spine that ties the other components together. Each level demands specific components be in place (verification for L3, governance for L4), so "what level is this client ready for?" is really "which components do they actually have?" — which makes E6 the bridge from the framework (E1–E5) to the assessment (checklist) and the phased rollout (E7).</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Higher is not better. L5 is not the goal and L1 is not failure. The right level is the one the client's ecosystem can support safely — usually L2 today, with robust L3 as the ambitious target. Selling "full autonomy" is how engagements fail; selling "the highest level your verification and governance can back" is how they succeed.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The five levels</h2>
+      <p>Each level is defined by how work is initiated, how far the agent runs unattended, and — the real differentiator — which harness components must be in place to make it safe. Read the ladder as increasing delegation of <em>judgment</em>, not increasing model capability.</p>
+      <figure>
+      <svg viewBox="0 0 860 360" role="img" aria-label="The L1 to L5 autonomy ladder">
+        <defs><marker id="ahE6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="30" y="292" width="560" height="40" rx="8" class="bxG"/><text x="42" y="312" class="tt">L1 · Assistant</text><text x="42" y="326" class="ts">inline suggestions, single file — Copilot autocomplete</text>
+        <rect x="70" y="244" width="560" height="40" rx="8" class="bxG"/><text x="82" y="264" class="tt">L2 · Conversational</text><text x="82" y="278" class="ts">multi-turn, codebase navigation — IDE chat  (most teams are here)</text>
+        <rect x="110" y="196" width="560" height="40" rx="8" class="bxC"/><text x="122" y="216" class="tt">L3 · Delegated task → PR</text><text x="122" y="230" class="ts">async scoped ticket → pull request  (today's production ceiling)</text>
+        <rect x="150" y="148" width="560" height="40" rx="8" class="bxA"/><text x="162" y="168" class="tt">L4 · High autonomy</text><text x="162" y="182" class="ts">picks its own work, rare intervention — narrow tasks only (Dependabot, FlakyGuard)</text>
+        <rect x="190" y="100" width="560" height="40" rx="8" class="bx" style="stroke:#B3362B"/><text x="202" y="120" class="tt">L5 · Full autonomy</text><text x="202" y="134" class="ts">no human in the loop — not achieved for general software</text>
+        <line x1="60" y1="292" x2="60" y2="90" class="edE6"/><text x="46" y="86" class="tg">DELEGATED JUDGMENT →</text>
+        <rect x="700" y="196" width="150" height="40" rx="8" fill="none" stroke="#4A63C8" stroke-dasharray="5 3"/><text x="710" y="220" class="ts" fill="#20389E">robust L3 = the</text><text x="710" y="233" class="ts" fill="#20389E">ambitious target</text>
+      </svg>
+      <figcaption>The ladder rises by delegated judgment, not model power. Most teams sit at L2; L3 (delegated task → reviewed PR) is today's realistic production ceiling; L4 is viable only for narrow, repeated, deterministically-verifiable tasks; L5 (no human in the loop) is not achieved for general software development.</figcaption>
+      </figure>
+      <div class="comp"><div class="chead"><span class="cid">L1</span><h3>Assistant</h3><span class="role">inline, single-file</span></div>
+      <p>Autocomplete-style suggestions the human accepts or rejects keystroke by keystroke. The human does all the work; the agent shortens it. Needs only prompt + context (E1/E2).</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L2</span><h3>Conversational</h3><span class="role">multi-turn, navigates the codebase</span></div>
+      <p>Back-and-forth in an IDE chat: the agent reads the codebase, proposes changes, explains. The human still drives and integrates. Adds tools (E1). <strong>Where most teams realistically are.</strong></p></div>
+      <div class="comp"><div class="chead"><span class="cid">L3</span><h3>Delegated task → PR</h3><span class="role">today's production ceiling</span></div>
+      <p>A scoped ticket is handed off; the agent works asynchronously and returns a pull request a human reviews and merges. This is where real delegation begins — and where the full harness (E3), verification loop (E4) and governance (E5) become mandatory, because the human is no longer watching every step.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L4</span><h3>High autonomy</h3><span class="role">narrow tasks only</span></div>
+      <p>The agent selects its own work from a stream and acts with rare human intervention — but only for narrowly defined, repeated, deterministically-verifiable tasks. Real examples: Dependabot (dependency bumps), Uber's FlakyGuard (of 1,115 flaky tests, 380 fixed, 197 landed). Adds memory and blast-radius control on top of L3.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L5</span><h3>Full autonomy</h3><span class="role">not achieved</span></div>
+      <p>No human in the loop for general software work. Not a real option today; treated as a horizon, not a target. Listing it matters mainly to make explicit that we are <em>not</em> aiming there.</p></div>
+
+      <h2 id="s2"><span class="n">2</span>The component prerequisites — what each level requires</h2>
+      <p>This is the operational heart of E6: each rung is unlocked by specific components being genuinely in place. This table is how we translate "what level?" into "what must exist first?" — and therefore how E6 drives both assessment and rollout.</p>
+      <table class="map"><tr><th>Level</th><th>Must have in place</th><th>What gates the step up</th></tr>
+      <tr><td>L1–L2</td><td>prompt + context + tools (E1, E2)</td><td>basic retrieval; a human watching every change</td></tr>
+      <tr><td>L3</td><td>+ harness, verification, governance (E3, E4, E5)</td><td>a fast, trustworthy test loop; deterministic guardrails; PR review capacity</td></tr>
+      <tr><td>L4</td><td>+ memory, blast-radius control</td><td>a narrow, repeated task with a deterministic oracle; bounded, reversible effects</td></tr>
+      <tr><td>L5</td><td>— (not achieved)</td><td>an unsolved problem, not a configuration</td></tr></table>
+      <div class="callout pine"><div class="t">The rule that caps everything</div><p><strong>Never scale the number of agents beyond code-review capacity.</strong> Autonomy and volume are the same budget seen twice: more agents or higher levels both produce more output needing review. When output outruns review, the effective level must come <em>down</em>, regardless of how capable the model is. This is why E7's review-bottleneck data (+98% PRs, +91% review time) is really an E6 constraint.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>How to choose the level — the assessment lens</h2>
+      <p>The level is set by the weakest enabling component, not the strongest. A brilliant model on a repo with no tests is capped at L2, because L3 has no verification loop to make delegation safe. So the assessment is component-by-component:</p>
+      <div class="io"><div class="box"><div class="lab">Signals that support L3</div><ul><li>fast, trustworthy tests (E4) with real teeth (mutation score)</li><li>CI that returns a signal the agent can read</li><li>deterministic governance: hooks, sandbox, egress (E5)</li><li>enough human review capacity for the PR volume</li></ul></div>
+      <div class="box"><div class="lab">Signals that cap at L2</div><ul><li>no/slow/flaky test suite</li><li>advisory-only config; no enforcement points</li><li>no dev/prod separation, RBAC or secrets hygiene</li><li>review already saturated</li></ul></div></div>
+      <p>Note L4 is not "L3 done well" — it is a different shape of task. You do not graduate a general delegated-task workflow to L4; you identify a narrow, repeated, deterministically-checkable slice (dependency updates, flaky-test repair) and run <em>that slice</em> at L4 while everything else stays at L3. Level is per-workflow, not per-team.</p>
+
+      <h2 id="s4"><span class="n">4</span>The parallel scales — L, P and D</h2>
+      <p>E6's engineering ladder has two siblings elsewhere in the workbook, and seeing them together clarifies all three. They share a shape (5 rungs, top rung an anti-pattern or unreached) but differ in what does the verifying.</p>
+      <table class="map"><tr><th>Scale</th><th>Layer</th><th>What verifies each step</th><th>Top rung</th></tr>
+      <tr><td>L1–L5</td><td>engineering (E6)</td><td>deterministic tests / CI</td><td>L5 not achieved</td></tr>
+      <tr><td>P1–P5</td><td>product (M2)</td><td>human judgment + consistency checks</td><td>P5 anti-pattern</td></tr>
+      <tr><td>D1–D5</td><td>design (M6)</td><td>conformance checks + designer taste</td><td>D5 anti-pattern</td></tr></table>
+      <p>The instructive contrast: engineering can push furthest (L4 in narrow cases) precisely because it has a <em>deterministic</em> oracle — tests either pass or fail. Product and design cap lower (P5/D5 are anti-patterns) because their verification is human judgment, which cannot be automated away. Autonomy rises exactly as far as verification can be made deterministic — the single principle behind all three scales.</p>
+
+      <h2 id="s5"><span class="n">5</span>Mapping to the SDLC</h2>
+      <table class="map"><tr><th>SDLC activity</th><th>Typical level</th><th>Why</th></tr>
+      <tr><td>Editing / prototyping</td><td>L1–L2</td><td>human in the loop every step; fast feedback, low stakes</td></tr>
+      <tr><td>Scoped feature / bugfix → PR</td><td>L3</td><td>delegated with a verification loop and a human merge gate</td></tr>
+      <tr><td>Dependency bumps, flaky-test repair</td><td>L4</td><td>narrow, repeated, deterministically verifiable; bounded blast radius</td></tr>
+      <tr><td>Anything safety-critical / high blast radius</td><td>≤ L2</td><td>the cost of a wrong autonomous action is unacceptable regardless of model skill</td></tr></table>
+
+      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (the level question)</div><ul><li>which enabling components are genuinely in place (E3/E4/E5)?</li><li>the level is set by the weakest one, not the model</li><li>is there review capacity for the volume the level produces?</li><li>which narrow slices could run at L4 while the rest stays L3?</li></ul></div>
+      <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>start L1–L2, prove the verification + governance base</li><li>move to L3 only once E4 and E5 are real</li><li>pick L4 candidates by task shape, not team seniority</li><li>set exit criteria per level; bring the level down if review saturates</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember E6 by</div><p>L1–L5 is a staffing decision about delegated judgment, not a measure of model capability — and higher is not better, with robust L3 the realistic target and L5 unreached. Each rung is unlocked by specific components (L3 needs verification + governance; L4 needs a narrow deterministic oracle), so the safe level is set by the weakest enabling component, never the strongest. Level is per-workflow, capped always by the rule "never scale agents beyond review capacity."</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Five levels of AI agent autonomy</div><div class="mt">Swarmia / Tessl · swarmia.com/blog/five-levels-ai-agent-autonomy</div><p>A clear articulation of the L1–L5 ladder and the "staffing decision" framing. Start here.</p></div>
+      <div class="item"><div class="rt">Building effective agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering/building-effective-agents</div><p>Where the component prerequisites for higher autonomy (harness, verification, governance) are laid out in practice.</p></div>
+      <div class="item"><div class="rt">FlakyGuard (Uber) &amp; Dependabot as L4 examples</div><div class="mt">Uber Engineering blog; GitHub Dependabot docs</div><p>Concrete, narrow, deterministically-verifiable L4 workflows — the shape of task that actually supports high autonomy.</p></div>
+      <div class="item"><div class="rt">DORA / State of DevOps — the review bottleneck</div><div class="mt">dora.dev; Faros AI telemetry</div><p>The evidence behind "never scale beyond review capacity" (+98% PRs, +91% review time) — the real cap on level.</p></div>
+      <div class="item"><div class="rt">Report 2 (P1–P5) &amp; Report 5 (D1–D5)</div><div class="mt">this workbook — modules M2 and M6</div><p>The sibling scales; read alongside E6 to see why deterministic verification lets engineering push furthest.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (E6-autonomy-levels-deepdive.html). Its natural neighbours in the workbook are E3/E4/E5 (the components that gate each level), E7 (metrics &amp; the review bottleneck), and the parallel scales P1–P5 (M2) and D1–D5 (M6).</p>
+
+</main>
+</div>
+</body>
+</html>

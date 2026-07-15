@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E3 Deep Dive — Harness Engineering in Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edE3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE3a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E3 · DEEP DIVE</span>
+    <h1>Harness Engineering in Practice</h1>
+    <span class="bc">companion to module M1 · topic E3</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why the harness is what we build</a>
+  <a href="#s1"><b>1</b> · What it is responsible for</a>
+  <a href="#s2"><b>2</b> · The core patterns</a>
+  <a href="#s3"><b>3</b> · The pruning principle</a>
+  <a href="#s4"><b>4</b> · Mapping to the SDLC</a>
+  <a href="#s5"><b>5</b> · Takeaways</a>
+  <a href="#s6"><b>6</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion</p>
+      <h2 id="s0"><span class="n">0</span>Why the harness is the thing we actually build</h2>
+      <p class="lead">E1 named the equation (Agent = Model + Harness) and E2 dug into context. E3 is where it gets concrete: the harness is the software we design, own, and maintain. It is the deliverable of an agentic-engineering engagement — not the model (a commodity we rent) and not the prompt (advisory text). If a client asks "what are we paying you to build?", the honest answer is: this.</p>
+      <p>This document turns the abstract "orchestrating scaffold" into named patterns with inputs and outputs: how a memoryless model is bootstrapped into a session, how state survives between sessions, how work stays merge-ready, and why the right long-term move is to <em>delete</em> parts of the harness as models improve. Everything here is drawn from Anthropic's own harness-engineering practice and generalised for a brownfield client.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Every harness component encodes an assumption about what the model <em>cannot</em> do yet. The harness is therefore a <em>liability register of model weaknesses</em>, written in code. When a weakness disappears with a better model, the matching scaffold should be removed — a good harness shrinks over time, it does not accrete.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>What the harness is responsible for</h2>
+      <p>Between "a model that can reason" and "an agent that ships merge-ready code" sits a set of responsibilities nothing else owns. The harness is the software that discharges them:</p>
+      <div class="io"><div class="box"><div class="lab">State &amp; continuity</div><ul><li>bootstrap a cold, memoryless model into a working session</li><li>carry decisions and progress across sessions</li><li>leave the repo in a clean, resumable state</li></ul></div>
+      <div class="box"><div class="lab">Orchestration &amp; control</div><ul><li>assemble context each turn (E2) and invoke tools</li><li>run the loop; detect stuck/blocked states</li><li>enforce deterministic constraints (E5 governance)</li></ul></div>
+      <div class="box sdlc"><div class="lab">Why it can't live elsewhere</div><ul><li>The model is stateless and unconstrained; the prompt is advisory; CI is downstream. Only the harness sits <em>around</em> the model at runtime, so only it can guarantee state, sequencing and hard limits.</li></ul></div></div>
+
+      <h2 id="s2"><span class="n">2</span>The core patterns — inputs &amp; outputs</h2>
+      <p>Read the diagram first: a harness runs sessions like relay legs. Each session is bootstrapped from durable state, does bounded work, and hands a clean baton to the next — the "engineers working in shifts" model.</p>
+      <figure>
+      <svg viewBox="0 0 880 340" role="img" aria-label="The harness runs sessions as relay legs from durable state">
+        <defs><marker id="ahE3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="30" y="40" width="180" height="120" rx="12" class="bxK"/><text x="40" y="62" class="tg">DURABLE STATE</text>
+        <text x="40" y="84" class="ti">progress file</text><text x="40" y="104" class="ti">git history</text><text x="40" y="124" class="ti">CLAUDE.md · specs</text><text x="40" y="144" class="ti">feature_list.json</text>
+        <rect x="270" y="30" width="180" height="90" rx="12" class="bxC"/><text x="280" y="52" class="tg">SESSION N</text><text x="280" y="74" class="ti">read state → plan</text><text x="280" y="93" class="ti">bounded work</text><text x="280" y="111" class="ts">context assembled each turn</text>
+        <rect x="500" y="30" width="180" height="90" rx="12" class="bxC"/><text x="510" y="52" class="tg">SESSION N+1</text><text x="510" y="74" class="ti">read state → plan</text><text x="510" y="93" class="ti">bounded work</text><text x="510" y="111" class="ts">no memory of N except state</text>
+        <rect x="730" y="30" width="120" height="90" rx="12" class="bxG"/><text x="740" y="52" class="tg">OUTPUT</text><text x="740" y="74" class="ti">merge-ready</text><text x="740" y="92" class="ti">PR</text>
+        <line x1="210" y1="90" x2="270" y2="80" class="edE3"/>
+        <line x1="450" y1="75" x2="500" y2="75" class="edE3"/>
+        <line x1="680" y1="75" x2="730" y2="75" class="edE3"/>
+        <path d="M360 120 V150 H120 V160" class="edE3 edD"/><text x="250" y="146" class="ts">writes progress + commit</text>
+        <path d="M590 120 V190 H120 V162" class="edE3 edD"/><text x="330" y="186" class="ts">next session bootstraps from the same durable state</text>
+        <rect x="30" y="230" width="820" height="80" rx="12" fill="#EDF1F4" opacity="0.6" stroke="#9AA7B1" stroke-dasharray="6 4"/>
+        <text x="44" y="252" class="tg">GOVERNANCE — deterministic, spans every session (E5)</text>
+        <text x="44" y="276" class="ti">permissions · pre/post-tool hooks · sandbox · network policy</text>
+        <text x="44" y="296" class="ts">enforced by the harness regardless of what the model decides in any session</text>
+      </svg>
+      <figcaption>Sessions are relay legs. Durable state (green) is the baton; each session (cobalt) bootstraps from it, does bounded work, then writes progress and commits before ending merge-ready. Governance (gray) is enforced across all sessions. The model has no memory between legs — the harness supplies all continuity.</figcaption>
+      </figure>
+
+      <div class="comp"><div class="chead"><span class="cid">A</span><h3>The initializer agent</h3><span class="role">solving the cold start</span></div>
+      <p>A memoryless model dropped into a repo has no idea how to build, test, or where it left off. The initializer pattern uses a first, special session to lay down the scaffolding every later session relies on: a runnable setup script, a progress file, and an initial commit as a known-good baseline.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>repo access + a way to run commands</li><li>an initializer prompt describing the setup contract</li><li>enough repo signal to infer build/test commands</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li><span class="mono">init.sh</span> (deterministic environment setup)</li><li><span class="mono">claude-progress.txt</span> seeded with current state</li><li>an initial git commit — the resumable baseline</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Phase-1 setup / onboarding — run once per repo; also the moment we discover whether a repo is agent-ready at all (feeds E6).</li></ul></div></div>
+      <p><strong>For our rollout:</strong> the initializer is the cheapest early diagnostic. If a model can't figure out how to build and test the repo, neither can a delegated agent — that's an agent-readiness red flag, not a prompt problem.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">B</span><h3>The progress file &amp; cross-session state</h3><span class="role">continuity for a stateless model</span></div>
+      <p>The model forgets everything between sessions; the harness must not. A progress file plus git history is the "shift handover notes" that let session N+1 resume session N's work without re-deriving intent from scratch.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>a convention for what belongs in the file (E1 memory component / M4)</li><li>a protocol: read state + <span class="mono">git log</span> at session start</li><li>a discipline: write continuously (assume interruption)</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>what this session finished, WIP + next step, blockers</li><li>file paths (not contents) pointing at the work</li><li>a resumable thread across many sessions</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Implementation runtime; the boundary where the harness (E3) leans on memory (E1's memory component, module M4). Architectural decisions belong in ADRs, not here.</li></ul></div></div>
+      <p><strong>For our rollout:</strong> keep it disposable and pruned — a progress file over ~200 lines is a smell; move durable facts to ADRs/CLAUDE.md and detail to topic memory. It records <em>where we are</em>, not <em>what is true</em>.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">C</span><h3>The clean-state principle</h3><span class="role">always merge-ready</span></div>
+      <p>Every session ends with the repo in a coherent, mergeable state — never mid-refactor with broken tests. This is what makes the relay safe: any session can be the last one, and any human can pick up cleanly.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>a fast verification loop to confirm "green" (E4 / M1)</li><li>a stop protocol: finish or cleanly park work</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a committed, test-passing state at every boundary</li><li>no half-applied changes to reverse-engineer later</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Every session boundary; the precondition that makes review/merge (governance) tractable.</li></ul></div></div>
+      <p><strong>For our rollout:</strong> clean-state is only achievable if verification is fast and trustworthy — another reason a weak test base caps autonomy at L2. The principle and the prerequisite are inseparable.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">D</span><h3>The generator–evaluator loop &amp; the sprint contract</h3><span class="role">agree on "done" before coding</span></div>
+      <p>Rather than one model both writing and judging its own work, the harness can separate generation from evaluation, and force an explicit agreement on the definition of done <em>before</em> code is written — a "sprint contract" that turns a vague task into a checkable target.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>a scoped task with acceptance criteria (M3 handoff)</li><li>an evaluator signal: tests, or a second agent/human</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>an agreed "done" the work is checked against</li><li>less rework from mid-task goal drift</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Task kickoff + implementation; the runtime face of verification-first (E4) and the handoff contract (M3).</li></ul></div></div>
+      <p><strong>For our rollout:</strong> the sprint contract is where under-specification gets caught early. If the agent can't restate a checkable "done", the task isn't ready — send it back to refinement rather than letting the loop churn.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">E</span><h3>Controlled write-surfaces</h3><span class="role">JSON over prose, status-only edits</span></div>
+      <p>What the agent may write, and in what shape, is itself a harness decision. Anthropic's pattern: keep a machine-state file (e.g. <span class="mono">feature_list.json</span>) that the agent may update only in a narrow way — flipping a <span class="mono">passes</span> field — with tests explicitly off-limits. JSON is chosen over Markdown because the model treats it as code and is less likely to "improve" it.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>a durable/derived/disposable classification (M4)</li><li>write-permissions enforced by hooks, not trust (E5)</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>agent edits confined to safe fields/paths</li><li>protected artifacts (tests, specs) the agent can't rewrite</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Cross-cutting; the concrete meeting point of the harness (E3), information architecture (M4) and governance (E5).</li></ul></div></div>
+      <p><strong>For our rollout:</strong> this is where the durable/derived/disposable taxonomy stops being theory. Decide per artifact who may write it and enforce it with a hook — "the agent won't touch tests" is advisory; a PreToolUse deny is deterministic.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>The pruning principle: a harness that shrinks</h2>
+      <p>The most counter-intuitive practice, and the one that keeps a harness healthy. Anthropic saw it directly: moving from one model generation to the next let them remove scaffolding they previously needed — sprint decomposition, certain context resets — because the newer model no longer needed the crutch.</p>
+      <div class="callout pine"><div class="t">Operating rule</div><p>Treat every component as a hypothesis: "the model can't do X unaided, so the harness does it." Re-test that hypothesis each model upgrade. If it no longer holds, delete the component — the space of what the harness must cover shifts and shrinks, it does not only grow. A harness that only accretes is accumulating tech debt against a moving model.</p></div>
+      <p>This has a commercial implication for the engagement: we are not selling a fixed artifact but a maintained one, with a cadence of re-evaluation tied to model releases. It also disciplines scope — we build the minimum scaffold the <em>current</em> model needs, not the maximum we can imagine.</p>
+
+      <h2 id="s4"><span class="n">4</span>Mapping to the SDLC</h2>
+      <table class="map"><tr><th>SDLC stage</th><th>Harness pattern</th><th>What good looks like</th></tr>
+      <tr><td>Repo onboarding</td><td>initializer agent</td><td>a model can set up, build and test the repo unaided; init.sh + baseline commit exist</td></tr>
+      <tr><td>Task kickoff</td><td>sprint contract</td><td>an explicit checkable "done" agreed before code is written</td></tr>
+      <tr><td>Implementation</td><td>loop + controlled writes</td><td>bounded work, context assembled per turn, writes confined to safe surfaces</td></tr>
+      <tr><td>Session boundary</td><td>clean-state + progress file</td><td>committed, test-passing, resumable; handover notes written</td></tr>
+      <tr><td>Across sessions</td><td>cross-session state</td><td>session N+1 resumes N without re-deriving intent</td></tr>
+      <tr><td>Every model upgrade</td><td>pruning</td><td>obsolete scaffolding removed; harness stays minimal</td></tr></table>
+
+      <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Can a model bootstrap the repo (build/test) unaided?</li><li>Is there a fast verification loop to make clean-state real?</li><li>Are artifacts classifiable as durable/derived/disposable?</li><li>Do we have hook enforcement points for controlled writes?</li></ul></div>
+      <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>initializer → progress-file convention → clean-state protocol</li><li>sprint contract at task kickoff; evaluator signal wired in</li><li>controlled write-surfaces (JSON state, protected tests)</li><li>a re-evaluation cadence to prune per model release</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember E3 by</div><p>The harness is the software we build and own — it supplies the state, sequencing and hard limits a stateless, unconstrained model lacks. Its patterns (initializer, progress file, clean-state, sprint contract, controlled writes) all exist to make a memoryless model behave like disciplined engineers working in shifts. Every component encodes a model weakness, so a healthy harness is pruned as the model grows — it shrinks, not just grows.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Effective harnesses for long-running agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering</div><p>The primary source for the initializer, progress-file, clean-state and sprint-contract patterns, and the pruning principle. Start here.</p></div>
+      <div class="item"><div class="rt">Building effective agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering/building-effective-agents</div><p>The wider frame — agents vs workflows and when to add (or not add) each piece of scaffolding.</p></div>
+      <div class="item"><div class="rt">Claude Code settings, hooks &amp; sub-agents</div><div class="mt">code.claude.com/docs</div><p>The concrete mechanisms behind controlled write-surfaces and deterministic enforcement — the E5 governance link.</p></div>
+      <div class="item"><div class="rt">The rise (and fall?) of the AI agent harness</div><div class="mt">Birgitta Böckeler, ThoughtWorks · martinfowler.com</div><p>Where "Agent = Model + Harness" and the shrink-the-harness thesis originate; useful narrative for explaining the pruning principle to a client.</p></div>
+      <div class="item"><div class="rt">Don't Build Multi-Agents</div><div class="mt">Walden Yan, Cognition · cognition.ai/blog/dont-build-multi-agents</div><p>Why single-threaded writes + a strong harness usually beat orchestration — context for keeping the harness simple.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (E3-harness-in-practice-deepdive.html). Its natural neighbours in the workbook are E1 (the framework), E2 (context), E4 (verification-first), E5 (governance) and M4 (information architecture / write-permissions).</p>
+
+</main>
+</div>
+</body>
+</html>

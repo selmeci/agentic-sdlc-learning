@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDLC Foundations — models &amp; agentic fit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edS{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahSa)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">SDLC · FOUNDATIONS</span>
+    <h1>SDLC models &amp; agentic fit</h1>
+    <span class="bc">intro companion to the whole workbook</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · What SDLC means</a>
+  <a href="#s1"><b>1</b> · The universal stages</a>
+  <a href="#s2"><b>2</b> · The process models</a>
+  <a href="#s3"><b>3</b> · When to use which</a>
+  <a href="#s4"><b>4</b> · How agents change the SDLC</a>
+  <a href="#s5"><b>5</b> · Takeaways</a>
+  <a href="#s6"><b>6</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Foundations · read first</p>
+      <h2 id="s0"><span class="n">0</span>Why an SDLC block, and what SDLC even means</h2>
+      <p class="lead">We reference "the SDLC" in almost every module — each E-topic has a "where it sits in the SDLC" line. But we never defined it, and the term hides a distinction that matters enormously for our engagement. This block fixes that: what the software development life cycle is, the process models teams actually use, how agentic development behaves inside each, and — the practical payoff — how to decide which model a given client or workstream should use.</p>
+      <p>The one distinction to hold onto up front: people say "SDLC" to mean two different things. There are the <strong>stages</strong> every piece of software passes through (requirements, design, build, test, release, operate) — roughly universal. And there is the <strong>process model</strong> — <em>how</em> you sequence and iterate through those stages (Waterfall, Agile, DevOps, and so on). The stages barely change; the process model is a genuine choice, and it is the choice that reshapes where agents plug in and what can go wrong.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Agentic development does not replace the SDLC — it <em>instruments</em> it with a fast inner loop. But the process model you're operating in decides how much that loop helps: models with fast, cheap iteration and strong verification (Agile, DevOps) amplify agents; models with slow, gated, document-heavy phases (strict Waterfall) blunt them — unless the gates are exactly what a regulated context requires. So "which SDLC model?" is upstream of "how do we roll out agents?"</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The universal stages — the spine</h2>
+      <p>Whatever the model, the same activities recur. This is the spine every process model traverses, once or many times:</p>
+      <figure>
+      <svg viewBox="0 0 860 150" role="img" aria-label="The universal SDLC stages">
+        <defs><marker id="ahSa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="12" y="52" width="122" height="46" rx="9" class="bxA"/><text x="24" y="76" class="ti">Requirements</text><text x="24" y="91" class="ts">what &amp; why</text>
+        <rect x="156" y="52" width="112" height="46" rx="9" class="bxC"/><text x="168" y="76" class="ti">Design</text><text x="168" y="91" class="ts">how</text>
+        <rect x="290" y="52" width="122" height="46" rx="9" class="bx"/><text x="302" y="76" class="ti">Implement</text><text x="302" y="91" class="ts">build</text>
+        <rect x="434" y="52" width="122" height="46" rx="9" class="bxK"/><text x="446" y="76" class="ti">Test / verify</text><text x="446" y="91" class="ts">external truth</text>
+        <rect x="578" y="52" width="122" height="46" rx="9" class="bxG"/><text x="590" y="76" class="ti">Release</text><text x="590" y="91" class="ts">deploy</text>
+        <rect x="722" y="52" width="126" height="46" rx="9" class="bxG"/><text x="734" y="76" class="ti">Operate</text><text x="734" y="91" class="ts">run &amp; evolve</text>
+        <line x1="134" y1="75" x2="156" y2="75" class="edS"/><line x1="268" y1="75" x2="290" y2="75" class="edS"/><line x1="412" y1="75" x2="434" y2="75" class="edS"/><line x1="556" y1="75" x2="578" y2="75" class="edS"/><line x1="700" y1="75" x2="722" y2="75" class="edS"/>
+        <text x="24" y="34" class="tg">EACH STAGE HAS A DOMINANT HARNESS COMPONENT (E1–E8)</text>
+        <text x="24" y="126" class="ts">Requirements→handoff/SDD · Design→context · Implement→loop/tools · Test→verification · Release/Operate→governance &amp; memory</text>
+      </svg>
+      <figcaption>The universal stages. Notice they map onto the components we've studied — this is the same "where it sits in the SDLC" line from each E-topic, gathered in one place. A process model is just a <em>route</em> through this spine: once (Waterfall), in widening loops (Iterative/Spiral), in tight repeated loops (Agile), or continuously (DevOps).</figcaption>
+      </figure>
+
+      <h2 id="s2"><span class="n">2</span>The process models — with agentic fit, pros &amp; cons</h2>
+      <p>Each model below gets the same treatment: what it is, how agentic development behaves inside it, and its trade-offs in that agentic context. Read them as a spectrum from "one slow pass" to "continuous flow."</p>
+
+      <div class="comp"><div class="chead"><span class="cid">1</span><h3>Waterfall</h3><span class="role">sequential, gated, one pass</span></div>
+      <p>Phases run strictly in order — requirements fully specified, then design, then build, then test — each signed off before the next. Heavy upfront documentation; change is expensive once you're downstream.</p>
+      <div class="io"><div class="box"><div class="lab">How agentic dev fits</div><ul><li>agents accelerate the <em>build</em> phase, but the model's slow feedback wastes their biggest strength (the inner loop)</li><li>the big upfront spec pairs naturally with spec-driven development (E8) — the spec is already the artifact</li><li>verification comes late, so agent errors surface late and expensively</li></ul></div>
+      <div class="box"><div class="lab">Pros &amp; cons (agentic)</div><ul><li>+ clear artifacts &amp; gates suit auditability and contracts</li><li>+ a complete spec is excellent agent input</li><li>− late feedback fights the propose→verify→correct loop (E4)</li><li>− churn/rework (E7) is most costly here</li></ul></div></div>
+      <p><strong>When to use:</strong> fixed, well-understood requirements; heavy compliance/contractual sign-off; safety domains where a change late is genuinely dangerous. Rare in greenfield software, common in regulated or fixed-scope work.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">2</span><h3>V-Model</h3><span class="role">Waterfall + paired verification</span></div>
+      <p>A Waterfall variant that pairs every development phase with a corresponding test/validation phase (requirements↔acceptance, design↔integration, module↔unit). Verification is planned up front, not bolted on.</p>
+      <div class="io"><div class="box"><div class="lab">How agentic dev fits</div><ul><li>the explicit verification pairing is a natural home for verification-first agents (E4)</li><li>acceptance criteria defined early = machine-verifiable targets (EARS/Gherkin, M3)</li><li>still gated, so iteration remains slow</li></ul></div>
+      <div class="box"><div class="lab">Pros &amp; cons (agentic)</div><ul><li>+ verification is first-class — agents thrive against defined oracles</li><li>+ traceability suits regulated/safety-critical work</li><li>− rigidity; changing requirements ripple through both arms</li><li>− upfront cost high before any agent leverage appears</li></ul></div></div>
+      <p><strong>When to use:</strong> safety-critical or regulated systems (medical, avionics, automotive) where traceable verification per requirement is mandatory. The gates are the point, not overhead.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">3</span><h3>Iterative &amp; Incremental</h3><span class="role">repeated cycles, growing function</span></div>
+      <p>Build in repeated passes; each cycle adds or refines functionality and produces something testable. Not fully adaptive like Agile, but no longer a single pass either.</p>
+      <div class="io"><div class="box"><div class="lab">How agentic dev fits</div><ul><li>each increment is a natural agent task → PR unit (L3, E6)</li><li>the repeated loop matches the agent loop; feedback arrives per increment</li><li>the harness's clean-state/session model (E3) maps onto increments</li></ul></div>
+      <div class="box"><div class="lab">Pros &amp; cons (agentic)</div><ul><li>+ feedback each cycle catches agent drift early</li><li>+ scopes work to reviewable chunks (review-capacity cap, E6/E7)</li><li>− needs discipline to keep increments coherent</li><li>− weaker at whole-system architecture emerging piecemeal</li></ul></div></div>
+      <p><strong>When to use:</strong> most brownfield modernization; when requirements are broadly known but will refine with feedback. A strong default for our engagements.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">4</span><h3>Spiral</h3><span class="role">risk-driven iteration + prototyping</span></div>
+      <p>Iterative, but each loop is organised around <em>risk</em>: identify the biggest risk, prototype/experiment to retire it, then proceed. Prototyping is explicit.</p>
+      <div class="io"><div class="box"><div class="lab">How agentic dev fits</div><ul><li>agents are excellent at cheap throwaway prototypes to retire a risk fast</li><li>the risk-first framing pairs with our security posture (M7) and blast-radius thinking</li><li>experiments are ideal low-stakes places to trial higher autonomy</li></ul></div>
+      <div class="box"><div class="lab">Pros &amp; cons (agentic)</div><ul><li>+ agent-generated prototypes make risk-retirement very cheap</li><li>+ explicit risk focus disciplines where to trust agents</li><li>− heavyweight ceremony for small projects</li><li>− needs experienced judgment to run well</li></ul></div></div>
+      <p><strong>When to use:</strong> large, high-risk, novel projects where unknowns dominate and early prototyping pays for itself. Overkill for routine work.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">5</span><h3>Agile — Scrum &amp; Kanban</h3><span class="role">short adaptive iterations / flow</span></div>
+      <p>Short iterations (Scrum sprints) or continuous flow with WIP limits (Kanban), continuous feedback, requirements expected to evolve. The dominant modern default.</p>
+      <div class="io"><div class="box"><div class="lab">How agentic dev fits</div><ul><li>tight loops match the agent loop best — fastest feedback of any model</li><li>backlog items ≈ agent-ready tasks (P3/M2); sprint = a batch of delegated PRs</li><li><em>but</em>: agent output can flood the board → the review bottleneck (E7) bites hardest here</li></ul></div>
+      <div class="box"><div class="lab">Pros &amp; cons (agentic)</div><ul><li>+ maximal agent leverage; fast course-correction</li><li>+ natural fit for L3 delegated task→PR</li><li>− WIP/review capacity is the real cap — more agents ≠ more throughput</li><li>− weak upfront spec can let agents build the wrong thing fast</li></ul></div></div>
+      <p><strong>When to use:</strong> evolving requirements, product development, teams with a real feedback loop and review capacity. The best fit for high agentic leverage — provided verification (E4) and the review cap (E6) are respected.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">6</span><h3>DevOps / Continuous Delivery</h3><span class="role">continuous, automated, dev+ops merged</span></div>
+      <p>Not a replacement for Agile but its operational extension: automate build/test/deploy so change flows continuously to production, with tight monitoring and fast rollback. This is the world DORA (E7) measures.</p>
+      <div class="io"><div class="box"><div class="lab">How agentic dev fits</div><ul><li>the CI/CD automation <em>is</em> the agent's verification + governance surface (E4/E5)</li><li>fast rollback + monitoring = bounded blast radius (M7) for agent changes</li><li>enables narrow high-autonomy (L4) workflows: Dependabot-style, flaky-test repair</li></ul></div>
+      <div class="box"><div class="lab">Pros &amp; cons (agentic)</div><ul><li>+ the strongest verification/governance base → the highest safe autonomy</li><li>+ continuous flow suits agents that never tire</li><li>− CI is the riskiest context: unattended, credentialed (M7)</li><li>− demands real maturity; immature DevOps + agents = fast instability (DORA)</li></ul></div></div>
+      <p><strong>When to use:</strong> teams with mature automation and monitoring; anywhere you want the highest safe autonomy. It is less a choice than the <em>maturity target</em> the other models grow toward.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>When to use which — a decision lens</h2>
+      <p>The model is chosen by the shape of the problem, not fashion. The dimensions that actually decide it:</p>
+      <table class="map"><tr><th>If…</th><th>lean toward</th><th>because</th></tr>
+      <tr><td>requirements are fixed &amp; fully known</td><td>Waterfall / V-Model</td><td>upfront spec is cheap to honour; change is rare</td></tr>
+      <tr><td>safety-critical / regulated, traceability required</td><td>V-Model</td><td>gated verification per requirement is mandatory, not overhead</td></tr>
+      <tr><td>requirements broadly known, will refine</td><td>Iterative &amp; Incremental</td><td>feedback each cycle without full adaptive overhead</td></tr>
+      <tr><td>high novelty / dominant unknowns</td><td>Spiral</td><td>retire risk early with cheap (agent) prototypes</td></tr>
+      <tr><td>evolving product, fast feedback available</td><td>Agile (Scrum/Kanban)</td><td>tightest loop = maximal agent leverage</td></tr>
+      <tr><td>mature automation &amp; monitoring</td><td>DevOps / CD</td><td>strongest verification base → highest safe autonomy</td></tr>
+      </table>
+      <div class="callout pine"><div class="t">The agentic overlay on the decision</div><p>Agentic development shifts the calculus toward <em>faster-feedback</em> models. Because agents make writing cheap and relocate the constraint to review (E7), the models that pay off most are those with a fast, trustworthy verification loop (E4) and continuous flow (Agile/DevOps). But the shift is conditional: without the verification and governance base, a fast model just produces instability faster (the DORA 2024 finding). So the honest recommendation is rarely "adopt Agile/DevOps" in the abstract — it's "build the verification + governance base first, then the faster models unlock higher autonomy." In regulated or safety-critical contexts, the gated models remain correct and agents live inside their gates.</p></div>
+
+      <h2 id="s4"><span class="n">4</span>How agentic development changes the SDLC itself</h2>
+      <p>Beyond "which model," agents change the life cycle in three structural ways worth naming:</p>
+      <div class="io"><div class="box"><div class="lab">The shifts</div><ul><li><strong>The loop tightens.</strong> Verification moves from a late stage to an inner, per-turn signal — the SDLC gains a fast feedback loop inside implementation (E4).</li><li><strong>The bottleneck moves.</strong> From writing to reviewing (E7); the constraint is now human review capacity, not typing speed (E6).</li><li><strong>The spec returns.</strong> After years of "working software over documentation," explicit specs matter again — because the agent needs them as input (E8/SDD).</li></ul></div>
+      <div class="box"><div class="lab">What stays true</div><ul><li>the stages don't disappear — they're instrumented, not removed</li><li>a weak surrounding system is exposed, not fixed, by speed (DORA)</li><li>human judgment stays at the gates: intent, architecture, merge</li><li>the safe autonomy level is still set by verification strength, not the model</li></ul></div></div>
+
+      <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess the client's model first</div><ul><li>which process model are they actually running (vs claiming)?</li><li>how fast &amp; trustworthy is their feedback loop today?</li><li>regulated/safety constraints that mandate gates?</li><li>review capacity relative to expected agent output?</li></ul></div>
+      <div class="box"><div class="lab">Then position agents accordingly</div><ul><li>gated models → agents inside the gates; spec-driven (E8)</li><li>iterative/Agile → agent task→PR at L3; watch the review cap</li><li>mature DevOps → narrow L4 for repetitive, verifiable slices</li><li>always: build verification + governance before raising autonomy</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember this block by</div><p>"SDLC" means both the universal stages (requirements→operate) and the process model that routes through them (Waterfall→DevOps) — and the model is the real choice. Agentic development doesn't replace the life cycle, it instruments it with a fast inner loop, which pays off most in faster-feedback models (Agile/DevOps) but only once the verification and governance base exists — otherwise speed just surfaces weakness faster. Choose the model by the problem's shape (fixed vs evolving requirements, risk, regulation, maturity), then position agents inside it: in the gates where gates are required, at task→PR where feedback is fast, and at narrow high autonomy only where automation is mature.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Royce (1970) &amp; the origins of Waterfall / iterative critique</div><div class="mt">"Managing the Development of Large Software Systems"</div><p>The paper usually (mis)cited as inventing Waterfall — it actually argued for iteration. Useful context for why the sequential model persists and where it fails.</p></div>
+      <div class="item"><div class="rt">Boehm — the Spiral model</div><div class="mt">Barry Boehm, "A Spiral Model of Software Development and Enhancement" (1988)</div><p>The primary source for risk-driven iteration; the framing behind treating agent prototypes as risk-retirement.</p></div>
+      <div class="item"><div class="rt">The Agile Manifesto &amp; Scrum/Kanban guides</div><div class="mt">agilemanifesto.org · scrumguides.org · Kanban (Anderson)</div><p>The adaptive-model canon; read for where "working software over comprehensive documentation" meets the agent's need for explicit specs.</p></div>
+      <div class="item"><div class="rt">Accelerate / DORA — the DevOps evidence base</div><div class="mt">Forsgren, Humble, Kim · dora.dev</div><p>Why continuous delivery + strong verification is the maturity target — and the data on what happens when speed outruns the surrounding system (see E7).</p></div>
+      <div class="item"><div class="rt">Our E-series deep dives</div><div class="mt">this workbook — E1–E8</div><p>Each E-topic's "where it sits in the SDLC" line, now gathered here; E4 (verification), E6 (autonomy), E7 (metrics), E8 (spec-driven) are the direct ties.</p></div>
+      </div>
+      <p class="closingnote">This foundations block is also available as a standalone downloadable file (SDLC-foundations-deepdive.html). It is the intro companion to the whole workbook: every E-topic's SDLC line traces back here, and the decision lens in §3 feeds the rollout planning in the trajectory (T-series).</p>
+
+</main>
+</div>
+</body>
+</html>

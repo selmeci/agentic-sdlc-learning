@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P1 Deep Dive — AI-Assisted Discovery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edP1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahP1a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">P1 · DEEP DIVE</span>
+    <h1>AI-Assisted Discovery</h1>
+    <span class="bc">companion to module M2 · Product harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why discovery starts the product harness</a>
+  <a href="#s1"><b>1</b> · What agents change</a>
+  <a href="#s2"><b>2</b> · The lazy-synthesis anti-pattern</a>
+  <a href="#s3"><b>3</b> · The two-perspectives method</a>
+  <a href="#s4"><b>4</b> · AI evals</a>
+  <a href="#s5"><b>5</b> · Tools vs methodology</a>
+  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M2</p>
+      <h2 id="s0"><span class="n">0</span>Why discovery is where the product harness starts</h2>
+      <p class="lead">The engineering deep dives (E1–E8) all rest on one assumption: that the task handed to the agent is the <em>right</em> task. P1 is where that rightness is decided. Discovery is the practice of continuously deciding what to build and why — and it is the first place a product harness can either amplify a PM or quietly replace the thinking that makes them a PM.</p>
+      <p>For our engagement the framing matters as much as the technique. In the product layer the agent <strong>assists</strong>; it never owns the judgment. Everything in this topic is an application of that one rule to the messy, human-heavy work of understanding users — and it sets up the P1–P5 assistance scale (P5, full delegation of product judgment, is the anti-pattern) that the rest of M2 builds on.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>AI in discovery is a <em>second perspective</em>, not a replacement for the first. The value is never the AI's summary on its own — it is the <strong>delta</strong> between the PM's own synthesis and the AI's. If the PM stops synthesising and just reads AI summaries, discovery has been deleted, not accelerated.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>What discovery is — and what agents change</h2>
+      <p>Discovery, in Teresa Torres's continuous sense, is the ongoing habit of talking to users weekly, mapping the opportunity space, and letting evidence — not opinion — drive what gets built. It is deliberately human-heavy: empathy, context, and the ability to notice the thing nobody said out loud are the point.</p>
+      <p>Agents change the <em>economics</em> of discovery without changing its purpose. They make it cheap to transcribe, cluster, and re-synthesise large volumes of interview and feedback data — work that used to bottleneck a PM. The risk is precisely that cheapness: when synthesis becomes a button, the temptation is to press it and move on, which is where the detail (and the empathy) leaks out.</p>
+      <div class="io"><div class="box"><div class="lab">What agents genuinely help with</div><ul><li>transcription &amp; first-pass clustering of many interviews</li><li>surfacing patterns across a large corpus a PM can't hold in their head</li><li>a fast parallel synthesis to compare against your own</li><li>drafting eval criteria for "did we learn what we needed?"</li></ul></div>
+      <div class="box"><div class="lab">What must stay human</div><ul><li>conducting the interviews (the empathy is the data)</li><li>the first synthesis pass — thinking happens in the doing</li><li>deciding which opportunities matter (product judgment)</li><li>noticing the unsaid, the contradiction, the surprise</li></ul></div></div>
+
+      <h2 id="s2"><span class="n">2</span>The anti-pattern: "lazy AI interview synthesis"</h2>
+      <p>This is the failure mode to name explicitly for a client, because it looks like productivity. The pattern — transcript → AI summary → move on — feels efficient and is quietly catastrophic for discovery quality.</p>
+      <figure>
+      <svg viewBox="0 0 860 250" role="img" aria-label="Lazy AI synthesis versus the two-perspectives method">
+        <defs><marker id="ahP1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="28" class="tg">ANTI-PATTERN — LAZY AI SYNTHESIS (captures ~5% of the value)</text>
+        <rect x="20" y="40" width="130" height="42" rx="8" class="bxA"/><text x="30" y="61" class="ts">interview</text><text x="30" y="75" class="ts">transcript</text>
+        <rect x="200" y="40" width="130" height="42" rx="8" class="bx"/><text x="210" y="61" class="ts">AI summary</text><text x="210" y="75" class="ts">(one pass)</text>
+        <rect x="380" y="40" width="130" height="42" rx="8" class="bx" style="stroke:#B3362B"/><text x="390" y="61" class="ts">move on</text><text x="390" y="75" class="ts">PM stops thinking</text>
+        <line x1="150" y1="61" x2="200" y2="61" class="edP1"/><line x1="330" y1="61" x2="380" y2="61" class="edP1"/>
+        <text x="540" y="58" class="ts" fill="#B3362B">→ 20–40% of important</text><text x="540" y="72" class="ts" fill="#B3362B">detail lost; empathy gone</text>
+        <text x="20" y="130" class="tg">TWO-PERSPECTIVES METHOD — the fix (value = the delta)</text>
+        <rect x="20" y="142" width="130" height="46" rx="8" class="bxK"/><text x="30" y="164" class="ts">PM's OWN</text><text x="30" y="178" class="ts">synthesis first</text>
+        <rect x="200" y="142" width="130" height="46" rx="8" class="bxC"/><text x="210" y="164" class="ts">AI parallel</text><text x="210" y="178" class="ts">synthesis</text>
+        <rect x="380" y="142" width="150" height="46" rx="8" class="bxA"/><text x="390" y="164" class="ts">COMPARE the two</text><text x="390" y="178" class="ts">study the differences</text>
+        <rect x="560" y="142" width="150" height="46" rx="8" class="bxK"/><text x="570" y="164" class="ts">richer synthesis</text><text x="570" y="178" class="ts">+ spot-check raw</text>
+        <line x1="150" y1="165" x2="200" y2="165" class="edP1"/><line x1="330" y1="165" x2="380" y2="165" class="edP1"/><line x1="530" y1="165" x2="560" y2="165" class="edP1"/>
+        <path d="M285 142 C 285 110, 90 118, 85 142" class="edP1 edD"/><text x="150" y="112" class="ts">independent</text>
+      </svg>
+      <figcaption>Lazy synthesis (top) captures roughly 5% of the value and removes the PM from the thinking; the two-perspectives method (bottom) keeps the PM's own synthesis first, uses AI as an independent second pass, and extracts the value from the differences. Torres: unreviewed AI synthesis misses 20–40% of important detail.</figcaption>
+      </figure>
+      <p>The numbers to carry: unreviewed AI interview synthesis misses <strong>20–40%</strong> of important detail, and the lazy pattern captures only about <strong>5%</strong> of the value real discovery would. The fix is not "better prompts" — it is keeping the human synthesis in the loop and mining the comparison.</p>
+
+      <h2 id="s3"><span class="n">3</span>The two-perspectives method — inputs &amp; outputs</h2>
+      <p>The core technique, stated as a repeatable process the PM actually follows.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>raw interview material (the PM conducted the interviews)</li><li>the PM's own first-pass synthesis, done before seeing AI's</li><li>a parallel AI synthesis of the same material</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a richer synthesis built from the <em>differences</em></li><li>caught blind spots (in both the PM's and AI's reading)</li><li>spot-checks of AI claims against the raw source</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Requirements / discovery — upstream of the handoff contract (M3); this is where "the right task" is decided before any agent builds anything.</li></ul></div></div>
+      <p><strong>For our rollout:</strong> the practical obstacle is friction — if comparing two syntheses is expensive, PMs won't do it and will slide back to lazy synthesis. Part of building the product harness is making the compare step cheap (templates, a side-by-side view), so the healthy behaviour is the path of least resistance — the same "make the good path easy" principle as verification in E4.</p>
+
+      <h2 id="s4"><span class="n">4</span>AI evals — the product-layer verification loop</h2>
+      <p>The most important structural idea in P1: discovery needs its own version of the verification loop that makes engineering delegation safe (E4). In the product layer that loop is <strong>AI evals</strong> — lightweight, explicit checks of "did we actually learn what we set out to learn, and is the synthesis faithful to the source?"</p>
+      <div class="callout"><div class="t">The parallel that ties M2 to M1</div><p>Engineering has tests as external truth; product has no deterministic oracle, so its "truth" is human judgment plus consistency checks. AI evals are how you approximate a feedback loop anyway: define what a good synthesis must contain, check the AI's output against it, spot-check against raw interviews. It is weaker than a test suite — which is exactly why the product scale (P1–P5) caps lower than the engineering one (L1–L5): the verification is human, so it cannot be automated away.</p></div>
+      <p>This is also the honest limit we carry to a client: you can instrument discovery, but you cannot make product judgment deterministic. The eval reduces the chance of a bad synthesis slipping through; it never removes the PM's responsibility for the call.</p>
+
+      <h2 id="s5"><span class="n">5</span>Tools vs methodology</h2>
+      <p>A recurring theme across the whole workbook, sharp here: the tools (Dovetail, Notion AI, and whatever launches next quarter) are <em>secondary</em>. The methodology — weekly customer touchpoints, the opportunity solution tree, two-perspectives synthesis, AI evals — is <em>primary</em> and portable across tools.</p>
+      <div class="io"><div class="box"><div class="lab">Primary — the methodology (durable)</div><ul><li>continuous weekly touchpoints with users</li><li>opportunity solution tree to map the space</li><li>two-perspectives synthesis; AI evals</li></ul></div>
+      <div class="box"><div class="lab">Secondary — the tools (swappable)</div><ul><li>Dovetail, Notion AI, transcription services</li><li>useful, but not the thing that makes discovery good</li><li>chosen to fit the methodology, never the reverse</li></ul></div></div>
+      <p><strong>For our rollout:</strong> we sell the methodology, not a tool stack. A client who adopts Dovetail but keeps doing lazy synthesis has gained nothing; a client who adopts the two-perspectives habit with any tool has improved discovery. This keeps us vendor-neutral and durable against the weekly tool churn.</p>
+
+      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>is the PM doing continuous discovery at all, or ad-hoc?</li><li>has "lazy AI synthesis" already crept in?</li><li>is there any eval of synthesis quality today?</li><li>are tools driving the process, or the methodology?</li></ul></div>
+      <div class="box"><div class="lab">Build</div><ul><li>institute two-perspectives synthesis as the default habit</li><li>make the compare step cheap (templates / side-by-side)</li><li>add lightweight AI evals + raw-interview spot-checks</li><li>frame agents as assist-only — set up the P1–P5 scale (P5 = anti-pattern)</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember P1 by</div><p>Discovery decides the right task, so it is where the product harness begins — and where AI is a second perspective, never a replacement for the PM's own synthesis. The anti-pattern is lazy AI synthesis (transcript → summary → move on), which loses 20–40% of detail and captures ~5% of the value; the fix is the two-perspectives method, where the value is the delta between the PM's synthesis and the AI's. AI evals are the product-layer analogue of the verification loop — weaker than tests because the oracle is human judgment, which is exactly why the product scale caps lower than engineering's.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Teresa Torres — Continuous Discovery Habits</div><div class="mt">Product Talk · producttalk.org</div><p>The canonical source for continuous discovery, the opportunity solution tree, and weekly touchpoints — and Torres's positions on where AI helps and where it erodes discovery. Start here.</p></div>
+      <div class="item"><div class="rt">Report 2 — the product harness &amp; P1–P5 (this workbook)</div><div class="mt">module M2, discovery section</div><p>The full research behind this topic and the assistance scale it feeds into; read alongside P2 (PRDs) and P5 (the scale itself).</p></div>
+      <div class="item"><div class="rt">The two-perspectives / parallel-synthesis practice</div><div class="mt">practitioner writing on AI-assisted research synthesis</div><p>Concrete workflows for running your own synthesis against an AI's and mining the differences — the mechanics of §3.</p></div>
+      <div class="item"><div class="rt">E4 — Verification-first (this workbook)</div><div class="mt">module M1, topic E4</div><p>The engineering verification loop that AI evals are the product-layer analogue of — the tie that explains why the product scale caps lower.</p></div>
+      <div class="item"><div class="rt">Continuous discovery tooling — Dovetail, Notion AI</div><div class="mt">vendor docs</div><p>The secondary layer: useful for transcription and clustering, but chosen to fit the methodology, never to define it.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (P1-ai-assisted-discovery-deepdive.html). Its natural neighbours in the workbook are P2 (PRDs &amp; requirements), P3 (decomposition into agent-ready work), P5 (the P1–P5 assistance scale), M3 (the handoff contract discovery feeds), and E4 (the verification loop AI evals mirror).</p>
+
+</main>
+</div>
+</body>
+</html>

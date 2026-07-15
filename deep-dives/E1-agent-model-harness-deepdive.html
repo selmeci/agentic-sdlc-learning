@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E1 Deep Dive — Agent = Model + Harness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E1 · DEEP DIVE</span>
+    <h1>Agent = Model + Harness</h1>
+    <span class="bc">companion to module M1 · Engineering harness</span>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#why"><b>0</b> · Why this matters</a>
+  <a href="#eq"><b>1</b> · The core equation</a>
+  <a href="#map"><b>2</b> · The seven components</a>
+  <a href="#c-prompt" class="sub">Prompt</a>
+  <a href="#c-context" class="sub">Context</a>
+  <a href="#c-harness" class="sub">Harness</a>
+  <a href="#c-loop" class="sub">Loop</a>
+  <a href="#c-tools" class="sub">Tools</a>
+  <a href="#c-verif" class="sub">Verification</a>
+  <a href="#c-gov" class="sub">Governance</a>
+  <a href="#c-mem" class="sub">Memory · Orchestration</a>
+  <a href="#sdlc"><b>3</b> · Mapping to the SDLC</a>
+  <a href="#takeaways"><b>4</b> · Takeaways for rollout</a>
+  <a href="#reading"><b>5</b> · Further reading</a>
+</nav>
+
+<main>
+<section>
+  <p class="kicker">Study companion</p>
+  <h2 id="why"><span class="n">0</span>Why this matters for us</h2>
+  <p class="lead">E1 is the conceptual foundation for the entire engagement. If we get this framing right, every later decision — how much autonomy to grant, which guardrails are deterministic, where the human gates sit — follows from it. If we get it wrong, we sell the client a "smarter autocomplete" and it fails in production the way DORA's data predicts.</p>
+  <p>Our goal is to introduce an <strong>agentic engineering harness</strong> at a brownfield client. This document unpacks the seven-component framework so that we can (a) explain it credibly to a technical audience, (b) assess what a client already has versus what we must build, and (c) know the input and output of each component so the pieces actually connect into a working loop rather than a demo.</p>
+  <div class="callout amber">
+    <div class="t">The one idea to internalise</div>
+    <p>A model is a <em>capability</em>; an agent is a <em>system</em>. The difference — and almost all of our engineering value — lives in the harness. When people say "the agent isn't good enough," they usually mean the harness around a perfectly capable model is missing or misconfigured.</p>
+  </div>
+</section>
+
+<section>
+  <h2 id="eq"><span class="n">1</span>The core equation: Agent = Model + Harness</h2>
+  <p>The framing comes from Birgitta Böckeler (ThoughtWorks) and is echoed in Anthropic's engineering writing: an <strong>agent</strong> is a language <strong>model</strong> wrapped in a <strong>harness</strong> that gives it state, tool execution, feedback loops, and enforceable constraints. Simon Willison's compact definition of the runtime pattern completes it: an agent "runs tools in a loop to achieve a goal."</p>
+  <p>The practical consequence is where the discipline's centre of gravity has moved. Two years ago the leverage was in <em>prompt engineering</em> — phrasing the request well. Today the leverage is in <strong>context engineering</strong> (curating what the model sees at each step) and <strong>harness engineering</strong> (designing the scaffolding around it). The model is increasingly a commodity you swap out; the harness is the durable asset you build and own.</p>
+  <div class="callout">
+    <div class="t">A principle that will keep recurring</div>
+    <p>Every harness component encodes an assumption about what the model <em>cannot</em> do on its own. When the model improves, some components become unnecessary — and the right move is to <strong>remove</strong> them. A harness is therefore never "finished"; it is continuously pruned as models get stronger. Anthropic saw this directly: moving from one model generation to the next let them delete scaffolding they had previously needed.</p>
+  </div>
+  <p>This is also why we resist the temptation to over-build. The framework below is not a checklist of things every client must have on day one — it is a map of the surfaces where engineering effort pays off, to be applied in proportion to the client's maturity (assessed in E6) and rolled out in phases (E7).</p>
+</section>
+<section>
+  <h2 id="map"><span class="n">2</span>The seven components — with inputs &amp; outputs</h2>
+  <p>Below is the whole framework as one picture, then each component in turn. For each, we give a plain explanation, what it <strong>requires on input</strong>, what it <strong>produces on output</strong>, where it sits in the <strong>SDLC</strong>, and a short note for our rollout. Read the diagram first: notice that the components form a loop, not a pipeline — output feeds back in.</p>
+
+  <figure>
+  <svg viewBox="0 0 900 470" role="img" aria-label="The seven-component agent framework as a loop">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+    <text x="30" y="26" class="tg">INPUTS</text>
+    <rect x="24" y="36" width="150" height="40" rx="8" class="bxA"/><text x="34" y="54" class="ti">Prompt (intent)</text><text x="34" y="69" class="ts">task spec · goal</text>
+    <rect x="24" y="88" width="150" height="40" rx="8" class="bxA"/><text x="34" y="106" class="ti">Context</text><text x="34" y="121" class="ts">code · docs · retrieved</text>
+    <rect x="24" y="140" width="150" height="40" rx="8" class="bxK"/><text x="34" y="158" class="ti">Memory</text><text x="34" y="173" class="ts">progress · prior state</text>
+    <rect x="250" y="60" width="380" height="240" rx="14" fill="#EBEFFA" opacity="0.4" stroke="#4A63C8" stroke-dasharray="6 4"/>
+    <text x="264" y="82" class="tg">HARNESS — the orchestrating scaffold</text>
+    <circle cx="440" cy="185" r="66" class="bx"/><text x="440" y="180" class="tt" text-anchor="middle">Model</text><text x="440" y="198" class="ts" text-anchor="middle">reasoning core</text>
+    <path d="M300 150 A150 150 0 0 1 380 130" class="ed"/>
+    <text x="300" y="120" class="tg">LOOP</text>
+    <path d="M506 150 A150 150 0 0 1 520 210" class="ed"/>
+    <path d="M520 230 A150 150 0 0 1 440 258" class="ed"/>
+    <path d="M420 258 A150 150 0 0 1 372 210" class="ed"/>
+    <path d="M372 165 A150 150 0 0 1 380 138" class="ed"/>
+    <rect x="266" y="250" width="150" height="38" rx="8" class="bx"/><text x="276" y="267" class="ti">Tools</text><text x="276" y="281" class="ts">bash · edit · MCP</text>
+    <rect x="466" y="250" width="150" height="38" rx="8" class="bx"/><text x="476" y="267" class="ti">Verification</text><text x="476" y="281" class="ts">tests · CI signal</text>
+    <line x1="341" y1="250" x2="405" y2="210" class="ed"/>
+    <line x1="541" y1="250" x2="480" y2="210" class="ed edD"/>
+    <rect x="250" y="320" width="380" height="34" rx="8" class="bxG"/><text x="440" y="342" class="ti" text-anchor="middle">Governance — deterministic hooks · permissions · sandbox</text>
+    <line x1="440" y1="300" x2="440" y2="320" class="ed"/><text x="448" y="314" class="ts">constrains every action</text>
+    <text x="726" y="26" class="tg">OUTPUTS</text>
+    <rect x="700" y="120" width="176" height="40" rx="8" class="bxK"/><text x="710" y="138" class="ti">Merge-ready change</text><text x="710" y="153" class="ts">code · PR · artifact</text>
+    <rect x="700" y="172" width="176" height="40" rx="8" class="bxK"/><text x="710" y="190" class="ti">Updated memory</text><text x="710" y="205" class="ts">progress · learnings</text>
+    <line x1="630" y1="150" x2="700" y2="140" class="ed"/>
+    <path d="M788 212 V400 H90 V180" class="ed edD"/><text x="420" y="418" class="ts" text-anchor="middle">feedback: verification result &amp; new state re-enter the loop</text>
+    <text x="30" y="215" class="tg">↑ tainted inputs are untrusted (see M7)</text>
+  </svg>
+  <figcaption>The framework as a loop. Amber = task/context inputs, green = memory (cross-cutting), the cobalt dashed box = the harness wrapping the model, gray = governance constraining every action. The dashed return path is what makes it "agentic": verification results and updated state feed back rather than terminating a one-shot generation.</figcaption>
+  </figure>
+
+  <div class="comp" id="c-prompt">
+    <div class="head"><span class="cid">01</span><h3>Prompt</h3><span class="role">the instruction layer</span></div>
+    <p>The standing instructions plus the specific task: who the agent is, how it should behave, and what it is being asked to do now. In coding agents this splits into a durable system/role layer (the <span class="mono">CLAUDE.md</span>/<span class="mono">AGENTS.md</span> conventions) and the per-task request.</p>
+    <div class="io">
+      <div class="box"><div class="lab">Requires on input</div><ul><li>a clearly scoped goal (from the handoff contract, M3)</li><li>role/behaviour conventions for the repo</li><li>explicit non-goals and constraints</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a bounded instruction the model can act on</li><li>the frame that determines whether context is even interpreted correctly</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits in the SDLC</div><ul><li>Refinement / task definition — the prompt is the downstream face of the handoff contract; a vague prompt is an under-specified ticket wearing a costume.</li></ul></div>
+    </div>
+    <p><strong>For our rollout:</strong> the prompt layer is <em>advisory</em> — the model may drift from it under pressure or injection. Treat it as documentation of intent, never as a security or correctness boundary. Keep the durable part short and load-bearing (every line earns its place).</p>
+  </div>
+
+  <div class="comp" id="c-context">
+    <div class="head"><span class="cid">02</span><h3>Context</h3><span class="role">what the model sees</span></div>
+    <p>The working set of information assembled for each step: relevant code, documentation, retrieved snippets, prior messages, tool results. Context engineering is the iterative discipline of curating "the smallest set of high-signal tokens" at every decision — not stuffing everything in.</p>
+    <div class="io">
+      <div class="box"><div class="lab">Requires on input</div><ul><li>a retrieval mechanism (agentic search / grep, or RAG)</li><li>source-of-truth artifacts to draw from (M4)</li><li>a budget discipline — what to include, what to link</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a curated, task-relevant window handed to the model</li><li>the single biggest lever on output quality</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits in the SDLC</div><ul><li>Cross-cutting, but heaviest at implementation time — the agent assembles context each turn as it navigates the codebase.</li></ul></div>
+    </div>
+    <p><strong>For our rollout:</strong> beware <em>context rot</em> — recall degrades as the window grows. Prefer "reference, don't copy": link to masters, inject summarised excerpts. Every piece of retrieved content is <em>untrusted</em> until proven otherwise (this is the entry point for injection — see M7).</p>
+  </div>
+
+  <div class="comp" id="c-harness">
+    <div class="head"><span class="cid">03</span><h3>Harness</h3><span class="role">the orchestrating scaffold</span></div>
+    <p>The component the whole equation is named for: the software around the model that manages sessions, assembles context, invokes tools, enforces constraints, and carries state between turns. It is where our engineering lives. Patterns include the initializer agent (first session sets up <span class="mono">init.sh</span>, a progress file, an initial commit) and the clean-state principle (every session ends merge-ready).</p>
+    <div class="io">
+      <div class="box"><div class="lab">Requires on input</div><ul><li>a runtime (CLI / SDK / IDE integration)</li><li>configuration: which tools, which permissions, which hooks</li><li>a state convention (progress file, git history)</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a repeatable, constrained execution environment</li><li>continuity across sessions (the "engineers in shifts" model)</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits in the SDLC</div><ul><li>Infrastructure/platform layer — set up once (Phase 1 of rollout), then maintained and pruned as models improve.</li></ul></div>
+    </div>
+    <p><strong>For our rollout:</strong> this is the "internal product" we build and own (see trajectory T5). Its quality determines everything downstream; treat it with versioning, ownership, and — eventually — its own evals.</p>
+  </div>
+
+  <div class="comp" id="c-loop">
+    <div class="head"><span class="cid">04</span><h3>Loop</h3><span class="role">the runtime cycle</span></div>
+    <p>The cycle that makes it agentic: the model proposes an action, the harness executes it via a tool, the result returns to context, the model reasons again — repeating until the goal is met or a stop condition fires. Willison's "tools in a loop" is exactly this.</p>
+    <div class="io">
+      <div class="box"><div class="lab">Requires on input</div><ul><li>tools it can call and observe results from</li><li>stop conditions (done, budget exhausted, needs human)</li><li>a way to detect and recover from being stuck</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a sequence of actions converging on the goal</li><li>a trace/audit of what was attempted</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits in the SDLC</div><ul><li>Implementation runtime — this is the agent "doing the work" between task hand-off and PR.</li></ul></div>
+    </div>
+    <p><strong>For our rollout:</strong> loops need blocker-recognition. Devin completed only 3 of 20 tasks in Answer.AI's independent test; the failures came from a loop that pushed ahead on impossible tasks instead of stopping. A good loop knows when to ask a human — which is where autonomy level (E6) is really decided.</p>
+  </div>
+
+  <div class="comp" id="c-tools">
+    <div class="head"><span class="cid">05</span><h3>Tools</h3><span class="role">the hands</span></div>
+    <p>The concrete actions the agent can take: run shell commands, read/edit files, search, call external systems via MCP. Tools are what turn reasoning into effects on the world — and therefore where capability and risk both concentrate.</p>
+    <div class="io">
+      <div class="box"><div class="lab">Requires on input</div><ul><li>well-described tool interfaces the model can use</li><li>scoped credentials (least privilege)</li><li>an allowlist of what may be called</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>real effects: file changes, command results, API calls</li><li>observations that re-enter the loop</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits in the SDLC</div><ul><li>Implementation &amp; integration — and, via MCP, the seam to ticketing, design, and deployment systems.</li></ul></div>
+    </div>
+    <p><strong>For our rollout:</strong> tools are the richest attack surface (M7). Every tool is a privilege you hand an agent that may be injected. One-repo-per-session, scoped tokens, no <span class="mono">service_role</span>, human gate on writes.</p>
+  </div>
+
+  <div class="comp" id="c-verif">
+    <div class="head"><span class="cid">06</span><h3>Verification / feedback</h3><span class="role">the external truth</span></div>
+    <p>The deterministic signal that tells the agent — and us — whether the work is actually correct: tests, type-checks, linters, CI results. This is the component that makes delegation safe, because it is truth the model cannot argue away. TDD fits agents naturally: run tests, read failures, self-correct.</p>
+    <div class="io">
+      <div class="box"><div class="lab">Requires on input</div><ul><li>a runnable, reasonably fast test suite</li><li>CI able to return results the agent can read</li><li>machine-verifiable acceptance criteria (EARS/Gherkin, M3)</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a pass/fail signal that drives the loop</li><li>the merge gate's evidence base</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits in the SDLC</div><ul><li>Testing &amp; CI — but shifted <em>left</em>: verification is written before or alongside implementation, becoming the specification.</li></ul></div>
+    </div>
+    <p><strong>For our rollout:</strong> this is the make-or-break prerequisite. A client without a fast, trustworthy test loop cannot safely go past L2. Agents also "cheat" tests — protect them (three-layer defence: rule + hook + verification gate).</p>
+  </div>
+
+  <div class="comp" id="c-gov">
+    <div class="head"><span class="cid">07</span><h3>Governance</h3><span class="role">the enforced boundary</span></div>
+    <p>The deterministic constraints on what the agent may do, enforced by the harness rather than requested of the model: permission rules, pre/post-tool hooks, sandboxing, network policy. The defining distinction of the whole framework lives here — <strong>advisory vs deterministic</strong>.</p>
+    <div class="io">
+      <div class="box"><div class="lab">Requires on input</div><ul><li>a policy: what is always allowed / denied / gated</li><li>enforcement points (hooks, OS sandbox, egress proxy)</li><li>an audit mechanism</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>hard guarantees independent of model behaviour</li><li>bounded, observable, reversible blast radius</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits in the SDLC</div><ul><li>Cross-cutting platform concern — spanning dev, CI, and deploy; the organisational layer sits above it (T7).</li></ul></div>
+    </div>
+    <p><strong>For our rollout:</strong> the litmus test for any rule — "what must never happen" goes in a hook/permission (deterministic); "what the model should know" goes in the prompt (advisory). Under injection, only the deterministic layer holds.</p>
+  </div>
+
+  <div class="comp" id="c-mem">
+    <div class="head"><span class="cid">+</span><h3>Memory &amp; Orchestration</h3><span class="role">cross-cutting &amp; conditional</span></div>
+    <p><strong>Memory</strong> runs across all seven: session/working memory (the context window), persistent files (progress logs, <span class="mono">/memories</span>), cross-session state (git history), and organisational stores. It is what lets a memoryless model behave like "engineers working in shifts." Input: a state convention and a place to write. Output: continuity — and, if unguarded, a poisoning surface (M7, ASI06).</p>
+    <p><strong>Orchestration</strong> (multi-agent) is a <em>conditional</em> choice, not a default eighth component. Parallel writers are fragile; the pattern that works keeps writes single-threaded while other agents contribute intelligence, not actions. Reach for it only when a task genuinely parallelises — and treat the whole cluster as one trust boundary.</p>
+  </div>
+</section>
+
+<section>
+  <h2 id="sdlc"><span class="n">3</span>Mapping the components to the SDLC</h2>
+  <p>The framework is not a phase model, but each component has a natural home in the classical software lifecycle. This table is how we explain "where does the agent actually plug in?" to a client who thinks in SDLC stages.</p>
+  <table class="map">
+    <tr><th>SDLC stage</th><th>Dominant component(s)</th><th>What good looks like</th></tr>
+    <tr><td>Requirements / refinement</td><td>Prompt · (handoff contract)</td><td>scoped tasks with non-goals and machine-verifiable acceptance criteria</td></tr>
+    <tr><td>Design / planning</td><td>Context · Harness</td><td>the agent can retrieve architecture and decisions; a plan mode before writes</td></tr>
+    <tr><td>Implementation</td><td>Loop · Tools · Context</td><td>the agent works in a constrained loop, assembling context per turn</td></tr>
+    <tr><td>Testing / CI</td><td>Verification</td><td>fast trustworthy suite as the external truth; tests protected from the agent</td></tr>
+    <tr><td>Review / merge</td><td>Governance · Verification</td><td>human gate on intent; deterministic gates on correctness &amp; safety</td></tr>
+    <tr><td>Operate / evolve</td><td>Memory · Governance</td><td>continuity across sessions; audit trail; blast radius bounded in prod</td></tr>
+  </table>
+  <div class="callout pine">
+    <div class="t">The shift to notice</div>
+    <p>Classical SDLC runs left-to-right once. The agentic version <em>loops</em>: verification feeds implementation, and memory carries state between whole cycles. The components don't replace the SDLC — they instrument it with a fast inner feedback loop, which is exactly why a weak test/CI base (a weak verification component) makes the whole thing regress, as DORA's stability data shows.</p>
+  </div>
+</section>
+
+<section>
+  <h2 id="takeaways"><span class="n">4</span>Takeaways for introducing a harness</h2>
+  <p>Distilled to what we act on:</p>
+  <div class="io">
+    <div class="box"><div class="lab">Assess before you build (feeds E6)</div><ul><li>Is there a fast, trustworthy test suite? (verification)</li><li>Can CI return signal an agent can read?</li><li>Are source-of-truth artifacts retrievable? (context)</li><li>Do dev/prod separation, RBAC and secrets hygiene exist? (governance)</li></ul></div>
+    <div class="box"><div class="lab">Build in this order (feeds E7)</div><ul><li>make the repo agent-ready (harness + governance skeleton)</li><li>establish the verification loop before granting write autonomy</li><li>start at L1–L2, prove the base, then move to L3</li><li>prune harness components as the model improves</li></ul></div>
+  </div>
+  <div class="callout">
+    <div class="t">Three sentences to remember E1 by</div>
+    <p>An agent is a model plus a harness; the harness is where our engineering value and the client's risk both live. Some components are advisory (prompt, context) and some must be deterministic (governance, verification) — never confuse the two. Build the loop, verify with external truth, bound the blast radius, and remove scaffolding as the model grows.</p>
+  </div>
+</section>
+
+<section>
+  <h2 id="reading"><span class="n">5</span>Further reading</h2>
+  <p>Primary and high-signal sources for going deeper on this component. Prioritise the first three.</p>
+  <div class="reading">
+    <div class="item"><div class="ti">Building effective agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering/building-effective-agents</div><p>The canonical practitioner piece on agents vs workflows and when to add each harness component. Start here.</p></div>
+    <div class="item"><div class="ti">Effective context engineering for AI agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering/effective-context-engineering-for-ai-agents</div><p>Deep treatment of the context component, the "smallest set of high-signal tokens", and context-rot mitigation.</p></div>
+    <div class="item"><div class="ti">The lethal trifecta &amp; the prompt-injection series</div><div class="mt">Simon Willison · simonwillison.net/series/prompt-injection</div><p>Willison's "tools in a loop" definition and the security framing that governance exists to answer. Essential for the M7 link.</p></div>
+    <div class="item"><div class="ti">The rise (and fall?) of the AI agent harness</div><div class="mt">Birgitta Böckeler, ThoughtWorks · martinfowler.com</div><p>Where the "Agent = Model + Harness" framing and the "prune the harness as models improve" principle come from.</p></div>
+    <div class="item"><div class="ti">Claude Code hooks &amp; secure deployment</div><div class="mt">code.claude.com/docs — hooks-guide &amp; agent-sdk/secure-deployment</div><p>The concrete reference for the governance component: advisory-vs-deterministic in practice (permissions, hooks, sandbox).</p></div>
+    <div class="item"><div class="ti">Accelerate / State of DevOps (DORA)</div><div class="mt">dora.dev</div><p>The evidence that a weak surrounding system (esp. the verification component) makes AI adoption regress — our core argument for verification-first.</p></div>
+  </div>
+  <div class="callout amber">
+    <div class="t">Where this sits in the workbook</div>
+    <p>This deep dive expands topic <strong>E1</strong> of module M1. The natural next stops are <strong>E2 Context</strong> and <strong>E3 Harness in practice</strong> for the mechanics, <strong>E5 Governance</strong> for the advisory-vs-deterministic distinction, and <strong>M7 Security</strong> to see every component re-read as an attack surface.</p>
+  </div>
+</section>
+
+</main>
+</div>
+</body>
+</html>

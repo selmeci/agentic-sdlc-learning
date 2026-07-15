@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P3 Deep Dive — Decomposition into Agent-Ready Work Items</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edP3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahP3a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">P3 · DEEP DIVE</span>
+    <h1>Decomposition into Agent-Ready Work Items</h1>
+    <span class="bc">companion to module M2 · Product harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why decomposition decides throughput</a>
+  <a href="#s1"><b>1</b> · INVEST, re-read for agents</a>
+  <a href="#s2"><b>2</b> · Right-sizing &amp; the capability ceiling</a>
+  <a href="#s3"><b>3</b> · The evidence — split vs estimate</a>
+  <a href="#s4"><b>4</b> · The agent-ready checklist</a>
+  <a href="#s5"><b>5</b> · SDD toolchains — what to take</a>
+  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M2</p>
+      <h2 id="s0"><span class="n">0</span>Why decomposition is where throughput is decided</h2>
+      <p class="lead">P2 ends with a handoff-ready PRD; the handoff contract (M3) specifies a single work item an engineering agent can execute. Between them sits the least glamorous step in the product harness: slicing an epic into work items. It is also the step that decides throughput, because agents do not work on epics — they work item by item, one fresh session at a time. How you cut decides how many agents can run in parallel, how big the PRs land in review, and how much autonomy each delegation can safely carry.</p>
+      <p>A perfectly specified epic that is badly sliced still fails: items too big exceed what a model can reliably finish, items too entangled serialise into a queue and merge-conflict against each other, items without their own context force every agent to rediscover intent from scratch. Decomposition is where the product layer either buys the engineering layer its parallelism — or quietly caps it.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Decomposition is a <strong>judgment task disguised as a mechanical one</strong>. An LLM can propose a split in seconds, and the proposal will look complete. But deciding <em>where the seams are</em> — what is genuinely independent, what is one change pretending to be three, what is out of scope — requires knowing the codebase, the architecture and the strategy. The evidence (§3) says exactly this: AI splitting is a useful completeness checker; the seams and the sizes stay human.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>INVEST, re-read for agents</h2>
+      <p>Bill Wake coined <strong>INVEST</strong> — Independent, Negotiable, Valuable, Estimable, Small, Testable — in a 2003 article on xp123.com (a practitioner blog post, later popularised by Mike Cohn's <em>User Stories Applied</em>). It was designed for exactly our problem, twenty years early: handing work across a context gap to someone who was not in the room. Agents widen that gap to its maximum — the recipient now has <em>no</em> shared history at all — which makes INVEST more relevant, not less. Each letter earns a sharper reading:</p>
+      <table class="map">
+        <tr><th>Letter</th><th>2003 reading (for humans)</th><th>Agent re-reading</th></tr>
+        <tr><td>Independent</td><td>minimise ordering dependencies between stories</td><td><strong>parallelisable across agent sessions</strong> — false independence surfaces as merge conflicts; dependency order must be explicit (§5)</td></tr>
+        <tr><td>Negotiable</td><td>a story is a placeholder for a conversation</td><td>drafts are <strong>cheap to regenerate</strong> (disposable, I1) — but the decisions in them must be pinned, because the agent won't renegotiate</td></tr>
+        <tr><td>Valuable</td><td>a vertical slice of user value</td><td>carries its <strong>why</strong> and a requirement ID — the rationale gap (P2) means a human supplies it; without it the agent implements form without purpose</td></tr>
+        <tr><td>Estimable</td><td>clear enough to estimate</td><td>right-sized against the <strong>model's reliability horizon</strong> (§2) — and note: estimability serves the human slicer; AI's own estimates ran at 16% accuracy (§3)</td></tr>
+        <tr><td>Small</td><td>fits in an iteration</td><td>fits a <strong>context window with room to work</strong> — the item plus its linked context plus the code it must read, before context rot (E2)</td></tr>
+        <tr><td>Testable</td><td>you know when it's done</td><td><strong>machine-verifiable AC</strong> (EARS/Gherkin, H2) — the property that separates supervised assistance from delegable work (E4, E6)</td></tr>
+      </table>
+      <p><strong>For our rollout:</strong> INVEST is the vocabulary the client's team already knows. Presenting agent-readiness as a re-reading of it — rather than a new methodology — is the cheapest possible change-management move: same checklist shape, sharpened definitions.</p>
+
+      <h2 id="s2"><span class="n">2</span>Right-sizing — the 10–30 line rule and the capability ceiling</h2>
+      <p>Our working heuristic (Report 2 — practitioner synthesis, not a measured result): a work-item spec of roughly <strong>10–30 lines</strong>. Under ~10 lines, constraints and non-goals are usually missing — the agent fills the gaps with guesses. Over ~50 lines, you are over-specifying: the spec starts to exceed the code it describes, and review burden has been relocated, not removed (H4 measured AI review commentary at ~29.6 tokens per line of code vs 4.1 human). And tasks under ~15 minutes need no spec at all — a conversational instruction is cheaper than the ceremony.</p>
+      <p>Both failure directions are real and show up as recognisable smells: <strong>under-specification</strong> is the 30-minute feature that balloons to 3 hours while the agent rewrites half a module off a misread intent; <strong>over-specification</strong> is the task whose spec took longer to review than the diff it produced.</p>
+      <p>Is there independent evidence for a size ceiling? The closest is METR's <strong>time-horizon</strong> research (arXiv:2503.14499): measure the human clock-time of tasks an agent completes with 50% success. That horizon has doubled roughly every 7 months since 2019, accelerating to ~4 months or faster on 2024+ models; by May 2026 the frontier estimate reached ≥16 hours (Claude Mythos Preview — wide confidence interval; METR itself flags measurements above 16 h as unreliable on the current suite). But two caveats do the real work here. First, the <strong>80%-success horizon is roughly 5× shorter</strong> than the headline 50% one. Second, the benchmark is well-scoped, automatically gradable software tasks — real backlog items are messier, so real horizons sit lower still. All figures point-in-time, mid-2026; re-verify before quoting.</p>
+      <div class="callout pine"><div class="t">The sizing rule that falls out</div><p>Size work items to the <strong>reliability horizon, not the headline horizon</strong>. A delegation that succeeds half the time doesn't halve your work — it doubles your review load and erodes trust in the whole rollout (E7's perception gap). Divide the marketing number by five for the 80% horizon, discount again for messiness, and you land at: <em>hours, not days</em> — which is exactly where the 10–30 line spec heuristic already points. The two rules agree from independent directions.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>The evidence — splitting helps, estimating fails</h2>
+      <p>Decomposition has one controlled experiment on record, and it is worth citing precisely: <strong>Pavlič, Saklamaeva &amp; Beranič, Applied Sciences 2024</strong> (University of Maribor; 14(24):12006). Thirteen three-person teams (39 developers analysed) upgraded a Jakarta EE system against 8 user stories; experimental teams had GitLab Duo Chat split the stories into tasks and estimate them, and could adjust prompts but not overrule the tool.</p>
+      <div class="callout"><div class="t">What it found — strong independent evidence</div><p><strong>Estimation failed:</strong> AI accuracy <strong>16%</strong> (SD 9.2) vs <strong>60%</strong> (SD 24.5) for human control teams — the paper calls 16% insufficient for industry standards, and 60% industry-typical. The AI overestimated ~4× (13.55 h vs 3.37 h per story) while actual effort was nearly identical across groups. <strong>Splitting helped, with a filter:</strong> AI decomposition was finer-grained (<strong>5.4 vs 3.2</strong> tasks per story) and caught overlooked work — but the lists carried generic, project-irrelevant items, and the authors' recommendation is to start from your own list and use the AI's to spot what you missed. Post-test preference: conventional-only 0%, AI-only 0%, <strong>hybrid 100%</strong>.</p></div>
+      <figure>
+      <svg viewBox="0 0 860 336" role="img" aria-label="The decomposition pipeline and the GitLab Duo experiment results">
+        <defs><marker id="ahP3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="26" class="tg">FROM EPIC TO PARALLEL SESSIONS — AI PROPOSES THE SPLIT, THE HUMAN OWNS THE SEAMS</text>
+        <rect x="20" y="38" width="128" height="46" rx="8" class="bxA"/><text x="30" y="59" class="ts">epic + PRD</text><text x="30" y="73" class="ts">from P2, red-teamed</text>
+        <rect x="188" y="38" width="128" height="46" rx="8" class="bxC"/><text x="198" y="59" class="ts">AI proposes split</text><text x="198" y="73" class="ts">candidate tasks</text>
+        <rect x="356" y="38" width="146" height="46" rx="8" class="bxK"/><text x="366" y="59" class="ts">human owns seams</text><text x="366" y="73" class="ts">filter + right-size</text>
+        <rect x="542" y="38" width="128" height="46" rx="8" class="bx"/><text x="552" y="59" class="ts">agent-ready items</text><text x="552" y="73" class="ts">checklist (§4)</text>
+        <rect x="710" y="38" width="130" height="46" rx="8" class="bxC"/><text x="720" y="59" class="ts">parallel sessions</text><text x="720" y="73" class="ts">bounded by review</text>
+        <line x1="148" y1="61" x2="188" y2="61" class="edP3"/><line x1="316" y1="61" x2="356" y2="61" class="edP3"/><line x1="502" y1="61" x2="542" y2="61" class="edP3"/><line x1="670" y1="61" x2="710" y2="61" class="edP3"/>
+        <text x="20" y="122" class="tg">THE CONTROLLED EXPERIMENT — PAVLIČ ET AL., APPLIED SCIENCES 2024 (GITLAB DUO) + 2026 FOLLOW-UP</text>
+        <text x="20" y="157" class="ts">estimation accuracy</text>
+        <rect x="150" y="144" width="300" height="16" rx="4" class="bxK"/><text x="460" y="157" class="ts">human teams 60% — industry-typical</text>
+        <rect x="150" y="172" width="80" height="16" rx="4" class="bx" style="stroke:#B3362B"/><text x="240" y="185" class="ts">GitLab Duo 16% — insufficient; overestimated ~4×</text>
+        <text x="20" y="221" class="ts">tasks per story</text>
+        <rect x="150" y="208" width="160" height="16" rx="4" class="bxK"/><text x="320" y="221" class="ts">human 3.2</text>
+        <rect x="150" y="236" width="270" height="16" rx="4" class="bxC"/><text x="430" y="249" class="ts">AI 5.4 — finer, but generic items; use as a completeness check</text>
+        <text x="20" y="285" class="ts">tasks that shipped</text>
+        <rect x="150" y="272" width="350" height="16" rx="4" class="bxK"/><text x="510" y="285" class="ts">manually authored 100%</text>
+        <rect x="150" y="300" width="206" height="16" rx="4" class="bx" style="stroke:#B3362B"/><text x="366" y="313" class="ts">AI-generated 59% (2026 follow-up, same group)</text>
+      </svg>
+      <figcaption>Top: the healthy division of labour in decomposition — AI expands (candidate split), the human judges (seams, sizes, relevance). Bottom: the measured results. AI effort estimation failed (16% vs 60% accuracy); AI splitting was finer-grained but needed human filtering — in the follow-up study only 59% of AI-generated tasks were actually implemented, vs 100% of manually authored ones.</figcaption>
+      </figure>
+      <p>The same group's 2026 follow-up (<em>Splitting User Stories Into Tasks with AI — A Foe or an Ally?</em>, arXiv:2605.07320) sharpens the picture: teams implemented only <strong>~59%</strong> of AI-generated tasks versus 100% of manually authored ones, and just 10% of participants found the AI tasks more relevant than their own (55% disagreed) — yet participants still favoured the hybrid workflow. Note honestly: this is the <em>same Maribor group</em>, a follow-up rather than an independent replication — and as of mid-2026 controlled evidence on AI backlog decomposition is essentially this one line of work. Estimation research is broader (zero-shot LLMs now beat older supervised baselines on story-point benchmarks — Shetty et al., arXiv:2603.06276), but benchmarks are not your backlog; treat vendor claims about "AI sprint planning" accordingly.</p>
+      <p>Read through P2's lens, the result is the same asymmetry: <strong>splitting is expansion</strong> — generate more candidates from the same input, a job models do well with a human filter; <strong>estimation and prioritisation are judgment</strong> — they price in context the model does not have, and fail without it. Point the model at expansion; keep judgment human.</p>
+
+      <h2 id="s4"><span class="n">4</span>The amnesiac colleague — context links and the agent-ready checklist</h2>
+      <p>The deepest difference between handing a task to a teammate and to an agent: the agent has <strong>total amnesia</strong>. It was not in the refinement call, does not remember the ticket from March, and will not lean over to ask the senior at the next desk — every clarification is a round-trip that spends the autonomy you delegated for. Report 2's observed failure mode follows directly: given an item without context, agents <em>reverse-engineer intent from code comments</em> — they excavate whatever fragments the repo happens to contain and guess the rest. The fix is not a longer spec; it is <strong>context links</strong> — pointers to the code, the design, the ADR and the requirement, so the agent assembles fresh, correct context per session (E2) instead of guessing.</p>
+      <p>That completes the <strong>agent-ready checklist</strong> — the deployable artifact of this topic, and deliberately the same six components as the handoff contract (H1) at task grain:</p>
+      <div class="io"><div class="box"><div class="lab">Agent-ready = all six present</div><ul><li><strong>intent/why</strong> — one human-written sentence (the rationale gap, P2)</li><li><strong>scope + explicit non-goals</strong> — or the agent over-engineers</li><li><strong>machine-verifiable AC</strong> — Gherkin/EARS (H2)</li><li><strong>constraints</strong> — tech, security, performance</li><li><strong>context links</strong> — code, design, ADR (the amnesia antidote)</li><li><strong>DoD + requirement ID</strong> — traceability travels with the task (H3)</li></ul></div>
+      <div class="box"><div class="lab">Right-sized = three checks</div><ul><li>spec ~10–30 lines; under 10, look for the missing constraints</li><li>well inside the model's reliability horizon (§2) — hours, not days</li><li>independent of its siblings — parallelisable without merge conflicts</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Backlog refinement — the same ceremony that carries P2's red-team gate; the checklist is the exit gate: no item leaves refinement incomplete.</li></ul></div></div>
+      <div class="callout"><div class="t">Enforce it as a gate, not a guideline</div><p>Most of the checklist is <strong>deterministically lintable</strong> (E5's advisory-vs-deterministic rule): a non-goals section exists, AC parse as Gherkin, context links resolve, a requirement ID is present. A template plus a refinement-bot check makes those structural. What stays human is exactly the judgment part: is the seam right, is the why true, is this really one task. The gate produces its own evidence trail — useful later for E7's measurement story.</p></div>
+
+      <h2 id="s5"><span class="n">5</span>How the SDD toolchains decompose — and what to take</h2>
+      <p>Both major spec-driven toolchains treat decomposition as a first-class, reviewable step (all details point-in-time, mid-2026). <strong>GitHub Spec Kit</strong>: <span class="mono">/speckit.tasks</span> generates a <span class="mono">tasks.md</span> — dependency-ordered, grouped by user story, each line <span class="mono">- [ ] T001 [P] [US1] description + exact file path</span>, where <span class="mono">[P]</span> marks tasks parallelisable because they touch different files with no dependencies; a separate command converts tasks to GitHub issues. Its template states the bar in one line: tasks must be <em>"specific enough for an LLM to complete without additional context"</em> — the tersest definition of agent-ready we have found. <strong>Amazon Kiro</strong>: <span class="mono">requirements.md</span> (EARS) → <span class="mono">design.md</span> → <span class="mono">tasks.md</span> with review between phases; each checkbox task carries nested sub-tasks and a trailing traceability line (<span class="mono">_Requirements: 1.1, 1.5_</span>), and independent tasks can run concurrently.</p>
+      <p>What we extract is portable without adopting either tool. First, <strong>the task list is itself a reviewable artifact</strong> — decomposition gets reviewed before any implementation starts, the same inversion E8 applies to specs. Second, <strong>independence is made inspectable</strong>: explicit dependency ordering and parallel markers turn "these are independent" from a hope into a claim a reviewer can check. Third, <strong>traceability travels per task</strong>, not per epic (H3). This is what P4 on the assistance scale — AI-driven decomposition with approval gates — looks like when it is done right.</p>
+      <div class="callout amber"><div class="t">The parallelism trap</div><p>Parallel markers make fan-out tempting: ten independent tasks, ten agents. But the binding constraint is not task independence — it is <strong>review capacity</strong> (E7: never scale agents beyond it). Decomposition sets the <em>ceiling</em> on parallelism; the review bottleneck sets the <em>budget</em>. Slice for independence, then spend the budget deliberately.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>who splits epics today, and does AI propose or decide?</li><li>do items carry non-goals, AC, context links, requirement IDs?</li><li>typical item size — and how often do agents finish without follow-up questions?</li><li>are AI-proposed splits filtered, or pasted into the backlog?</li></ul></div>
+      <div class="box"><div class="lab">Build</div><ul><li>adopt the agent-ready checklist as the refinement exit gate; lint the structural parts</li><li>AI proposes the split, a human owns seams and sizes — hybrid won 100% preference</li><li>size to the reliability horizon: hours not days, spec 10–30 lines</li><li>track the no-follow-up completion rate and the share of AI-proposed tasks that ship (59% is the published baseline)</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember P3 by</div><p>Agents work item by item, so decomposition — not the epic — decides parallelism, review load and safe autonomy; INVEST re-read for total amnesia is the checklist. The controlled evidence (Pavlič et al.): AI splitting is a finer-grained completeness checker (5.4 vs 3.2 tasks/story) that needs a human filter (only ~59% of AI tasks ship), while AI estimation fails outright (16% vs 60% accuracy) — expansion works, judgment doesn't. Right-size to the reliability horizon (METR's 80% horizon is ~5× below the headline; hours, not days), give every item its six contract components with context links, and enforce the checklist as a lintable refinement gate.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Pavlič, Saklamaeva &amp; Beranič — Can LLMs replace humans in agile effort estimation?</div><div class="mt">Applied Sciences 2024, 14(24):12006 · DOI 10.3390/app142412006</div><p>The controlled GitLab Duo experiment behind §3: 16% vs 60% estimation accuracy, 5.4 vs 3.2 tasks per story, 100% hybrid preference. The primary source for this topic.</p></div>
+      <div class="item"><div class="rt">Pavlič, Bernsteiner, Schlögl &amp; Ploder — Splitting user stories with AI: a foe or an ally?</div><div class="mt">arXiv:2605.07320 · 2026 follow-up, same group</div><p>The 59%-of-AI-tasks-shipped number and the relevance perception data. A follow-up, not independent replication — as of mid-2026 this group's work is essentially the whole controlled-evidence base.</p></div>
+      <div class="item"><div class="rt">METR — Measuring AI ability to complete long tasks</div><div class="mt">arXiv:2503.14499 + Time Horizon 1.1 update (Jan 2026)</div><p>The time-horizon method, the doubling trend, and the caveats §2 leans on: the 80% horizon ~5× below the 50% one, and the well-scoped-benchmark messiness gap. Point-in-time; re-verify before client use.</p></div>
+      <div class="item"><div class="rt">Bill Wake — INVEST in good stories, and SMART tasks</div><div class="mt">xp123.com · 2003</div><p>The original article. Written for handing work across a human context gap; §1 re-reads each letter for the agent's wider one.</p></div>
+      <div class="item"><div class="rt">Spec Kit tasks template &amp; Kiro spec docs</div><div class="mt">github.com/github/spec-kit · kiro.dev/docs/specs</div><p>The two reference implementations of reviewable decomposition: dependency-ordered tasks.md with [P] parallel markers; EARS→design→tasks with per-task requirement traceability.</p></div>
+      <div class="item"><div class="rt">Report 2 — decomposition &amp; the task-spec template (this workbook)</div><div class="mt">module M2 decomposition section · module M3 templates</div><p>The 10–30 line heuristic, the agent-ready work-item template (TASK-042), and the full research notes this topic distils. Read H1 next for the contract the checklist mirrors.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (P3-decomposition-deepdive.html). Its natural neighbours in the workbook are P2 (the PRD the split consumes), P4 (automation bias in the editor role), P5 (the assistance scale — P4-with-gates is this topic's shape), H1–H3 (the contract, EARS/Gherkin AC and traceability each item carries), E2 (context windows and rot), E6/E7 (autonomy levels and the review-capacity rule), and B5 (picking seams in a brownfield codebase).</p>
+
+</main>
+</div>
+</body>
+</html>

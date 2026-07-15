@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentický vývoj — študijné podklady</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4;
+  --card:#FBFCFD;
+  --ink:#1A2430;
+  --soft:#57656F;
+  --line:#D6DDE4;
+  --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0;
+  --cobalt-deep:#20389E;
+  --amber:#B26205;
+  --amber-bg:#FBF1E1;
+  --pine:#177245;
+  --pine-bg:#E5F3EB;
+  --idle:#9AA7B1;
+  --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.55;
+}
+a{color:var(--cobalt-deep)}
+a:hover{color:var(--cobalt)}
+button{font-family:var(--mono);cursor:pointer}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px;border-radius:3px}
+
+/* ---------- header ---------- */
+.hdr{
+  position:sticky;top:0;z-index:50;
+  background:rgba(238,241,244,.92);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.hdr-in{
+  max-width:1220px;margin:0 auto;padding:12px 20px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;
+}
+.brand{display:flex;flex-direction:column;gap:1px;min-width:220px}
+.brand h1{font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:-.01em}
+.brand .sub{font-family:var(--mono);font-size:10.5px;color:var(--soft);letter-spacing:.04em;text-transform:uppercase}
+.search{flex:1;min-width:200px;max-width:420px;position:relative}
+.search input{
+  width:100%;padding:8px 12px 8px 34px;
+  font-family:var(--mono);font-size:12.5px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:8px;
+}
+.search input::placeholder{color:var(--idle)}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--idle)}
+.gprog{display:flex;flex-direction:column;gap:4px;min-width:190px}
+.gprog .nums{font-family:var(--mono);font-size:11px;color:var(--soft);display:flex;justify-content:space-between;gap:10px}
+.gprog .nums b{color:var(--pine);font-weight:600}
+.gbar{height:7px;border-radius:4px;background:#DDE4EA;overflow:hidden;display:flex}
+.gbar .gd{background:var(--pine);height:100%;transition:width .35s ease}
+.gbar .gs{background:var(--amber);height:100%;transition:width .35s ease}
+.savebox{font-family:var(--mono);font-size:10.5px;color:var(--soft);text-align:right;min-width:120px}
+.savebox .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--idle);margin-right:6px;vertical-align:1px}
+.savebox.ok .dot{background:var(--pine)}
+.savebox.busy .dot{background:var(--amber)}
+.savebox.err .dot{background:#B3362B}
+
+/* ---------- layout ---------- */
+.app{max-width:1220px;margin:0 auto;padding:22px 20px 80px;display:grid;grid-template-columns:236px 1fr;gap:30px;align-items:start}
+.side{position:sticky;top:86px}
+.side .cap{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin:0 0 8px 2px}
+.mnav{list-style:none;display:flex;flex-direction:column;gap:4px;margin-bottom:22px}
+.mnav a{
+  display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:8px;
+  text-decoration:none;color:var(--ink);font-family:var(--disp);font-size:13.5px;font-weight:600;
+  border:1px solid transparent;
+}
+.mnav a:hover{background:var(--card);border-color:var(--line-soft)}
+.mnav .mc{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--soft);background:var(--idle-bg);border:1px solid var(--line-soft);border-radius:5px;padding:2px 6px;flex-shrink:0}
+.mnav .cnt{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--soft)}
+.mnav .cnt b{color:var(--pine);font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.fchip{
+  font-size:10.5px;padding:5px 10px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--soft);
+}
+.fchip:hover{border-color:var(--idle)}
+.fchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.fchip[data-f="studying"].on{background:var(--amber);border-color:var(--amber)}
+.fchip[data-f="done"].on{background:var(--pine);border-color:var(--pine)}
+.bulk{display:flex;gap:6px;flex-wrap:wrap}
+.bulk button{
+  font-size:10.5px;padding:5px 10px;border-radius:7px;
+  border:1px solid var(--line);background:transparent;color:var(--soft);
+}
+.bulk button:hover{background:var(--card);color:var(--ink)}
+
+/* ---------- intro ---------- */
+.intro{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:20px 24px;margin-bottom:30px;
+}
+.intro h2{font-family:var(--disp);font-size:16px;font-weight:700;margin-bottom:8px}
+.intro p{font-size:14.5px;color:var(--soft);max-width:72ch}
+.intro p+p{margin-top:7px}
+.intro .leg{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--soft)}
+.intro .leg span{display:flex;align-items:center;gap:6px}
+.lg{width:10px;height:10px;border-radius:3px;display:inline-block}
+.lg.n{background:#DDE4EA}.lg.s{background:var(--amber)}.lg.d{background:var(--pine)}
+
+/* ---------- modules ---------- */
+.mod{margin-bottom:38px}
+.mod-head{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;
+  padding:0 4px 12px;border-bottom:2px solid var(--ink);margin-bottom:14px;
+}
+.mod-head .mcode{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--card);background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.05em}
+.mod-head h2{font-family:var(--disp);font-size:22px;font-weight:700;letter-spacing:-.015em}
+.mod-head .mbase{font-family:var(--mono);font-size:10.5px;color:var(--soft)}
+.mod-head .mstat{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--soft)}
+.mod-head .mstat b{color:var(--pine)}
+.mod-desc{font-size:14.5px;color:var(--soft);max-width:76ch;margin:-4px 4px 12px}
+.segbar{display:flex;gap:3px;margin:0 4px 16px}
+.seg{height:8px;flex:1;border-radius:2.5px;background:#DCE3E9;transition:background .25s ease}
+.seg.s{background:var(--amber)}
+.seg.d{background:var(--pine)}
+
+/* ---------- topic cards ---------- */
+.topic{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  margin-bottom:10px;overflow:hidden;
+  transition:border-color .2s ease;
+}
+.topic[data-status="studying"]{border-left:3px solid var(--amber)}
+.topic[data-status="done"]{border-left:3px solid var(--pine)}
+.topic.hide{display:none}
+.t-head{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px}
+.t-toggle{
+  flex:1;display:flex;align-items:center;gap:12px;text-align:left;
+  background:none;border:0;padding:8px 6px;min-width:0;
+}
+.t-toggle .tid{
+  font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--cobalt-deep);
+  background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 7px;flex-shrink:0;letter-spacing:.03em;
+}
+.topic[data-status="done"] .t-toggle .tid{color:var(--pine);background:var(--pine-bg);border-color:#CBE5D6}
+.t-toggle h3{font-family:var(--disp);font-size:15.5px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
+.t-toggle .car{margin-left:auto;flex-shrink:0;width:16px;height:16px;stroke:var(--idle);transition:transform .22s ease}
+.topic.open .t-toggle .car{transform:rotate(90deg)}
+.status{display:flex;flex-shrink:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.status button{
+  font-size:9.5px;letter-spacing:.02em;padding:5px 8px;border:0;background:transparent;color:var(--idle);
+}
+.status button+button{border-left:1px solid var(--line-soft)}
+.status button:hover{color:var(--soft);background:var(--idle-bg)}
+.status button.on[data-v="none"]{background:var(--idle-bg);color:var(--soft);font-weight:600}
+.status button.on[data-v="studying"]{background:var(--amber-bg);color:var(--amber);font-weight:600}
+.status button.on[data-v="done"]{background:var(--pine-bg);color:var(--pine);font-weight:600}
+.t-body{display:none;border-top:1px solid var(--line-soft);padding:16px 20px 18px}
+.topic.open .t-body{display:block}
+.sec{margin-bottom:15px}
+.sec:last-child{margin-bottom:0}
+.sec .lab{
+  font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:8px;
+}
+.sec .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.sec ul{list-style:none}
+.sec ul li{
+  position:relative;padding-left:16px;font-size:14.5px;margin-bottom:5px;color:var(--ink);
+}
+.sec ul li::before{content:"—";position:absolute;left:0;color:var(--idle);font-family:var(--mono);font-size:12px;top:2px}
+.sec ul.oq li::before{content:"?";color:var(--amber);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{
+  font-family:var(--mono);font-size:11px;color:var(--ink);
+  background:var(--idle-bg);border:1px solid var(--line-soft);border-radius:6px;padding:3px 8px;
+}
+.srcs{list-style:none}
+.srcs li{font-size:13.5px;margin-bottom:4px;padding-left:16px;position:relative;color:var(--soft)}
+.srcs li::before{content:"↗";position:absolute;left:0;color:var(--cobalt);font-size:11px;top:2px}
+.check{border:1px solid var(--line-soft);border-radius:9px;padding:11px 14px;margin-bottom:8px;background:#F7F9FB}
+.check:last-child{margin-bottom:0}
+.check .q{font-size:14px;font-weight:600;font-style:italic;margin-bottom:8px}
+.check .rev{
+  font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--line);
+  background:var(--card);color:var(--cobalt-deep);
+}
+.check .rev:hover{border-color:var(--cobalt)}
+.check .ans{display:none;margin-top:9px;font-size:13.5px;color:var(--ink);border-left:2px solid var(--pine);padding-left:11px}
+.check.open .ans{display:block}
+.note textarea{
+  width:100%;min-height:64px;resize:vertical;
+  font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--ink);
+  background:#FDFEFE;border:1px solid var(--line);border-radius:9px;padding:10px 12px;
+}
+.note textarea::placeholder{color:var(--idle)}
+.note textarea:focus{border-color:var(--cobalt);outline:none}
+
+/* ---------- misc ---------- */
+.empty{
+  display:none;text-align:center;padding:44px 20px;color:var(--soft);
+  font-family:var(--mono);font-size:12.5px;border:1px dashed var(--line);border-radius:12px;
+}
+.empty.show{display:block}
+.warnbar{
+  display:none;max-width:1220px;margin:14px auto 0;padding:9px 20px;
+  font-family:var(--mono);font-size:11.5px;color:#7A3B08;background:#FBF1E1;
+  border:1px solid #EDD9B8;border-radius:9px;
+}
+.warnbar.show{display:block}
+footer{
+  max-width:1220px;margin:0 auto;padding:26px 20px 50px;
+  border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.8;
+}
+footer b{color:var(--ink)}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr;gap:14px}
+  .side{position:static}
+  .mnav{flex-direction:row;flex-wrap:wrap;gap:5px}
+  .mnav a{padding:6px 9px;font-size:12.5px}
+  .mnav .cnt{display:none}
+  .hdr-in{gap:10px}
+  .savebox{display:none}
+  .status button{padding:5px 6px;font-size:9px}
+  .t-toggle h3{font-size:14.5px}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="brand">
+      <h1>Agentický vývoj</h1>
+      <span class="sub">Študijné podklady · projekt zavádzania</span>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="hľadať v témach…" autocomplete="off">
+    </div>
+    <div class="gprog">
+      <div class="nums"><span id="gtext">0 / 0 zvládnuté</span><span id="gstud"></span></div>
+      <div class="gbar"><div class="gd" id="gd" style="width:0%"></div><div class="gs" id="gs" style="width:0%"></div></div>
+    </div>
+    <div class="savebox" id="savebox"><span class="dot"></span><span id="savetxt">načítavam…</span></div>
+  </div>
+</header>
+
+<div class="warnbar" id="warnbar">Perzistentné úložisko nie je dostupné — zmeny sa po zatvorení stránky neuložia. Otvor artefakt v Claude, aby sa progress a poznámky ukladali.</div>
+
+<div class="app">
+  <aside class="side">
+    <p class="cap">Moduly</p>
+    <ul class="mnav" id="mnav"></ul>
+    <p class="cap">Filter podľa stavu</p>
+    <div class="filters" id="filters">
+      <button class="fchip on" data-f="all">všetky</button>
+      <button class="fchip" data-f="none">nezačaté</button>
+      <button class="fchip" data-f="studying">študujem</button>
+      <button class="fchip" data-f="done">zvládnuté</button>
+    </div>
+    <p class="cap">Zobrazenie</p>
+    <div class="bulk">
+      <button id="expAll">rozbaliť všetko</button>
+      <button id="colAll">zbaliť všetko</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="intro">
+      <h2>Ako s podkladmi pracovať</h2>
+      <p>Moduly M1–M5 sú zhustené jadro našich štyroch research reportov — dosť na štúdium a opakovanie, detail vždy v plnom reporte. Modul M6 je <strong>trajektória</strong>: oblasti, ktoré ešte len ideme naštudovať, zatiaľ vo forme výskumných otázok. Každej téme nastav stav, píš si poznámky (ukladajú sa automaticky) a over sa self-checkom až po naštudovaní.</p>
+      <p>Podklady budeme postupne rozširovať v ďalších konverzáciách — ID tém sú stabilné, takže tvoj progress a poznámky zostanú zachované.</p>
+      <div class="leg">
+        <span><i class="lg n"></i> nezačaté</span>
+        <span><i class="lg s"></i> študujem</span>
+        <span><i class="lg d"></i> zvládnuté</span>
+        <span style="margin-left:auto">segmentová lišta = verifikačná slučka modulu, 1 segment / téma</span>
+      </div>
+    </div>
+    <div id="modules"></div>
+    <div class="empty" id="empty">Žiadna téma nezodpovedá filtru ani hľadaniu.</div>
+  </main>
+</div>
+
+<footer>
+  <b>v0.1</b> · 2026-07-11 · Moduly M1–M5 = kondenzát Reportov 1–4 (engineering harness · product harness · handoff · information architecture · brownfield). M6 = plánovaná študijná trajektória.<br>
+  Rozširovanie: nové témy pridávame s novými stabilnými ID; existujúce ID nemeníme, aby sa zachoval uložený progress. Changelog vedieme tu.
+</footer>
+
+<script>
+/* ================= DATA — stabilné ID, nikdy nemeniť, len pridávať ================= */
+const MODULES = [
+{
+id:"m1", code:"M1", name:"Engineering harness", base:"Report 1",
+desc:"Sedem zložiek rámca a prax, ktorá robí z modelu spoľahlivého agenta: context a harness engineering, verifikačná slučka, governance, úrovne autonómie a tvrdé dáta o tom, čo funguje.",
+topics:[
+{id:"eng-framework", code:"E1", title:"Agent = Model + Harness: rámec siedmich zložiek",
+know:[
+`Surový model nie je agent — agentom sa stáva až cez harness, ktorý mu dáva stav, exekúciu toolov, feedback loops a vynútiteľné obmedzenia (Böckeler: Agent = Model + Harness).`,
+`Sedem zložiek: prompt, context, harness, loop, tools, verification/feedback, governance; k tomu memory. Orchestration (multi-agent) je vedomá voľba pre úzke prípady, nie ôsma default zložka.`,
+`Ťažisko disciplíny sa presunulo z prompt engineeringu na context a harness engineering — pridaná hodnota architekta je v dizajne harnessu.`,
+`Loop (Willison): agent je systém, ktorý „spúšťa tools v slučke, aby dosiahol cieľ" — zručnosť je v dizajne toolov aj slučky.`,
+`Každý komponent harnessu kóduje predpoklad o slabine modelu; keď sa model zlepší, komponent treba odstrániť (Anthropic — priestor sa presúva, nestráca).`],
+concepts:["harness","loop","tools","verification","governance","memory","orchestration"],
+open:[`Ktoré časti dnešného harnessu zastarajú s ďalšou generáciou modelov?`,`Kde končí harness a začína proces tímu — dá sa tá hranica vôbec ostro nakresliť?`],
+src:[{t:"Anthropic Engineering: Building effective agents / harness engineering",u:"https://www.anthropic.com/engineering"},{t:"Cognition: Don't Build Multi-Agents (Walden Yan)",u:"https://cognition.ai/blog/dont-build-multi-agents"},{t:"Report 1 — plný text rámca"}],
+checks:[{q:`Vymenuj sedem zložiek rámca a vysvetli, prečo orchestration nie je ôsma default zložka.`,a:`Prompt, context, harness, loop, tools, verification/feedback, governance (+ memory ako prierezová). Orchestration je podmienená voľba: paralelné zápisy viacerých agentov sú krehké (context fragmentation, konfliktné implicitné rozhodnutia); funguje vzor single-threaded write + read/intelligence subagenti — preto multi-agent nasadzujeme selektívne, nie ako default.`}]},
+
+{id:"eng-context", code:"E2", title:"Context engineering & context rot",
+know:[
+`Context engineering = iteratívna kurácia „najmenšej množiny high-signal tokenov" pri každom rozhodnutí, čo poslať modelu — nie jednorazové napísanie promptu.`,
+`Context rot: presnosť recallu klesá s dĺžkou kontextu (n² pairwise attention). Chroma Research: viditeľná degradácia typicky ~300–400k tokenov u 1M-modelov; horšia, keď klesá sémantická podobnosť needle–question.`,
+`System prompt patrí do „Goldilocks zóny" — ani brittle if-else logika, ani vágne „buď užitočný".`,
+`Praktický dôsledok: informácie externalizovať (súbory, git) a načítavať just-in-time, nie upfront všetko.`],
+concepts:["context rot","attention budget","high-signal tokens","just-in-time loading"],
+open:[`Ako merať „signal density" kontextu v našich projektoch — existuje praktická metrika?`],
+src:[{t:"Anthropic: Effective context engineering for AI agents",u:"https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"},{t:"Chroma Research: Context Rot (2025)"}],
+checks:[{q:`Prečo je „nahraj celý PRD agentovi do kontextu" anti-pattern a čo namiesto toho?`,a:`Veľký kontext degraduje recall (context rot) a riedi attention budget — agent prehliadne kritické detaily. Namiesto toho: context links + sumarizované výňatky relevantné pre daný task, s odkazom na master dokument (progressive disclosure).`}]},
+
+{id:"eng-harness", code:"E3", title:"Harness engineering v praxi (Anthropic vzory)",
+know:[
+`Initializer agent: prvá session so špeciálnym promptom nastaví init.sh, claude-progress.txt a iniciálny git commit — rieši studený štart agenta bez pamäte.`,
+`Princíp clean state: každá session končí merge-ready kódom; progress file + git história = orientácia „inžinierov pracujúcich na zmeny".`,
+`Generator–evaluator loop so „sprint contract": generátor a evaluátor sa dohodnú na definícii done pred písaním kódu.`,
+`feature_list.json namiesto Markdownu: model je menej náchylný nevhodne prepísať JSON (vníma ho ako kód); agent smie meniť len passes:true/false.`,
+`S modelmi Opus 4.5→4.6 sa časť scaffoldingu (sprint dekompozícia, context resets) dala odstrániť — dôkaz tézy o dočasnosti komponentov.`],
+concepts:["initializer agent","progress file","clean state","generator–evaluator","sprint contract"],
+open:[`Ktoré z týchto vzorov sa oplatí štandardizovať ako našu firemnú harness šablónu?`],
+src:[{t:"Anthropic: Effective harnesses for long-running agents",u:"https://www.anthropic.com/engineering"},{t:"Report 1 + Report 3 (write-permissions rozvinutie)"}],
+checks:[{q:`Aký problém rieši initializer agent a prečo je feature_list v JSON, nie v Markdowne?`,a:`Rieši studený štart: agent bez pamäte potrebuje deterministický vstupný bod (init.sh, progress file, git história). JSON preto, že model ho vníma ako kód a je menej náchylný ho „vylepšiť" či prepísať — plus write sa dá obmedziť len na status pole.`}]},
+
+{id:"eng-verification", code:"E4", title:"Verification-first: TDD ako slučka a ochrana testov",
+know:[
+`TDD je pre agenta externá pravda: red-green-refactor je prirodzený fit — agent spúšťa testy, číta zlyhania, self-correctuje (Beck: „superpower").`,
+`Agenti „cheatujú": oslabujú asserty alebo mažú testy, aby dosiahli zelený build.`,
+`Trojvrstvová obrana: pravidlo v AGENTS.md („Never modify existing tests unless explicitly asked"), PreToolUse hook, Stop-hook verification gate.`,
+`„Tests become the specification": failing test píše človek alebo oddelený agent proti jasnej požiadavke; review beží proti passing testom — ľudský úsudok ostáva tam, kde najviac záleží.`,
+`Verifikácia má byť cesta najmenšieho odporu, nie akt disciplíny.`],
+concepts:["red-green-refactor","test-first","protected tests","verification gate"],
+open:[`Ako škálovať „test-first píše človek", keď agentov je viac než ľudí — oddelený testovací agent s vlastným kontraktom?`],
+src:[{t:"Kent Beck v The Pragmatic Engineer (2026) — agenti a TDD"},{t:"Report 1 + Report 4 (mutation testing nadväzuje)"}],
+checks:[{q:`Vymenuj tri vrstvy obrany proti tomu, aby agent mazal alebo oslaboval testy.`,a:`1) Advisory pravidlo v AGENTS.md/CLAUDE.md, 2) deterministický PreToolUse hook blokujúci edit/delete test súborov, 3) Stop-hook verification gate, ktorý pred ukončením session overí, že test suite je nedotknutá a zelená.`}]},
+
+{id:"eng-governance", code:"E5", title:"Governance: hooks, permissions, lethal trifecta",
+know:[
+`Kľúčové rozlíšenie: CLAUDE.md je advisory (text v kontexte — model ho „väčšinou" dodrží); hooks a permissions sú deterministické (exekuuje ich harness, nie model).`,
+`Pravidlo: čo model má vedieť → CLAUDE.md; čo sa nesmie stať / musí vždy stať → hook. PreToolUse blokuje aj v bypassPermissions; managed settings sa nedajú lokálne prepísať.`,
+`Limit hooks: enforcement len na hranici tool-callu hlavnej session — subagenti, MCP a pipe mode vyžadujú OS-level kontroly (file permissions, network policy, sandbox).`,
+`Lethal trifecta (Willison): privátne dáta + nedôveryhodný obsah + externá komunikácia súčasne = nepodmienene zraniteľné voči indirect prompt injection.`,
+`Meta „Agents Rule of Two": nedozorovaný agent max 2 z 3 vlastností trifecty; všetky 3 → human-in-the-loop.`],
+concepts:["advisory vs deterministic","PreToolUse hook","sandbox","lethal trifecta","Rule of Two"],
+open:[`Ako vyzerá minimálna governance sada pre prvý deň u klienta — čo je nutné vs. nice-to-have?`],
+src:[{t:"Claude Code docs: hooks",u:"https://code.claude.com/docs/en/hooks-guide"},{t:"Simon Willison: lethal trifecta",u:"https://simonwillison.net"},{t:"Report 1 (governance) + Report 3 (write-permissions)"}],
+checks:[{q:`Vysvetli rozdiel advisory vs. deterministické riadenie a daj príklad, čo patrí kam.`,a:`Advisory = inštrukcia v kontexte, ktorú model interpretuje (štýl kódu, preferované knižnice → CLAUDE.md); pod tlakom ju môže ignorovať. Deterministické = vynucuje harness bez ohľadu na rozhodnutie modelu (blokovanie rm -rf, deny na .env, povinný lint po edite → hooks/permissions).`}]},
+
+{id:"eng-autonomy", code:"E6", title:"Taxonómia autonómie L1–L5",
+know:[
+`L1 asistent (autocomplete) → L2 konverzačný → L3 delegovaný task→PR (dnešný produkčný strop) → L4 vysoká autonómia (len úzko scoped: Dependabot; Uber FlakyGuard: z 1 115 flaky testov 380 fixov, 197 landed) → L5 nedosiahnuté.`,
+`Vyššie nie je vždy lepšie — je to staffing decision; väčšina tímov je na L2, ambiciózny cieľ je robustné L3.`,
+`Kritické zložky rastú s úrovňou: L1–L2 stačí prompt+context; L3 vyžaduje harness+verification+governance; L4+ pridáva memory a blast-radius kontrolu.`,
+`Zásadné pravidlo: nikdy neškáluj počet agentov nad kapacitu code review.`],
+concepts:["L1–L5","produkčný strop L3","staffing decision","blast-radius"],
+open:[`Aké merateľné exit-kritériá pre posun L3→L4 navrhneme klientovi?`],
+src:[{t:"Swarmia / Tessl: five levels of AI agent autonomy"},{t:"Report 1 (taxonómia) + Report 2 (P1–P5 paralela)"}],
+checks:[{q:`Prečo je L3 dnešný produkčný strop a čo musí platiť, aby dávalo zmysel skúšať L4?`,a:`L3 (delegovaný task s human review PR) je strop, lebo verifikácia a zodpovednosť ostávajú u človeka pri zvládnuteľnej granularite. L4 dáva zmysel len pre úzko definované, opakované úlohy s deterministickou verifikáciou (dependency bumps, flaky-test fixy) — stabilné malé PR, silné CI, nízky change-fail-rate, human approval na merge.`}]},
+
+{id:"eng-metrics", code:"E7", title:"Metriky & anti-patterny: čo hovoria tvrdé dáta",
+know:[
+`DORA 2024: +25 % AI adopcia korelovala s −1,5 % throughput a −7,2 % delivery stability; 39 % má „little to no trust" v AI kód. AI odhaľuje slabiny okolitého systému.`,
+`METR RCT (2025): 16 skúsených OSS vývojárov bolo s AI o 19 % pomalších, pričom verili, že sú o 20 % rýchlejší — trvalý perception gap.`,
+`GitClear: code churn 3,3 % → 7,1 %, duplicitné bloky 8×, refactoring pod 10 % — korelácia, nie kauzalita, ale koncentrovaná v AI-heavy projektoch.`,
+`Faros AI: +21 % taskov, +98 % PR, ale +91 % review time a +154 % veľkosť PR; org DORA metriky bez zlepšenia → bottleneck sa presunul z písania na verifikáciu.`,
+`Anti-patterny: Devin 3/20 úloh; Replit agent zmazal produkčnú DB počas code freeze (chýbala vynútená dev/prod separácia); vibe coding v produkcii; multi-agent paralelné zápisy.`],
+concepts:["review bottleneck","perception gap","code churn","drop-in replacement fallacy"],
+open:[`Ktoré z týchto metrík vieme reálne zbierať u klienta od dňa 0 ako baseline?`],
+src:[{t:"DORA / Accelerate State of DevOps",u:"https://dora.dev"},{t:"METR: Measuring the Impact of Early-2025 AI",u:"https://metr.org"},{t:"GitClear reports",u:"https://www.gitclear.com"},{t:"Answer.AI: Thoughts on a month with Devin",u:"https://www.answer.ai/posts/2025-01-08-devin.html"}],
+checks:[{q:`Čo presne ukázala METR štúdia o perception gap a prečo je to kľúčové pre dizajn pilotu?`,a:`Vývojári predikovali +24 % zrýchlenie, po experimente stále verili +20 %, reálne boli o 19 % pomalší. Subjektívny pocit produktivity je nespoľahlivý — pilot musí mať objektívnu baseline a metriky (DORA/DX), nie dotazník spokojnosti.`},{q:`Čo je review bottleneck a aké je pravidlo, ktoré z neho vyplýva?`,a:`Agenti generujú viac kódu, než ľudia stíhajú reviewovať (+98 % PR, +91 % review time, +154 % veľkosť PR). Pravidlo: neškáluj počet agentov nad review kapacitu; gate v CI na duplicitu/churn, AI pre-screening, human review na intent.`}]},
+
+{id:"eng-sdd", code:"E8", title:"Spec-driven development (Spec Kit, Kiro, BMAD)",
+know:[
+`GitHub Spec Kit: /constitution → /specify → /clarify → /plan → /tasks → /analyze → /implement; constitution = nemenné princípy; „intent is the source of truth".`,
+`Amazon Kiro: requirements.md (EARS) → design.md → tasks.md s approval gates; BMAD: 12+ špecializovaných rolí, každá s úzko scoped kontextom.`,
+`Spoločná inverzia: spec review predchádza code review ako primárna quality gate.`,
+`Fowlerova kritika: veľa repetitívneho markdownu, ktorý sa horšie reviewuje než kód; kladivo na orech pri malých taskoch; brownfield je slabina.`,
+`Prakticky: spec držať minimálny (10–30 riadkov) a portable; SDD najsilnejšie na greenfielde a legacy modernizácii.`],
+concepts:["constitution","spec-anchored","approval gates","intent as source of truth"],
+open:[`Vieme z Spec Kit / Kiro extrahovať ľahkú vlastnú pipeline bez lock-inu na konkrétny nástroj?`],
+src:[{t:"GitHub Spec Kit",u:"https://github.com/github/spec-kit"},{t:"Amazon Kiro",u:"https://kiro.dev"},{t:"Martin Fowler / ThoughtWorks — SDD kritika",u:"https://martinfowler.com"}],
+checks:[{q:`Kedy SDD nasadiť a kedy je to overkill?`,a:`Nasadiť: greenfield, legacy modernizácia (zachytiť biznis logiku do spec-u), features s viacerými agent-taskami, kde spec slúži ako kontrakt a review artefakt. Overkill: tasky pod ~15 minút, jednoriadkové bugfixy — tam spec len presúva review burden (Kiro spravilo zo small bugu 16 acceptance criteria).`}]}
+]},
+
+{
+id:"m2", code:"M2", name:"Product harness", base:"Report 2",
+desc:"Agent ako asistent v produktovej vrstve: discovery, PRD, dekompozícia na agent-ready work items. Verifikácia tu nie je test, ale human judgement — a preto tu človek rozhoduje.",
+topics:[
+{id:"prod-discovery", code:"P1", title:"Agentmi asistované discovery",
+know:[
+`Torres: AI syntéza rozhovorov bez human review vynecháva 20–40 % dôležitého detailu; „lazy AI interview synthesis" (transkript→summary→ďalej) zachytí ~5 % — najčastejší anti-pattern.`,
+`Metodika dvoch perspektív: urob vlastnú syntézu → nechaj AI spraviť paralelnú → porovnaj; hodnota je v rozdieloch.`,
+`Nová discovery habit: AI evals — product-vrstvová obdoba verifikačnej slučky pre kvalitu AI features.`,
+`Nástroje (Dovetail, Notion AI) sú sekundárne; primárna je metodika (weekly touchpoints, opportunity solution tree).`],
+concepts:["continuous discovery","dve perspektívy","AI evals","opportunity solution tree"],
+open:[`Ako spraviť „porovnanie dvoch syntéz" dostatočne lacným, aby ho PM reálne robili?`],
+src:[{t:"Teresa Torres: Continuous Discovery Habits + AI postoje"},{t:"Report 2, sekcia discovery"}],
+checks:[{q:`Prečo je „transkript → AI summary → ďalej" anti-pattern a aká je náprava?`,a:`AI summary stráca kontext, empatiu a 20–40 % detailu; PM prestáva robiť discovery a len generuje sumáre. Náprava: vlastná syntéza najprv, AI syntéza paralelne, porovnanie rozdielov + spot-check summaries proti raw rozhovorom.`}]},
+
+{id:"prod-prd", code:"P2", title:"PRD a requirements s AI: čo funguje a čo nie",
+know:[
+`Funguje: drafting z hrubých vstupov, konzistencia, edge-case generovanie, red-teaming požiadaviek, generovanie acceptance criteria; PR/FAQ princíp — AI má urýchliť zabíjanie zlých nápadov na papieri.`,
+`Nefunguje: generický „thin" output, halucinované požiadavky, strata product judgement.`,
+`Quattrocchi et al. (2025, 13 958 stories): LLM user stories odmietnuté v 63–77 % prípadov; systematicky najhoršie „Rationale Clarity" — vysvetlenie PREČO.`,
+`Cagan: „amplify your thinking, don't abdicate it" — AI ako najlepší junior PM, nie náhrada senioritného úsudku.`],
+concepts:["red-teaming požiadaviek","PR/FAQ","Rationale Clarity","junior PM analógia"],
+open:[`Dá sa Rationale Clarity zlepšiť promptom/kontextom, alebo je to inherentný limit — čo hovoria novšie práce?`],
+src:[{t:"Quattrocchi et al., arXiv:2507.15157",u:"https://arxiv.org/abs/2507.15157"},{t:"Marty Cagan / SVPG — AI v product manažmente"},{t:"Report 2, sekcia PRD"}],
+checks:[{q:`V ktorej kvalite user stories LLM najviac zlyhávajú a prečo to bolí práve pri handoffe?`,a:`Rationale Clarity — zdôvodnenie prečo (GPT-4 skóre 1,54 vs. ľudské ~2,7). Intent/why je pritom prvá zložka handoff kontraktu; bez nej engineering agent verne implementuje formu bez pochopenia účelu a defaultuje k nesprávnym rozhodnutiam.`}]},
+
+{id:"prod-decomposition", code:"P3", title:"Dekompozícia na agent-ready work items",
+know:[
+`INVEST + right-sizing: spec ~10–30 riadkov (pod 10 chýbajú constraints, nad 50 over-specifikácia); task pod ~15 min spec nepotrebuje.`,
+`Agent-ready task = scoped, verifikovateľný (AC), s jasným DoD a context links — agent si nepamätá tikety spred 6 mesiacov; bez odkazov reverse-engineeruje intent.`,
+`GitLab Duo experiment: AI effort estimation len 16 % accuracy (nedostatočné), ale task breakdown pomáha — granulárnejšia dekompozícia (5,4 vs. 3,2 taskov/story) s nutným human oversightom.`],
+concepts:["INVEST","right-sizing","context links","DoD"],
+open:[`Aký je náš checklist „agent-ready task" — vieme ho vynútiť v backlog refinement gate?`],
+src:[{t:"Nier et al., Applied Sciences 2024 (GitLab Duo)"},{t:"Report 2, sekcia dekompozícia + šablóna task specu"}],
+checks:[{q:`Aké vlastnosti robia task agent-ready?`,a:`Scoped s explicitnými non-goals, right-sized (~10–30 riadkov specu), strojovo verifikovateľné acceptance criteria, definition of done, context links na kód/dizajn/rozhodnutia a traceability na requirement ID.`}]},
+
+{id:"prod-pm-role", code:"P4", title:"Rola PM: z autora na editora a kurátora",
+know:[
+`Cagan rozlišuje: delivery PO a feature-team PM → veľká automatizácia až plná; empowered PM (outcomes, discovery, product sense) sa stáva DÔLEŽITEJŠÍM.`,
+`Riziko 1 — automation bias: review AI draftov degeneruje na rubber-stamp; ľudia over-trustujú automated outputs.`,
+`Riziko 2 — strata kontaktu s používateľmi: ak tím outsourcuje analýzu na AI, „negeneruje discovery, generuje summaries".`],
+concepts:["editor/kurátor","automation bias","empowered PM"],
+open:[`Aké procesné poistky proti automation bias zavedieme (povinný spot-check, kill-rate metrika návrhov)?`],
+src:[{t:"Marty Cagan / SVPG talks 2026"},{t:"Report 2, sekcia rola PM"}],
+checks:[{q:`Dve hlavné riziká posunu PM z autora na editora?`,a:`Automation bias (schvaľovanie AI draftov bez skutočného úsudku — rubber-stamp) a strata priameho kontaktu s používateľmi (discovery nahradené generovaním sumárov).`}]},
+
+{id:"prod-scale", code:"P5", title:"Škála asistencie P1–P5 v product vrstve",
+know:[
+`P1 assisted drafting → P2 AI draft + human edit (dnešný mainstream) → P3 AI red-teaming a edge-cases (Bashir et al.: +20,2 % v detekcii ambiguity) → P4 AI dekompozícia s approval gates → P5 autonómne definovanie = dnes anti-pattern.`,
+`Kľúčový rozdiel oproti engineering L1–L5: verifikácia v product vrstve = human judgement + konzistenčné kontroly, NIE deterministické testy — preto sa P5 nedá „odverifikovať".`],
+concepts:["P1–P5","konzistenčné kontroly","human judgement ako verifikácia"],
+open:[`Je P3 (red-teaming) náš najlepší quick win u klienta — ako ho zabaliť do backlog refinement?`],
+src:[{t:"Bashir et al., ICSME 2025 — ambiguity detection"},{t:"Report 2, škála P1–P5"}],
+checks:[{q:`Prečo je P5 (autonómne definovanie produktu) dnes anti-pattern?`,a:`Chýba deterministická verifikácia — kvalitu produktového rozhodnutia nevie overiť test, len human judgement; pri P5 sa review mení na rubber-stamp (automation bias) a stráca sa product judgement aj kontakt s používateľmi. LLM stories navyše zlyhávajú presne v rationale.`}]}
+]},
+
+{
+id:"m3", code:"M3", name:"Handoff contract", base:"Report 2",
+desc:"Most medzi product a engineering vrstvou: anatómia kontraktu, strojovo verifikovateľné acceptance criteria (EARS/Gherkin), traceability a obojsmerný feedback loop.",
+topics:[
+{id:"hand-anatomy", code:"H1", title:"Anatómia handoff kontraktu",
+know:[
+`Šesť zložiek: intent/why · scope + non-goals · acceptance criteria (strojovo verifikovateľné) · constraints (tech/security/perf) · context links · definition of done.`,
+`Bez non-goals agent defaultuje k „maximally complete implementation" a over-engineeruje; bez AC je spec len prompt s formátovaním navyše.`,
+`Investícia do kontraktu sa vracia v engineering vrstve — spec review sa stáva primárnou quality gate pred code review.`,
+`Ownership: PM vlastní čo/prečo, tech lead vlastní verifikovateľnosť/DoD; písanie kolaboratívne.`],
+concepts:["intent/why","non-goals","context links","DoD","spec review gate"],
+open:[`Aká je minimálna verzia kontraktu pre 30-minútový task, aby proces neudusil malé zmeny?`],
+src:[{t:"Report 2 — anatómia + šablóna TASK specu"},{t:"GitHub Spec Kit / Amazon Kiro ako referenčné modely"}],
+checks:[{q:`Vymenuj šesť zložiek kontraktu. Ktorá najčastejšie chýba v LLM draftoch?`,a:`Intent/why, scope + non-goals, acceptance criteria, constraints, context links, DoD. Najčastejšie chýba (alebo je najslabší) intent/why — presne kvalita, v ktorej LLM stories skórujú najhoršie (Rationale Clarity).`}]},
+
+{id:"hand-ears-gherkin", code:"H2", title:"EARS & Gherkin: strojová verifikovateľnosť AC",
+know:[
+`EARS (Mavin, Rolls-Royce; Airbus/Bosch/NASA…): 5 patternov — ubiquitous, WHEN (event), WHILE (state), WHERE (optional), IF/THEN (unwanted). Núti explicitne povedať kedy a za akých podmienok; vágne vety sa do vzoru nezmestia.`,
+`Gherkin (BDD): Given–When–Then — čitateľné pre PM a zároveň priamo spustiteľné (Cucumber/pytest-bdd/behave). Ten istý text = spec aj test.`,
+`Vzťah: EARS na úrovni požiadaviek, Gherkin na úrovni acceptance criteria. Tok: user story → EARS → Gherkin → failing testy → agent implementuje do zelena.`,
+`Dôkazy: ClarifyGPT +11,52 % Pass@1 len z clarifikácie požiadaviek; Bashir +20,2 % detekcia ambiguity; Wang et al. AC generovanie +23,2 p.b. s multi-modal RAG.`],
+concepts:["EARS 5 patternov","Given–When–Then","executable specification","failing testy ako handoff"],
+open:[`Ako zabrániť BDD pasci (Gherkin píšu len test inžinieri v izolácii) — kto ho píše u klienta?`],
+src:[{t:"Alistair Mavin: EARS guide (IEEE RE'09)"},{t:"ClarifyGPT (FSE 2024); Wang et al., arXiv:2508.06888",u:"https://arxiv.org/abs/2508.06888"},{t:"Report 2 — ukážka prevodu story→EARS→Gherkin→testy"}],
+checks:[{q:`Aký je rozdiel rolí EARS a Gherkin v toku a prečo sú oba cenné pre agenta?`,a:`EARS štruktúruje požiadavky (pravidlá, čo systém SHALL robiť, kedy); Gherkin z nich robí konkrétne spustiteľné scenáre (AC). Pre agenta: oba sú dosť štruktúrované na jednoznačnú interpretáciu (žiadne halucinovanie intentu) a Gherkin navyše dáva spustiteľnú verifikačnú slučku.`}]},
+
+{id:"hand-traceability", code:"H3", title:"Traceability & režimy spec-u",
+know:[
+`Reťazec: requirement → spec → task → kód → test → PR; Kiro linkuje explicitne (_Requirements: 1.1_); ID sa nesie v branch/commit/PR.`,
+`Invalidation mechanism: zmena kódu → príslušná požiadavka a testy sa stanú „suspect" (obojsmerný drift detection).`,
+`ML-based traceability má len ~64 % accuracy → preferuj štruktúrne prepojenie (explicitné ID, spec verzovaný s kódom) pred ML odhadom.`,
+`Fowler/ThoughtWorks tri režimy: spec-first (spec vedie AI, kód primárny) · spec-anchored (spec = governing living contract) · spec-as-source (kód disposable). Odporúčanie pre klienta: spec-anchored.`],
+concepts:["invalidation","suspect artefakty","spec-first/anchored/as-source","štruktúrne ID"],
+open:[`Ako škáluje traceability pri tisíckach agent-generovaných artefaktov — potrebujeme tooling, alebo stačí disciplína ID?`],
+src:[{t:"Martin Fowler / ThoughtWorks — spec režimy",u:"https://martinfowler.com"},{t:"Report 2 (traceability) + Report 3 (ID schémy)"}],
+checks:[{q:`Prečo je spec-anchored realistický cieľ, a nie spec-as-source?`,a:`Spec-anchored drží spec ako živý kontrakt a review artefakt, ale kód ostáva plnohodnotný — funguje v brownfielde a s ľudským review. Spec-as-source (kód ako disposable byproduct) predpokladá úplnú, vždy aktuálnu špecifikáciu a plne spoľahlivú regeneráciu — čo dnes neplatí (Beck: „počas implementácie sa učíš, spec sa mení").`}]},
+
+{id:"hand-feedback", code:"H4", title:"Feedback loop & anti-patterny handoffu",
+know:[
+`Engineering vrstva je najlepší detektor zlých požiadaviek: agent narazí na kontradikciu / nemožné AC → signál späť do product vrstvy (Kiro robí automated reasoning kontrolu pred kódom).`,
+`Drift otázka pri nesúlade spec↔kód: „is the code wrong, is the requirement wrong, or did we learn something?" — kým nerozhodnuté, proces je rozbitý.`,
+`Anti-patterny: over-specification (spec dlhší než kód → review burden presunutý, nie odstránený) · under-specification (agent halucinuje intent, 30-min feature nabobtná) · stale specs / drift · throw-over-the-wall (interpretive drift sa skladá cez vrstvy).`],
+concepts:["agent ako detektor","drift triage","over/under-specification","throw over the wall"],
+open:[`Ako formalizovať spätný kanál (agent→PM) tak, aby sa nejasnosti nestrácali v logoch sessions?`],
+src:[{t:"Report 2 — anti-patterny handoffu"},{t:"reqproof: code, spec, or requirement?"}],
+checks:[{q:`Ako z priebehu projektu spoznáš over- vs. under-specification?`,a:`Over-spec: review burden rastie, spec > kód, PM/tech lead trávia viac času nad markdownom než nad produktom. Under-spec: „confidently wrong" implementácie — agent doručí zelené PR, ktoré rieši iný problém, rastie počet spätných otázok a prepisovaní.`}]}
+]},
+{
+id:"m4", code:"M4", name:"Information architecture", base:"Report 3",
+desc:"Ako sa v systéme tvoria a udržiavajú informácie: taxonómia artefaktov, lifecycle a write-permissions, memory a retrieval pre agentov, a prepojenie product ↔ engineering sveta.",
+topics:[
+{id:"ia-taxonomy", code:"I1", title:"Taxonómia artefaktov: durable / derived / disposable",
+know:[
+`Durable = source of truth (PRD, ADR, spec, kód, testy, CLAUDE.md, architektonická mapa) → verzované, review, ownership.`,
+`Derived = regenerovateľné z durable (plány, task listy, API docs z kódu, diagramy, sumarizácie) → nikdy needitovať ručne ako master, inak drift.`,
+`Disposable = ephemeral (progress notes, session transkripty, scratchpady) → agent voľne píše, pravidelne sa čistia.`,
+`Master sa líši per vrstva: product durable často v Notion/Confluence, engineering durable v gite — hranica je jadro single-source-of-truth problému.`],
+concepts:["source of truth","derived","disposable","SSOT hranica"],
+open:[`Do ktorej kategórie patrí agentom generovaná dokumentácia legacy systému — derived, alebo durable po validácii?`],
+src:[{t:"Report 3, rovina A"},{t:"Anthropic: memory typológia (in-context / external / in-weights / cache)"}],
+checks:[{q:`Prečo sa derived artefakty nesmú ručne editovať?`,a:`Sú odvodené z durable masteru — ručná editácia vytvára druhú, nesynchronizovanú „pravdu" a drift. Správny tok: zmeniť master (spec, kód) a derived regenerovať; ak derived potrebuje trvalú zmenu, tá zmena patrí do masteru.`}]},
+
+{id:"ia-lifecycle", code:"I2", title:"Lifecycle & write-permissions ako governance",
+know:[
+`ADR (Nygard) ako vzorový lifecycle: krátky MD, číslovaný, Proposed→Accepted cez PR; Accepted je immutable — zmena = nový ADR so Superseded linkom; linky z kódu na seams (grep test: ak nula, prax ticho zlyháva).`,
+`Write-permissions per kategória: durable len s human/PR gate; derived smie agent regenerovať; disposable voľne. Vzor feature_list.json: agent mení len status pole.`,
+`Vynucovanie hookmi a scoped permissions, nie dôverou; org pamäť s audit logmi a rollbackom (managed stores).`],
+concepts:["ADR","Superseded","write-permissions per kategória","audit log"],
+open:[`Ako nastaviť write-permissions v nástrojoch klienta, ktoré hooks nepodporujú (Jira, Confluence)?`],
+src:[{t:"ADR — Nygard / adr.github.io",u:"https://adr.github.io"},{t:"Report 3, rovina A + Anthropic long-running harness"}],
+checks:[{q:`Čo znamená „Accepted ADR je immutable" a prečo na tom záleží?`,a:`Prijaté rozhodnutie sa už needituje — pri zmene sa píše nový ADR a starý dostane status Superseded s linkom. História rozhodnutí tak ostáva čitateľná a dôveryhodná; agent aj človek vidia nielen ČO platí, ale aj ČO platilo a prečo sa to zmenilo.`}]},
+
+{id:"ia-consistency", code:"I3", title:"Konzistencia, drift & documentation debt",
+know:[
+`Drift spec↔kód↔testy↔docs je pri AI rýchlosti akútnejší; Tan et al.: ~29 % top-1000 GitHub projektov malo stale code-element referencie, priemerne 4,7 roka staré — ešte PRED AI akceleráciou.`,
+`Docs-as-code (MD/AsciiDoc pri kóde, review v PR) + docs-as-tests v CI: README staleness check, OpenAPI ↔ implementácia contract testy, drift → automatická notifikácia/PR.`,
+`AI-generovaná dokumentácia: riziko staleness a „impressive but wrong" → vždy human review pred publikáciou, label + timestamp AI obsahu, expiračné politiky pre kritické docs.`],
+concepts:["docs-as-code","docs-as-tests","staleness","impressive but wrong"],
+open:[`Aký staleness threshold spustí u klienta alarm — vieme ho merať automaticky od Fázy 1?`],
+src:[{t:"Tan, Wagner & Treude, EMSE 2023 — outdated references"},{t:"Report 3, rovina A"}],
+checks:[{q:`Uveď dva konkrétne docs-as-tests checky, ktoré patria do CI.`,a:`1) README/docs staleness: skript overí, že referencované súbory/príkazy existujú a build zlyhá pri mŕtvych odkazoch. 2) OpenAPI contract test: schéma ↔ implementácia sa porovnajú; mismatch = failed build (spec ako executable contract).`}]},
+
+{id:"ia-memory", code:"I4", title:"Memory systémy pre agentov",
+know:[
+`Typológia: session/working (context okno) · persistent files (/memories, CLAUDE.md) · cross-session (progress file + git história) · organizačná (zdieľané stores, scoped permissions, audit).`,
+`MemGPT/Letta referenčný rámec: LLM ako OS — core (vždy v kontexte) / recall (searchable história) / archival (vektorový store), self-editing memory cez tool calls. Anthropic memory tool je naproti tomu čisto súborový.`,
+`Tri techniky long-horizon: compaction (sumarizuj a reinicializuj) · structured note-taking (NOTES.md, míľniky) · subagenti (izolované okná, 1–2k token sumár späť).`,
+`Memory poisoning (OWASP ASI06): perzistentné a temporálne oddelené — „poison planted today executes weeks later"; šíri sa medzi agentmi. Obrana: provenance, validácia pred zápisom, human review durable memory, rollback.`],
+concepts:["core/recall/archival","compaction","note-taking","subagent sumár","memory poisoning"],
+open:[`Kedy sa nám oplatí org-level memory store vs. len súbory v repe — aké je rozhodovacie kritérium?`],
+src:[{t:"MemGPT paper (Packer et al., 2023) / Letta"},{t:"Anthropic memory tool + context engineering",u:"https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"},{t:"OWASP Top 10 for Agentic Applications"}],
+checks:[{q:`Kedy zvolíš compaction, kedy note-taking a kedy subagentov?`,a:`Compaction pre dlhý konverzačný tok bez prirodzených míľnikov; structured note-taking pre iteratívnu prácu s míľnikmi (progress file prežije reset); subagentov pre paralelný prieskum/read-heavy úlohy, kde sa hlavnému agentovi vráti len krátky sumár a kontext ostáva čistý.`}]},
+
+{id:"ia-disclosure", code:"I5", title:"Progressive disclosure: Skills, nested súbory, indexy",
+know:[
+`Anthropic Skills = najčistejšia implementácia, 3 úrovne: (1) metadáta každého skillu vždy v kontexte (~80 tokenov), (2) telo SKILL.md pri relevancii (medián ~1,4–2k tokenov), (3) bundled scripts/references on-demand.`,
+`Otvorený štandard s reálnou cross-vendor adopciou: Codex, Copilot, Cursor, Gemini CLI.`,
+`Nested CLAUDE.md/AGENTS.md: bottom-up hierarchia, subdirectory súbory sa načítajú on-demand; špecifickejšie prebíja všeobecnejšie.`,
+`Index súbory (ARCHITECTURE.md, docs/INDEX.md) ako table of contents — agent aj človek načíta len potrebnú vetvu.`,
+`Gardening CLAUDE.md: každý riadok load-bearing, pod ~300 riadkov; auto-generované duplikáty README merateľne škodia (−2 % success, +23 % cost).`],
+concepts:["3 úrovne Skills","lazy loading","nested AGENTS.md","load-bearing riadky","gardening"],
+open:[`Čo z našej internej expertízy zabaliť ako prvé Skills — kandidáti: task-spec šablóna, characterization workflow?`],
+src:[{t:"Anthropic: Agent Skills (open standard)"},{t:"AGENTS.md štandard",u:"https://agents.md"},{t:"Report 3, rovina B"}],
+checks:[{q:`Opíš tri úrovne progressive disclosure v Skills a čo je na ktorej.`,a:`Úroveň 1: name + description každého skillu, vždy v system prompte (lacná discovery vrstva). Úroveň 2: celé telo SKILL.md sa načíta, len keď model usúdi relevanciu. Úroveň 3: bundled súbory (scripts/, references/, assets/) sa čítajú/spúšťajú až on-demand pri práci.`}]},
+
+{id:"ia-retrieval", code:"I6", title:"Retrieval: agentic search vs. RAG vs. knowledge graphs",
+know:[
+`Claude Code zámerne NEindexuje codebase — grep/glob/read: presnosť (exact match), freshness (index nedriftuje), jednoduchosť, privacy; rané RAG verzie agentic search prekonal. Devin rovnaký vzor.`,
+`Cursor hybrid: embeddings + grep; +12,5 % accuracy z kombinácie semantic+grep (6,5–23,5 % podľa modelu) — vhodné pre konceptuálne dotazy nad veľkými codebase.`,
+`Protipríklad indexovania: Sourcegraph Cody index postavil a potom odstránil.`,
+`Knowledge graphs nad codebase (Potpie, CodeGraph): sľubné self-reported čísla, ale staleness a náklady údržby → experimentálne; default = agentic search + progressive disclosure, hybrid až keď zlyháva na veľkosti.`],
+concepts:["agentic search","hybrid retrieval","staleness indexu","KG hype-check"],
+open:[`Pri akej veľkosti/štruktúre monorepa začne čistý grep prehrávať — máme vlastný benchmark?`],
+src:[{t:"Cursor: Improving agent with semantic search"},{t:"Report 3, rovina B (retrieval sekcia)"}],
+checks:[{q:`Prečo Claude Code neindexuje a kedy napriek tomu zvážiš semantic/hybrid?`,a:`Grep dáva exact-match presnosť, vždy čerstvý stav (žiadny driftujúci index), nulovú údržbu a privacy. Semantic/hybrid zváž pri veľmi veľkej codebase, ktorá sa nezmestí do rozumného počtu grep krokov, pri konceptuálnych dotazoch bez lexikálnej zhody a pri onboardingu — a meraj prínos proti nákladu údržby.`}]},
+
+{id:"ia-linking", code:"I7", title:"Prepojenie product ↔ engineering",
+know:[
+`Jednotná ID schéma: issue/requirement ID v branch names, commit messages a PR descriptions; vynútené prepare-commit-msg hookom → obojsmerné linky Jira/Linear ↔ git zadarmo.`,
+`Mapa systému: C4 (Context→Container→Component→Code) + arc42; ARCHITECTURE.md ako vstupný bod pre ľudí aj agentov; code-level diagramy generovať z kódu (derived).`,
+`Sync vzor: každý artefakt má práve jeden master; „reference, don't copy" — kópie len ako sumarizované výňatky s linkom (kvôli context rotu).`,
+`MCP ako integračná vrstva (Jira/Linear/Notion): pozor na token overhead raw JSON dumpov, injection riziko z ticket obsahu; write tools na „always ask". llms.txt = nika pre developer-docs, nie univerzálny štandard.`],
+concepts:["ID schéma","C4 / arc42","reference don't copy","MCP vrstva"],
+open:[`Ktorý nástroj klienta bude master pre product durable — a ako presadíme reference-don't-copy proti zvyku kopírovať?`],
+src:[{t:"C4 model (Simon Brown); arc42"},{t:"llms.txt návrh (Howard)",u:"https://llmstxt.org"},{t:"Report 3, rovina C"}],
+checks:[{q:`Aký problém rieši pravidlo „reference, don't copy"?`,a:`Version drift z duplikácie: keď rovnaký obsah žije v Jira aj v repe, jedna kópia zastará a vzniknú dve „pravdy". Pravidlo drží jeden živý master a všade inde len odkazy (prípadne krátke sumarizované výňatky s linkom), takže aktualizácia má jedno miesto.`}]}
+]},
+
+{
+id:"m5", code:"M5", name:"Brownfield bootstrap", base:"Report 4",
+desc:"Ako zaviesť agentický vývoj tam, kde prerekvizity chýbajú: bootstrap paradox, characterization testy, mutation testing, agent archeológia, strangler fig a STOP kritériá.",
+topics:[
+{id:"brown-paradox", code:"B1", title:"Bootstrap paradox a poradie rozbiehania",
+know:[
+`Paradox: agent potrebuje testy/CI ako verifikačnú slučku, legacy ich nemá — a agent je zároveň najlacnejší nástroj na ich vytvorenie.`,
+`Bezpečné poradie (závislostný reťazec): read-only comprehension → characterization/golden-master testy → minimálna CI (build+lint+testy) → AGENTS.md z extrahovaných konvencií → write v low-risk moduloch.`,
+`DORA mechanizmus: AI bez zrelej základne znižuje stability (−7,2 %) — základňa musí predchádzať write-automatizácii.`,
+`Read-only Fáza 0 rozbíja paradox: nulové write riziko, okamžitá hodnota, buduje dôveru defenzívneho tímu.`],
+concepts:["bootstrap paradox","závislostný reťazec","read-only first"],
+open:[`Ako dlho smie trvať Fáza 0, kým sa stane výhovorkou neprejsť ďalej?`],
+src:[{t:"Report 4 — paradox a roadmap"},{t:"DORA 2024/2025",u:"https://dora.dev"}],
+checks:[{q:`Prečo poradie bootstrapu nie je ľubovoľné?`,a:`Write-zmeny vyžadujú testy, ktoré chytia regresiu; zmysluplné testy v netestovanom kóde = characterization; tie potrebujú build + minimálnu CI na feedback; AGENTS.md vyžaduje comprehension. Preskočenie kroku znamená agenta bez verifikačnej slučky — presne scenár, kde DORA meria pokles stability.`}]},
+
+{id:"brown-characterization", code:"B2", title:"Characterization & golden master testy s agentmi",
+know:[
+`Feathers: legacy = kód bez testov; characterization testy dokumentujú REÁLNE správanie, nie želané — sila (bezpečnostný pás refactoringu) aj pasca (bug-as-spec: test zafixuje bug ako správanie).`,
+`Approval/golden-master (Falco): zachyť výstup, kontroluj nemennosť — netreba rozumieť internals, ideálne pre agenta; po refactoringu sa testy môžu zahodiť.`,
+`Meta TestGen-LLM (FSE 2024): filter-based garancia zlepšenia (build+pass+coverage↑); 75 % build, 57 % pass, 25 % coverage↑, 73 % acceptance; užitočné:generované ~1:4 kontrolované vs. ~1:20 reálne.`,
+`Workflow poistky: prompt „dokumentuj, neopravuj; podozrivé označ SUSPECTED-BUG" → human review sampling → triage load-bearing bug (zachovaj + ADR) vs. skutočný bug (ticket).`],
+concepts:["characterization test","golden master","SUSPECTED-BUG triage","filter-based generovanie"],
+open:[`Vieme workflow z Reportu 4 zabaliť ako reusable Skill pre projekty klienta?`],
+src:[{t:"Michael Feathers: Working Effectively with Legacy Code"},{t:"Meta TestGen-LLM, arXiv:2402.09171",u:"https://arxiv.org/abs/2402.09171"},{t:"ApprovalTests (Falco)",u:"https://approvaltests.com"}],
+checks:[{q:`Prečo approval testing elegantne obchádza problém „agent nerozumie kódu"?`,a:`Nevyžaduje pochopenie internals ani písanie assertions — len zachytenie pozorovateľného výstupu pre reprezentatívne vstupy. Agent tak vytvorí bezpečnostný pás bez interpretácie logiky; interpretácia (je toto správanie bug?) ostáva človeku v review kroku.`}]},
+
+{id:"brown-mutation", code:"B3", title:"Mutation testing ako kontrola kvality testov",
+know:[
+`Coverage je vanity metrika: existujú suites so 100 % coverage a 4 % mutation score (MutGen).`,
+`Haroon et al.: >99 % z 23 977 testov, ktoré failovali na mutovanom kóde, prejde na origináli — LLM testom chýba precíznosť voči sémantickým zmenám.`,
+`Mutation feedback funguje: MutGen 53 % → 89,5 % mutation score; Meta ACH = mutation-guided generovanie + LLM equivalence detector.`,
+`Prax: mutmut/PIT/Stryker v CI; prežité mutanty = konkrétny zoznam assertion gaps na review; prah ~70 % mutation score pred označením modulu za „characterized" a pred prechodom na write fázu.`],
+concepts:["mutation score","surviving mutants","equivalence problém","exit kritérium"],
+open:[`Ako zvládnuť výpočtovú cenu mutation testingu na veľkom module — incremental/changed-lines only?`],
+src:[{t:"MutGen, arXiv:2506.02954",u:"https://arxiv.org/abs/2506.02954"},{t:"Haroon et al., arXiv:2603.23443",u:"https://arxiv.org/abs/2603.23443"},{t:"Stryker / PIT / mutmut docs"}],
+checks:[{q:`Prečo coverage nestačí ako exit kritérium bootstrapu a čo použiť namiesto neho?`,a:`Coverage meria, či sa riadok vykonal, nie či ho niečo overuje — LLM testy často vykonajú kód bez silných assertov (100 % coverage / 4 % mutation score). Exit kritérium = mutation score (~70 % na pilotnom module): meria, či testy reálne zabíjajú zavedené chyby.`}]},
+
+{id:"brown-archaeology", code:"B4", title:"Agent archeológia: reverse-engineering legacy",
+know:[
+`Najbezpečnejšia ROI je comprehension: ThoughtWorks CodeConcise (LLM + KG z AST) −⅔ času analýzy na 15M+ riadkoch; IBM WCA for Z u NOSI −79 % času porozumenia (24 h → ~5 h) — vendor dáta, brať kriticky.`,
+`Nezávislé hlasy (CROZ): hodnota v Understand fáze, NIE v autonómnej COBOL→Java transformácii bez refinementu (to je marketing anti-pattern).`,
+`Halucinácie: v kóde ich chytí compiler (Willison: „least dangerous"), v dokumentácii vzniká „plausible but wrong" — horšie než žiadna, lebo vyzerá autoritatívne.`,
+`Validácia: dokumentácia ako HYPOTÉZA s confidence levelmi; expert review sampling; ukotvenie v deterministických faktoch (AST dependency graf); cross-check proti characterization testom.`],
+concepts:["comprehension ROI","hypotéza s confidence","plausible but wrong","ADR rekonštrukcia"],
+open:[`Ako formátovať „dokumentáciu ako hypotézu", aby ju tím bral vážne, ale nie ako pravdu?`],
+src:[{t:"ThoughtWorks CodeConcise / mainframe modernization",u:"https://www.thoughtworks.com"},{t:"CROZ: honest take on WCA for Z"},{t:"Report 4, sekcia 3"}],
+checks:[{q:`Prečo sú halucinácie v dokumentácii nebezpečnejšie než v kóde?`,a:`Halucinovaný kód okamžite odhalí compiler/test — slučka je deterministická. Halucinovanú dokumentáciu nič neverifikuje; „plausible but wrong" vysvetlenie legacy správania vyzerá autoritatívne, tím ho prestane spochybňovať a rozhoduje na jeho základe.`}]},
+
+{id:"brown-strangler", code:"B5", title:"Strangler fig, heatmapa a výber prvého bojiska",
+know:[
+`Strangler fig (Fowler) pre agent adoption: nové moduly agent-first, legacy sa postupne obrastá testami; anti-corruption layer medzi svetmi; seams sú „unicorny" — niekedy najprv refactoring.`,
+`Heatmapa kritérií: izolovateľnosť ↑, existujúce coverage ↑, churn (hodnota testov) ↑, business criticality ↓ pre pilot, veľkosť/komplexita ↓ (god classes = context rot).`,
+`Churn-vs-complexity hotspoty (CodeScene logika): komplexný a často menený kód je najdrahší; stabilný komplexný nie je priorita.`,
+`Hyrumov zákon a load-bearing bugs: pri dosť používateľoch niekto závisí od každého pozorovateľného správania — agentova „oprava" bugu rozbije integrácie; preto triage v characterization workflow.`],
+concepts:["strangler fig","anti-corruption layer","heatmapa","Hyrumov zákon","hotspoty"],
+open:[`Vieme heatmapu vygenerovať automaticky z git histórie + statickej analýzy ako prvý deliverable?`],
+src:[{t:"Martin Fowler: Strangler Fig Application",u:"https://martinfowler.com/bliki/StranglerFigApplication.html"},{t:"Report 4 — ukážka heatmapy so scoringom"}],
+checks:[{q:`Aké kritériá rozhodujú o výbere pilotného modulu a ktoré je vylučovacie?`,a:`Izolovateľnosť (seams), aspoň čiastočné testy, vyšší churn (testy sa oplatia), zvládnuteľná veľkosť. Vylučovacie: vysoká business criticality — na platobnom/safety module sa nepilotuje bez ohľadu na ostatné skóre (neprijateľný blast-radius).`}]},
+
+{id:"brown-roadmap", code:"B6", title:"Roadmap Fázy 0–3, metriky a STOP kritériá",
+know:[
+`F0 read-only (archeológia, dôvera) → F1 verifikačná infra (characterization + min CI + AGENTS.md) → F2 write v low-risk moduloch, L1–L2, plná slučka → F3 rozširovanie podľa heatmapy, nové moduly agent-first.`,
+`Metriky progressu: mutation score (primárna), coverage (sekundárna), dokumentačná pokrytosť, čas onboardingu, change failure rate.`,
+`Secrets hygiene od dňa 0: gitleaks/TruffleHog na celú históriu PRED write prístupom; AI-asistované commity leakujú ~2× baseline (GitGuardian); aktívne credentials → STOP + rotácia.`,
+`STOP kritériá pre write: nemožno vybudovať CI/test slučku · safety-critical bez akceptovateľného blast-radius · bez audit trailu → agent ostáva read-only.`,
+`Prahy: mutation <70 % → späť do F1; CFR rastie → zmenši batch size; tím defenzívny → predĺž F0, nájdi championa.`],
+concepts:["F0–F3","exit kritériá","secrets hygiene","STOP kritériá"],
+open:[`Ako roadmap zladiť s fázami z Reportov 1–3 do jedného master plánu pre klienta?`],
+src:[{t:"Report 4 — plný roadmap + ukážka deň 1"},{t:"GitGuardian: State of Secrets Sprawl"}],
+checks:[{q:`Aké je exit kritérium F1→F2 a čo ťa vráti späť?`,a:`Exit: verifikačná slučka existuje — characterization testy na pilotných moduloch s mutation score ~70 %+, bežiaca CI (build+lint+testy), AGENTS.md bez halucinácií, čistý secrets scan. Späť ťa vráti: klesajúci mutation score, rastúci change failure rate, alebo nájdené aktívne credentials.`}]}
+]},
+
+{
+id:"m6", code:"M6", name:"Trajektória ďalšieho štúdia", base:"plán — zatiaľ bez researchu",
+plan:true,
+desc:"Oblasti, ktoré musíme naštudovať, aby sme vedeli projekt reálne doručiť. Zatiaľ vo forme výskumných otázok — každá téma sa po researchi rozšíri na plnohodnotný modul.",
+topics:[
+{id:"traj-economics", code:"T1", title:"Ekonomika & business case",
+know:[
+`Bez cost modelu a ROI rámca klient projekt nepodpíše — prvá vec na stole.`,
+`Cost runaway: L3+ session vie spáliť značné sumy bez výsledku; treba capy a monitoring.`,
+`Súvisí so štruktúrou engagementu: ako takýto projekt scopovať a cenotvoriť.`],
+concepts:["cost model","token vs. subscription","ROI rámec","cost runaway"],
+rq:[
+`Ako vyzerá per-rola cost model (inžinier / PM / agent-hodina) pri token vs. flat-rate ekonomike?`,
+`Ako modelovať a capovať cost runaway autonómnych sessions?`,
+`Ktoré ROI metriky enterprise klient akceptuje — a ako do nich započítať cenu review bottlenecku?`,
+`Existujú publikované enterprise cost case studies, ktorým sa dá veriť?`],
+src:[{t:"Vendor pricing dáta; FinOps for AI literatúra; publikované cost case studies"}]},
+
+{id:"traj-measurement", code:"T2", title:"Dizajn merania a pilotu",
+know:[
+`METR perception gap: pocity klamú — bez objektívnej baseline sa úspech pilotu nedá preukázať ani vyvrátiť.`,
+`Zlý výber pilotného tímu/projektu = výsledok, ktorý negeneralizuje.`],
+concepts:["baseline","vanity metriky","generalizácia pilotu","SPACE/DX"],
+rq:[
+`Ako nastaviť baseline (DORA + DX) pred pilotom a ako dlho ju zbierať?`,
+`Podľa čoho vybrať pilotný tím a projekt, aby výsledok generalizoval na organizáciu?`,
+`Ktoré metriky sú vanity (počet PR, LOC, akceptované suggestions) a čím ich nahradiť?`,
+`Ako dlho musí pilot bežať, aby prekonal novelty efekt a learning curve?`],
+src:[{t:"DORA/DX research; METR metodika; SPACE framework"}]},
+
+{id:"traj-change", code:"T3", title:"Change management & ľudia",
+know:[
+`Najčastejší dôvod zlyhania transformácií nie je technika, ale ľudia — adopcia, skeptici, incentívy.`,
+`Junior problém: ak agenti robia junior prácu, kde sa formujú budúci seniori? (Anthropic RCT: −17 % comprehension pri pasívnej delegácii.)`],
+concepts:["adopčná krivka","junior problém","incentívy","skill formation"],
+rq:[
+`Ako pracovať so skeptikmi a nadšencami — aká je zdravá adopčná sekvencia v tíme?`,
+`Aké incentívy nastaviť bez perverzných efektov (odmena za počet PR = katastrofa)?`,
+`Ako vyzerá training program a redesign kariérneho rebríčka (kde sa učia budúci seniori)?`,
+`Ktoré organizačné case studies adopcie sú dôveryhodné a prenositeľné?`],
+src:[{t:"Anthropic skill-formation RCT; DevEx výskum; adoption case studies"}]},
+
+{id:"traj-compliance", code:"T4", title:"Compliance, legal & EU kontext",
+know:[
+`Pre EU klienta potenciálny blocker dňa 0 — treba minimálne rýchly screening skoro.`,
+`Zasahuje: dáta do model providerov, IP kódu, audit trail agent akcií, certifikácie.`],
+concepts:["EU AI Act","GDPR","IP AI kódu","audit trail","DPA"],
+rq:[
+`Aký je reálny dopad EU AI Act na coding agentov v našom use case (klasifikácia, povinnosti)?`,
+`GDPR pri posielaní kódu a dát do providerov — čo riešia DPA a data residency možnosti vendorov?`,
+`Aký je stav IP/licensing AI-generovaného kódu v EU (a v jurisdikcii klienta)?`,
+`Čo vyžaduje SOC 2 / ISO 27001 pre agentov s credentials a ako logovať agent akcie auditovateľne?`],
+src:[{t:"EU AI Act texty a guidance; vendor DPA/terms; právne analýzy AI-generated code"}]},
+
+{id:"traj-platform", code:"T5", title:"Harness ako interný produkt",
+know:[
+`Harness treba vlastniť, verzovať a merať ako produkt — inak eroduje a nikto nevie, či zmeny pomáhajú.`,
+`Kľúčová diera: evals pre zmeny harnessu („zlepšila táto úprava CLAUDE.md správanie, alebo tomu len verím?").`],
+concepts:["platform engineering","harness evals","harness ownership","release proces"],
+rq:[
+`Kto harness vlastní — platform team, guild, každý tím svoj s core šablónou?`,
+`Ako postaviť eval suite pre zmeny CLAUDE.md/hooks/skills — čo je test case harnessu?`,
+`Aký release/rollback proces pre harness zmeny naprieč tímami?`,
+`Aké metriky kvality harnessu sledovať (adherencia, intervention rate, tokeny/task)?`],
+src:[{t:"Platform engineering literatúra; Anthropic harness engineering; eval frameworks"}]},
+
+{id:"traj-vendor", code:"T6", title:"Vendor stratégia & lock-in",
+know:[
+`Pricing/deprecation riziká sú reálne; portabilita: AGENTS.md a Skills áno, hooks a workflow čiastočne.`,
+`Rozhodnutie multi- vs. single-vendor ovplyvňuje celý harness dizajn.`],
+concepts:["portabilita","multi-vendor","exit plán","abstrakčné vrstvy"],
+rq:[
+`Multi-vendor od začiatku, alebo single-vendor + exit plán — čo je pre klienta lacnejšie celkovo?`,
+`Kedy sa oplatí abstrakčná vrstva nad agent tooling a kedy je to premature abstraction?`,
+`Ako benchmarkovať paritu modelov na NAŠICH úlohách, nie na verejných benchmarkoch?`,
+`Čo presne je dnes prenositeľné cez štandardy (AGENTS.md, Skills, MCP) a čo nie?`],
+src:[{t:"Cross-vendor štandardy; migračné skúsenosti komunity"}]},
+
+{id:"traj-governance", code:"T7", title:"Organizačná governance",
+know:[
+`Chýba vrstva nad technickou governance: kto schvaľuje posun autonómie, kto nesie zodpovednosť za agent-bug v produkcii.`,
+`Incident proces musí počítať s agentom v slučke (postmortem, audit, rollback).`],
+concepts:["approval proces","accountability chain","incident proces","autonomy governance"],
+rq:[
+`Kto a na základe čoho schvaľuje posun tímu na vyššiu úroveň autonómie (L↑ / P↑)?`,
+`Ako vyzerá incident proces a blameless postmortem, keď je v slučke agent?`,
+`Aká je accountability chain za agent-written bug v produkcii — autor promptu, reviewer, vlastník harnessu?`,
+`Aké audit požiadavky vyplynú z T4 a ako ich technicky pokryť (logy, provenance)?`],
+src:[{t:"OWASP agentic top 10; publikované incident postmortems; governance vzory veľkých firiem"}]}
+]}
+];
+
+/* ================= APLIKAČNÁ LOGIKA ================= */
+const KEY='agentic-study-v1';
+const STATUSES=['none','studying','done'];
+const LBL={none:'nezačaté',studying:'študujem',done:'zvládnuté'};
+let state={progress:{},notes:{},updatedAt:null};
+let storeOK=false, saveTimer=null;
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const topicStatus=id=>state.progress[id]||'none';
+
+function setSave(cls,txt){const b=$('#savebox');b.className='savebox '+cls;$('#savetxt').textContent=txt;}
+async function loadState(){
+  if(!(window.storage&&window.storage.get)){$('#warnbar').classList.add('show');setSave('err','bez uloženia');return;}
+  storeOK=true;
+  try{
+    const r=await window.storage.get(KEY);
+    if(r&&r.value){const p=JSON.parse(r.value);state.progress=p.progress||{};state.notes=p.notes||{};}
+    setSave('ok','načítané');
+  }catch(e){setSave('ok','nový stav');}
+}
+function scheduleSave(){
+  if(!storeOK)return;
+  setSave('busy','ukladám…');
+  clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,700);
+}
+async function saveNow(){
+  try{
+    state.updatedAt=new Date().toISOString();
+    const r=await window.storage.set(KEY,JSON.stringify(state));
+    if(!r){setSave('err','chyba ukladania');return;}
+    setSave('ok','uložené '+new Date().toTimeString().slice(0,5));
+  }catch(e){setSave('err','chyba ukladania');}
+}
+
+function topicEl(m,t){
+  const a=document.createElement('article');
+  a.className='topic';a.dataset.id=t.id;a.dataset.mod=m.id;a.dataset.status='none';
+  const secKnow=t.know&&t.know.length?'<div class="sec"><div class="lab">'+(m.plan?'Prečo študovať':'Čo už vieme')+'</div><ul>'+t.know.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>':'';
+  const secC=t.concepts&&t.concepts.length?'<div class="sec"><div class="lab">Kľúčové koncepty</div><div class="chips">'+t.concepts.map(c=>'<span>'+c+'</span>').join('')+'</div></div>':'';
+  const secO=t.open&&t.open.length?'<div class="sec"><div class="lab">Otvorené otázky</div><ul class="oq">'+t.open.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>':'';
+  const secRQ=t.rq&&t.rq.length?'<div class="sec"><div class="lab">Výskumné otázky</div><ul class="oq">'+t.rq.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>':'';
+  const secChecks=t.checks&&t.checks.length?'<div class="sec"><div class="lab">Self-check</div>'+t.checks.map(c=>'<div class="check"><div class="q">'+c.q+'</div><button class="rev" type="button">zobraziť odpoveď</button><div class="ans">'+c.a+'</div></div>').join('')+'</div>':'';
+  const secSrc=t.src&&t.src.length?'<div class="sec"><div class="lab">Kam ďalej</div><ul class="srcs">'+t.src.map(s=>s.u?'<li><a href="'+s.u+'" target="_blank" rel="noopener">'+s.t+'</a></li>':'<li>'+s.t+'</li>').join('')+'</ul></div>':'';
+  const secNote='<div class="sec note"><div class="lab">Moje poznámky</div><textarea placeholder="poznámky k téme… (ukladajú sa automaticky)" data-note="'+t.id+'"></textarea></div>';
+  a.innerHTML='<div class="t-head"><button class="t-toggle" type="button" aria-expanded="false"><span class="tid">'+t.code+'</span><h3>'+t.title+'</h3><svg class="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button><div class="status" role="group" aria-label="stav témy">'+STATUSES.map(s=>'<button type="button" data-v="'+s+'" class="'+(s==='none'?'on':'')+'">'+LBL[s]+'</button>').join('')+'</div></div><div class="t-body">'+secKnow+secC+secO+secRQ+secChecks+secSrc+secNote+'</div>';
+  a.dataset.search=(t.code+' '+t.title+' '+(t.know||[]).join(' ')+' '+(t.concepts||[]).join(' ')+' '+(t.open||[]).join(' ')+' '+(t.rq||[]).join(' ')).toLowerCase();
+  return a;
+}
+
+function render(){
+  const nav=$('#mnav'),wrap=$('#modules');
+  MODULES.forEach(m=>{
+    const li=document.createElement('li');
+    li.innerHTML='<a href="#'+m.id+'"><span class="mc">'+m.code+'</span>'+m.name+'<span class="cnt" id="cnt-'+m.id+'"></span></a>';
+    nav.appendChild(li);
+    const sec=document.createElement('section');
+    sec.className='mod';sec.id=m.id;
+    sec.innerHTML='<div class="mod-head"><span class="mcode">'+m.code+'</span><h2>'+m.name+'</h2><span class="mbase">základ: '+m.base+'</span><span class="mstat" id="ms-'+m.id+'"></span></div><p class="mod-desc">'+m.desc+'</p><div class="segbar" id="sb-'+m.id+'">'+m.topics.map(t=>'<span class="seg" data-t="'+t.id+'"></span>').join('')+'</div><div class="tlist"></div>';
+    const list=sec.querySelector('.tlist');
+    m.topics.forEach(t=>list.appendChild(topicEl(m,t)));
+    wrap.appendChild(sec);
+  });
+}
+
+function syncFromState(){
+  $$('.topic').forEach(a=>{
+    const id=a.dataset.id,st=topicStatus(id);
+    a.dataset.status=st;
+    $$('.status button',a).forEach(b=>b.classList.toggle('on',b.dataset.v===st));
+    const ta=a.querySelector('textarea[data-note]');
+    if(ta)ta.value=state.notes[id]||'';
+  });
+}
+
+function updateCounts(){
+  let gd=0,gs=0,gt=0;
+  MODULES.forEach(m=>{
+    let d=0,s=0;
+    m.topics.forEach(t=>{
+      const st=topicStatus(t.id);
+      if(st==='done')d++;else if(st==='studying')s++;
+      const seg=document.querySelector('#sb-'+m.id+' .seg[data-t="'+t.id+'"]');
+      if(seg)seg.className='seg'+(st==='done'?' d':st==='studying'?' s':'');
+    });
+    gt+=m.topics.length;gd+=d;gs+=s;
+    const c=$('#cnt-'+m.id);if(c)c.innerHTML='<b>'+d+'</b>/'+m.topics.length;
+    const ms=$('#ms-'+m.id);if(ms)ms.innerHTML='<b>'+d+'</b> / '+m.topics.length+' zvládnuté'+(s?' · '+s+' študujem':'');
+  });
+  $('#gtext').textContent=gd+' / '+gt+' zvládnuté';
+  $('#gstud').textContent=gs?gs+' študujem':'';
+  $('#gd').style.width=(gt?gd/gt*100:0)+'%';
+  $('#gs').style.width=(gt?gs/gt*100:0)+'%';
+}
+
+let fStatus='all',fQ='';
+function applyFilter(){
+  let any=false;
+  $$('.topic').forEach(a=>{
+    const okS=fStatus==='all'||a.dataset.status===fStatus;
+    const okQ=!fQ||a.dataset.search.indexOf(fQ)!==-1;
+    const show=okS&&okQ;
+    a.classList.toggle('hide',!show);
+    if(show)any=true;
+  });
+  MODULES.forEach(m=>{
+    const sec=document.getElementById(m.id);
+    if(!sec)return;
+    const vis=$$('.topic',sec).some(a=>!a.classList.contains('hide'));
+    sec.style.display=vis?'':'none';
+  });
+  $('#empty').classList.toggle('show',!any);
+}
+
+function setTopicStatus(id,v){
+  state.progress[id]=v;scheduleSave();
+  const art=document.querySelector('.topic[data-id="'+id+'"]');
+  if(art){
+    art.dataset.status=v;
+    $$('.status button',art).forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  }
+  updateCounts();applyFilter();
+}
+
+/* ---------- events ---------- */
+$('#modules').addEventListener('click',e=>{
+  const st=e.target.closest('.status button');
+  if(st){setTopicStatus(st.closest('.topic').dataset.id,st.dataset.v);return;}
+  const rev=e.target.closest('.rev');
+  if(rev){const c=rev.closest('.check');const o=c.classList.toggle('open');rev.textContent=o?'skryť odpoveď':'zobraziť odpoveď';return;}
+  const tog=e.target.closest('.t-toggle');
+  if(tog){const art=tog.closest('.topic');const open=art.classList.toggle('open');tog.setAttribute('aria-expanded',open?'true':'false');}
+});
+$('#modules').addEventListener('input',e=>{
+  const ta=e.target.closest('textarea[data-note]');
+  if(ta){state.notes[ta.dataset.note]=ta.value;scheduleSave();}
+});
+$('#q').addEventListener('input',e=>{fQ=e.target.value.trim().toLowerCase();applyFilter();});
+$('#filters').addEventListener('click',e=>{
+  const c=e.target.closest('.fchip');if(!c)return;
+  fStatus=c.dataset.f;
+  $$('#filters .fchip').forEach(x=>x.classList.toggle('on',x===c));
+  applyFilter();
+});
+$('#expAll').addEventListener('click',()=>$$('.topic').forEach(a=>{if(!a.classList.contains('hide')){a.classList.add('open');a.querySelector('.t-toggle').setAttribute('aria-expanded','true');}}));
+$('#colAll').addEventListener('click',()=>$$('.topic').forEach(a=>{a.classList.remove('open');a.querySelector('.t-toggle').setAttribute('aria-expanded','false');}));
+
+/* ---------- init ---------- */
+(async function(){
+  render();
+  updateCounts();
+  await loadState();
+  syncFromState();
+  updateCounts();
+  applyFilter();
+})();
+</script>
+</body>
+</html>

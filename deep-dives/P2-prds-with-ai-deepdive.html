@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2 Deep Dive — PRDs and Requirements with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edP2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahP2a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">P2 · DEEP DIVE</span>
+    <h1>PRDs &amp; Requirements with AI</h1>
+    <span class="bc">companion to module M2 · Product harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why the PRD is the hinge</a>
+  <a href="#s1"><b>1</b> · What works — the junior-PM jobs</a>
+  <a href="#s2"><b>2</b> · What doesn&#8217;t work — the evidence</a>
+  <a href="#s3"><b>3</b> · The PR/FAQ principle</a>
+  <a href="#s4"><b>4</b> · Requirements red-teaming</a>
+  <a href="#s5"><b>5</b> · From PRD to handoff</a>
+  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M2</p>
+      <h2 id="s0"><span class="n">0</span>Why the PRD is the hinge of the whole system</h2>
+      <p class="lead">Discovery (P1) decides what is worth building; the handoff contract (M3) is what an engineering agent can actually execute. The PRD sits between them — it is where fuzzy product intent becomes written requirements. That makes it the hinge: the quality of this one artifact decides how autonomously the engineering harness downstream can run. Investment in the product layer pays off in the engineering layer, and this is the topic where that investment is made or lost.</p>
+      <p>It is also where AI assistance is at its most seductive. Nothing looks more like PM work than a well-formatted PRD, and nothing is easier for an LLM to produce than a plausible one. P2 is about telling those two apart: what AI genuinely does well in requirements work, what it systematically fails at, and how to structure the collaboration so you get the first without the second.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Marty Cagan's rule: use AI to <strong>amplify your thinking, not abdicate it</strong>. The productive frame is AI as the <em>best junior PM you have ever had</em> — tireless at drafting, structuring, consistency and edge cases, but with no product judgment of its own. A junior's draft is a starting point a senior edits; the moment the draft ships unedited, the senior has abdicated.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>What works — the junior-PM jobs</h2>
+      <p>The 2025–2026 practitioner consensus (Cagan/SVPG, Torres, Anthropic internal teams — practitioner synthesis, not controlled studies) is consistent about where AI drafting genuinely helps. The common thread: every job on this list is either <em>expansion</em> (more edge cases, more structure, more consistency from the same input) or <em>challenge</em> (find what is wrong with this) — never <em>judgment</em> (decide what to build).</p>
+      <div class="io"><div class="box"><div class="lab">What AI does well in PRD work</div><ul><li>drafting from rough input — notes, a call transcript, a whiteboard photo</li><li>structuring and consistency across a long document</li><li>generating edge cases the author did not think of</li><li>red-teaming a draft before stakeholder review (§4)</li><li>generating acceptance criteria from stories (feeds M3)</li></ul></div>
+      <div class="box"><div class="lab">What must stay human</div><ul><li>the <strong>why</strong> — rationale is exactly where LLMs fail hardest (§2)</li><li>the kill/keep decision on an idea (§3)</li><li>trade-offs between users, stakeholders, strategy</li><li>final ownership of every sentence that reaches engineering</li></ul></div></div>
+      <p><strong>For our rollout:</strong> the assess question at a client is not "do PMs use AI to write PRDs?" — most already do. It is <em>which of these jobs</em> they use it for, and whether a human edit pass stands between the AI draft and the backlog. AI drafting with human editing is P2 on the assistance scale — today's healthy mainstream. The same output without the edit pass is drift toward P5, the anti-pattern.</p>
+
+      <h2 id="s2"><span class="n">2</span>What doesn't work — and the evidence</h2>
+      <p>The failure modes are as consistent as the successes: <strong>hallucinated requirements</strong> (capabilities or constraints the product does not have), <strong>generic "thin" output</strong> (a PRD that could describe any product in the category), and — the deepest one — <strong>missing rationale</strong>. This is not anecdote; it is the best-measured result in the field.</p>
+      <div class="callout"><div class="t">Strong independent evidence — Quattrocchi et al., arXiv:2507.15157</div><p>The largest academic study of LLM-generated user stories to date: 13,958 generated stories, 153 of them triple-annotated by humans against the Quality User Story (QUS) framework. Result: LLM stories are rejected far more often than human ones — <strong>77.34%</strong> rejection for GPT-3.5, <strong>63.47%</strong> for GPT-4 — and the failures concentrate systematically on one quality: <strong>Rationale Clarity</strong>, the <em>why</em>. GPT-4 scored <strong>1.54</strong> where human stories score <strong>2.66–2.68</strong>. Point-in-time caveat: these are 2025 numbers on 2024-era models; re-verify before quoting, but the <em>pattern</em> (form outpacing rationale) has held across model generations so far.</p></div>
+      <figure>
+      <svg viewBox="0 0 860 270" role="img" aria-label="The rationale gap: where AI helps in the PRD pipeline and where it systematically fails">
+        <defs><marker id="ahP2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="26" class="tg">THE DRAFT-AND-CHALLENGE PIPELINE — AI EXPANDS AND CHALLENGES, THE PM JUDGES</text>
+        <rect x="20" y="38" width="128" height="46" rx="8" class="bxA"/><text x="30" y="59" class="ts">rough input</text><text x="30" y="73" class="ts">notes / transcript</text>
+        <rect x="188" y="38" width="128" height="46" rx="8" class="bxC"/><text x="198" y="59" class="ts">AI draft</text><text x="198" y="73" class="ts">structure + edges</text>
+        <rect x="356" y="38" width="146" height="46" rx="8" class="bxK"/><text x="366" y="59" class="ts">PM edits + owns</text><text x="366" y="73" class="ts">adds the WHY</text>
+        <rect x="542" y="38" width="128" height="46" rx="8" class="bxC"/><text x="552" y="59" class="ts">AI red-team</text><text x="552" y="73" class="ts">gaps + ambiguity</text>
+        <rect x="710" y="38" width="130" height="46" rx="8" class="bxK"/><text x="720" y="59" class="ts">handoff-ready</text><text x="720" y="73" class="ts">PRD (feeds M3)</text>
+        <line x1="148" y1="61" x2="188" y2="61" class="edP2"/><line x1="316" y1="61" x2="356" y2="61" class="edP2"/><line x1="502" y1="61" x2="542" y2="61" class="edP2"/><line x1="670" y1="61" x2="710" y2="61" class="edP2"/>
+        <text x="20" y="128" class="tg">THE RATIONALE GAP — QUS SCORES, QUATTROCCHI ET AL. (ARXIV:2507.15157)</text>
+        <text x="20" y="156" class="ts">human stories</text>
+        <rect x="140" y="144" width="445" height="16" rx="4" class="bxK"/><text x="595" y="157" class="ts">Rationale Clarity 2.66–2.68 / 3</text>
+        <text x="20" y="186" class="ts">GPT-4 stories</text>
+        <rect x="140" y="174" width="257" height="16" rx="4" class="bxA"/><text x="407" y="187" class="ts">1.54 / 3 — the WHY is what goes missing</text>
+        <text x="20" y="222" class="ts">rejection rate</text>
+        <rect x="140" y="210" width="285" height="16" rx="4" class="bx" style="stroke:#B3362B"/><text x="435" y="223" class="ts">GPT-4 63.47% rejected</text>
+        <rect x="140" y="238" width="348" height="16" rx="4" class="bx" style="stroke:#B3362B"/><text x="498" y="251" class="ts">GPT-3.5 77.34% rejected (human-written stories are the baseline)</text>
+      </svg>
+      <figcaption>Top: the healthy division of labour — AI expands (draft, edge cases) and challenges (red-team); the PM judges, edits, and supplies the rationale. Bottom: the measured gap. LLM user stories fail review far more often than human ones, and the failure concentrates on Rationale Clarity — the why.</figcaption>
+      </figure>
+      <p>Why the rationale gap hurts <em>precisely at handoff</em>: intent/why is the <strong>first component of the handoff contract</strong> (M3, H1). An engineering agent given a story with form but no purpose will faithfully implement the form — and every decision the spec does not pin down defaults to a guess made without knowing what the feature is for. The Jama Software traceability audit found teams deploying coding agents without a specification layer produced code with no traceable link to any documented requirement. Weak rationale upstream becomes untraceable code downstream.</p>
+      <p>The honest caveat we carry to clients: most published "AI in PM" case studies (ChatPRD and similar) are <strong>vendor marketing</strong>, and the academic numbers come from benchmark and industrial-dataset contexts whose transferability to any given team is not guaranteed. The Quattrocchi result is the strongest independent evidence available; treat everything glossier with suspicion.</p>
+
+      <h2 id="s3"><span class="n">3</span>The PR/FAQ principle — AI should speed up killing ideas</h2>
+      <p>Amazon's Working Backwards process starts a product idea as a written press release + FAQ, reviewed before anything is built. Its famous property: <em>most PR/FAQs do not get approved — and that is a feature</em>. The document exists to kill weak ideas cheaply, on paper, before they consume a team.</p>
+      <p>This reframes what AI drafting is <em>for</em>. If AI makes writing a PRD ten times cheaper, the naive conclusion is "we can produce ten times more PRDs" — which floods the backlog with plausible, thin, unkilled ideas and moves the cost downstream to engineering. The productive conclusion is the opposite: <strong>AI should speed up killing bad ideas on paper</strong>. Cheap drafting means an idea can reach its kill/keep decision in hours instead of weeks; the kill rate should go <em>up</em>, not the shipping rate of half-thought features.</p>
+      <div class="io"><div class="box"><div class="lab">Requires on input</div><ul><li>a real product idea with a named customer problem</li><li>discovery evidence behind it (P1 — not a substitute for it)</li><li>an explicit kill/keep review step with a human owner</li></ul></div>
+      <div class="box"><div class="lab">Produces on output</div><ul><li>a fast, cheap paper prototype of the idea (PR/FAQ or PRD draft)</li><li>a kill/keep decision made on evidence, not sunk cost</li><li>for keepers: a draft already structured for red-teaming (§4)</li></ul></div>
+      <div class="box sdlc"><div class="lab">Where it sits</div><ul><li>Requirements — between discovery (P1) and decomposition (P3); the last point where an idea is cheap to kill.</li></ul></div></div>
+      <p><strong>For our rollout:</strong> a useful health metric for the product harness is the <strong>proposal kill rate</strong>. If AI-drafted PRDs are almost never killed, the review step has degenerated into rubber-stamping (P4's automation bias) and the drafting speed is being converted into backlog noise rather than decision speed.</p>
+
+      <h2 id="s4"><span class="n">4</span>Requirements red-teaming — the highest-evidence quick win</h2>
+      <p>Of everything in this topic, adversarial review of requirements is the job with the strongest quantitative support — and it is P3 on the assistance scale, one step beyond today's mainstream, which makes it the natural next move at a client.</p>
+      <table class="map">
+        <tr><th>Evidence</th><th>What was measured</th><th>Result</th></tr>
+        <tr><td>Bashir et al., ICSME 2025</td><td>LLM classification of ambiguous requirements on industrial data (RISE / Alstom / Westermo)</td><td><strong>+20.2%</strong> average improvement (10-shot vs 0-shot); F1 67–75%; expert-rated usefulness 3.84/5 — an assistant, not an arbiter</td></tr>
+        <tr><td>ClarifyGPT, Mu et al., FSE 2024</td><td>Detecting ambiguity and asking clarifying questions before code generation</td><td>GPT-4 Pass@1 on MBPP-sanitized <strong>70.96% → 80.80%</strong>; average <strong>+11.52%</strong> across benchmarks</td></tr>
+        <tr><td>Quattrocchi et al., 2025</td><td>QUS quality of LLM-generated stories (§2)</td><td>Generation is weak on rationale — which is exactly why the <em>critic</em> role outperforms the <em>author</em> role</td></tr>
+      </table>
+      <p>The asymmetry is the lesson: models are measurably better at <em>finding problems in requirements</em> than at <em>authoring requirements</em>. Finding ambiguity is a pattern-matching task with a checkable answer; authoring rationale requires the product judgment the model does not have. So point the model at the job it is good at: after the PM writes (or edits) a draft, an AI red-team pass hunts for ambiguity, contradictions, missing edge cases, untestable acceptance criteria, and unstated assumptions — and the PM decides which findings matter.</p>
+      <div class="callout pine"><div class="t">Packaging it — the backlog-refinement gate</div><p>The deployable form is a checklist gate in backlog refinement: no story leaves refinement until it has had an AI red-team pass and a human disposition of the findings. This is deliberately the same shape as E4's verification-first loop — a challenge step between draft and done — implemented with human judgment where engineering has tests. It is cheap (minutes per story), it produces its own evidence trail, and F1 in the 67–75% range means the human disposition step is structural, not optional.</p></div>
+
+      <h2 id="s5"><span class="n">5</span>From PRD to handoff — where P2 meets M3</h2>
+      <p>The PRD is not the terminal artifact; the handoff contract is. The practical flow at a client: discovery insight (P1, two-perspectives) → PRD drafted by AI from grounded context — company context, user research, a PRD template — and edited by the PM with kill/keep applied (§3) → red-team gate (§4) → decomposition into agent-ready work items (P3) → each item gets machine-verifiable acceptance criteria, context links, and requirement traceability (M3). Every stage hands the next one exactly what it cannot generate for itself: the why survives because a human wrote it and the contract carries it.</p>
+      <p>This ordering also fixes the measurement. The tempting metric for AI-assisted PRD work is drafting speed; the meaningful one is downstream: <strong>the share of tasks the engineering harness completes without follow-up questions</strong>. A PRD process that doubles drafting speed but leaves engineering agents guessing at intent has optimised the wrong end of the pipe — the same lesson E7 teaches about output metrics generally.</p>
+
+      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>are PRDs AI-drafted, and does a real human edit pass follow?</li><li>do stories carry rationale, or form without a why?</li><li>what is the proposal kill rate — does paper ever die?</li><li>is there any adversarial review of requirements today?</li></ul></div>
+      <div class="box"><div class="lab">Build</div><ul><li>institute draft-and-challenge: AI drafts + edges, PM edits + owns the why</li><li>add the red-team gate to backlog refinement (P3 — the quick win)</li><li>adopt the PR/FAQ frame: cheap drafts exist to kill ideas faster</li><li>measure handoff quality (no-follow-up-questions rate), not drafting speed</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember P2 by</div><p>AI is the best junior PM you have ever had — excellent at drafting, structure, edge cases and red-teaming — but the evidence (Quattrocchi: 63–77% rejection, Rationale Clarity 1.54 vs human ~2.7) shows it systematically fails at the why, which is the first component of the handoff contract. Use cheap drafting to kill bad ideas faster (PR/FAQ), not to produce more unkilled ones, and put the model in the critic's chair where the evidence is strongest (red-teaming: +20.2% ambiguity detection). Amplify your thinking, don't abdicate it — the PM edits, owns, and supplies the rationale; the measure of success is downstream handoff quality, not drafting speed.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Quattrocchi et al. — LLM-generated user stories under the QUS framework</div><div class="mt">arXiv:2507.15157</div><p>The strongest independent evidence in this topic: 13,958 generated stories, triple-annotated sample, the rejection rates and the Rationale Clarity gap. The paper behind §2.</p></div>
+      <div class="item"><div class="rt">Marty Cagan / SVPG — AI in product management</div><div class="mt">svpg.com · talks 2025–2026</div><p>The "amplify, don't abdicate" frame, the junior-PM analogy, and the empowered-PM argument that P4 builds on. Practitioner synthesis, consistently sober.</p></div>
+      <div class="item"><div class="rt">Working Backwards — the PR/FAQ process</div><div class="mt">Bryar &amp; Carr · Amazon practice</div><p>The origin of "most PR/FAQs don't get approved — that is a feature", and the kill-ideas-on-paper discipline that §3 adapts for AI drafting.</p></div>
+      <div class="item"><div class="rt">Bashir et al. — ambiguity detection in industrial requirements</div><div class="mt">ICSME 2025 · RISE / Alstom / Westermo</div><p>The +20.2% red-teaming evidence and the F1 range that makes the human disposition step non-optional. Pairs with ClarifyGPT (Mu et al., FSE 2024) on clarifying questions.</p></div>
+      <div class="item"><div class="rt">Report 2 — the product harness &amp; the handoff contract (this workbook)</div><div class="mt">module M2 PRD section · module M3</div><p>The full research notes behind this topic, and the contract anatomy the PRD must ultimately feed — read H1 next.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (P2-prds-with-ai-deepdive.html). Its natural neighbours in the workbook are P1 (discovery — the evidence a PRD rests on), P3 (decomposition into agent-ready work), P4 (automation bias and the editor role), P5 (the assistance scale), H1 (the handoff contract the PRD feeds), and E4/E7 (the verification and measurement principles it mirrors).</p>
+
+</main>
+</div>
+</body>
+</html>
