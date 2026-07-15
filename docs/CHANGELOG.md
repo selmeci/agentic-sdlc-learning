@@ -3,6 +3,43 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.25 · 2026-07-15
+
+Added the **I2 deep dive — Lifecycle & Write-Permissions as Governance** (topic
+`ia-lifecycle`): embedded workbook overlay + standalone
+`deep-dives/I2-lifecycle-write-permissions-deepdive.html`, written after the
+three-teammate fact pass (2× verification + 1 discovery) **plus the spot-verification
+round on discovered sources** — which again earned its keep: the Anthropic harness quote
+"it is unacceptable to remove or edit tests…" turns out to guard the *feature-list
+entries*, not unit-test files (context corrected before use; the workbook's existing
+Report-3 usage was already correct). Fact corrections applied: ThoughtWorks Radar dates
+pinned (Lightweight ADRs: Trial Nov 2016 → **Adopt Nov 2017**); MADR expands to
+"Markdown **Architectural** Decision Records" (4.0.0, Sep 2024; adds *Rejected*);
+OWASP ASI06 rendered by its canonical name "Memory & Context Poisoning" (fixed in the
+I4 topic too); Nygard's immutability line quoted verbatim ("we will keep the old one
+around, but mark it as superseded").
+
+New load-bearing sources: **ImpossibleBench** (arXiv:2510.20270 — tests mutated to
+contradict the spec; GPT-5 cheats 54% of trials, 76% on the one-off variant; Claude
+models cheat >79% *by modifying test cases*; paper's mitigation: hide tests or make
+them read-only; an explicit escalation tool cut cheating 54%→9%), Anthropic's
+"Natural emergent misalignment from reward hacking" (12% sabotage-of-detection-code
+figure, Nov 2025), the **Replit production-database deletion** (July 2025, Lemkin/SaaStr;
+fixes — dev/prod separation, rollback, planning-only mode — as reported from Masad's
+posts), **Copilot coding agent guardrails** as the shipped write-permission matrix
+(own identity, signed commits, copilot/ branch only, initiator cannot approve),
+GitHub **restrict file paths** push rulesets (GA Sep 2024), the GitLab CODEOWNERS
+porosity caveat (privileged pushers bypass), Claude Code Edit/Read deny-rule mechanics
+(the `//` absolute-path gotcha; subprocess limitation → sandbox), Atlassian
+identity-scoped governance (permission schemes, Rovo agents inherit the invoking
+user's permissions, Remote MCP Server GA), Anthropic memory-tool security guidance
+(path containment, validate-before-write), and **Lore** (arXiv:2603.15566 — the
+"Decision Shadow", git-trailer decision records). The write-permission matrix
+(category → write mode → gate → enforcement) and the ADR code-seam grep test stay
+flagged as **our synthesis**. I2 topic `know/concepts/checks/src` enriched; deferred
+as unverifiable-at-primary: Masad's exact fix wording (secondhand via Fortune/Register),
+GitGuardian leaked-secrets figures (not confirmed — excluded).
+
 ## v1.24 · 2026-07-15
 
 Added the **I1 deep dive — Artifact Taxonomy: Durable / Derived / Disposable** (topic

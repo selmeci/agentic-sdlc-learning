@@ -6,8 +6,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 ## Done
 
 - **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.15)
-- **Deep-dive companions (20)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1** (first of M4).
+- **Deep-dive companions (21)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I2** (first two of M4).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -67,8 +67,16 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     retired as unpinnable; triad confirmed as our synthesis and flagged; ADR statuses +
     AGENTS.md stewardship corrected) and a spot-verified discovery round (Ahrefs llms.txt
     97%-zero-traffic study, Solmaz SimpleDoc, Kiro/Spec Kit spec layouts, Cline Memory
-    Bank; a fabricated ".claudeignore" caught). Next: **I2** (write-permissions — builds
-    directly on I1) or **I4** (memory).
+    Bank; a fabricated ".claudeignore" caught).
+  - ~~**I2** `ia-lifecycle` — lifecycle & write-permissions as governance~~ — **done (v1.25)**,
+    with the three-teammate fact pass + spot-verify round (the Anthropic "unacceptable to
+    remove or edit tests" quote re-anchored to the feature list, not test files; Radar
+    Adopt = Nov 2017; MADR 4.0 "Architectural" + Rejected; ASI06 canonical name) and new
+    load-bearing sources (ImpossibleBench arXiv:2510.20270, Anthropic reward-hacking 12%,
+    Replit DB incident, Copilot coding-agent guardrails, restrict-file-paths rulesets,
+    GitLab CODEOWNERS porosity, Rovo/Atlassian MCP identity model, Lore arXiv:2603.15566).
+    The write-permission matrix + ADR code-seam grep test flagged as our synthesis.
+    Next: **I4** (memory — the fourth write-mode I2 opened) or **I3** (drift).
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
 
