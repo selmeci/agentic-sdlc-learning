@@ -206,11 +206,11 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 
       <h3>The same loop, seen through three lenses</h3>
       <p>Comparing them on planning, execution and feedback-learning is the useful exercise — it isolates what actually differs.</p>
-      <table class="map"><tr><th>Dimension</th><th>Superpowers</th><th>Compound Engineering</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Dimension</th><th>Superpowers</th><th>Compound Engineering</th></tr>
       <tr><td>Planning</td><td>Socratic brainstorming → design sign-off → a plan of bite-sized tasks (2–5 min each) with exact file paths and complete code, written for "an enthusiastic junior with no context"</td><td>brainstorm → plan where sub-agents research the codebase, edge cases and past learnings <em>in parallel</em>; the ratio is stated as ~80% planning+review, 20% execution</td></tr>
       <tr><td>Execution</td><td>subagent-driven development: a fresh subagent per task; two-stage subagent review (spec compliance, then code quality) up to v4, replaced in v5 by a Spec Self-Review checklist; enforced red-green TDD, YAGNI, DRY</td><td>/ce-work implements the plan (asks clarifying questions first, writes tests), then a simplify pass; specialist reviewer agents fan out (security, architecture, performance…)</td></tr>
       <tr><td>Feedback learning</td><td>largely <em>within</em> a run (reviews, checkpoints); learning across tasks is not the core loop — the discipline resets each session</td><td><strong>the defining feature</strong>: /ce-compound codifies what was learned into CLAUDE.md / docs (ADRs, solutions, new agents) so future brainstorms and plans read it as grounding</td></tr>
-      </table>
+      </table></div>
 
       <div class="callout pine"><div class="t">The one difference that matters most</div><p>Superpowers makes a single task go well by enforcing discipline; <strong>Compound Engineering makes the next task go better</strong> by turning each finished task into durable, machine-readable institutional knowledge. Superpowers is a <em>within-task</em> quality system; Compound Engineering adds a <em>between-task</em> learning loop. That "compound" step — capture the lesson, make it findable (tags/frontmatter), update CLAUDE.md, verify the system would now catch it automatically — is exactly the feedback dimension the classical SDD tools (Spec Kit/Kiro/BMAD) leave out.</p></div>
 
@@ -261,22 +261,22 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 
       <h2 id="s5"><span class="n">5</span>How SDD connects the whole framework</h2>
       <p>SDD is not a standalone practice; it is the connective tissue between several components we have already studied. Seeing those links is what makes it usable rather than a buzzword.</p>
-      <table class="map"><tr><th>SDD element</th><th>Connects to</th><th>How</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDD element</th><th>Connects to</th><th>How</th></tr>
       <tr><td>Constitution</td><td>governance (E5)</td><td>non-negotiables encode advisory principles; the deterministic ones become hooks</td></tr>
       <tr><td>Specify / acceptance criteria</td><td>handoff contract (M3)</td><td>the spec is the engineering face of the contract; EARS/Gherkin make it verifiable</td></tr>
       <tr><td>Spec review gate</td><td>autonomy (E6)</td><td>a reviewed spec is what makes L3 delegation accountable</td></tr>
       <tr><td>Spec as artifact</td><td>information architecture (M4)</td><td>durable, versioned, owned — not ephemeral chat text</td></tr>
-      <tr><td>Tasks → implement</td><td>verification (E4)</td><td>acceptance criteria become the failing tests the agent builds toward</td></tr></table>
+      <tr><td>Tasks → implement</td><td>verification (E4)</td><td>acceptance criteria become the failing tests the agent builds toward</td></tr></table></div>
       <div class="callout pine"><div class="t">The spec-anchored recommendation</div><p>Böckeler distinguishes spec-<em>first</em> (spec guides, code stays primary), spec-<em>anchored</em> (spec is a living governing contract), and spec-<em>as-source</em> (code is a disposable byproduct). For a brownfield client we recommend <strong>spec-anchored</strong>: it works with human review and imperfect specs, whereas spec-as-source presumes complete, always-current specs and fully reliable regeneration — which today's reality (Beck: "you learn during implementation; the spec changes") does not support.</p></div>
       <p>SDD's payoff is also measurable, which ties it to E7: track the <strong>spec-review catch rate</strong> (wrong intent caught at the spec gate rather than in code review or production) and compare <strong>rework rate on specced vs unspecced tasks</strong>. The latter now has an industry hook — DORA 2025 promoted Rework Rate to an official fifth delivery metric — so the baseline half of that comparison likely already exists in the client's delivery dashboards.</p>
 
       <h2 id="s6"><span class="n">6</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>SDD activity</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>SDD activity</th><th>What good looks like</th></tr>
       <tr><td>Inception</td><td>constitution</td><td>non-negotiable principles agreed once, referenced everywhere</td></tr>
       <tr><td>Requirements</td><td>specify + clarify</td><td>intent explicit, ambiguities surfaced before code; EARS acceptance criteria</td></tr>
       <tr><td>Design</td><td>plan</td><td>technical approach reviewed against the spec, not improvised</td></tr>
       <tr><td>Refinement</td><td>tasks</td><td>decomposed into right-sized, agent-ready items (M3 sizing)</td></tr>
-      <tr><td>Implementation</td><td>implement</td><td>agent builds toward acceptance criteria; spec is the accountability anchor</td></tr></table>
+      <tr><td>Implementation</td><td>implement</td><td>agent builds toward acceptance criteria; spec is the accountability anchor</td></tr></table></div>
 
       <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>where is intent non-trivial and delegated (SDD pays off)?</li><li>where are tasks tiny (SDD is overkill)?</li><li>is there appetite to review specs, not just code?</li><li>can we extract a lightweight pipeline without tool lock-in?</li></ul></div>

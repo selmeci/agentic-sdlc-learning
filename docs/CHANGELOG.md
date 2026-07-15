@@ -3,6 +3,14 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.18 · 2026-07-15
+**Table responsiveness follow-up** (consistency with the v1.16 pass): the five `table.map`
+tables in E7 (2) and E8 (3) are now wrapped in the same `.figscroll` container the diagrams
+use, so below 760px they scroll horizontally in their own box instead of overflowing the page —
+matching how the H1 deep dive ships its tables. Applied in both copies (standalone files and
+the workbook overlays). No content changes. Remaining bare tables in E1–E6, P1–P5, D1, SDLC
+and the workbook map sections are noted as a possible follow-up sweep. Validator green.
+
 ## v1.17 · 2026-07-15
 **H1 deep-dive companion — Anatomy of the handoff contract** (opens the M3 deep-dive set):
 - New deep dive, embedded overlay + standalone `deep-dives/H1-handoff-contract-anatomy-deepdive.html`:

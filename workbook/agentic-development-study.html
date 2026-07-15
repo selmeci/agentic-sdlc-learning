@@ -1456,12 +1456,12 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h3>DORA — a measurement framework we adopt directly</h3>
       <p><strong>DORA</strong> (DevOps Research and Assessment) is the research program behind the book <em>Accelerate</em> and, today, Google Cloud's annual <em>State of DevOps</em> report. Begun by Nicole Forsgren, Jez Humble and Gene Kim, its lasting contribution is a small, statistically validated set of software-delivery metrics — the "four keys" — split evenly between speed and safety:</p>
-      <table class="map"><tr><th>Dimension</th><th>Metric</th><th>Plain meaning</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Dimension</th><th>Metric</th><th>Plain meaning</th></tr>
       <tr><td>Throughput</td><td>Deployment frequency</td><td>how often you ship to production</td></tr>
       <tr><td>Throughput</td><td>Lead time for changes</td><td>time from a commit to it running in production</td></tr>
       <tr><td>Stability</td><td>Change failure rate</td><td>% of deployments that cause a failure needing remediation</td></tr>
       <tr><td>Stability</td><td>Failed-deployment recovery time</td><td>time to restore service after a bad deploy (formerly "time to restore" / MTTR)</td></tr>
-      </table>
+      </table></div>
       <p>Teams were historically clustered Low → Medium → High → Elite. The four keys keep their names in every edition to date; the 2025 cycle additionally promoted <strong>rework rate</strong> — unplanned deployments ÷ total deployments — to an official fifth metric, with its first benchmarks published in October 2025 (an earlier fifth candidate, operational <em>reliability</em>, never got the same formal treatment). The single most important finding — and the reason the metric set matters to us — is that <strong>throughput and stability are not a trade-off</strong>: elite performers score high on <em>both</em>. That is precisely why the DORA 2024 AI result is a warning sign, not a footnote: AI adoption pushed the two apart (stability −7.2%), which is the signature of a weak surrounding system rather than a healthy speed-up.</p>
       <div class="callout"><div class="t">DORA 2025 — the update, and why it strengthens the argument</div><p>The 2025 report is retitled <em>State of AI-assisted Software Development 2025</em> (published ~Sept 2025, dora.dev/dora-report-2025). Headline reversal versus 2024: AI adoption now correlates with <em>higher</em> throughput — but instability remains elevated. In short: <strong>faster, but not safer</strong>. Treat the 2024 figures (−1.5% throughput, −7.2% stability) as the historical decomposition and 2025 as the update. The report's central thesis — <strong>AI is an amplifier</strong> of existing organisational strengths and dysfunctions — <em>strengthens</em> E7's weak-system argument rather than retiring it: the same adoption that lifts a disciplined team's throughput amplifies an undisciplined team's instability.</p>
       <p>Two structural changes matter for us. First, a <strong>DORA AI Capabilities Model</strong>: seven capabilities that determine whether AI amplifies strength or dysfunction — a clear and communicated AI stance; healthy data ecosystems; AI-accessible internal data; strong version control practices; working in small batches; a user-centric focus; quality internal platforms. This is very nearly a ready-made <em>readiness checklist</em> for a client harness pitch. Second, seven <strong>team profiles</strong> replace the elite/high/medium/low tiers: Foundational Challenges; Legacy Bottleneck; Constrained by Process; High Impact, Low Cadence; Stable and Methodical; Pragmatic Performers; Harmonious High-Achievers. Point-in-time note: no 2026 report exists yet (expected fall 2026) — re-verify before citing.</p></div>
@@ -1476,12 +1476,12 @@ footer .verlink:hover{color:var(--cobalt)}
       <p>DORA is the framework we deploy directly, so this is a concrete playbook: what to collect, from where, how to compute each key, and what to prepare before the pilot. The goal is a defensible before/after comparison that survives the perception gap.</p>
 
       <h3>The four keys — definition, source, how to compute</h3>
-      <table class="map"><tr><th>Metric</th><th>Data source (already exists)</th><th>How to compute</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Metric</th><th>Data source (already exists)</th><th>How to compute</th></tr>
       <tr><td>Deployment frequency</td><td>CD tool / release tags / deploy logs</td><td>count of deploys to production per day/week, over a window</td></tr>
       <tr><td>Lead time for changes</td><td>Git + CI/CD timestamps</td><td>median time from first commit of a change to it running in production</td></tr>
       <tr><td>Change failure rate</td><td>incident tracker + deploy logs</td><td>% of deployments that caused a failure needing a hotfix/rollback</td></tr>
       <tr><td>Failed-deployment recovery time</td><td>incident tracker (open→resolve)</td><td>median time from a failed deploy to service restored</td></tr>
-      </table>
+      </table></div>
       <p>All four are computable from data a client already has — version control, CI/CD logs, and an incident/ticket system — so no new instrumentation is required to start. Two are throughput (frequency, lead time), two are stability (failure rate, recovery time); you must report them together.</p>
 
       <div class="comp"><div class="chead"><span class="cid">1</span><h3>Prepare the baseline (before agents)</h3><span class="role">the non-negotiable step</span></div>
@@ -1643,11 +1643,11 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h3>The same loop, seen through three lenses</h3>
       <p>Comparing them on planning, execution and feedback-learning is the useful exercise — it isolates what actually differs.</p>
-      <table class="map"><tr><th>Dimension</th><th>Superpowers</th><th>Compound Engineering</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>Dimension</th><th>Superpowers</th><th>Compound Engineering</th></tr>
       <tr><td>Planning</td><td>Socratic brainstorming → design sign-off → a plan of bite-sized tasks (2–5 min each) with exact file paths and complete code, written for "an enthusiastic junior with no context"</td><td>brainstorm → plan where sub-agents research the codebase, edge cases and past learnings <em>in parallel</em>; the ratio is stated as ~80% planning+review, 20% execution</td></tr>
       <tr><td>Execution</td><td>subagent-driven development: a fresh subagent per task; two-stage subagent review (spec compliance, then code quality) up to v4, replaced in v5 by a Spec Self-Review checklist; enforced red-green TDD, YAGNI, DRY</td><td>/ce-work implements the plan (asks clarifying questions first, writes tests), then a simplify pass; specialist reviewer agents fan out (security, architecture, performance…)</td></tr>
       <tr><td>Feedback learning</td><td>largely <em>within</em> a run (reviews, checkpoints); learning across tasks is not the core loop — the discipline resets each session</td><td><strong>the defining feature</strong>: /ce-compound codifies what was learned into CLAUDE.md / docs (ADRs, solutions, new agents) so future brainstorms and plans read it as grounding</td></tr>
-      </table>
+      </table></div>
 
       <div class="callout pine"><div class="t">The one difference that matters most</div><p>Superpowers makes a single task go well by enforcing discipline; <strong>Compound Engineering makes the next task go better</strong> by turning each finished task into durable, machine-readable institutional knowledge. Superpowers is a <em>within-task</em> quality system; Compound Engineering adds a <em>between-task</em> learning loop. That "compound" step — capture the lesson, make it findable (tags/frontmatter), update CLAUDE.md, verify the system would now catch it automatically — is exactly the feedback dimension the classical SDD tools (Spec Kit/Kiro/BMAD) leave out.</p></div>
 
@@ -1698,22 +1698,22 @@ footer .verlink:hover{color:var(--cobalt)}
 
       <h2><span class="n">5</span>How SDD connects the whole framework</h2>
       <p>SDD is not a standalone practice; it is the connective tissue between several components we have already studied. Seeing those links is what makes it usable rather than a buzzword.</p>
-      <table class="map"><tr><th>SDD element</th><th>Connects to</th><th>How</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDD element</th><th>Connects to</th><th>How</th></tr>
       <tr><td>Constitution</td><td>governance (E5)</td><td>non-negotiables encode advisory principles; the deterministic ones become hooks</td></tr>
       <tr><td>Specify / acceptance criteria</td><td>handoff contract (M3)</td><td>the spec is the engineering face of the contract; EARS/Gherkin make it verifiable</td></tr>
       <tr><td>Spec review gate</td><td>autonomy (E6)</td><td>a reviewed spec is what makes L3 delegation accountable</td></tr>
       <tr><td>Spec as artifact</td><td>information architecture (M4)</td><td>durable, versioned, owned — not ephemeral chat text</td></tr>
-      <tr><td>Tasks → implement</td><td>verification (E4)</td><td>acceptance criteria become the failing tests the agent builds toward</td></tr></table>
+      <tr><td>Tasks → implement</td><td>verification (E4)</td><td>acceptance criteria become the failing tests the agent builds toward</td></tr></table></div>
       <div class="callout pine"><div class="t">The spec-anchored recommendation</div><p>Böckeler distinguishes spec-<em>first</em> (spec guides, code stays primary), spec-<em>anchored</em> (spec is a living governing contract), and spec-<em>as-source</em> (code is a disposable byproduct). For a brownfield client we recommend <strong>spec-anchored</strong>: it works with human review and imperfect specs, whereas spec-as-source presumes complete, always-current specs and fully reliable regeneration — which today's reality (Beck: "you learn during implementation; the spec changes") does not support.</p></div>
       <p>SDD's payoff is also measurable, which ties it to E7: track the <strong>spec-review catch rate</strong> (wrong intent caught at the spec gate rather than in code review or production) and compare <strong>rework rate on specced vs unspecced tasks</strong>. The latter now has an industry hook — DORA 2025 promoted Rework Rate to an official fifth delivery metric — so the baseline half of that comparison likely already exists in the client's delivery dashboards.</p>
 
       <h2><span class="n">6</span>Mapping to the SDLC</h2>
-      <table class="map"><tr><th>SDLC stage</th><th>SDD activity</th><th>What good looks like</th></tr>
+      <div class="figscroll"><table class="map"><tr><th>SDLC stage</th><th>SDD activity</th><th>What good looks like</th></tr>
       <tr><td>Inception</td><td>constitution</td><td>non-negotiable principles agreed once, referenced everywhere</td></tr>
       <tr><td>Requirements</td><td>specify + clarify</td><td>intent explicit, ambiguities surfaced before code; EARS acceptance criteria</td></tr>
       <tr><td>Design</td><td>plan</td><td>technical approach reviewed against the spec, not improvised</td></tr>
       <tr><td>Refinement</td><td>tasks</td><td>decomposed into right-sized, agent-ready items (M3 sizing)</td></tr>
-      <tr><td>Implementation</td><td>implement</td><td>agent builds toward acceptance criteria; spec is the accountability anchor</td></tr></table>
+      <tr><td>Implementation</td><td>implement</td><td>agent builds toward acceptance criteria; spec is the accountability anchor</td></tr></table></div>
 
       <h2><span class="n">7</span>Takeaways for our engagement</h2>
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>where is intent non-trivial and delegated (SDD pays off)?</li><li>where are tasks tiny (SDD is overkill)?</li><li>is there appetite to review specs, not just code?</li><li>can we extract a lightweight pipeline without tool lock-in?</li></ul></div>
@@ -2015,6 +2015,7 @@ footer .verlink:hover{color:var(--cobalt)}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.18</span><span class="vd">2026-07-15</span><p>Consistency follow-up to the v1.16 responsive pass: the five <span class="mono">table.map</span> tables in E7 (metrics dimensions, pilot data sources) and E8 (Superpowers vs Compound, SDD framework links, SDLC mapping) are now wrapped in the same <span class="mono">.figscroll</span> container the diagrams use — on narrow screens they scroll horizontally in their own box instead of overflowing the page, matching how H1 ships its tables. Applied in both copies (standalone files + workbook overlays). No content changes.</p></div>
       <div class="vitem"><span class="vv">v1.17</span><span class="vd">2026-07-15</span><p>Added the H1 deep-dive companion (Anatomy of the handoff contract) — opening the M3 set. The amnesia test, the six components with per-component failure modes and owners (flagged as Report 2's synthesis; July-2026 re-verification: Spec Kit v0.12 dropped its dedicated non-goals section, amux retired as a reference — it is an agent multiplexer, not a contract format), the spec-review gate with Kiro's Requirements Analysis (LLM+SMT; ~60% of 1,400+ first-draft AC needed refinement, vendor-reported) and Fowler's counter-view, three-amigos ownership with Adzic's verified framing (the unattributable "BDD's second chance" retired), the T0–T2 contract tiers answering the minimal-contract open question, and the annotated TASK-042. New sources: Grove's The New Code, Cognition's Devin task guidance, Osmani's three-tier boundaries, SWE-Bench+ weak-oracle audit, arXiv:2603.15911 as the correct 2026 citation for the 29.6-vs-4.1 tokens/line review density. Also repaired five double-encoded UTF-8 characters from v1.15.</p></div>
       <div class="vitem"><span class="vv">v1.16</span><span class="vd">2026-07-15</span><p>Responsive &amp; wayfinding pass (design-led review). <strong>Mobile diagram legibility:</strong> every dense SVG diagram — the SDLC and Domain-map views, and all deep-dive figures — now keeps a legible width and scrolls horizontally on phones (with a right-edge fade + thin scrollbar cue) instead of shrinking to unreadable; captions still wrap to the viewport. Applied in the workbook and mirrored across all 15 standalone deep-dives. <strong>Orientation:</strong> a scroll-spy highlight marks the module you are reading in the sidebar, a thin reading-position line sits atop the header, and a back-to-top control appears once you scroll. <strong>Touch &amp; scale:</strong> larger tap targets (status toggles, filter chips, tabs) meeting WCAG 2.2 target-size on touch screens, and fluid module/section headings via clamp(). No content, topic-id, storage, or desktop-layout changes. Dark mode was evaluated and deferred as a separate scoped initiative (it would touch ~150 colour points incl. every diagram fill across 16 files; light stays the right default for a reading-heavy artifact) — see NOTES.md / docs/CHANGELOG.</p></div>
       <div class="vitem"><span class="vv">v1.15</span><span class="vd">2026-07-15</span><p>Added the D1 deep-dive companion (The design system as the third handoff artifact) — opening the M6 design-harness set. The third-artifact thesis (flagged as Report 5’s synthesis), machine-readable infrastructure with verified Frost quotes, the slop audit + design-homogenization evidence (arXiv:2603.13036), the five layers, the evidence table incl. the Indeed/Wolosin machine-readable benchmark, and conformance-vs-judgment. Fact re-verification pass workbook-wide: unsourced Storybook MCP figures reframed as an unquantified vendor claim, Frost “AI is a new user” corrected to the verified “natural design system consumer”, CHI 2025 a11y finding precisely attributed to CodeA11y.</p></div>
@@ -2630,7 +2631,7 @@ footer .verlink:hover{color:var(--cobalt)}
 </div>
 
 <footer>
-  <b>v1.17</b> · 2026-07-15 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.18</b> · 2026-07-15 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
