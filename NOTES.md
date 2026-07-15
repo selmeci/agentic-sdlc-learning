@@ -8,10 +8,18 @@ Use this for open questions, session hand-off notes, and things to check before 
 - (T2) What DORA data can this specific client actually produce from day 0? (unknown until we see them)
 - (D-scale) Keep re-confirming D1–D5 framing reads as clearly "original synthesis", not standard.
 
-## Re-verify before any client meeting (point-in-time facts, mid-2026)
-- Tool versions / marketplace status: Superpowers, Compound Engineering, BMAD (V6+), Spec Kit, Kiro.
-- CVEs and incident dates cited in E5/E7/E8 and M7 Security.
-- DORA metric names (the 4th key has been renamed across report years).
+## Re-verify before any client meeting (point-in-time facts)
+- Tool versions / status: verified 2026-07-15 against primary sources (Kiro GA Nov 2025,
+  Spec Kit v0.11, Superpowers v5.x, BMAD v6.8, Claude Code 2026 surface) — re-verify if
+  older than a month at meeting time.
+- DORA: 2025 report incorporated (Rework Rate 5th metric, AI Capabilities Model); the 2026
+  report is expected fall 2026 — check for it before any meeting after that.
+- METR: Feb-2026 follow-up incorporated (self-flagged "very weak evidence"); watch for the
+  redesigned experiment's results.
+- CVEs and incident dates cited in E5/E7/E8 and M7 Security (all checked out on 2026-07-14).
+- Still unverified: Superpowers "Anthropic marketplace, Jan 2026" claim (softened in E8);
+  the Anthropic −17% comprehension RCT (no primary source located — softened in E7);
+  Uber FlakyGuard exact numbers (attributed + re-verify flag in E6).
 
 ## Session hand-off
 - 2026-07-15: quality-review session. 4 review agents ran (content ×2, workbook, fact-currency);

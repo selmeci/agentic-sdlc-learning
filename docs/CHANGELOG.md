@@ -3,6 +3,33 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.14 · 2026-07-15
+**Quality-review pass** across the workbook + all deep dives (four parallel review agents +
+a web fact-currency sweep), followed by four approved improvement packages:
+- **Factual fixes**: stale "memory (E4)" cross-refs in E2/E3 → E1 memory component / M4;
+  E1 Devin phrasing (completed 3/20, not "3/20 failures"); E8 SDD critique attributed to
+  **Birgitta Böckeler** (martinfowler.com), not Fowler; Faros AI flagged as vendor telemetry
+  (E6/E7); scale provenance made honest (L1–L5 adapted from industry ladders; P1–P5 + D1–D5
+  original synthesis); unsourced hard numbers softened to practitioner estimates (Torres
+  20–40%/~5%, Anthropic −17%, the ~70% mutation bar); CONTENT-MAP topic ids corrected (8).
+- **2026 currency**: E7 gains DORA 2025 (Rework Rate as official 5th metric, AI Capabilities
+  Model, "faster but not safer" reversal) and the METR Feb-2026 follow-up (−4% CI −15…+9,
+  self-flagged selection effects — used as a teaching example); E8 refreshed (Kiro GA +
+  property-based spec testing, Spec Kit v0.11 workflow-as-dependency, Superpowers v5 reversal);
+  E3 gains the skills/plugins/agent-teams surface + the ICSE 2026 harness-engineering paper;
+  E5 gains OWASP Agentic Skills Top 10 + "prompts become shells" + CI/CD supply-chain notes.
+- **New content**: E4 §6 "Verification beyond the unit-test oracle" (property-based, agentic
+  E2E, rubric-anchored LLM-judge as advisory-only) + fail-fast ladder + flakiness protocol;
+  E5 harness-agnostic five-layer control table + credentials callout + config artifact;
+  E6 operational rubric, circuit-breaker ("a dial, not a ratchet"), staffing arithmetic;
+  E2 cache economics + tool-schema sprawl + empirical rot framing; E8 worked 15-line spec;
+  P1 eval checklist, privacy/consent callout, P1–P5 mini-ladder, synthetic-users caveat.
+- **Workbook UX**: export/import of progress+notes (JSON), suggested study paths, SDLC in the
+  sidebar nav, research-priority badges on T1–T4, second self-checks for the thinnest topics.
+- **Toolchain**: `validate.py` now also checks CSS-class coverage (markup vs stylesheet/JS)
+  and CONTENT-MAP↔workbook topic-id drift; fixed the `.rt`/`.chead` CSS drift in all
+  standalone deep dives.
+
 ## v1.13 · 2026-07-15
 Added the **P5** deep-dive companion (The P1–P5 assistance scale in the product layer) —
 **completing the M2 deep-dive set**. The five levels with per-rung evidence ratings, the

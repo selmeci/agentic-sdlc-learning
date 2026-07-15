@@ -123,6 +123,18 @@ def check_workbook():
          if not dups else f"DUPLICATE topic ids: {dups}")
     print(f"  ->  topic count = {len(ids)} (expected 52 unless intentionally changed)")
 
+    # CONTENT-MAP.md must list exactly the workbook's topic ids (ids are frozen
+    # progress keys — a wrong id in the docs invites a progress-wiping "fix")
+    cmap = os.path.join(ROOT, "docs", "CONTENT-MAP.md")
+    if os.path.exists(cmap):
+        doc = open(cmap, encoding="utf-8").read()
+        doc_ids = set(re.findall(r"`((?:eng|prod|hand|ia|brown|traj|des|sec)-[a-z0-9-]+)`", doc))
+        wb_ids = set(ids)
+        extra, missing = sorted(doc_ids - wb_ids), sorted(wb_ids - doc_ids)
+        note(not extra and not missing, "CONTENT-MAP.md topic ids match the workbook"
+             if not extra and not missing
+             else f"CONTENT-MAP.md id drift: not-in-workbook={extra}, undocumented={missing}")
+
 def check_deepdives():
     print("deep-dives/")
     if not os.path.isdir(DEEPDIR):

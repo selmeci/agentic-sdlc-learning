@@ -41,7 +41,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | Topic | id |
 |---|---|
 | H1 Anatomy of the handoff contract | `hand-anatomy` |
-| H2 EARS & Gherkin: machine-verifiable AC | `hand-ears` |
+| H2 EARS & Gherkin: machine-verifiable AC | `hand-ears-gherkin` |
 | H3 Traceability & spec modes | `hand-traceability` |
 | H4 Feedback loop & handoff anti-patterns | `hand-feedback` |
 
@@ -49,8 +49,8 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | Topic | id |
 |---|---|
 | I1 Artifact taxonomy: durable / derived / disposable | `ia-taxonomy` |
-| I2 Lifecycle & write-permissions as governance | `ia-permissions` |
-| I3 Consistency, drift & documentation debt | `ia-drift` |
+| I2 Lifecycle & write-permissions as governance | `ia-lifecycle` |
+| I3 Consistency, drift & documentation debt | `ia-consistency` |
 | I4 Memory systems for agents | `ia-memory` |
 | I5 Progressive disclosure: Skills, nested files, indexes | `ia-disclosure` |
 | I6 Retrieval: agentic search vs RAG vs knowledge graphs | `ia-retrieval` |
@@ -66,18 +66,18 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | B5 Strangler fig, the heatmap and picking the first battlefield | `brown-strangler` |
 | B6 Roadmap F0–F3, metrics and STOP criteria | `brown-roadmap` |
 
-### M6 · Design harness (id `m7`) — Report 5; 1 research-note section
+### M6 · Design harness (id `m7`) — Report 5; 6 research-note sections
 > **D1–D5 is an original synthesis, not an industry standard — flag it wherever it appears.**
 
 | Topic | id |
 |---|---|
-| D1 Design system as the third handoff artifact | `des-system` |
+| D1 Design system as the third handoff artifact | `des-artifact` |
 | D2 Design tokens as the visual contract (DTCG) | `des-tokens` |
-| D3 How agents consume design context | `des-consume` |
+| D3 How agents consume design context | `des-consumption` |
 | D4 Governance & SSOT in the design world | `des-governance` |
 | D5 The design harness: verification loops & guardrails | `des-harness` |
 | D6 D1–D5 scale & the designer as curator | `des-scale` |
-| D7 Design archaeology & the F0–F4 rollout | `des-archaeology` |
+| D7 Design archaeology & the F0–F4 rollout | `des-brownfield` |
 
 ### M7 · Security — cross-cutting (id `m8sec`) — Report 6; 8 research-note sections
 | Topic | id |
@@ -96,9 +96,9 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 |---|---|
 | T1 Economics & the business case | `traj-economics` |
 | T2 Measurement & pilot design | `traj-measurement` |
-| T3 Change management & people | `traj-people` |
+| T3 Change management & people | `traj-change` |
 | T4 Compliance, legal & the EU context | `traj-compliance` |
-| T5 The harness as an internal product | `traj-internal-product` |
+| T5 The harness as an internal product | `traj-platform` |
 | T6 Vendor strategy & lock-in | `traj-vendor` |
 | T7 Organizational governance | `traj-governance` |
 
