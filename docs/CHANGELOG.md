@@ -3,6 +3,19 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.13 · 2026-07-15
+Added the **P5** deep-dive companion (The P1–P5 assistance scale in the product layer) —
+**completing the M2 deep-dive set**. The five levels with per-rung evidence ratings, the
+verification asymmetry vs engineering L1–L5 (anchored by the Nature Human Behaviour 2024
+meta-analysis: human+AI worse than best alone on decision tasks, g=−0.23), why P5 is the
+anti-pattern (Klarna's 2025 reversal, Mitchell et al. 2025, EU AI Act Art. 14 human-oversight
+mandate from Aug 2026), AI evals as the emerging partial verification loop (Torres, Husain &
+Shankar, criteria drift), and per-artifact level assignment with downshift triggers. P1–P5
+flagged as **our synthesis** with named ancestors (Parasuraman/Sheridan/Wickens 2000, Feng et
+al. 2025) after a search confirmed no published product-layer equivalent. Also tightened
+Bashir/ClarifyGPT citations workbook-wide (Alstom/Westermo datasets; +11.52% is relative;
+3.84/5 is a four-criteria average; F1 67–76% by dataset).
+
 ## v1.12 · 2026-07-15
 Added the **P4** deep-dive companion (The PM: from author to editor and curator) — Cagan's
 vulnerable-vs-empowered distinction with verbatim sourcing (A Vision For Product Teams,

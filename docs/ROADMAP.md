@@ -5,19 +5,19 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 
 ## Done
 
-- **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.12)
-- **Deep-dive companions (13)**: SDLC Foundations, **E1–E8** (all of module M1), **P1–P4**.
+- **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.13)
+- **Deep-dive companions (14)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
 ## Next (in suggested order)
 
-### 1. Finish M2 — Product harness deep dives (P3–P5)
-The immediate continuation of the last session. Same recipe as P1/P2.
+### 1. ~~Finish M2 — Product harness deep dives (P3–P5)~~ — **DONE**
 - ~~**P2** `prod-prd` — PRDs & requirements with AI~~ — **done (v1.8)**.
 - ~~**P3** `prod-decomposition` — decomposition into agent-ready work items~~ — **done (v1.11)**.
 - ~~**P4** `prod-pm-role` — the PM from author to editor/curator~~ — **done (v1.12)**.
-- **P5** `prod-scale` — the P1–P5 assistance scale itself (P5 = anti-pattern). Pairs with E6.
+- ~~**P5** `prod-scale` — the P1–P5 assistance scale itself~~ — **done (v1.13)**. M2 complete:
+  all five product-harness topics have deep-dive companions.
 
 ### 2. M6 — Design harness deep dives (D1–D7)
 Highest-novelty area because **D1–D5 is our original synthesis** — the deep dives are where we

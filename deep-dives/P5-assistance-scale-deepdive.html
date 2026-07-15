@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P5 Deep Dive — The P1–P5 Assistance Scale in the Product Layer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edP5{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahP5a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">P5 · DEEP DIVE</span>
+    <h1>The P1–P5 Assistance Scale in the Product Layer</h1>
+    <span class="bc">companion to module M2 · Product harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why a separate scale</a>
+  <a href="#s1"><b>1</b> · The five levels</a>
+  <a href="#s2"><b>2</b> · The verification asymmetry</a>
+  <a href="#s3"><b>3</b> · Evidence by level</a>
+  <a href="#s4"><b>4</b> · Why P5 is the anti-pattern</a>
+  <a href="#s5"><b>5</b> · Choosing the level</a>
+  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M2</p>
+      <h2 id="s0"><span class="n">0</span>Why the product layer needs its own scale</h2>
+      <p class="lead">Module M2 ends where it began: with the question of how much of product work can be delegated. The tempting shortcut is to reuse the engineering autonomy ladder (E6's L1–L5) and rename the rungs. That shortcut fails on the one property that makes the engineering ladder work: <strong>verification</strong>. An engineering agent earns autonomy because deterministic tests, CI and mutation gates stand behind every level (E4); a product artifact has no such backstop — its verification is human judgment plus consistency checks, and that difference restructures the entire ladder. P1–P5 is the scale that results, and it doubles as the module's map: each topic you have read lives at a level.</p>
+      <p>Positioning, stated plainly: <strong>P1–P5 is our synthesis</strong>, like the D1–D5 design scale — as of mid-2026 we found no published equivalent that grades AI assistance across product-definition work. It has honest intellectual ancestors: Parasuraman, Sheridan &amp; Wickens's classic ten-level automation model (2000), Feng, McDonald &amp; Zhang's five human-role levels for AI agents (Operator → Observer, arXiv:2506.12469), and Mitchell et al.'s Hugging Face position paper arguing the fully-autonomous top level should not be built at all (arXiv:2502.02649). The nearest SDLC-space neighbour (ASDLC.io's L1–L5) explicitly scopes itself to the engineering layer. Notably, the challenger rung — our P3 — appears in none of them.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Andrej Karpathy compressed the whole argument into one line at YC's AI Startup School (June 2025): build <strong>autonomy sliders</strong> and keep AI "on a leash," because <em>generation is cheap and verification is expensive</em> — the human verification loop is the bottleneck. The P-scale is that slider for the product layer, calibrated to the only verifier the layer has: human judgment. Set the slider by what you can verify, not by what the model can generate.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The five levels</h2>
+      <table class="map">
+        <tr><th>Level</th><th>What the AI does</th><th>What the human does</th><th>Where it stands</th></tr>
+        <tr><td>P1</td><td>assisted drafting — completions, rewording, structure on demand</td><td>authors; AI is stationery</td><td>universal, uncontroversial</td></tr>
+        <tr><td>P2</td><td>drafts whole artifacts from rough input (PRD sections, story sets, synthesis)</td><td>edits, owns every sentence and the why</td><td><strong>today's mainstream</strong> (P2 topic)</td></tr>
+        <tr><td>P3</td><td>red-teams human-owned artifacts: ambiguity, contradictions, missing edges</td><td>writes first, then disposes of findings</td><td>evidence-strongest step (§3) — the natural next move</td></tr>
+        <tr><td>P4</td><td>drives decomposition and consistency checks across the backlog</td><td>approves at explicit gates; owns seams</td><td>works with gates — the SDD toolchains are this shape (P3 topic §5)</td></tr>
+        <tr><td>P5</td><td>autonomous product definition — decides what to build</td><td>rubber-stamps, then stops looking</td><td><strong>anti-pattern today</strong> (§4)</td></tr>
+      </table>
+      <p>Two properties matter more than the rungs themselves. First, the ladder is <strong>per artifact type, not per team</strong>: the same PM can run interview synthesis at P2–P3, PRD drafting at P2, refinement red-teaming at P3, and decomposition at P4-with-gates — the level attaches to the artifact and its verifiability, not to a job title. Second, the levels describe <em>who initiates and who judges</em>, not model quality: P3 uses the same model as P2 — pointed at critique, where the evidence says it is stronger (§3).</p>
+
+      <h2 id="s2"><span class="n">2</span>The structural difference — verification asymmetry</h2>
+      <p>E6's rule for engineering is: autonomy is earned, level by level, by the strength of the verification loop behind it — tests, CI, protected suites, mutation gates. The product layer cannot earn autonomy the same way because no test can check a product decision. What it has instead: human judgment (expensive, biased under load — P4), consistency checks (cheap but shallow), and downstream signals that arrive weeks later (E7). That is why the product ladder caps earlier, and why the top rung is a different kind of thing: L5 in engineering is a risk calibration; P5 in product removes the only verifier the layer has.</p>
+      <p>The strongest independent support for treating <em>decision</em> work differently comes from outside our field: Vaccaro, Almaatouq &amp; Malone's meta-analysis in <em>Nature Human Behaviour</em> (October 2024; 106 studies, 370 effect sizes) found that human–AI combinations performed <strong>worse than the best of human or AI alone on decision tasks</strong> (Hedges' g = −0.23) while outperforming on <em>creation</em> tasks. Read against the P-scale: the naive comfort that "there's a human in the loop" does not rescue decision quality by itself — the pairing has to be designed around who verifies whom. Drafting and challenging (P2–P3) sit on the creation side of that split; deciding (P5) sits squarely on the losing side.</p>
+      <figure>
+      <svg viewBox="0 0 860 320" role="img" aria-label="Two autonomy ladders: engineering earns height through deterministic verification, product caps earlier">
+        <defs><marker id="ahP5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="26" class="tg">TWO LADDERS, ONE DIFFERENCE — WHAT STANDS BEHIND EACH RUNG</text>
+        <text x="40" y="52" class="ts">engineering (E6)</text>
+        <rect x="40" y="236" width="150" height="34" rx="7" class="bxC"/><text x="50" y="257" class="ts">L1 · assist</text>
+        <rect x="40" y="192" width="150" height="34" rx="7" class="bxC"/><text x="50" y="213" class="ts">L2 · supervised edits</text>
+        <rect x="40" y="148" width="150" height="34" rx="7" class="bxC"/><text x="50" y="169" class="ts">L3 · delegated tasks</text>
+        <rect x="40" y="104" width="150" height="34" rx="7" class="bxC"/><text x="50" y="125" class="ts">L4 · narrow autonomy</text>
+        <rect x="40" y="60" width="150" height="34" rx="7" class="bxG"/><text x="50" y="81" class="ts">L5 · full autonomy</text>
+        <line x1="215" y1="270" x2="215" y2="64" class="edP5"/>
+        <text x="226" y="150" class="ts">each rung earned by</text><text x="226" y="164" class="ts">deterministic verification</text><text x="226" y="178" class="ts">(tests, CI, mutation — E4)</text>
+        <text x="330" y="52" class="ts">product (this topic)</text>
+        <rect x="330" y="236" width="150" height="34" rx="7" class="bxK"/><text x="340" y="257" class="ts">P1 · assisted drafting</text>
+        <rect x="330" y="192" width="150" height="34" rx="7" class="bxK"/><text x="340" y="213" class="ts">P2 · draft + human edit</text>
+        <rect x="330" y="148" width="150" height="34" rx="7" class="bxK"/><text x="340" y="169" class="ts">P3 · AI red-team</text>
+        <rect x="330" y="104" width="150" height="34" rx="7" class="bxA"/><text x="340" y="125" class="ts">P4 · decomposition + gates</text>
+        <rect x="330" y="60" width="150" height="34" rx="7" class="bx" style="stroke:#B3362B"/><text x="340" y="81" class="ts">P5 · autonomous definition</text>
+        <line x1="505" y1="270" x2="505" y2="110" class="edP5"/>
+        <line x1="322" y1="99" x2="492" y2="99" stroke="#B3362B" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="516" y="200" class="ts">rungs rest on human</text><text x="516" y="214" class="ts">judgment + consistency</text><text x="516" y="228" class="ts">checks — caps at the line:</text><text x="516" y="242" class="ts">no deterministic gate above it</text>
+        <rect x="560" y="46" width="280" height="118" rx="10" class="bxG"/>
+        <text x="572" y="68" class="ts">why the cap is real (§2–§4)</text>
+        <text x="572" y="88" class="ts">· decision tasks: human+AI worse than</text><text x="572" y="101" class="ts">  best alone (Nature HB 2024, g = −0.23)</text>
+        <text x="572" y="118" class="ts">· automation bias erodes lone-gate review</text>
+        <text x="572" y="135" class="ts">· EU AI Act Art. 14: human oversight +</text><text x="572" y="148" class="ts">  bias guard mandatory (high-risk, 8/2026)</text>
+      </svg>
+      <figcaption>Left: the engineering ladder earns each rung through deterministic verification. Right: the product ladder rests on human judgment — it caps below P5, where the only verifier would be removed. The box lists the three independent reasons the cap is real: the decision-task meta-analysis, the automation-bias literature (P4), and the regulatory floor.</figcaption>
+      </figure>
+
+      <h2 id="s3"><span class="n">3</span>Evidence by level — and the eval loop that is emerging</h2>
+      <p>The scale is only useful if the rungs are evidence-rated, so: <strong>P2</strong> carries the best-measured failure mode — LLM-authored stories fail review at 63–77% and fail hardest on rationale (Quattrocchi et al.; P2 topic §2). <strong>P3</strong> is the evidence-strongest rung: ambiguity classification improved <strong>+20.2%</strong> with 10-shot prompting on industrial requirements (Bashir et al., ICSME 2025, Alstom/Westermo data — best F1 roughly 67–76% depending on dataset, expert rating 3.84/5 across four criteria, measured on small open-weight models: an assistant, not an arbiter), clarifying-questions loops lifted GPT-4 Pass@1 from 70.96% to 80.80% on MBPP-sanitized (≈11.5% <em>relative</em> improvement on average, with simulated user answers — ClarifyGPT, FSE 2024), and grounded AC generation gained +23.2 pp with multi-modal RAG (Wang et al., ASE 2025). <strong>P4</strong> has one controlled experiment: decomposition helps as a completeness check with a human filter, estimation fails outright, and 100% of participants chose the hybrid (Pavlič et al.; P3 topic §3). <strong>P5</strong> has no supporting evidence at all — what it has is the automation-bias literature predicting exactly how it degrades (P4 topic §2).</p>
+      <p>Two 2026 results sharpen the P3 picture in opposite directions. Strengthening it: Unterbusch &amp; Vogelsang (ICSE-NIER 2026, Mercedes-Benz data) found that feeding the model a handful of <em>human-validated</em> explanations — as few as ~20 — beats both few-shot prompting and a fine-tuned baseline at defect prediction: the strongest configuration of the critic has a human inside it. Cautioning it: Yang et al.'s Orchid benchmark (1,304 tasks) shows LLMs flag ambiguity with high recall but <strong>heavily overpredict</strong>, and "lack the capability to identify or resolve such ambiguity autonomously" — flagging is not resolving, which is exactly why the disposition step in the red-team gate stays human (P2 §4).</p>
+      <p>The honest counter-trend: the product layer is growing a partial verification loop of its own — <strong>AI evals</strong>. Teresa Torres calls them the practice she would add a chapter for ("If I had to write my book today, I would add a chapter on AI evals" — webinar statement, 2025), and her own published loop is concrete: error analysis → measure → improve, run like discovery itself, cutting one error class from 4-in-~20 traces to 1-in-25 (Product Talk, Sep 2025). The skill is institutionalising fast — Husain &amp; Shankar's evals course has trained 2,000+ PMs and engineers; OpenAI's CPO Kevin Weil calls eval-writing a core PM skill. Two sober caveats before anyone reads evals as "tests for product": there is <strong>no measured evidence yet that evals catch product-decision errors</strong> (as opposed to model-output regressions), and Shankar et al.'s <em>Who Validates the Validators?</em> (UIST 2024) documents <strong>criteria drift</strong> — graders cannot fully define quality criteria up front; grading outputs changes the criteria. That makes eval work a form of requirements discovery, which is an argument for keeping humans in it, not for automating them out.</p>
+
+      <h2 id="s4"><span class="n">4</span>Why P5 is the anti-pattern — with names and dates</h2>
+      <p>Assemble the pieces from the module and the failure is overdetermined. Remove the human and you remove the layer's only verifier (§2); automation bias guarantees the removal happens gradually and invisibly, through rubber-stamping rather than by decision (P4 §2); the rationale gap means the artifacts flowing downstream carry form without why, which the handoff contract cannot survive (P2, H1); and accountability evaporates — a shipped decision nobody made is a decision nobody owns when it fails. This is no longer just our synthesis: Mitchell et al. argue the fully-autonomous level should not be built as a general matter; and the EU AI Act's Article 14 makes effective human oversight — with explicit protection against automation bias — a legal requirement for high-risk systems from August 2026 (T4). In regulated domains, P5 is not an anti-pattern; it is non-compliance.</p>
+      <div class="callout"><div class="t">The named case study — Klarna's reversal</div><p>February 2024: Klarna's CEO announces its AI assistant is doing the work of 700 agents across 2.3M conversations — the customer-service version of autonomous product delivery, celebrated as a headcount decision. May 2025: the same CEO tells Bloomberg the cost-cutting "went too far," service quality dropped, and Klarna is rehiring humans into a hybrid model. Read through this topic: the decision was made where verification was weakest (customer-experience quality — human judgment territory), the degradation was gradual, and the correction required the kind of public reversal most organisations avoid until forced. That is the P5 failure shape, observed in the wild with names and dates.</p></div>
+      <p>Is the anti-pattern permanent? Honestly: unknown, and the claim is point-in-time. What would have to change is specific, though — mature eval suites that demonstrably catch decision-grade errors (not just output regressions), outcome telemetry loops fast enough to act as verification (E7's lagging-signal problem), and organisational answers to the accountability question. None of the three exists today; watch the evals movement (§3), because that is where the first one would come from. Until then the ceiling is P4-with-gates, and the gates are human.</p>
+
+      <h2 id="s5"><span class="n">5</span>Choosing the level — per artifact, with downshift triggers</h2>
+      <p>The deployment rule mirrors E6: <strong>start where verification exists, and move one rung at a time</strong>. In practice: interview synthesis runs at P2–P3 with mandatory spot-checks against raw material (P1, P4 §4); PRD drafting runs at P2 with the kill/keep review (P2 §3); backlog refinement adds the P3 red-team gate — the single best quick win, because it is the evidence-strongest rung and only one step beyond mainstream practice; decomposition runs at P4 with approval gates on the task list (P3 §5). Machine-verifiable acceptance criteria (H2) are the bridge rung: the one place a product artifact crosses into deterministic verification — which is why the contract invests there.</p>
+      <p>And because the failure mode is drift rather than decision (P4), every level assignment needs its <strong>downshift triggers</strong> — the degeneration signals watched per artifact type: kill rate falling toward zero, dispositions turning into "ok", review time collapsing while volume grows, PMs unable to recount a recent user conversation. Any of them fires: drop the artifact one rung and rebuild the review habit before climbing again. The scale is a dial, not a ratchet.</p>
+
+      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>which level does each artifact type actually run at today — and who decided?</li><li>where is the client's verification real (human review with teeth) vs theatre?</li><li>do they have any eval practice, or plans for one?</li><li>any artifact already drifting toward P5 by rubber-stamp (check the signals)?</li></ul></div>
+      <div class="box"><div class="lab">Build</div><ul><li>set levels per artifact type, explicitly, with the P-scale as shared vocabulary</li><li>deploy P3 red-teaming in refinement first — evidence-strongest, one step up</li><li>gate P4 decomposition on human-approved task lists (SDD mechanics, P3 §5)</li><li>wire the downshift triggers into the same ceremony; treat the scale as a dial</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember P5 by</div><p>The product layer needs its own autonomy scale because its verification is human judgment, not deterministic tests — so autonomy caps earlier, and the ladder (P1 drafting → P2 draft+edit → P3 red-team → P4 decomposition-with-gates → P5 autonomous definition) is our synthesis, with ancestors in Parasuraman/Sheridan/Wickens and Feng et al. but no published product-layer equivalent as of mid-2026. The evidence rates the rungs: P3 is strongest (+20.2% ambiguity detection), P4 works only as a gated hybrid (100% preference), and P5 has no evidence, a meta-analytic warning (human+AI underperforms on decision tasks, g=−0.23), a named failure (Klarna's 2025 reversal), and a regulatory floor against it (EU AI Act Art. 14, Aug 2026). Set the slider by what you can verify, per artifact, with downshift triggers — generation is cheap, verification is expensive, and the dial must move both ways.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Vaccaro, Almaatouq &amp; Malone — When combinations of humans and AI are useful</div><div class="mt">Nature Human Behaviour 8:2293–2303 · Oct 2024 · arXiv:2405.06087</div><p>The meta-analysis behind §2: 106 studies, 370 effect sizes — human–AI combos underperform the best alone on decision tasks (g = −0.23), outperform on creation. The strongest independent argument for designing who-verifies-whom.</p></div>
+      <div class="item"><div class="rt">Feng, McDonald &amp; Zhang — Levels of autonomy for AI agents · Mitchell et al. — Fully autonomous AI agents should not be developed</div><div class="mt">arXiv:2506.12469 (Knight Institute) · arXiv:2502.02649 (Hugging Face) · 2025</div><p>The two closest published ladders: five human-role levels (Operator → Observer), and the argument that the top level should not exist — the published precedent for P5-as-anti-pattern.</p></div>
+      <div class="item"><div class="rt">EU AI Act, Article 14 — human oversight</div><div class="mt">Regulation (EU) 2024/1689 · high-risk obligations from Aug 2, 2026</div><p>Effective natural-person oversight with explicit guard against automation bias, as law. The regulatory floor under the whole P-scale argument; connects to T4 (compliance).</p></div>
+      <div class="item"><div class="rt">Torres — Interview Coach evals · Shankar et al. — Who validates the validators?</div><div class="mt">producttalk.org Sep 2025 · UIST 2024, arXiv:2404.12272</div><p>The emerging product-layer verification loop, from a practitioner building one (error class 4/~20 → 1/25) and the study showing criteria drift — eval work is requirements discovery, not just regression testing.</p></div>
+      <div class="item"><div class="rt">Karpathy — Software is changing (again)</div><div class="mt">YC AI Startup School · Jun 17, 2025</div><p>Autonomy sliders and the leash: generation is cheap, verification is expensive. The one-line frame this topic operationalises for product work. Point-in-time talk.</p></div>
+      <div class="item"><div class="rt">Report 2 — the P1–P5 scale (this workbook)</div><div class="mt">module M2 research notes · P1–P4 deep dives</div><p>The original research notes, and the four topics that live on the scale's rungs: discovery (P1), PRDs (P2), decomposition (P3), the PM role (P4). This topic is their map.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (P5-assistance-scale-deepdive.html). It completes the M2 deep-dive set. Its natural neighbours in the workbook are P1–P4 (the rungs), E4/E6 (the verification-first principle and the engineering ladder this one mirrors and diverges from), E7 (metrics and the lagging-signal problem), H2 (machine-verifiable AC — the bridge rung), P4 (the automation-bias evidence the cap rests on), and T4 (the EU AI Act context).</p>
+
+</main>
+</div>
+</body>
+</html>

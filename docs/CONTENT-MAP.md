@@ -1,7 +1,7 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.12):
-8 modules, 52 topics, 6 research reports, 2 inline map sections, 13 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.13):
+8 modules, 52 topics, 6 research reports, 2 inline map sections, 14 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -35,7 +35,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | P2 PRDs and requirements with AI | `prod-prd` | ✅ |
 | P3 Decomposition into agent-ready work items | `prod-decomposition` | ✅ |
 | P4 The PM: from author to editor and curator | `prod-pm-role` | ✅ |
-| P5 The P1–P5 assistance scale in the product layer | `prod-scale` | ⬜ |
+| P5 The P1–P5 assistance scale in the product layer | `prod-scale` | ✅ |
 
 ### M3 · Handoff contract (id `m3`) — Report 2 (contract portion); 5 research-note sections
 | Topic | id |
@@ -112,15 +112,16 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (13)
+## Deep-dive companions (14)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
 `SDLC-foundations` · `E1-agent-model-harness` · `E2-context-engineering` ·
 `E3-harness-in-practice` · `E4-verification-first` · `E5-governance` ·
 `E6-autonomy-levels` · `E7-metrics-anti-patterns` · `E8-spec-driven-development` ·
-`P1-ai-assisted-discovery` · `P2-prds-with-ai` · `P3-decomposition` · `P4-pm-role`
+`P1-ai-assisted-discovery` · `P2-prds-with-ai` · `P3-decomposition` · `P4-pm-role` ·
+`P5-assistance-scale`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e8-deepdive`,
-`#p1-deepdive` … `#p4-deepdive` (each appears exactly twice: the "Go deeper" link + the JS
+`#p1-deepdive` … `#p5-deepdive` (each appears exactly twice: the "Go deeper" link + the JS
 open handler).

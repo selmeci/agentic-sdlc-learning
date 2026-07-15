@@ -14,5 +14,14 @@ Use this for open questions, session hand-off notes, and things to check before 
 - DORA metric names (the 4th key has been renamed across report years).
 
 ## Session hand-off
-- Last completed: P1 deep dive (v1.7). Next per ROADMAP: P2 (prod-prd).
-- Build recipe: docs/AUTHORING-GUIDE.md. Gate: `python3 scripts/validate.py`.
+- 2026-07-15: quality-review session. 4 review agents ran (content ×2, workbook, fact-currency);
+  user approved 4 improvement packages (A factual fixes, B 2026 currency, C content extensions,
+  D workbook UX). Package A is ~half done (E2/E3 cross-refs, E1 Devin, E8 Böckeler, E6 Faros/
+  FlakyGuard/provenance — all in both copies). Remaining: E7 −17% claim, P1 Torres numbers +
+  P-scale flag, E4 ~70% flag, CONTENT-MAP id fixes; then packages B, C, D and version bump.
+  **Full checkpoint with the complete remaining-work list: Claude memory file
+  `improvement-rollout-checkpoint.md` (project memory dir).**
+- Also done this session: `.rt`/`.chead` CSS drift fixed in all deep-dives; validate.py extended
+  with a CSS-class-coverage check; dead `class="main"` removed from workbook.
+- Previous: P2 deep dive added (workbook v1.10). Build recipe: docs/AUTHORING-GUIDE.md.
+  Gate: `python3 scripts/validate.py` (green as of this hand-off).
