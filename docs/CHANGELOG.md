@@ -3,6 +3,25 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.20 · 2026-07-15
+**Added the H2 deep-dive companion** (EARS & Gherkin: machine-verifiable acceptance criteria) —
+second in the M3 set, embedded as an in-page overlay and as the standalone
+`deep-dives/H2-ears-gherkin-deepdive.html`. Content: the verification gap (ambiguity in /
+unverifiability out), the six EARS templates with the password-reset worked example, Gherkin
+as the executable criterion that doubles as the agent's reward signal, the
+story→EARS→Gherkin→red-tests ladder with the spec-review gate, the writing craft (declarative
+what-not-how, BRIEF, failure paths) and the BDD trap with the fourth-amigo ownership answer.
+Three-teammate fact-verification pass: EARS co-authors (Wilkinson, Harwood, Novak) credited and
+the blue-chip adopter roster reframed as creator-self-reported; Given–When–Then dated to ~2004
+(North & Matts); SpecFlow EOL Dec 2024 → Reqnroll (Nagy); Spec Kit's section heading verified as
+"Acceptance Scenarios"; ClarifyGPT 11.52% confirmed as *relative* Pass@1 (GPT-4 avg, four
+benchmarks), Bashir 20.2% reframed as 10-shot-vs-0-shot (ICSME 2025), Wang +23.2 pp confirmed
+(arXiv:2508.06888). New sources from the discovery pass: Mathews & Nagappan (ASE 2024)
+tests-in-prompt evidence, SWE-bench Verified's FAIL_TO_PASS oracle, AutoUAT/TestFlow
+(arXiv:2504.07244), QVscribe EARS-conformance tooling, Automation Panda's
+Gherkin-guidelines-for-AI. H2 topic data enriched (know/checks/src) with the corrected framings.
+Both new tables ship inside the v1.19 `.figscroll` wrapper.
+
 ## v1.19 · 2026-07-15
 **Table-responsiveness sweep completed** (finishes what v1.18 started): the remaining 36
 `table.map` tables — E1–E6, P1–P5, D1, SDLC-foundations, and the workbook's SDLC/Domain-map

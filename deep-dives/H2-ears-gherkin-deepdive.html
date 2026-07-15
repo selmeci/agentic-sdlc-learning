@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H2 Deep Dive — EARS &amp; Gherkin: Machine-Verifiable Acceptance Criteria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edH2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahH2a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">H2 · DEEP DIVE</span>
+    <h1>EARS &amp; Gherkin: Machine-Verifiable Acceptance Criteria</h1>
+    <span class="bc">companion to module M3 · Handoff contract</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why criteria are the engine</a>
+  <a href="#s1"><b>1</b> · The verification gap</a>
+  <a href="#s2"><b>2</b> · EARS — constrained NL</a>
+  <a href="#s3"><b>3</b> · Gherkin — executable criteria</a>
+  <a href="#s4"><b>4</b> · The ladder to red tests</a>
+  <a href="#s5"><b>5</b> · Craft &amp; the BDD trap</a>
+  <a href="#s6"><b>6</b> · Evidence &amp; toolchain</a>
+  <a href="#s7"><b>7</b> · Framework map</a>
+  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> · Further reading</a>
+</nav>
+      <h2 id="s0"><span class="n">0</span>Why the criteria are the contract's engine</h2>
+      <p class="lead">H1 dissected the handoff contract into six components and was blunt about which one carries the proof obligation: component C, the acceptance criteria — "machine-verifiable wherever possible". This deep dive is about the two formats that deliver that clause. <strong>EARS</strong> structures requirements as constrained natural-language rules; <strong>Gherkin</strong> turns rules into concrete, executable examples. Together they walk a criterion down an altitude ladder — from intent a PM can ratify, to a scenario a reviewer can falsify, to a red test the harness can run — and that last rung is the point. E4's verification-first principle says the reviewer's question is never "does this look right" but "what machine said this is right"; criteria written in prose leave that question unanswerable, and the review gate H1 built becomes theatre.</p>
+      <p>The reason this matters more for agents than it ever did for humans is the same amnesia argument P3 made for decomposition. A human developer resolves an ambiguous criterion by leaning over to ask; an agent resolves it by <strong>guessing with confidence</strong> — Report 2 calls this intent hallucination, and it is invisible at exactly the moment it happens, because the agent's guess compiles, passes its own improvised tests, and reads plausibly in the diff. The defence is not more prose. It is criteria structured enough that ambiguity has nowhere to hide (EARS) and concrete enough that the claim "done" is a program output, not an opinion (Gherkin).</p>
+      <div class="callout"><div class="t">The oracle, in one line</div><p>Every delegation needs an oracle — the thing that decides pass or fail. A prose criterion makes the <em>reviewer</em> the oracle (expensive, inconsistent, unavailable at 2 a.m. when the agent finishes); an executable criterion makes the <em>harness</em> the oracle. H2 is the craft of moving criteria from the first category to the second, and of knowing when the move is not worth it (§4).</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The verification gap</h2>
+      <p>Put a typical brownfield ticket criterion next to what a machine can evaluate and the gap is obvious. "The system should handle errors gracefully" names no trigger, no observable response, no boundary — it cannot fail, therefore it cannot pass. The INVEST checklist already demanded <em>testable</em> stories a decade before agents; the workbook's M3 overview sharpened the T for the agentic setting: testable is no longer enough, the bar is <strong>machine-verifiable</strong>, because the whole economic argument for delegation (E6's autonomy levels) collapses if a human must hand-inspect every completion anyway.</p>
+      <p>The gap has two distinct failure directions, and the two formats of this topic attack one each. Direction one is <strong>ambiguity in</strong>: the criterion under-specifies, the agent fills the void with priors, and you get the wrong right-looking thing — H1's intent problem at criterion granularity. Direction two is <strong>unverifiability out</strong>: the criterion may even be clear, but nothing can execute it, so "finished" reverts to opinion and the PR review inherits the entire proof burden — at densities arXiv:2603.15911 measured at 29.6 review tokens per changed line for AI-authored work, that burden is precisely what the contract was supposed to amortize. EARS narrows direction one; Gherkin closes direction two.</p>
+      <p>One warning before the formats: an executable criterion is only as strong as its oracle. The SWE-Bench+ audit (arXiv:2410.06992, cited at length in H1 §2C) found roughly a third of claimed benchmark passes tainted by solution leakage and another third passing only because tests were weak. Translating a vague rule into a weak scenario produces confident false greens — worse than prose, because it <em>looks</em> machine-verified. The craft sections (§5) and B3's mutation gate exist for exactly this reason.</p>
+
+      <h2 id="s2"><span class="n">2</span>EARS — constrained natural language for rules</h2>
+      <p>EARS — the Easy Approach to Requirements Syntax — was developed at Rolls-Royce by Alistair Mavin with Philip Wilkinson, Adrian Harwood and Mark Novak, and published at the IEEE Requirements Engineering conference in 2009 (RE'09, DOI 10.1109/RE.2009.9). The origin is instructive: the team was analysing airworthiness regulations for a jet-engine control system — prose requirements at their most safety-critical and most lawyered — and found that nearly all of them could be rewritten into a handful of sentence templates keyed on <em>when</em> and <em>under what conditions</em> the system must respond. Five core patterns plus a combining form:</p>
+      <div class="figscroll"><table class="map">
+        <tr><th>Pattern</th><th>Template</th><th>Password-reset example (Report 2's task)</th></tr>
+        <tr><td><strong>Ubiquitous</strong> — always true</td><td><span class="mono">The &lt;system&gt; shall &lt;response&gt;</span></td><td><span class="mono">The service shall log every throttling decision with account id hashed.</span></td></tr>
+        <tr><td><strong>Event-driven</strong> — triggered</td><td><span class="mono">WHEN &lt;trigger&gt;, the &lt;system&gt; shall &lt;response&gt;</span></td><td><span class="mono">WHEN a client submits more than 5 reset requests for the same account within 15 minutes, the system shall respond 429 and shall not send a reset email.</span></td></tr>
+        <tr><td><strong>State-driven</strong> — while a state holds</td><td><span class="mono">WHILE &lt;state&gt;, the &lt;system&gt; shall &lt;response&gt;</span></td><td><span class="mono">WHILE the throttle flag is off, the system shall preserve existing reset behaviour byte-for-byte.</span></td></tr>
+        <tr><td><strong>Optional feature</strong> — if the feature is present</td><td><span class="mono">WHERE &lt;feature is included&gt;, the &lt;system&gt; shall &lt;response&gt;</span></td><td><span class="mono">WHERE the tenant has SSO enabled, the system shall exempt IdP-initiated resets from the counter.</span></td></tr>
+        <tr><td><strong>Unwanted behaviour</strong> — failure &amp; abuse paths</td><td><span class="mono">IF &lt;trigger&gt;, THEN the &lt;system&gt; shall &lt;response&gt;</span></td><td><span class="mono">IF the Redis counter is unavailable, THEN the system shall fail open and alert, not block resets.</span></td></tr>
+        <tr><td><strong>Complex</strong> — combinations</td><td><span class="mono">WHILE &lt;state&gt;, WHEN &lt;trigger&gt;, the &lt;system&gt; shall &lt;response&gt;</span></td><td><span class="mono">WHILE the flag is on, WHEN the 6th request arrives, the system shall respond 429.</span></td></tr>
+      </table></div>
+      <div class="callout amber"><div class="t">The pattern is the linter</div><p>The templates look almost too simple to matter, and that is the trick: a vague sentence does not fit any of them. "Handle errors gracefully" has no trigger for WHEN, no state for WHILE, no observable response for the SHALL clause — attempting the rewrite <em>is</em> the ambiguity detector, and it runs at authoring time, before any agent sees the task. E5's advisory-versus-deterministic rule applies here too: EARS conformance is mechanically checkable (QVscribe has shipped automated EARS-conformance checking since v2.10, alongside INCOSE's 41-rule set), so a client can gate requirements the way CI gates code.</p></div>
+      <p>Who uses it? Honestly sourced: Rolls-Royce is the documented origin; beyond that, the adopter roster — Airbus, Bosch, Dyson, Honeywell, Intel, NASA, Siemens — is <strong>self-reported by EARS's creator</strong> on alistairmavin.com, and we present it as exactly that, a claim by the method's author, not independent verification. What is independently observable is the agentic uptake: Amazon's Kiro generates its <span class="mono">requirements.md</span> in explicitly-named EARS notation ("WHEN [condition/event] THE SYSTEM SHALL [expected behavior]") — the tightest coupling yet of a 2009 aerospace syntax to a 2025 coding agent, and a vendor design decision worth reading as evidence of fit (point-in-time, mid-2026; re-verify).</p>
+      <p>Why does a sentence syntax help a language model? Direct measured evidence is thin — we flag clearly: <strong>no study we can cite shows "EARS improves agent code generation by X%"</strong>, and we refuse to invent one. What exists is adjacent: grammar-prompting work (arXiv:2305.19234, NeurIPS 2023) shows LLMs follow injected formal syntax templates reliably, and requirements-engineering research has begun evaluating EARS as a target template for structuring extracted knowledge (arXiv:2511.15340). The mechanism argument is simpler and older than either paper: EARS removes the degrees of freedom in which intent hallucination lives. The trigger, the state, the actor and the observable response are each forced into a named slot; an empty slot is visible to a reviewer — and to a linter — in a way a fuzzy paragraph never is.</p>
+
+      <h2 id="s3"><span class="n">3</span>Gherkin — the executable criterion</h2>
+      <p>EARS produces rules. Rules are still abstractions, and abstractions still leave room to guess — <em>which</em> five requests, <em>what</em> counts as the same account, what exactly does the 429 body say? Gherkin closes the remaining distance with concrete examples. A scenario names real data and a real observable outcome:</p>
+      <div class="callout"><div class="t">The EARS rule from §2, as a Gherkin scenario</div><p><span class="mono">Feature: password-reset throttling<br>&nbsp;&nbsp;Scenario: sixth request in the window is throttled<br>&nbsp;&nbsp;&nbsp;&nbsp;Given account "ada@example.com" has made 5 reset requests in the last 15 minutes<br>&nbsp;&nbsp;&nbsp;&nbsp;When the client submits another reset request for "ada@example.com"<br>&nbsp;&nbsp;&nbsp;&nbsp;Then the response status is 429<br>&nbsp;&nbsp;&nbsp;&nbsp;And no reset email is sent</span></p><p>Given establishes state, When fires the trigger, Then asserts the observable response — the same three slots EARS forced, now bound to data. Note what the scenario adds to the rule: the boundary is now falsifiable (a sibling scenario asserts the <em>fifth</em> request passes), and "no reset email is sent" is a checkable side-effect assertion, not a hope.</p></div>
+      <p>The history matters because it explains both the power and the trap (§5). Given–When–Then was worked out around 2004 by Dan North with business analyst Chris Matts, as part of North's behaviour-driven development — BDD — reframing of TDD; the canonical write-up, "Introducing BDD", ran in Better Software magazine in March 2006. Aslak Hellesøy's Cucumber (2008) made the format executable: Gherkin is Cucumber's plain-text language, and step definitions bind each Given/When/Then line to automation code, so <strong>the same text is simultaneously the specification a PM reads and the test the harness runs</strong> — "executable specification", with "living documentation" as its corollary: documentation that fails CI when it stops being true.</p>
+      <p>For two decades that double identity was BDD's selling point to humans, and adoption chronically decayed into §5's trap. The agentic setting changes the economics in Gherkin's favour, for a reason E8 already named: the expensive part of BDD was never reading scenarios, it was <em>writing and maintaining the step definitions</em> — mechanical glue code, which is precisely the work coding agents do well and cheaply. And the payoff compounds: a Gherkin set handed to an agent is not just documentation, it is the <strong>reward signal</strong>. The agent iterates until the scenarios pass; the criteria are the oracle from §0, wired directly into the loop. SDD tooling has converged on the format from the other direction — GitHub Spec Kit's template writes each user story's <em>Acceptance Scenarios</em> section as numbered Given/When/Then items (point-in-time, mid-2026).</p>
+
+      <h2 id="s4"><span class="n">4</span>The ladder: story → EARS → Gherkin → red tests</h2>
+      <p>The two formats are levels, not competitors — a distinction Specification by Example (Adzic, 2011) drew as <em>rules versus examples</em>: EARS states the rule at the requirements level; Gherkin illustrates the rule with key examples at the acceptance-criteria level; the failing tests generated from the scenarios are the handoff itself. Report 2's flow, end to end:</p>
+      <figure>
+      <svg viewBox="0 0 980 330" role="img" aria-label="The handoff ladder: user story to EARS rules to Gherkin scenarios to failing tests to agent implementation, with the spec review gate and the merge gate">
+        <defs><marker id="ahH2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="40" y="26" class="tg">HUMAN-LED · INTENT</text>
+        <text x="620" y="26" class="tg">AGENT-LED · EXECUTION</text>
+        <rect x="40" y="44" width="160" height="72" rx="10" class="bx"/>
+        <text x="56" y="70" class="ti">User story + rules</text>
+        <text x="56" y="88" class="ts">P3 decomposition output</text>
+        <text x="56" y="102" class="ts">one task, agent-ready</text>
+        <path class="edH2" d="M200 80 L232 80"/>
+        <rect x="234" y="44" width="170" height="72" rx="10" class="bxC"/>
+        <text x="250" y="70" class="ti">EARS requirements</text>
+        <text x="250" y="88" class="ts">rules: WHEN / WHILE /</text>
+        <text x="250" y="102" class="ts">WHERE / IF-THEN + SHALL</text>
+        <path class="edH2" d="M404 80 L436 80"/>
+        <rect x="438" y="44" width="170" height="72" rx="10" class="bxC"/>
+        <text x="454" y="70" class="ti">Gherkin scenarios</text>
+        <text x="454" y="88" class="ts">examples: Given / When /</text>
+        <text x="454" y="102" class="ts">Then, concrete data</text>
+        <path class="edH2" d="M608 80 L640 80"/>
+        <rect x="642" y="44" width="150" height="72" rx="10" class="bxA"/>
+        <text x="658" y="70" class="ti">Failing tests</text>
+        <text x="658" y="88" class="ts">red = the handoff</text>
+        <text x="658" y="102" class="ts">artifact (E4)</text>
+        <path class="edH2" d="M792 80 L824 80"/>
+        <rect x="826" y="44" width="120" height="72" rx="10" class="bxK"/>
+        <text x="842" y="70" class="ti">Agent → green</text>
+        <text x="842" y="88" class="ts">iterate until the</text>
+        <text x="842" y="102" class="ts">oracle passes</text>
+        <path d="M626 36 L626 208" stroke="#C98A2B" stroke-width="1.4" stroke-dasharray="6 5" fill="none"/>
+        <text x="560" y="226" class="tg">SPEC REVIEW GATE (H1 §3) — HUMANS RATIFY RULES + SCENARIOS</text>
+        <path d="M956 36 L956 124" stroke="#3C8A63" stroke-width="1.4" stroke-dasharray="6 5" fill="none"/>
+        <text x="836" y="140" class="tg">MERGE GATE (E5)</text>
+        <rect x="40" y="160" width="568" height="48" rx="10" class="bxG"/>
+        <text x="56" y="180" class="ti">Altitude check</text>
+        <text x="56" y="196" class="ts">EARS = requirement level (what rule, when) · Gherkin = criteria level (which example proves it) · tests = code level (H3 carries the IDs across all three)</text>
+        <rect x="40" y="240" width="906" height="52" rx="10" class="bx"/>
+        <text x="56" y="262" class="ti">The loop closes (H4)</text>
+        <text x="56" y="278" class="ts">a scenario that fails in production is a bug report in handoff format — reproduce as a new failing Gherkin scenario, hand back down the ladder; nothing is re-explained in prose</text>
+      </svg>
+      <figcaption>The ladder is also a division of labour: everything left of the amber gate is where humans spend judgement (rules and which examples matter); everything right of it is mechanical and delegable. The agent may <em>draft</em> the left side too — but drafts cross the gate only with human ratification.</figcaption>
+      </figure>
+      <p>Two practical notes on running the ladder. First, <strong>the agent drafts, the human ratifies</strong> — the same division P4 established for PRDs. Translating a ratified story into candidate EARS rules and candidate scenarios is exactly the mechanical-transformation work agents are good at; the judgement calls — is this rule what we meant, are these the examples that matter, did we cover the failure paths — stay human, at the spec review gate. Second, <strong>the ladder is not a mandate</strong>: H1's T0–T2 sizing applies rung by rung. A T0 tweak needs no EARS at all; a T1 task might carry two EARS lines and three scenarios (the password-reset task above is exactly this size — fifteen spec lines total, E8's worked example); only a T2 slice earns the full set. Sixteen acceptance criteria on a one-line bugfix is the sledgehammer anti-pattern, not rigour.</p>
+
+      <h2 id="s5"><span class="n">5</span>Writing quality — the craft and the trap</h2>
+      <p>Machine-verifiable formats fail in characteristic ways, all of them known for a decade before agents arrived. Three crafts and one organizational trap:</p>
+      <div class="comp"><div class="chead"><span class="cid">1</span><h3>Declarative, not imperative</h3></div>
+      <p>The Cucumber documentation's own rule: scenarios "should describe the intended behaviour of the system, not the implementation — what, not how". An imperative scenario scripts UI mechanics (click this, type that, wait) and welds the criterion to today's interface, so every redesign breaks the spec without the rule having changed; a declarative scenario ("Given an account with 5 recent reset requests…") survives any implementation the rule permits. For agents the distinction is sharper still: an imperative scenario quietly <em>makes design decisions</em> that belonged to the agent's solution space — it smuggles the how into the what, exactly the altitude error P2 warned about in PRDs.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">2</span><h3>BRIEF</h3></div>
+      <p>Seb Rose and Gáspár Nagy's checklist from <em>Formulation</em> (the BDD Books): <strong>B</strong>usiness language, <strong>R</strong>eal data, <strong>I</strong>ntention revealing, <strong>E</strong>ssential, <strong>F</strong>ocused — and the sixth principle, brief itself. "Essential" carries the most weight in the agentic setting: every incidental detail in a scenario ("the button is blue") reads to an agent as a requirement to satisfy, so padding does not just bore reviewers, it actively constrains the solution. The contract-sizing logic of H1 §5 repeats at scenario grain.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">3</span><h3>Failure paths are half the set</h3></div>
+      <p>H1 §2C's craft, formalized by the formats: EARS gives unwanted behaviour its own pattern (IF/THEN) and Gherkin makes each failure path one scenario — service down, empty result, sixth-versus-fifth request at the boundary. TASK-042's network-failure scenario and the password-reset fail-open rule are the worked examples. A criteria set with only happy paths is a weak oracle (§1) wearing executable clothes; B2's characterization-test discipline is the brownfield version of the same instinct.</p></div>
+      <div class="callout amber"><div class="t">The BDD trap — and who writes it at the client</div><p>BDD's documented failure mode is organizational, not technical: Given/When/Then adopted as a <em>test-automation syntax</em>, written by test engineers alone, after development, with no conversation — Seb Rose: "I see far more people using G/W/T for test automation than to support BDD… the BDD acronym has become synonymous in the industry with G/W/T powered tests." Adzic's Specification by Example (2011, from 50-plus case studies) found collaboration was <em>the</em> success factor, and his verified framing of the agentic revival cuts both ways: "Specification by Example taken to a new level — or the revenge of Waterfall." Which one a client gets is decided by ownership. The answer this workbook carries (H1 §4): three-amigos lenses, kept — analyst drafts business rules (EARS), tester lens drafts boundary and negative scenarios, tech lead ratifies verifiability — with the agent as the fourth amigo that drafts candidates and step definitions, never the sole author. If only QA touches the Gherkin, you have rebuilt the trap with more expensive tooling.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>What the evidence says — and the 2026 toolchain</h2>
+      <p>The workbook's three headline numbers for this topic all survived a July-2026 re-verification pass, each with a framing correction worth keeping. <strong>ClarifyGPT</strong> (Mu et al., FSE 2024; arXiv:2310.10996) has the model detect ambiguous requirements and ask clarifying questions <em>before</em> generating code: an average <em>relative</em> Pass@1 improvement of 11.52% for GPT-4 across four benchmarks — concretely, 70.96% → 80.80% on MBPP-sanitized. Relative percent, not percentage points; the mechanism it prices is exactly §0's point that asking beats guessing. <strong>Bashir et al.</strong> (ICSME 2025, industry track) measured ambiguity classification on three industrial railway requirement sets (Alstom, Westermo): the 20.2% figure is the average gain from giving the model <em>ten in-context examples over zero-shot</em> — the value of showing the model what ambiguity looks like, not of using an LLM at all; the LLM's explanations of <em>why</em> a requirement is ambiguous rated 3.84/5 with practitioners. <strong>Wang et al.</strong> (arXiv:2508.06888, the RAGcceptance system) generate acceptance criteria grounded in retrieved project data: multi-modal RAG lifts case-level accuracy from 42.8% to 66.0% — the +23.2 pp our topic data cites — on a ~100,000-user education platform.</p>
+      <p>Read as one argument, the three studies point the same way: requirement ambiguity is measurable, and every mechanism that reduces it before generation pays — asking (ClarifyGPT), showing examples (Bashir), grounding in real project data (Wang). Note the honest limit from §2: none of them tests EARS or Gherkin syntax as the treatment; what they validate is the underlying bet that structure and grounding beat prose.</p>
+      <p>The test-first rung of the ladder has more direct backing — this is what the discovery pass added to our outline. <strong>Mathews &amp; Nagappan</strong> (ASE 2024, arXiv:2402.13521) tested TDD-for-LLMs empirically: putting the test cases in the prompt consistently raises solve rates on MBPP and HumanEval — tests-as-spec, measured. And the strongest real-world datapoint is a design decision hiding in plain sight: <strong>SWE-bench Verified</strong>, the industry's standard coding-agent benchmark, defines "resolved" <em>entirely</em> as a test oracle — hidden FAIL_TO_PASS tests must flip green and no PASS_TO_PASS test may regress, with no human judgement anywhere in the loop. The benchmark the whole field competes on is, structurally, a machine-verifiable acceptance contract; E7's measurement chapter and this topic's thesis meet in that one design choice.</p>
+      <p>Gherkin-specific agent research is younger — industrial case studies rather than controlled trials, flagged as emerging: AutoUAT and TestFlow generate Gherkin from user stories and executable tests from Gherkin at a reported ~€0.12 per test script (arXiv:2504.07244); the A-TEST 2024 experiments had collaborating LLM agents execute Gherkin scenarios directly; and the practitioner layer is forming — Andrew Knight's <em>Gherkin guidelines for AI</em> (Automation Panda, Apr 2026) is a curated ruleset written to be fed to coding agents as authoring context, §5's craft packaged for the fourth amigo.</p>
+      <div class="io">
+        <div class="box"><div class="lab">Toolchain, point-in-time (mid-2026 — re-verify)</div><ul>
+          <li><strong>Cucumber</strong> — Ruby/JS/JVM; open source, stewarded by SmartBear since the 2019 acquisition of Cucumber Ltd</li>
+          <li><strong>pytest-bdd / behave</strong> — the Python bindings; pytest-bdd rides the existing pytest harness, usually the lightest brownfield entry</li>
+          <li><strong>SpecFlow is dead</strong> — Tricentis EOL'd it Dec 31, 2024 (repos deleted); .NET teams migrate to <strong>Reqnroll</strong>, the early-2024 fork by Gáspár Nagy, SpecFlow's original creator</li>
+          <li><strong>Kiro</strong> — requirements.md in named EARS notation (§2); <strong>GitHub Spec Kit</strong> — Acceptance Scenarios as Given/When/Then per user story</li>
+          <li><strong>QVscribe</strong> — automated EARS-conformance and INCOSE-rule checking for requirements text</li>
+        </ul></div>
+        <div class="box"><div class="lab">How to read the evidence (house rule)</div><ul>
+          <li><strong>Strong independent</strong>: ClarifyGPT (FSE 2024), Bashir et al. (ICSME 2025), Wang et al. (arXiv:2508.06888), Mathews &amp; Nagappan (ASE 2024), and SWE-bench Verified's oracle design — peer-reviewed or field-standard, with numbers</li>
+          <li><strong>Vendor claims</strong>: Kiro's EARS workflow and Requirements Analysis figures; Spec Kit template design — design decisions, not measurements</li>
+          <li><strong>Practitioner synthesis</strong>: the ladder itself (Report 2), the fourth-amigo ownership, BRIEF-for-agents — ours and others' experience, flagged as such</li>
+        </ul></div>
+      </div>
+
+      <h2 id="s7"><span class="n">7</span>How H2 connects the framework</h2>
+      <div class="figscroll"><table class="map">
+        <tr><th>Topic</th><th>The connection</th></tr>
+        <tr><td><strong>H1</strong> handoff anatomy</td><td>H2 is component C in depth — the formats behind "machine-verifiable wherever possible"; the T0–T2 tiers size how much of the ladder a task earns</td></tr>
+        <tr><td><strong>E4</strong> verification-first</td><td>Gherkin scenarios are the agent-facing edge of the test pyramid: the failing tests are the oracle the harness runs; weak scenarios = weak oracle = false greens</td></tr>
+        <tr><td><strong>E5</strong> governance</td><td>EARS conformance and scenario linting are mechanically checkable — move them from advisory prose to deterministic gates (QVscribe, CI Gherkin linters)</td></tr>
+        <tr><td><strong>E8</strong> spec-driven development</td><td>SDD's specify phase emits exactly these formats: Kiro writes EARS, Spec Kit writes Given/When/Then — H2 is the format layer under the E8 workflow</td></tr>
+        <tr><td><strong>H3</strong> traceability</td><td>EARS rules carry requirement IDs; scenarios tag the IDs; tests inherit them — the chain H3 walks (Kiro's <span class="mono">_Requirements: 1.1</span> back-links are the tool-native version)</td></tr>
+        <tr><td><strong>H4</strong> feedback loop</td><td>a production bug re-enters as a new failing scenario — the feedback format equals the handoff format, so nothing is re-explained in prose</td></tr>
+        <tr><td><strong>P3 / P4</strong> product harness</td><td>P3's decomposition produces the stories the ladder consumes; P4's author→editor shift is the authoring model — agent drafts rules and scenarios, humans ratify at the gate</td></tr>
+        <tr><td><strong>B2 / B3</strong> brownfield</td><td>characterization tests are Gherkin's brownfield cousin (pin current behaviour before change); B3's mutation gate is how you audit scenario strength</td></tr>
+      </table></div>
+
+      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <div class="callout pine"><div class="t">Three sentences to keep</div><p>Acceptance criteria are the only part of the handoff contract a machine can enforce, so their format decides whether the spec review gate is real or theatre: EARS forces the rule to name its trigger, state and observable response; Gherkin binds the rule to concrete falsifiable examples; the failing tests are the handoff. The formats are cheap and old — the 2009 aerospace syntax and the 2004 conversation pattern — and the agentic turn fixes their historical cost problem, because step definitions and candidate scenarios are exactly the mechanical work agents draft well, while ratifying rules and choosing the examples that matter stays human at the gate. The trap is organizational, not technical: if Gherkin becomes QA's test syntax instead of the team's shared criteria language, you have rebuilt 2015-era BDD failure with more expensive tooling — keep the three amigos, add the agent as the fourth who drafts but never ratifies.</p></div>
+
+      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Mavin, Wilkinson, Harwood &amp; Novak — Easy Approach to Requirements Syntax (EARS)</div><div class="mt">IEEE RE'09 · DOI 10.1109/RE.2009.9 · templates at alistairmavin.com/ears</div><p>The original paper, born from Rolls-Royce airworthiness analysis. The site carries the canonical templates and the adopter list — the latter self-reported by the author, cite accordingly.</p></div>
+      <div class="item"><div class="rt">Dan North — Introducing BDD</div><div class="mt">Better Software magazine, March 2006 · dannorth.net/introducing-bdd</div><p>The canonical essay; Given–When–Then itself dates to ~2004, worked out with business analyst Chris Matts — the format was a conversation pattern before it was a test syntax, which is the whole point of §5's trap.</p></div>
+      <div class="item"><div class="rt">Gojko Adzic — Specification by Example</div><div class="mt">Manning, 2011 · gojko.net</div><p>The collaboration evidence base (50+ case-study teams): rules illustrated by key examples, specification as a team conversation. Source of the rules-vs-examples distinction §4 builds on and the "revenge of Waterfall" warning §5 quotes.</p></div>
+      <div class="item"><div class="rt">Seb Rose &amp; Gáspár Nagy — Formulation (the BDD Books)</div><div class="mt">Leanpub · BRIEF</div><p>The scenario-writing craft: Business language, Real data, Intention revealing, Essential, Focused, Brief. With cucumber.io/docs/bdd/better-gherkin (declarative what-not-how), the two standing style references for §5.</p></div>
+      <div class="item"><div class="rt">Mu et al. — ClarifyGPT</div><div class="mt">FSE 2024 · DOI 10.1145/3660810 · arXiv:2310.10996</div><p>The ask-before-coding evidence: detecting ambiguous requirements and posing clarifying questions lifts GPT-4 Pass@1 by an average 11.52% (relative) across four benchmarks — the measured version of §0's amnesia argument.</p></div>
+      <div class="item"><div class="rt">Mathews &amp; Nagappan — Test-Driven Development and LLM-based Code Generation</div><div class="mt">ASE 2024 · arXiv:2402.13521</div><p>The empirical spine of §4's last rung: including test cases in the prompt consistently raises solve rates — tests-as-spec, measured. Read together with SWE-bench Verified's FAIL_TO_PASS oracle, the field's own definition of "done" as a test.</p></div>
+      <div class="item"><div class="rt">Wang et al. — Multi-Modal Requirements Data-based Acceptance Criteria Generation (RAGcceptance)</div><div class="mt">arXiv:2508.06888</div><p>AC generation grounded in retrieved project data: +23.2 pp case-level accuracy over no-retrieval. The evidence that the agent drafting the ladder's left side (§4) needs grounding, not just a template.</p></div>
+      <div class="item"><div class="rt">Kiro specs docs &amp; GitHub Spec Kit spec template</div><div class="mt">kiro.dev/docs/specs · github.com/github/spec-kit · point-in-time, mid-2026</div><p>The two SDD tools' native use of the formats: named EARS notation in requirements.md; Acceptance Scenarios as numbered Given/When/Then per user story. Vendor design decisions — evidence of fit, not of effect.</p></div>
+      <div class="item"><div class="rt">Report 2 — the handoff-contract research notes (this workbook)</div><div class="mt">module M3 research notes · the story→EARS→Gherkin→tests flow</div><p>The original synthesis behind §4's ladder, including the password-reset worked example this deep dive reuses and the phased adoption recommendation for clients.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (H2-ears-gherkin-deepdive.html). Its natural neighbours are H1 (the contract these criteria live in), H3 (how the requirement IDs travel from EARS through scenarios into tests), and E4 (the verification stack that runs what this topic writes).</p>
+
+</div>
+</body>
+</html>
