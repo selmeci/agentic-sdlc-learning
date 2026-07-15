@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P4 Deep Dive — The PM: From Author to Editor and Curator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edP4{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahP4a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">P4 · DEEP DIVE</span>
+    <h1>The PM: From Author to Editor and Curator</h1>
+    <span class="bc">companion to module M2 · Product harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why the role shift is load-bearing</a>
+  <a href="#s1"><b>1</b> · Which PM gets automated</a>
+  <a href="#s2"><b>2</b> · Risk 1: automation bias</a>
+  <a href="#s3"><b>3</b> · Risk 2: losing user contact</a>
+  <a href="#s4"><b>4</b> · The editor&#8217;s toolkit</a>
+  <a href="#s5"><b>5</b> · The curator half</a>
+  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M2</p>
+      <h2 id="s0"><span class="n">0</span>Why the role shift is the load-bearing wall</h2>
+      <p class="lead">Every gate this module has installed assumes a human who judges: P1 compares two syntheses, P2 kills ideas and owns the why, P3 owns the seams and sizes. P4 asks the uncomfortable follow-up — who is that human, what happens to their job, and what keeps their judgment alive once most of their day is reviewing AI drafts instead of writing their own? The product harness fails socially before it fails technically: if review quietly degenerates, every upstream gate — kill/keep, red-team disposition, the agent-ready checklist — keeps running as theatre.</p>
+      <p>The frame the industry converged on is the <strong>editor</strong>: Lenny Rachitsky put it early — "PMs will become editors of super-intelligent suggestions" (April 2024). We extend it with a second half, the <strong>curator</strong> (§5) — that extension is our synthesis, not an industry standard. Both halves name the same shift: the PM's value moves from producing artifacts to judging them and tending the context they are produced from.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>Author → editor is not a smaller job; it is a <strong>different job under active attack</strong>. Two documented forces work to hollow it out: <em>automation bias</em> (§2) erodes the quality of review, and <em>losing user contact</em> (§3) erodes the judgment review runs on. Neither announces itself — both look, from the outside, like a team happily shipping faster. The toolkit in §4 exists because good intentions measurably do not survive contact with a mostly-right machine.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>Which PM gets automated — Cagan's distinction</h2>
+      <p>Marty Cagan's line is the sharpest on record, and worth quoting exactly (<em>A Vision For Product Teams</em>, svpg.com, February 2025): <em>"For product owners and feature team product managers, where the job is primarily about delivery, and driven by a delivery process, it seems pretty clear to me that there will be very substantial productivity improvements, if not full automation."</em> He calls these roles "very vulnerable in this timeframe" and urges the people in them to upskill. The other side of the same distinction (<em>Preparing For The Future</em>, 2023): <em>"if you're a product manager on an empowered product team, then your role is likely to become more critical rather than less."</em></p>
+      <table class="map">
+        <tr><th>Profile</th><th>The job is mostly…</th><th>AI exposure</th></tr>
+        <tr><td>delivery PO</td><td>backlog administration, ticket translation, status choreography</td><td>directly automatable — the P1–P4 assists do exactly this work</td></tr>
+        <tr><td>feature-team PM</td><td>turning stakeholder requests into specs; output-driven</td><td>"very substantial productivity improvements, if not full automation"</td></tr>
+        <tr><td>empowered PM</td><td>outcomes, discovery, judgment, product sense</td><td>becomes <strong>more</strong> critical — AI compresses delivery, so discovery becomes the main activity</td></tr>
+      </table>
+      <p><strong>For our rollout:</strong> assess which of these the client actually employs <em>before</em> introducing product-layer tooling. If their PMs are ticket translators, the harness does not assist the role — it competes with it, and the rollout lands as a threat (T3's change-management problem). The honest engagement move is to pair the tooling with a deliberate shift of the saved hours toward discovery and user contact — turning delivery PMs toward the empowered profile rather than automating them in place. Practitioner synthesis, sober labelling: Cagan is opinion (consistently sober opinion, but opinion); the adoption numbers around it (Productboard 2025: 96% of enterprise product professionals report consistent AI use — vendor survey; Lenny's Newsletter 2025, ~1,750 respondents: over half save at least half a day per week, 92% also report significant downsides) are surveys, not controlled studies.</p>
+
+      <h2 id="s2"><span class="n">2</span>Risk 1: automation bias — review is the only gate, and bias erodes it</h2>
+      <p>Automation bias is one of the best-replicated findings in human-factors research, and it predates LLMs by decades: give people a <em>mostly</em> reliable automated aid, and they stop checking. Skitka, Mosier &amp; Burdick (1999) measured both failure directions — <strong>omission errors</strong> (missing what the aid fails to flag) and <strong>commission errors</strong> (following the aid against contradicting evidence) — and found unaided participants monitored <em>better</em> than aided ones. The expert data is worse: in Mosier et al.'s cockpit study (1998), professional pilots showed a <strong>55% omission error rate</strong>, virtually all of them shut down an engine on a false automated fire warning despite contradictory gauges — and <em>more</em> flight experience meant <em>more</em> susceptibility, not less. Parasuraman &amp; Manzey's review (2010) adds the finding that matters most for process design: the effect hits novices and experts alike, gets worse under multi-task load, and <strong>is not prevented by training or instructions</strong>.</p>
+      <p>The LLM era confirms the mechanism transfers. Lee et al. (CHI 2025, Microsoft Research; 319 knowledge workers, 936 real GenAI work examples): <strong>higher confidence in the AI correlates with less critical thinking</strong>, while higher <em>self</em>-confidence correlates with more — self-reported and correlational, but pointing exactly where the cockpit studies point. And skills measurably decay when the aid does the detecting: the Lancet ACCEPT data (Budzyń et al., 2025) found endoscopists' <em>unassisted</em> adenoma detection rate fell from <strong>28.4% to 22.4%</strong> after just three months of AI-assisted colonoscopy — the first real-world deskilling result tied to patient outcomes. In our own field, Perry et al. (ACM CCS 2023) found AI-assisted participants wrote less secure code <em>and believed it was more secure</em> — the same confidence inversion E7 documents as the perception gap.</p>
+      <figure>
+      <svg viewBox="0 0 860 330" role="img" aria-label="Automation bias: why the product layer is exposed, and the measured evidence">
+        <defs><marker id="ahP4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="26" class="tg">WHY THE PRODUCT LAYER IS EXPOSED — HUMAN REVIEW IS THE ONLY GATE THERE IS</text>
+        <rect x="20" y="38" width="200" height="52" rx="8" class="bxC"/><text x="30" y="59" class="ts">engineering layer (E4)</text><text x="30" y="73" class="ts">lazy review is backstopped by</text><text x="30" y="85" class="ts">deterministic tests + CI</text>
+        <rect x="20" y="102" width="200" height="52" rx="8" class="bxA"/><text x="30" y="123" class="ts">product layer (P5)</text><text x="30" y="137" class="ts">no test can check a decision —</text><text x="30" y="149" class="ts">human judgment IS the gate</text>
+        <rect x="300" y="70" width="180" height="52" rx="8" class="bx"/><text x="310" y="91" class="ts">automation bias</text><text x="310" y="105" class="ts">erodes exactly that gate</text>
+        <rect x="560" y="70" width="280" height="52" rx="8" class="bxK"/><text x="570" y="91" class="ts">so the safeguards must be structural (§4)</text><text x="570" y="105" class="ts">accountability, spot-checks, kill-rate — not advice</text>
+        <line x1="220" y1="128" x2="300" y2="100" class="edP4"/><line x1="480" y1="96" x2="560" y2="96" class="edP4"/>
+        <text x="20" y="188" class="tg">THE MEASURED EVIDENCE — COCKPITS, CLINICS, KNOWLEDGE WORK</text>
+        <text x="20" y="223" class="ts">pilot omission errors</text>
+        <rect x="175" y="210" width="275" height="16" rx="4" class="bx" style="stroke:#B3362B"/><text x="460" y="223" class="ts">55% missed automation failures (Mosier et al. 1998 — experts)</text>
+        <text x="20" y="251" class="ts">deskilling (Lancet)</text>
+        <rect x="175" y="238" width="284" height="16" rx="4" class="bxK"/><text x="469" y="251" class="ts">unassisted detection 28.4% before AI exposure</text>
+        <rect x="175" y="266" width="224" height="16" rx="4" class="bx" style="stroke:#B3362B"/><text x="409" y="279" class="ts">22.4% after 3 months of AI assistance (−6 pp)</text>
+        <text x="20" y="307" class="ts">critical thinking</text>
+        <rect x="175" y="294" width="310" height="16" rx="4" class="bxA"/><text x="495" y="307" class="ts">higher confidence in AI ↔ less critical thinking (CHI 2025, n=319)</text>
+      </svg>
+      <figcaption>Top: the structural exposure — engineering review has a deterministic backstop; product review does not, so bias erodes the only gate. Bottom: the evidence base — expert pilots missed 55% of automation failures; clinicians' unassisted detection dropped 6 points after three months of AI assistance; knowledge workers who trust the AI more think less critically about its output.</figcaption>
+      </figure>
+      <p>The product-layer twist is structural, and it is why this topic exists: engineering review has a deterministic backstop — if a human rubber-stamps a bad diff, tests and CI still stand behind them (E4). Product review has none. Verification in the product layer <em>is</em> human judgment (P5), so when review degenerates into rubber-stamping, the layer has zero remaining controls. The observable signals — offered as our synthesis, since no independent telemetry on AI-draft review exists as of mid-2026: the proposal kill rate falling toward zero (P2), near-100% acceptance of AI red-team dispositions, and review time per artifact collapsing while artifact volume grows.</p>
+
+      <h2 id="s3"><span class="n">3</span>Risk 2: losing user contact — the judge goes blind</h2>
+      <p>The second risk attacks the input side. The editor's judgment is fed by direct user contact; outsource that contact and the judge P1–P3 depend on goes blind while continuing to approve things. Teresa Torres has the most concrete data anyone has published on the failure (Product Talk, October 2025): when she had ChatGPT summarise her own product interviews, roughly <strong>30% of the direct quotes it produced were incorrect or fabricated</strong>. Her verbatim conclusion is the whole risk in one sentence: <em>"When we outsource synthesis to AI, our synthesis skills start to atrophy from lack of use."</em> — the PM version of the Lancet result in §2.</p>
+      <p>Attribution honesty, because this topic gets quoted onward at clients: the widely-shared line "you're not doing discovery, you're generating summaries" comes from a write-up of Torres's webinar (airfocus/Lucid, April 2026) — the frame is faithful to her position, but the phrasing is the write-up author's, and the circulating "AI synthesis misses 20–40% of important detail" figure is a newsletter paraphrase, not a measured result. What is safely hers: the "lazy AI interview synthesis" anti-pattern (P1), the 30%-fabricated-quotes observation, and the atrophy warning. The chain the anti-pattern predicts: outsource analysis → lose the texture and the disconfirming detail → product sense atrophies (Lee et al.'s cognitive offloading, §2) → the editor is now approving drafts against a memory of users, not knowledge of them.</p>
+
+      <h2 id="s4"><span class="n">4</span>The editor's toolkit — safeguards that actually bite</h2>
+      <p>Parasuraman &amp; Manzey's finding sets the design constraint: training and instructions do not prevent automation bias — so awareness campaigns and "review carefully!" guidance are advisory controls that will not hold (the same advisory-vs-deterministic lesson E5 teaches for engineering governance). The safeguards have to be structural: built into the process so that skipping them is visible, not virtuous-feeling. The encouraging result from the same research line (Skitka et al., 2000): <strong>accountability manipulations reduce automation bias</strong> — people who must justify their decisions to someone check the automation more. That is the cheapest lever we have.</p>
+      <div class="io"><div class="box"><div class="lab">Structural safeguards (each maps to a gate we already built)</div><ul><li><strong>disposition of findings</strong> — every AI red-team finding gets an explicit human keep/reject with a one-line rationale (P2 §4); the rationale is the accountability mechanism</li><li><strong>mandatory spot-checks</strong> — PM reads N raw interviews per cycle and compares against the AI synthesis (P1's two-perspectives, made non-optional)</li><li><strong>kill-rate watch</strong> — AI-drafted proposals that are never killed mean review has died (P2)</li><li><strong>no-follow-up rate</strong> — handoff quality measured downstream, not by drafting volume (P2/P3)</li></ul></div>
+      <div class="box"><div class="lab">Signals review is degenerating</div><ul><li>kill rate trending to zero while PRD volume grows</li><li>AI suggestions accepted at ~100%, dispositions turning into "ok"</li><li>review time per artifact collapsing</li><li>PMs who cannot recount a recent user conversation unprompted</li></ul></div></div>
+      <div class="callout pine"><div class="t">The time-reinvestment rule</div><p>The hours the drafting assists save are the budget for keeping the editor's judgment alive. Spend them on discovery and user contact — Cagan's point that as AI compresses delivery, <strong>discovery becomes the main activity</strong> — not on producing more drafts. A team that converts saved hours into more artifacts is feeding the review bottleneck (E7) and starving the judgment that guards it; that is the P5 drift in slow motion.</p></div>
+
+      <h2 id="s5"><span class="n">5</span>The curator half — context is the PM's second product</h2>
+      <p>The editor judges the artifact stream; the <strong>curator</strong> owns what the stream is generated <em>from</em>. Every product-layer assist in this module drafts from durable context — the company-context file, the PRD template, the opportunity tree, the requirement registry (H3), the glossary. P3's amnesia argument applies with full force: agents read this context fresh every session, so a stale or wrong durable artifact poisons every downstream draft silently and at scale. Someone must own its truth. That someone is the PM — it is product knowledge, and nobody else will notice when it drifts (I3).</p>
+      <p>Concretely, the curator: holds the write-pen on durable product context (M4's write-permission discipline, I2 — agents propose, the PM approves what becomes durable); prunes requirements and opportunities that are no longer true; keeps the PRD template and red-team checklist current as the team learns (E8's compound loop, product edition); and treats the context files as a product with users — the users being every agent and human who drafts from them. Flag we repeat everywhere: the editor frame is Rachitsky's (2024); this curator extension is <strong>our synthesis</strong> — it follows from M4's architecture, but no industry source formalises it yet.</p>
+
+      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>which PM profile does the client employ — delivery PO, feature-team PM, empowered PM?</li><li>who reviews AI drafts, and can they show a rejected one?</li><li>when did each PM last watch or run a user interview?</li><li>who owns the durable product context — or does nobody?</li></ul></div>
+      <div class="box"><div class="lab">Build</div><ul><li>install the accountability mechanics: disposition-with-rationale on every finding</li><li>mandate spot-checks vs raw material; watch kill rate and no-follow-up rate</li><li>reinvest saved hours into discovery, explicitly and by agreement</li><li>name the curator: give the PM the write-pen on durable product context (I2)</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember P4 by</div><p>The PM shifts from author to editor and curator, and Cagan's split says which PMs survive it: delivery-process roles face "very substantial productivity improvements, if not full automation," while empowered PMs become more critical. The editor's two occupational diseases are measured, not hypothetical — automation bias (55% expert omission errors; training does not fix it; −6 pp clinician deskilling in 3 months; confidence in AI ↔ less critical thinking) and losing user contact (30% fabricated quotes in AI interview synthesis; "synthesis skills atrophy from lack of use"). The countermeasures are structural, not advisory: accountability via disposition-with-rationale, mandatory spot-checks, kill-rate and no-follow-up metrics, saved hours reinvested into discovery, and the PM holding the write-pen on the durable context every agent drafts from.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Marty Cagan — A Vision For Product Teams · Preparing For The Future</div><div class="mt">svpg.com · Feb 2025 · Jun 2023</div><p>The full-automation quote and the vulnerable-vs-empowered distinction; the earlier piece argues the empowered PM becomes more critical. Practitioner opinion, consistently sober — the P2 junior-PM frame comes from the same well.</p></div>
+      <div class="item"><div class="rt">Lee et al. — The impact of generative AI on critical thinking</div><div class="mt">CHI 2025 · Microsoft Research · DOI 10.1145/3706598.3713778</div><p>319 knowledge workers, 936 real GenAI tasks: confidence in the AI correlates with less critical thinking. Self-reported and correlational — but the LLM-era confirmation of the cockpit literature.</p></div>
+      <div class="item"><div class="rt">Parasuraman &amp; Manzey — Complacency and bias in human use of automation</div><div class="mt">Human Factors 52(3), 2010 · with Skitka et al. 1999/2000 · Mosier et al. 1998</div><p>The classic evidence base: omission/commission errors, experts not immune (55% pilot omission rate), training does not prevent it, accountability reduces it. §4's design constraints come straight from here.</p></div>
+      <div class="item"><div class="rt">Budzyń et al. — Endoscopist deskilling after exposure to AI</div><div class="mt">Lancet Gastroenterology &amp; Hepatology 2025 · ACCEPT trial</div><p>Unassisted detection fell 28.4% → 22.4% after three months of AI assistance — the first real-world deskilling result tied to outcomes, and the mechanism behind Torres's atrophy warning.</p></div>
+      <div class="item"><div class="rt">Teresa Torres — Customer interview analysis: where AI helps and hurts</div><div class="mt">producttalk.org · Oct 2025</div><p>The 30%-fabricated-quotes observation and the atrophy line, from her own testing. Primary source — prefer it over the secondhand "20–40%" and "generating summaries" paraphrases circulating in write-ups.</p></div>
+      <div class="item"><div class="rt">Report 2 — the PM-role section (this workbook)</div><div class="mt">module M2 research notes</div><p>The author → editor &amp; curator shift and the two risks as originally researched. Read P5 next for why the product layer cannot verify its way out of a degenerate review.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (P4-pm-role-deepdive.html). Its natural neighbours in the workbook are P1 (discovery and the two-perspectives habit §4 makes mandatory), P2 (the junior-PM frame and the kill-rate metric), P3 (the amnesia argument the curator role answers), P5 (why P5 autonomy is an anti-pattern — this topic is the reason), E5 (advisory vs deterministic controls), E7 (the perception gap and the review bottleneck), and M4/I2–I3 (write permissions and drift on durable context).</p>
+
+</main>
+</div>
+</body>
+</html>

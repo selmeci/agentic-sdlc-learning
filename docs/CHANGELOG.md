@@ -3,6 +3,17 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.12 · 2026-07-15
+Added the **P4** deep-dive companion (The PM: from author to editor and curator) — Cagan's
+vulnerable-vs-empowered distinction with verbatim sourcing (A Vision For Product Teams,
+Feb 2025), the automation-bias evidence base (Mosier 1998: 55% expert omission errors;
+Parasuraman & Manzey 2010: training does not prevent it; Lee et al. CHI 2025: confidence in
+GenAI ↔ less critical thinking; Budzyń et al. Lancet 2025: −6 pp clinician deskilling),
+**corrected Torres attributions** (the "generating summaries" line is a webinar write-up
+paraphrase; her primary figure is ~30% fabricated quotes, Product Talk Oct 2025), the
+structural editor toolkit (accountability, spot-checks, kill-rate), and the curator role
+(flagged as our synthesis; editor frame credited to Rachitsky 2024).
+
 ## v1.11 · 2026-07-15
 Added the **P3** deep-dive companion (Decomposition into agent-ready work items) — INVEST
 re-read for agents, right-sizing against the METR reliability horizon (80% horizon ~5× below
