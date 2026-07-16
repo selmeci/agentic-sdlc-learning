@@ -57,6 +57,11 @@ Progress + notes persist under key **`agentic-study-v1`**, debounced ~700ms, wit
 - Progress is **per-origin** (and per-backend). Serving the file from a different origin
   (e.g. GitHub Pages vs the preview host) starts fresh — the data does not travel with the
   file. That's expected. The save indicator shows the active backend (`local` / `artifact`).
+- **Highlights** (deep-dive annotations) persist in the same `state` under
+  `agentic-study-v1` as `state.highlights` — an array of
+  `{id, ov, title, quote, prefix, suffix, occ, thought, created}`. Passages are
+  re-located by text-quote anchoring and wrapped in runtime-only `<mark>`
+  elements on overlay open; nothing is written back to the file.
 
 ## The overlay pattern (how deep dives embed)
 

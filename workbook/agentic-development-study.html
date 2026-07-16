@@ -303,6 +303,30 @@ footer .verlink:hover{color:var(--cobalt)}
 .e1ov .vitem .vv{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--cobalt-deep)}
 .e1ov .vitem .vd{font-family:var(--mono);font-size:11px;color:var(--soft)}
 .e1ov .vitem p{font-size:13.5px;margin:0;max-width:none}
+/* ------- highlight-notes ------- */
+mark.hl-note{background:linear-gradient(transparent 55%, #FCE8C0 55%);color:inherit;border-radius:2px;padding:0 .5px;cursor:default}
+mark.hl-note.flash{animation:hlflash 1.3s ease-out}
+@keyframes hlflash{0%{background:#F6C858}35%{background:#F6C858}100%{background:linear-gradient(transparent 55%, #FCE8C0 55%)}}
+#hlSave{position:fixed;z-index:70;display:none;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff;background:var(--cobalt-deep);border:0;border-radius:999px;padding:6px 12px;cursor:pointer;box-shadow:0 4px 14px rgba(20,40,90,.28)}
+#hlSave:hover{background:var(--cobalt)}
+#hlToast{position:fixed;z-index:71;left:50%;bottom:26px;transform:translateX(-50%);display:none;font-family:var(--mono);font-size:11px;color:#fff;background:#20303f;border-radius:8px;padding:8px 14px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#hlToast.show{display:block;animation:hltoast 2.2s ease forwards}
+@keyframes hltoast{0%{opacity:0;transform:translate(-50%,8px)}12%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
+#notesBody{padding:4px 0 8px}
+.hlgroup{margin:0 0 22px}
+.hlgroup>h4{font-family:var(--disp);font-size:14px;margin:0 0 10px;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:6px}
+.hlcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:0 0 10px}
+.hlcard blockquote{margin:0 0 8px;padding:6px 0 6px 12px;border-left:3px solid var(--amber);font-family:var(--serif,inherit);font-size:14px;line-height:1.5;color:var(--ink);white-space:normal;overflow-wrap:anywhere}
+.hlcard .hlmeta{font-family:var(--mono);font-size:10px;color:var(--soft);margin:0 0 8px}
+.hlcard textarea{width:100%;min-height:52px;resize:vertical;font-family:var(--mono);font-size:12px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
+.hlcard textarea::placeholder{color:var(--idle)}
+.hlcard textarea:focus{border-color:var(--cobalt);outline:none}
+.hlcard .hlact{display:flex;gap:10px;align-items:center;margin-top:8px}
+.hlcard .hlopen{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:999px;padding:4px 11px;cursor:pointer}
+.hlcard .hlopen:hover{background:#DFE6F8}
+.hlcard .hldel{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--soft);background:none;border:0;cursor:pointer}
+.hlcard .hldel:hover{color:#b3402e}
+.hlempty{font-size:14px;color:var(--soft);padding:14px 0}
 @media (max-width:760px){.e1ov .vitem{grid-template-columns:52px 1fr}.e1ov .vitem .vd{display:none}}
 
 /* ===== v1.16 — mobile diagram legibility, orientation & touch targets ===== */
@@ -414,6 +438,7 @@ footer .verlink:hover{color:var(--cobalt)}
     <div class="bulk">
       <button id="expData" title="Download progress + notes as JSON (storage is per-origin — take your data with you)">export data</button>
       <button id="impData" title="Merge a previously exported JSON back in">import data</button>
+      <button id="notesbtn" type="button" data-notesopen title="Your saved highlight-notes from the deep dives">my notes <span id="notesN">(0)</span></button>
     </div>
     <input id="impFile" type="file" accept="application/json,.json" style="display:none">
   </aside>
@@ -2040,6 +2065,7 @@ footer .verlink:hover{color:var(--cobalt)}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.29</span><span class="vd">2026-07-16</span><p><strong>Highlight-notes.</strong> Select any passage inside a deep-dive overlay and save it as a note via the floating "+ save as note" button; add your own thought later. A new <strong>my notes</strong> button (sidebar Data group) opens a modal listing every saved passage grouped by deep dive, each with an editable thought and an "open in deep dive →" jump that scrolls to and flashes the passage. Saved passages stay tinted in the deep dive on every open. Stored in the same per-origin profile; included in export/import.</p></div>
       <div class="vitem"><span class="vv">v1.28</span><span class="vd">2026-07-16</span><p>Added the <strong>I4 deep dive — Memory Systems for Agents: Typologies, Poisoning &amp; the Governed Write-Mode</strong> (23rd companion; standalone <span class="mono">I4-memory-systems-deepdive.html</span> + in-page overlay): the four-layer typology with the CoALA and MemGPT frames — including a terminology correction propagated to the topic and Report 3 (the "core/recall/archival memory" triad is Letta product vocabulary; the MemGPT paper says main/external context with working context and recall/archival <em>storage</em>); the point-in-time vendor landscape (memory tool <span class="mono">memory_20250818</span> six ops; Claude Code MEMORY.md 200-line/25KB load cutoff; Cline Memory Bank; Cursor Memories GA in 1.2; Copilot Memory public preview — citation re-verification against the current branch, 28-day unused-fact TTL; Devin Knowledge org→enterprise promotion; Mem0/Zep/LangMem with the LoCoMo benchmark dispute kept as a vendor-claims lesson); the three long-horizon techniques with verbatim protocol quotes; memory as the governed fourth write-mode (git-versioned memory, provenance, the promotion path — our synthesis, flagged); the ASI06 threat model with research attacks (AgentPoison &gt;80% at &lt;0.1% poison; MINJA query-only; the mid-2026 systematization arXiv:2606.04329 — 4 write channels / 9 vulnerabilities / 6 attack classes + MPBench) and Rehberger’s two documented demos, plus OWASP’s Agent Memory Guard as the off-the-shelf deterministic stack; the files-vs-store decision criterion (with the GDPR-erasure vs AI-Act-retention wrinkle); and a week-one client checklist. Independent evidence kept separate from vendor claims throughout (Reflexion, LongMemEval, Momento arXiv:2606.00832, cache economics arXiv:2601.06007, Sandelin’s coding-agent memory benchmark with its own-tool caveat). <span class="mono">ia-memory</span> know/concepts/src/checks enriched.</p></div>
       <div class="vitem"><span class="vv">v1.27</span><span class="vd">2026-07-16</span><p>Integrated the <strong>session-persistence research</strong> (internal artifact, Jul 2026: <em>Recording, Tracking, and Preserving AI Agent Work as First-Class SDLC Artifacts</em>) as targeted summaries across five topics, each with a source link to the full report. <span class="mono">ia-taxonomy</span>: the agent session/trajectory as the newest artifact to classify — tiered, not one bucket (durable decision-provenance spine; disposable full payloads on a 7–30-day TTL; link-don&#39;t-inline), plus a new check question. <span class="mono">hand-traceability</span>: the chain gains the session link — the vendor-neutral <strong>Agent Trace</strong> spec (agent-trace.dev; Cognition + Cursor, Cloudflare, Vercel, Google Jules, Amp, OpenCode), GitHub Copilot commit→session-log linking (Mar 2026) + SIEM/Purview streaming (preview Jul 2026), the task-centric record (spec → task → session → PR → review), and the layered provenance stack (W3C PROV/PROV-AGENT · SLSA/in-toto · ML-BOM/SPDX 3.0 AI) — flagged point-in-time, adoption nascent. <span class="mono">ia-lifecycle</span>: traces extend ADRs down to implementation-level decisions (Lore, arXiv:2603.15566) but are <em>decision provenance, not rationale</em> — CoT unfaithfulness pinned (Anthropic 2025: 25% Claude 3.7 Sonnet / 39% DeepSeek R1; Korbak et al., arXiv:2507.11473), so promoted "why" fields stay human-gated. <span class="mono">sec-surfaces</span>: the trace store as a secondary secrets-leakage path and quietly-regulated data store (arXiv:2606.30373: 132,853 HF apps — 14.15% — using 253,755 secrets, 936 logging them at runtime) → redaction at the collector, tiered retention. <span class="mono">traj-compliance</span>: EU AI Act Art. 12/19 logging & ≥6-month retention head-start (fines up to €15M/3%, deadline 2 Aug 2026; prEN 18229-1 + ISO/IEC DIS 24970 still drafts). Vendor claims kept separated from independent evidence per house style.</p></div>
       <div class="vitem"><span class="vv">v1.26</span><span class="vd">2026-07-16</span><p>Added the <strong>I3 deep dive — Consistency, Drift &amp; Documentation Debt</strong> (topic <span class="mono">ia-consistency</span>): embedded overlay + standalone file, written after the three-teammate fact pass (2× verification + 1 discovery) plus the spot-verification round on discovered sources — which earned its keep a fourth time: the scout&#39;s context-file population statistics were materially wrong (corrected to the paper&#39;s 4,768 files across 2,586 of 2,853 repos, CLAUDE.md leading at 34.4%), a practitioner post was re-dated 2026, and DocPrism&#39;s 98%→14% was relabelled a <em>flag rate</em>. Fact correction applied to the topic itself: the 28.9%/4.7-year stale-references figures are pinned to <strong>arXiv:2212.01479 (2022)</strong>, denominator 265/918 — not the EMSE 2023 journal restatement; the DORA "2.4×" folklore multiplier was found unpinnable and excluded (the 2022 amplification framing + published lifts used instead). New load-bearing sources: <strong>Treude &amp; Baltes arXiv:2606.09090</strong> (DOCER on agent config files: stale references in 23.0% of 356 repos; "context rot" extended to repo artifacts; the two-snapshot CI grep), Galster et al. (AIware 2026) + Lulla et al. (JAWs 2026: AGENTS.md ↔ ~29% lower runtime), DocPrism (arXiv:2511.00215), DORA 2022 documentation-quality capability + DORA 2025 "AI-accessible internal data", SWE-at-Google ch.10 freshness reminders, Docs as Tests / Doc Detective, Schemathesis/Specmatic (with the Dredd/Optic/driftctl/DeepDocs graveyard flagged point-in-time). The per-category freshness policy flagged as our synthesis. Topic <span class="mono">know</span>/<span class="mono">concepts</span>/<span class="mono">checks</span> enriched.</p></div>
@@ -3656,8 +3682,15 @@ footer .verlink:hover{color:var(--cobalt)}
     </div>
   </div>
 </div>
+<div class="e1ov" id="notesov" role="dialog" aria-modal="true" aria-label="My highlight-notes">
+  <div class="panel">
+    <div class="bar"><span class="tag">MY NOTES</span><h3>Highlight-notes</h3>
+      <button class="x" type="button" data-notesclose>✕ close</button></div>
+    <div class="body"><div id="notesBody"></div></div>
+  </div>
+</div>
 <footer>
-  <b>v1.28</b> · 2026-07-16 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.29</b> · 2026-07-16 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
@@ -4758,7 +4791,7 @@ src:[{t:"OWASP agentic top 10; published incident postmortems; large-company gov
 const KEY='agentic-study-v1';
 const STATUSES=['none','studying','done'];
 const LBL={none:'not started',studying:'studying',done:'mastered'};
-let state={progress:{},notes:{},seen:{},updatedAt:null};
+let state={progress:{},notes:{},seen:{},highlights:[],updatedAt:null};
 let storeOK=false, saveTimer=null;
 const $=(s,r)=>(r||document).querySelector(s);
 const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
@@ -4788,7 +4821,7 @@ async function loadState(){
   storeOK=true;
   try{
     const r=await store.get(KEY);
-    if(r&&r.value){const p=JSON.parse(r.value);state.progress=p.progress||{};state.notes=p.notes||{};state.seen=p.seen||{};}
+    if(r&&r.value){const p=JSON.parse(r.value);state.progress=p.progress||{};state.notes=p.notes||{};state.seen=p.seen||{};state.highlights=Array.isArray(p.highlights)?p.highlights:[];}
     setSave('ok','loaded · '+store.kind);
   }catch(e){setSave('ok','fresh state');}
 }
@@ -4809,7 +4842,7 @@ async function saveNow(){
 /* Export/import: storage is per-origin, so moving hosts (preview → GitHub Pages → local file)
    starts fresh. The JSON file is how progress + notes travel with the reader. Import merges. */
 function exportData(){
-  const payload={key:KEY,exportedAt:new Date().toISOString(),progress:state.progress,notes:state.notes,seen:state.seen};
+  const payload={key:KEY,exportedAt:new Date().toISOString(),progress:state.progress,notes:state.notes,seen:state.seen,highlights:state.highlights};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -4822,18 +4855,19 @@ function importData(file){
   rd.onload=function(){
     try{
       const p=JSON.parse(rd.result);
-      if(!p||typeof p!=='object'||(!p.progress&&!p.notes))throw new Error('not an export file');
+      if(!p||typeof p!=='object'||(!p.progress&&!p.notes&&!p.highlights))throw new Error('not an export file');
       Object.assign(state.progress,p.progress||{});
       Object.assign(state.notes,p.notes||{});
       if(p.seen)Object.assign(state.seen,p.seen);
-      syncFromState();updateCounts();applyFilter();scheduleSave();
+      if(Array.isArray(p.highlights)){var have={};state.highlights.forEach(function(h){have[h.id]=1;});p.highlights.forEach(function(h){if(h&&h.id&&!have[h.id]){state.highlights.push(h);have[h.id]=1;}});}
+      syncFromState();updateCounts();updateNotesCount();applyFilter();scheduleSave();
       setSave('ok','imported');
     }catch(e){setSave('err','import failed');}
   };
   rd.readAsText(file);
 }
 
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 function topicEl(m,t){
   const a=document.createElement('article');
@@ -5268,7 +5302,7 @@ function initDeepDiveNav(){
   state.seen=state.seen||{};
 
   $$('.e1ov[role="dialog"]').forEach(function(ov){
-    if(ov.id==='verov')return;
+    if(ov.id==='verov'||ov.id==='notesov')return;
     var panel=ov.querySelector('.panel'),bar=ov.querySelector('.bar'),body=ov.querySelector('.body');
     if(!panel||!bar||!body)return;
     var heads=Array.prototype.slice.call(body.querySelectorAll('h2'));
@@ -5359,12 +5393,188 @@ function initDeepDiveNav(){
       if(ov.classList.contains('show')){
         if(state.seen[ov.id])seen=new Set(state.seen[ov.id]);
         requestAnimationFrame(measure);
+        applyHighlights(ov);
       }else{closePop();}
     });
     mo.observe(ov,{attributes:true,attributeFilter:['class']});
 
     paint();
   });
+}
+
+/* ===== highlight-notes: central modal ===== */
+function updateNotesCount(){var n=$('#notesN');if(n)n.textContent='('+state.highlights.length+')';}
+function hlToast(msg){var t=$('#hlToast');if(!t){t=document.createElement('div');t.id='hlToast';document.body.appendChild(t);}t.textContent=msg;t.classList.remove('show');void t.offsetWidth;t.classList.add('show');}
+function renderNotes(){
+  var body=$('#notesBody');if(!body)return;
+  if(!state.highlights.length){body.innerHTML='<div class="hlempty">No highlight-notes yet. Open a deep dive, select any passage, and choose “+ save as note”. Your saved passages collect here.</div>';return;}
+  var groups={},order=[];
+  state.highlights.forEach(function(h){if(!groups[h.ov]){groups[h.ov]={title:h.title||h.ov,items:[]};order.push(h.ov);}groups[h.ov].items.push(h);});
+  body.innerHTML=order.map(function(ov){
+    var g=groups[ov];
+    var cards=g.items.slice().sort(function(a,b){return (b.created||'').localeCompare(a.created||'');}).map(function(h){
+      var when=(h.created||'').slice(0,10);
+      return '<div class="hlcard" data-hid="'+esc(h.id)+'">'+
+        '<blockquote>'+esc(h.quote||'')+'</blockquote>'+
+        '<div class="hlmeta">saved '+esc(when)+'</div>'+
+        '<textarea data-hthought="'+esc(h.id)+'" placeholder="your thought on this… (saved automatically)">'+esc(h.thought||'')+'</textarea>'+
+        '<div class="hlact"><button type="button" class="hlopen" data-hopen="'+esc(h.id)+'">open in deep dive →</button>'+
+        '<button type="button" class="hldel" data-hdel="'+esc(h.id)+'">delete</button></div>'+
+        '</div>';
+    }).join('');
+    return '<div class="hlgroup"><h4>'+esc(g.title)+'</h4>'+cards+'</div>';
+  }).join('');
+}
+function openNotes(){var ov=$('#notesov');if(!ov)return;renderNotes();ov.classList.add('show');document.body.style.overflow='hidden';var p=ov.querySelector('.panel');if(p)p.scrollTop=0;}
+function closeNotes(){var ov=$('#notesov');if(!ov)return;ov.classList.remove('show');document.body.style.overflow='';}
+function hlOpenNote(h){
+  closeNotes();
+  var ov=document.getElementById(h.ov+'ov');if(!ov)return;
+  ov.classList.add('show');document.body.style.overflow='hidden';
+  var panel=ov.querySelector('.panel');if(panel)panel.scrollTop=0;
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    applyHighlights(ov);
+    var mark=panel?panel.querySelector('mark.hl-note[data-note-id="'+(window.CSS&&CSS.escape?CSS.escape(h.id):h.id)+'"]'):null;
+    if(mark){
+      var bar=ov.querySelector('.bar'),barH=bar?bar.offsetHeight:0;
+      var delta=mark.getBoundingClientRect().top-panel.getBoundingClientRect().top-barH-16;
+      panel.scrollBy({top:delta,behavior:'auto'});
+      mark.classList.add('flash');setTimeout(function(){mark.classList.remove('flash');},1400);
+    }else{hlToast('couldn’t locate the exact passage — it may have changed');}
+  });});
+}
+function initNotes(){
+  document.addEventListener('click',function(e){
+    if(e.target.closest('[data-notesopen]')){openNotes();return;}
+    if(e.target.closest('[data-notesclose]')||e.target===$('#notesov')){closeNotes();return;}
+    var op=e.target.closest('[data-hopen]');
+    if(op){var h=state.highlights.filter(function(x){return x.id===op.getAttribute('data-hopen');})[0];if(h)hlOpenNote(h);return;}
+    var del=e.target.closest('[data-hdel]');
+    if(del){var id=del.getAttribute('data-hdel');state.highlights=state.highlights.filter(function(x){return x.id!==id;});scheduleSave();updateNotesCount();renderNotes();return;}
+  });
+  var nb=$('#notesBody');
+  if(nb)nb.addEventListener('input',function(e){var ta=e.target.closest('textarea[data-hthought]');if(!ta)return;var id=ta.getAttribute('data-hthought');var h=state.highlights.filter(function(x){return x.id===id;})[0];if(h){h.thought=ta.value;scheduleSave();}});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#notesov')&&$('#notesov').classList.contains('show'))closeNotes();});
+  updateNotesCount();
+}
+
+/* ===== highlight-notes: shared anchoring helpers ===== */
+var HL_CTX=32;
+function hlOverlayToken(ov){return ov.id.replace(/ov$/,'');}
+function hlOverlayTitle(ov){
+  var tag=ov.querySelector('.bar .tag'),h3=ov.querySelector('.bar h3');
+  var code=tag?tag.textContent.split('·')[0].replace(/[▾▾\s]+$/,'').trim():hlOverlayToken(ov).toUpperCase();
+  var name=h3?h3.textContent.trim():'';
+  return code+(name?' · '+name:'');
+}
+function hlTextMap(root){
+  var nodes=[],parts=[],total=0;
+  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    if(!n.nodeValue)return NodeFilter.FILTER_REJECT;
+    var p=n.parentNode;
+    while(p&&p!==root){var t=p.nodeName.toLowerCase();if(t==='svg'||t==='script'||t==='style')return NodeFilter.FILTER_REJECT;p=p.parentNode;}
+    return NodeFilter.FILTER_ACCEPT;
+  }});
+  var n;while((n=w.nextNode())){var len=n.nodeValue.length;nodes.push({node:n,start:total,end:total+len});parts.push(n.nodeValue);total+=len;}
+  return {text:parts.join(''),nodes:nodes};
+}
+function hlOffsetOf(map,container,offset){
+  if(container.nodeType===3){for(var i=0;i<map.nodes.length;i++){if(map.nodes[i].node===container)return map.nodes[i].start+offset;}return -1;}
+  var child=container.childNodes[offset];
+  if(child){
+    for(var j=0;j<map.nodes.length;j++){if(child===map.nodes[j].node||(child.contains&&child.contains(map.nodes[j].node)))return map.nodes[j].start;}
+  }else{
+    for(var e=map.nodes.length-1;e>=0;e--){if(container.contains&&container.contains(map.nodes[e].node))return map.nodes[e].end;}
+  }
+  for(var k=0;k<map.nodes.length;k++){if(container.contains&&container.contains(map.nodes[k].node))return map.nodes[k].start;}
+  return -1;
+}
+function hlOccurrence(text,quote,at){var i=-1,c=0;while((i=text.indexOf(quote,i+1))!==-1){if(i===at)return c;c++;}return 0;}
+function hlId(){return 'h_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);}
+
+/* ===== highlight-notes: capture ===== */
+function hlCaptureSelection(){
+  var sel=window.getSelection();
+  if(!sel||sel.rangeCount===0||sel.isCollapsed)return null;
+  var range=sel.getRangeAt(0);
+  var node=range.commonAncestorContainer;
+  var host=(node.nodeType===3?node.parentNode:node);
+  var ov=host&&host.closest?host.closest('.e1ov[role="dialog"]'):null;
+  if(!ov||ov.id==='verov'||ov.id==='notesov')return null;
+  var panel=ov.querySelector('.panel');if(!panel)return null;
+  var map=hlTextMap(panel);
+  var gS=hlOffsetOf(map,range.startContainer,range.startOffset);
+  var gE=hlOffsetOf(map,range.endContainer,range.endOffset);
+  if(gS<0||gE<0||gE<=gS)return null;
+  var quote=map.text.slice(gS,gE);
+  if(quote.replace(/\s+/g,'').length<3)return null;
+  return {ov:hlOverlayToken(ov),title:hlOverlayTitle(ov),quote:quote,
+    prefix:map.text.slice(Math.max(0,gS-HL_CTX),gS),suffix:map.text.slice(gE,gE+HL_CTX),
+    occ:hlOccurrence(map.text,quote,gS)};
+}
+function initCapture(){
+  var btn=document.createElement('button');btn.id='hlSave';btn.type='button';btn.textContent='+ save as note';
+  document.body.appendChild(btn);
+  var pending=null;
+  function hide(){btn.style.display='none';pending=null;}
+  function evaluate(){
+    var cap=hlCaptureSelection();
+    if(!cap){hide();return;}
+    var sel=window.getSelection(),rect=sel.getRangeAt(0).getBoundingClientRect();
+    if(!rect||(!rect.width&&!rect.height)){hide();return;}
+    pending=cap;btn.style.display='block';
+    var top=rect.bottom+6,left=rect.left;
+    top=Math.max(6,Math.min(top,window.innerHeight-38));left=Math.min(left,window.innerWidth-140);
+    btn.style.top=top+'px';btn.style.left=Math.max(6,left)+'px';
+  }
+  document.addEventListener('mouseup',function(){setTimeout(evaluate,10);});
+  document.addEventListener('keyup',function(e){if(e.key==='Shift'||e.shiftKey)setTimeout(evaluate,10);});
+  document.addEventListener('scroll',function(){if(btn.style.display==='block')hide();},true);
+  btn.addEventListener('mousedown',function(e){e.preventDefault();});
+  btn.addEventListener('click',function(){
+    if(!pending)return;
+    var h={id:hlId(),ov:pending.ov,title:pending.title,quote:pending.quote,prefix:pending.prefix,suffix:pending.suffix,occ:pending.occ,thought:'',created:new Date().toISOString()};
+    state.highlights.push(h);scheduleSave();updateNotesCount();
+    var ov=document.getElementById(h.ov+'ov');if(ov&&typeof applyHighlights==='function')applyHighlights(ov);
+    var s=window.getSelection();if(s)s.removeAllRanges();
+    hide();hlToast('saved — add your thought in “my notes”');
+  });
+}
+
+/* ===== highlight-notes: locate + wrap + apply ===== */
+function hlLocate(text,note){
+  var q=note.quote;if(!q)return null;
+  var idxs=[],i=-1;while((i=text.indexOf(q,i+1))!==-1)idxs.push(i);
+  if(!idxs.length)return null;
+  if(idxs.length===1)return {start:idxs[0],end:idxs[0]+q.length};
+  var best=idxs[0],bestScore=-1;
+  idxs.forEach(function(pos){
+    var pre=text.slice(Math.max(0,pos-(note.prefix||'').length),pos);
+    var suf=text.slice(pos+q.length,pos+q.length+(note.suffix||'').length);
+    var s=(note.prefix&&pre===note.prefix?2:0)+(note.suffix&&suf===note.suffix?2:0);
+    if(s>bestScore){bestScore=s;best=pos;}
+  });
+  if(bestScore<=0&&typeof note.occ==='number'&&note.occ<idxs.length)best=idxs[note.occ];
+  return {start:best,end:best+q.length};
+}
+function hlWrap(root,gStart,gEnd,id){
+  var map=hlTextMap(root),targets=[];
+  map.nodes.forEach(function(rec){var s=Math.max(gStart,rec.start),e=Math.min(gEnd,rec.end);if(e>s)targets.push({node:rec.node,from:s-rec.start,to:e-rec.start});});
+  for(var k=targets.length-1;k>=0;k--){
+    var t=targets[k],r=document.createRange();
+    try{r.setStart(t.node,t.from);r.setEnd(t.node,t.to);var m=document.createElement('mark');m.className='hl-note';m.setAttribute('data-note-id',id);r.surroundContents(m);}catch(err){}
+  }
+}
+function applyHighlights(ov){
+  var panel=ov.querySelector('.panel');if(!panel)return;
+  $$('mark.hl-note',panel).forEach(function(m){var p=m.parentNode;while(m.firstChild)p.insertBefore(m.firstChild,m);p.removeChild(m);p.normalize();});
+  var token=hlOverlayToken(ov);
+  var mine=state.highlights.filter(function(h){return h.ov===token;});
+  if(!mine.length)return;
+  var text=hlTextMap(panel).text,ranges=[];
+  mine.forEach(function(h){var loc=hlLocate(text,h);if(loc)ranges.push({start:loc.start,end:loc.end,id:h.id});});
+  ranges.sort(function(a,b){return b.start-a.start;});
+  ranges.forEach(function(rg){hlWrap(panel,rg.start,rg.end,rg.id);});
 }
 
 /* ---------- init ---------- */
@@ -5378,6 +5588,8 @@ function initDeepDiveNav(){
   wrapFigures();
   initOrientation();
   initDeepDiveNav();
+  initNotes();
+  initCapture();
   const expBtn=$('#expData'),impBtn=$('#impData'),impFile=$('#impFile');
   if(expBtn)expBtn.addEventListener('click',exportData);
   if(impBtn&&impFile)impBtn.addEventListener('click',function(){impFile.click();});

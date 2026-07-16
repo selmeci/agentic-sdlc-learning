@@ -3,6 +3,22 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.29 · 2026-07-16
+
+Added **highlight-notes**. In any in-page deep-dive overlay, selecting a passage
+shows a floating **"+ save as note"** button that stores the passage (text-quote
+anchored) in the profile. A new **my notes** button in the sidebar Data group
+opens a modal listing every saved passage grouped by deep dive, each with an
+editable personal thought, a delete control, and an **"open in deep dive →"**
+jump that scrolls to and flashes the source passage. Saved passages are
+re-highlighted (persistent tint) every time the deep dive is opened, via the
+existing per-overlay `MutationObserver` in `initDeepDiveNav()`. Highlights persist
+through the single `store` backend (`agentic-study-v1`) and travel with
+export/import. Runtime-only `<mark>` wrapping — the static file (and
+`scripts/validate.py`) is unaffected. Workbook-only; standalone deep-dive files
+unchanged (they have no storage backend). Known limitation: overlapping
+highlights may nest (slightly darker tint).
+
 ## v1.28 · 2026-07-16
 
 Added the **I4 deep dive — Memory Systems for Agents: Typologies, Poisoning & the
