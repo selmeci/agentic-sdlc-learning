@@ -6,8 +6,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 ## Done
 
 - **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.15)
-- **Deep-dive companions (23)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I4** (first four of M4).
+- **Deep-dive companions (24)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I5** (first five of M4).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -103,8 +103,19 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     caveat). The promotion path (session note → memory file → steering file via PR)
     flagged as our synthesis. ASI06 entry mitigations verbatim-UNPINNABLE — defenses
     attributed to Anthropic docs + Agent Memory Guard, never quoted as the Top 10 entry.
-    Next: **I5** (progressive disclosure; resolve the ~300-vs-200-line CLAUDE.md tension
-    noted in NOTES.md — official guidance says "target under 200 lines").
+  - ~~**I5** `ia-disclosure` — progressive disclosure: Skills, nested files, indexes~~ —
+    **done (v1.30)**, with the three-teammate fact pass + spot-verify round (seed corrections:
+    L1 metadata ~100 tokens not ~80, SKILL.md body 500 lines not "5k words", official
+    CLAUDE.md target 200 lines not ~300 — the NOTES.md tension resolved in favour of the
+    official docs; @imports four hops and NOT lazy; CLAUDE.local.md not deprecated;
+    spot-verify catches: matklad quote paraphrase, −2%/+23% is AGENTbench-specific, aider
+    "personalized PageRank" not in the 2023 post). Load-bearing new sources: ETH Zurich
+    arXiv:2602.11988 (the −2%/+23% pin), McMillan arXiv:2605.10039 (structural null,
+    within-session decay), Anthropic advanced-tool-use + code-execution-with-MCP (tool-layer
+    disclosure, vendor-flagged), HumanLayer CLAUDE.md guide, matklad ARCHITECTURE.md, aider
+    repo map, Windsurf hard caps, agentskills.io cross-vendor roster. The core/map/leaves
+    three-tier framing flagged as our synthesis. Fact fix: Galster re-pointed to
+    arXiv:2602.14690 ("Harness Engineering…"). Next: **I6** (retrieval) or **I7** (linking).
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
 

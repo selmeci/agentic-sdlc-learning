@@ -3,6 +3,34 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.30 · 2026-07-16
+
+Added the **I5 deep dive — Progressive Disclosure: Skills, Nested Context Files & the Map
+Layer** (`deep-dives/I5-progressive-disclosure-deepdive.html` + in-page overlay `#i5-deepdive`),
+the fifth companion of module M4. Sections: the principle honestly attributed (Nielsen 2006,
+Carroll & Carrithers 1984) and the three-tier framing core/map/leaves (flagged as this
+workbook's synthesis); Skills as the canonical three-level mechanism with the official token
+economics (~100 tokens/skill metadata, bodies under 5k tokens / 500 lines) and the open
+standard's cross-vendor reach (agentskills.io, Apache-2.0; Codex, Copilot, Cursor 2.4, Gemini
+CLI — point-in-time); nested context files and scoped rules across tools, including the
+subdirectory on-demand semantics, the @import illusion (four hops, still loads at launch) and
+the AGENTS.md nearest-file-wins divergence; the map layer (matklad's ARCHITECTURE.md, aider's
+repo map, MEMORY.md, the Ahrefs llms.txt caution reworded precisely — 97% of files fetched by
+nothing at all); gardening the core around the official 200-line target (reconciling our
+earlier "~300" note — practitioner range vs official budget); the evidence triad — Lulla
+(Δ 28.64% median runtime / Δ 16.58% output tokens), ETH Zurich arXiv:2602.11988 (LLM-generated
+files −0.5%/−2% success for +20%/+23% cost; developer-written +4%; "context files do not
+provide effective overviews") and McMillan arXiv:2605.10039 (structural null, ~5.6% per-step
+within-session decay); five failure modes; a week-one disclosure audit. Topic I5
+know/concepts/src/checks rewritten with verified figures (seed corrections: L1 ~100 tokens not
+~80, body budget 500 lines not "5k words", 200-line official target not ~300, four-hop imports
+not five, CLAUDE.local.md not deprecated). Fact fix elsewhere: the I3 Galster reading item
+re-pointed to arXiv:2602.14690 with the current title "Harness Engineering for Agentic AI
+Coding Tools" (the previously noted Zenodo DOI belongs to the companion dataset paper).
+Fact-verification: two verification teammates + one discovery scout + a spot-verification
+round (catches: matklad "10x" quote was being paraphrased; −2%/+23% is AGENTbench-specific;
+"personalized PageRank" not in aider's 2023 post — attributed to the implementation).
+
 ## v1.29 · 2026-07-16
 
 Added **highlight-notes**. In any in-page deep-dive overlay, selecting a passage

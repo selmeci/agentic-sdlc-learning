@@ -30,13 +30,16 @@ Use this for open questions, session hand-off notes, and things to check before 
   (Dec 22 2025), Kiro .kiro/specs + Spec Kit .specify/memory/constitution.md layouts
   (fast-moving), Tan/Wagner/Treude 28.9%/4.7yr (top-1000 scope), Nygard ADR Nov 15 2011
   (four statuses incl. Deprecated), Cline Memory Bank six files (official docs).
-- I5 tension to resolve in its session: workbook says CLAUDE.md "under ~300 lines"; official
-  Claude Code docs say "Target under 200 lines. Longer files still load in full but may
-  reduce adherence." Reconcile + attribute when I5's deep dive is written.
+- ~~I5 tension~~ RESOLVED in the I5 session (v1.30): official docs verbatim "Size: target
+  under 200 lines per CLAUDE.md file. Longer files consume more context and reduce adherence."
+  (code.claude.com/docs/en/memory) — workbook now says 200 and attributes "~300" to the
+  practitioner range (HumanLayer: "&lt; 300 lines is best, and shorter is even better").
 - Verified 2026-07-16 for I3 (primary sources; tool facts point-in-time): Treude & Baltes
   arXiv:2606.09090 (all numbers digit-checked), Tan arXiv:2212.01479 (28.9% = 265/918,
   4.7yr), DocPrism arXiv:2511.00215, Lulla arXiv:2601.20404 (~28.64%/~16.58%), Galster
-  AIware '26 (Zenodo 10.5281/zenodo.19375880), DORA 2022 docs-quality lifts + DORA 2025
+  AIware '26 (arXiv:2602.14690, current title "Harness Engineering for Agentic AI Coding
+  Tools"; the Zenodo DOI 10.5281/zenodo.19375880 we briefly noted is the COMPANION DATASET
+  paper by Baltes et al. — corrected in the I5 session), DORA 2022 docs-quality lifts + DORA 2025
   "AI-accessible internal data" (official capability name), SWE-at-Google ch.10 quotes,
   Doc Detective v4.30.0 (active), Schemathesis/Specmatic (active), lychee (active),
   HCP Terraform Health Assessments. Graveyard status to re-verify before client meetings:
@@ -48,6 +51,27 @@ Use this for open questions, session hand-off notes, and things to check before 
   exact quote, Design2Code 49%/64% (GPT-4V-specific), DTCG 2025.10 status (CG deliverable, not
   W3C REC), CodeA11y CHI 2025, Code Connect frameworks, Frost quotes ("natural design system
   consumer" 2023; "machine-readable infrastructure" Dec 2025 — "AI is a new user" is NOT his).
+
+- Verified 2026-07-16 for I5 (primary sources; tool facts point-in-time): Skills three levels +
+  "~100 tokens per Skill" + "Under 5k tokens" + "body under 500 lines" (platform.claude.com
+  docs), open standard Dec 18 2025 (agentskills.io, spec repo Apache-2.0), cross-vendor native
+  SKILL.md — Codex, Copilot (changelog Dec 18 2025; paths from docs.github.com), Cursor 2.4,
+  Gemini CLI, .agents/skills shared path (FAST-MOVING roster — re-verify before meetings);
+  CLAUDE.md "target under 200 lines" + subdirectory on-demand + four-hop imports-load-at-launch
+  + CLAUDE.local.md supported (code.claude.com/docs/en/memory); AGENTS.md nearest-file verbatim
+  + AAIF stewardship + "60k+" self-reported; ETH arXiv:2602.11988 (−0.5%/−2% success,
+  +20%/+23% cost — AGENTbench-specific pair; +4% human-written; 641 words/9.7 sections);
+  McMillan arXiv:2605.10039 (1,650 sessions, BF10 0.05–0.10, ~5.6%/step OR 0.944);
+  advanced-tool-use (Nov 24 2025: 58 tools/55K, 85% reduction, Opus 4 49%→74%, 4.5
+  79.5%→88.1% — VENDOR) + code-exec-with-MCP (Nov 4 2025: 150k→2k "time and cost saving of
+  98.7%" — VENDOR); HumanLayer guide (humanlayer.com, Nov 25 2025; cites arXiv:2507.11538 for
+  ~150–200 instructions); matklad verbatim "2x…10x more time to figure out where"; aider
+  --map-tokens 1k default ("personalized PageRank" = implementation, NOT in the 2023 post);
+  Windsurf caps 6,000/12,000 chars (docs now served via docs.devin.ai post-Cognition —
+  re-verify); Manus post July 18 2025; Nielsen Dec 3 2006 + Carroll & Carrithers CACM 1984;
+  Ahrefs precise framing: 97% of valid llms.txt files got zero requests OF ANY KIND, AI-retrieval
+  = 1.1% of the few fetches. NOT used: obra/superpowers star counts (unverifiable),
+  aider 10x/10x/50x edge multipliers (secondary only).
 
 ## Next scoped initiative — DARK MODE (evaluated in v1.16, deliberately deferred)
 Research backs dark mode as an **opt-in** (light stays default for a reading-heavy artifact;
@@ -76,6 +100,18 @@ not because it lacks merit. When picking it up, do it token-first — do NOT `fi
    `scripts/validate.py`. Screenshot both themes at desktop + mobile before shipping.
 
 ## Session hand-off
+- 2026-07-16 (I5 session): **I5 deep dive added (v1.30) — M4 at 5/7.** Outline → 3 teammates
+  (2 fact-verify + 1 discovery, session-unique names) → spot-verify round on discovery finds
+  (catches: matklad "bottleneck" line was a paraphrase — verbatim is "2x more time to write a
+  patch… 10x more time to figure out where"; −2%/+23% is AGENTbench-specific, SWE-bench Lite
+  is −0.5%/+20%; aider "personalized PageRank" not in the 2023 blog — attribute to the
+  implementation; HumanLayer URL is humanlayer.com and its instruction-capacity source is
+  arXiv:2507.11538). Seed corrections applied: L1 ~100 tokens (not ~80), body 500 lines (not
+  "5k words"), 200-line official target (not ~300 — NOTES tension resolved), imports four hops
+  (not five) and NOT lazy, CLAUDE.local.md not deprecated. The −2%/+23% figure finally PINNED:
+  ETH Zurich arXiv:2602.11988. Fact fix elsewhere: I3 Galster reading item → arXiv:2602.14690
+  + current title (Zenodo DOI was the dataset paper). Core/map/leaves framing flagged as our
+  synthesis. Validator green.
 - 2026-07-16 (I3 session): **I3 deep dive added (v1.26).** Outline → 3 teammates (2
   fact-verify + 1 discovery) → spot-verification on discovery sources — **4th catch**:
   scout's context-file population stats were materially wrong (real: Galster et al.
