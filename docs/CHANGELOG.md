@@ -3,6 +3,64 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.28 · 2026-07-16
+
+Added the **I4 deep dive — Memory Systems for Agents: Typologies, Poisoning & the
+Governed Write-Mode** (23rd companion): standalone `deep-dives/I4-memory-systems-deepdive.html`
++ in-page overlay (`#i4-deepdive`, wired ×2), built with the three-teammate fact pass
+(two verification rounds + discovery) and a spot-verify round on all discovery-sourced
+numbers (8/8 survived — a first; two usage corrections applied).
+
+- **§0–§1** — memory as an information-architecture decision; four operational layers
+  (session/working · persistent files · cross-session state · organizational); CoALA
+  frame (working/episodic/semantic/procedural — the harness itself is explicit
+  procedural memory); research lineage Generative Agents / Reflexion (91% vs 80%
+  HumanEval) / Voyager; MemGPT paging frame **with a terminology correction propagated
+  to the `ia-memory` know bullet and Report 3 Plane B**: "core/recall/archival memory"
+  is Letta product vocabulary — the paper says *main/external context*, *working
+  context*, recall/archival *storage*. Calibration: LongMemEval ~30% sustained-memory
+  drop; Sandelin's controlled coding-agent benchmark (memory flat on quality, hurts
+  simple tasks, 22–32% cheaper on complex — own-tool caveat, directional).
+- **§2** — the vendor landscape, point-in-time mid-2026: memory tool `memory_20250818`
+  (GA, six ops, client-side); Claude Code auto memory (MEMORY.md first-200-lines/25KB
+  **load cutoff**, distinct from the CLAUDE.md under-200-lines style target); Cline
+  Memory Bank six files; Cursor Memories GA in 1.2 (an earlier "removed in v2.1"
+  scout flag was retracted — the docs URL 308-redirect was a site restructure);
+  Windsurf Cascade Memories; **Copilot Memory** (public preview: repo-level facts with
+  citations re-verified against the current branch, 28-day unused-fact TTL, enterprise
+  export/bulk-delete); **Devin Knowledge** (trigger descriptions, repo pinning,
+  org→enterprise promotion); Letta (sleep-time compute, arXiv:2504.13171), Mem0, Zep/
+  Graphiti, LangMem — with the **Mem0-vs-Zep LoCoMo dispute** documented both ways and
+  kept as the vendor-claims lesson; BEAM (third-party) noted at 1M/10M-token scale.
+- **§3** — compaction / structured note-taking / sub-agents with verbatim protocol
+  quotes ("ALWAYS VIEW YOUR MEMORY DIRECTORY…", "ASSUME INTERRUPTION…"); measured cache
+  economics (arXiv:2601.06007: 41–80% cost, 13–31% TTFT; dynamic content after the
+  cache breakpoint).
+- **§4** — the governed fourth write-mode: git-versioned memory (diffable/attributable/
+  revertible), index discipline, validation floor (path containment incl. %2e%2e%2f,
+  sensitive-data strip, size caps, expiry), provenance frontmatter, and the **promotion
+  path** (session note → memory file → steering file only via human-merged PR) —
+  flagged as our synthesis; demotion anchored to Momento (arXiv:2606.00832: agents
+  treat "prior session history as a reliable proxy for current context rather than
+  stale information requiring re-validation"); Every's compound-engineering loop as the
+  practitioner instance.
+- **§5** — ASI06 threat model (persistent, temporally decoupled, spreads via ordinary
+  reads; primary quotes from the Dec 9 2025 announcement — the canonical entry's own
+  mitigation list was verbatim-unreachable, so defenses are attributed to Anthropic
+  docs, **OWASP Agent Memory Guard** (verbatim ×4) and I2 machinery, never quoted as
+  the Top 10 entry); AgentPoison (>80% ASR at <0.1% poison), MINJA (query-only; titled
+  "Memory Injection Attacks on LLM Agents via Query-Only Interaction" as of v5),
+  the SoK arXiv:2606.04329 (4 write channels / 9 vulnerabilities / 6 attack classes,
+  MPBench, "more aggressive memory ops → more exploitable"), Rehberger's SpAIware +
+  Gemini demos (both dated, both primary).
+- **§6–§7** — the files-vs-store decision criterion (default files; boundary/scale/
+  compliance tests flip it; GDPR-erasure vs AI-Act-retention wrinkle flagged as our
+  synthesis) and the week-one client checklist.
+- **`ia-memory` topic enriched**: know +CoALA/+evidence bullets, corrected MemGPT
+  terminology, concepts, `src` (deep-dive link first, +arXiv, +Copilot Memory), two
+  new checks (fourth write-mode rationale; query-only poisoning).
+- Docs: CONTENT-MAP 22→23 companions, ROADMAP I4 marked done.
+
 ## v1.27 · 2026-07-16
 
 Integrated the **session-persistence research** (internal artifact, Jul 2026:

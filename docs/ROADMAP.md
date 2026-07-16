@@ -6,8 +6,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 ## Done
 
 - **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.15)
-- **Deep-dive companions (22)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I3** (first three of M4).
+- **Deep-dive companions (23)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I4** (first four of M4).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -88,8 +88,23 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     Docs as Tests / Doc Detective, Schemathesis/Specmatic + the tool graveyard
     (Dredd/Optic/driftctl/DeepDocs/Swimm-pivot) flagged point-in-time. The per-category
     freshness policy flagged as our synthesis.
-    Next: **I4** (memory — the fourth write-mode I2 opened) or **I5** (progressive
-    disclosure; resolve the ~300-vs-200-line CLAUDE.md tension noted in NOTES.md).
+  - ~~**I4** `ia-memory` — memory systems for agents~~ — **done (v1.28)**, with the
+    three-teammate fact pass + spot-verify round (spot-verify: 8/8 discovery finds
+    survived — a first; two usage corrections: Momento dated May/June 2026, the Mem0
+    6,900-vs-26,000-token contrast dropped as per-call vs per-conversation). Durable
+    terminology catch: "core/recall/archival memory" is Letta product vocabulary — the
+    MemGPT paper says main/external context with working context + recall/archival
+    *storage* (know bullet + Report 3 corrected). Load-bearing new sources: CoALA
+    (arXiv:2309.02427), Copilot Memory docs (citation re-verification + 28-day TTL),
+    Devin Knowledge (org→enterprise promotion), Momento arXiv:2606.00832 (over-trusting
+    stale memory), memory-poisoning SoK arXiv:2606.04329 (4 channels/9 vulns/6 classes,
+    MPBench), cache economics arXiv:2601.06007, OWASP Agent Memory Guard, Mem0-vs-Zep
+    LoCoMo dispute (vendor-claims lesson), Sandelin coding-memory benchmark (own-tool
+    caveat). The promotion path (session note → memory file → steering file via PR)
+    flagged as our synthesis. ASI06 entry mitigations verbatim-UNPINNABLE — defenses
+    attributed to Anthropic docs + Agent Memory Guard, never quoted as the Top 10 entry.
+    Next: **I5** (progressive disclosure; resolve the ~300-vs-200-line CLAUDE.md tension
+    noted in NOTES.md — official guidance says "target under 200 lines").
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
 
