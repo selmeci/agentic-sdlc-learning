@@ -3,6 +3,24 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.34 · 2026-07-16
+
+**UX — deep-dive links now render as a distinct "Open panel" button, not a citation.** In every
+topic's "Go deeper" section, the in-page deep-dive link was visually indistinguishable from
+external references: it shared the same `↗` "leaving-the-page" bullet, and the anchor even carried
+`target="_blank" rel="noopener"` — neutralised only by the JS overlay interceptor calling
+`preventDefault()`. The DOM effectively said "external navigation" for a link that opens content
+in place. Deep dives now render as a bordered button-card (panel-with-lines icon, bold title,
+description, "Open panel →" affordance) placed above a separate "References" list; the `↗` glyph
+is now reserved for genuinely external citations. Added `aria-haspopup="dialog"` so the affordance
+is announced as opening a dialog, and dropped the misleading `target="_blank"` on in-page links.
+
+Purely presentational and workbook-render-only (one render block + CSS): the 26 `src` arrays are
+untouched (title/description parsed at render from the uniform `↳ <CODE> Deep Dive — open here
+(<desc>)` string, with a raw-text fallback), the `#*-deepdive` anchor wiring and JS handlers are
+unchanged — so no frozen progress keys move and no two-copies (standalone-vs-overlay) sync is
+triggered. Design: `docs/superpowers/specs/2026-07-16-deepdive-link-presentation-design.md`.
+
 ## v1.33 · 2026-07-16
 
 **NEW TOPIC E11 + deep dive — Formal Methods in the Agentic Loop: Vericoding & Runtime
