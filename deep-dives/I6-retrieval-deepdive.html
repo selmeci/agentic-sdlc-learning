@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I6 Deep Dive &mdash; Retrieval: Agentic Search, Embedding Indexes &amp; Knowledge Graphs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edI6{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahI6a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">I6 · DEEP DIVE</span>
+    <h1>Retrieval: Agentic Search, Embedding Indexes &amp; Knowledge Graphs</h1>
+    <span class="bc">companion to module M4 · Information architecture</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · The four lanes</a>
+  <a href="#s2"><b>2</b> · What shipped</a>
+  <a href="#s3"><b>3</b> · The evidence</a>
+  <a href="#s4"><b>4</b> · The index tax</a>
+  <a href="#s5"><b>5</b> · Knowledge graphs</a>
+  <a href="#s6"><b>6</b> · The escalation ladder</a>
+  <a href="#s7"><b>7</b> · Week one at the client</a>
+  <a href="#s8"><b>8</b> · Framework map</a>
+  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> · Further reading</a>
+</nav>
+<main>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">I5 closed on a promise: disclosure stages what is <em>known</em> to matter; retrieval finds what no map anticipated. This chapter is about that finding — where the agent's knowledge of the codebase comes from at query time. Three architectures compete for the job: a <strong>live search loop</strong> the model drives itself (grep, glob, read — nothing precomputed), a <strong>precomputed embedding index</strong> queried by similarity (the RAG pattern), and a <strong>graph</strong> of code entities and relations. The stakes are easy to underestimate because 2023-era folklore settled the question early: "AI needs your code in a vector database" was the default enterprise assumption, and vector-store line items are still in many clients' AI budgets. The production reality of 2025–26 is stranger and more instructive: the most-used coding agent ships <em>no index at all</em> — Boris Cherny, who created Claude Code, put it flatly: "Claude Code doesn't use RAG currently. In our testing we found that agentic search out-performed RAG for the kinds of things people use Code for" — while Cursor runs a hybrid it defends with measurements, Sourcegraph publicly walked its embeddings back, and Augment doubled down on vectors for 100-million-line codebases. Every position on the board is occupied by a serious team with a serious argument, which is precisely why this is a harness architecture decision (E1) and not a tool detail: the retrieval choice determines what your client must build, sync, secure and pay for — an index is a second copy of the codebase with its own freshness problem (I3), its own attack surface (M7), and its own bill. The chapter maps the lanes, reads the evidence, prices the index tax, deflates the knowledge-graph hype, and ends in an escalation ladder you can defend in a client meeting.</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the four retrieval lanes — agentic search, embedding index, symbol index, knowledge graph — as engineering trade-offs, not religions (§1)</li><li>what production agents actually shipped, with the primary quotes: the no-index camp, the hybrid, the retreat, the counterexamples (§2)</li><li>the independent evidence — and the folklore correction about BM25 vs embeddings on code (§3)</li><li>the index tax: staleness, embedding inversion, and the cost curve (§4)</li><li>knowledge graphs over code: what is measured, what is self-reported, what has shipped (§5)</li><li>an escalation ladder with measurable triggers — our synthesis (§6)</li><li>a week-one retrieval audit for a brownfield client (§7)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>I5 — disclosure: the map layer makes search cheap; retrieval finds what the map missed</li><li>I1/I3 — every index is a derived artifact that can drift</li><li>I4 — memory: the same retrieval question over the agent's own notes</li><li>E2 — context engineering: search results are context; loops cost tokens</li><li>E7 — metrics discipline: every number in §2 is a vendor number</li><li>M7 — security: embeddings are recoverable; the vector store is an asset</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>The four retrieval lanes</h2>
+      <p>Strip the marketing and there are four ways an agent can find things in a codebase. They differ on one axis that matters more than any other: <strong>how much is precomputed</strong> — because everything precomputed must be stored, synced, secured and paid for, and everything computed live must be paid for in tokens and turns instead.</p>
+      <div class="comp"><div class="chead"><span class="cid">LANE A</span><h3>Agentic search</h3><span class="role">nothing precomputed · the model drives</span></div>
+      <p>The model composes searches itself — find files by name pattern, grep file contents, read what looks promising — inspects the results, and refines. Claude Code's tool tier is cost-ordered exactly this way: <span class="mono">Glob</span> returns paths for near-zero tokens, <span class="mono">Grep</span> (ripgrep underneath) returns matches, <span class="mono">Read</span> pays hundreds to thousands of tokens per file — so a competent loop spends cheaply before it spends dearly. Search-relevance veteran Doug Turnbull's diagnosis of <em>why</em> this suddenly works is worth keeping: the win is not grep, it is the loop around grep — an agent that reacts to what it finds, backtracks, and is checked by an outer validation loop. His caveat travels too: "feedback that's not actionable doesn't help an agent" — a tool that returns 4,000 unranked matches has not helped. Zero build cost, zero sync, structurally fresh (it searches the working tree as it is <em>right now</em>); the price is per-query tokens and latency measured in seconds.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LANE B</span><h3>Embedding index — the RAG lane</h3><span class="role">chunks precomputed · similarity lookup</span></div>
+      <p>The pattern the term <strong>RAG</strong> named (Lewis et al., NeurIPS 2020, arXiv:2005.11401): split the corpus into chunks, embed each into a vector, store the vectors; at query time embed the question and return the nearest chunks. Its unique power is matching <em>meaning without shared words</em> — "where do we throttle API clients?" can land on <span class="mono">RateLimiter</span> even if no file contains the word "throttle". Its unique costs are the pipeline: an index to build, re-embed on every change, host somewhere, and secure — §4 prices all three. Latency, once built, is milliseconds — which §2 shows is exactly why the products that kept embeddings are the ones with millisecond features.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LANE C</span><h3>Symbol &amp; structure index</h3><span class="role">derived from syntax · precise relations</span></div>
+      <p>Not semantic, not lexical: <em>structural</em>. Tree-sitter or a language server parses the code and answers questions grep answers badly — definitions, references, call sites, "who uses this symbol". Two shipped forms: aider's repo map (tree-sitter symbols, graph-ranked, packed to a 1k-token default budget — I5's computed map), and LSP-backed tool servers such as Serena, which expose <span class="mono">find_symbol</span> / <span class="mono">find_referencing_symbols</span> to any MCP-capable agent. In I1's taxonomy these are <strong>derived artifacts</strong>: regenerated from code, never hand-edited, cheap to keep fresh because the compiler toolchain already does the parsing. This lane is the quiet workhorse — most of what a "code knowledge graph" promises, it already delivers without a database.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LANE D</span><h3>Code knowledge graph</h3><span class="role">entities + relations · a database of the repo</span></div>
+      <p>The maximal precompute: extract entities (modules, classes, functions) and typed relations (calls, imports, inherits) into a graph database the agent queries — CodexGraph (arXiv:2408.03910) is the cleanest research statement of the idea. The pitch is multi-hop structural questions in one cheap query instead of a grep chain. The status — measured results, self-reported gains, and what has actually shipped — gets §5 to itself, because this is where the hype concentration is highest.</p></div>
+      <figure><div class="figwrap"><div class="figscroll"><svg viewBox="0 0 980 400" role="img" aria-label="Four retrieval lanes compared: agentic search with nothing precomputed, embedding index with chunks and vectors precomputed, symbol index derived from syntax, and knowledge graph as a full database of the repo. Each lane lists build cost, freshness, query cost and what it is best at. An axis below shows precomputation increasing from left to right, with maintenance and attack surface growing with it.">
+<defs><marker id="ahI6a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+<text x="24" y="30" class="tg">FOUR LANES — WHAT IS PRECOMPUTED, WHAT IS PAID LIVE</text>
+<rect x="28" y="52" width="218" height="240" rx="12" class="bxC"/>
+<text x="137" y="80" text-anchor="middle" class="tt">A · agentic search</text>
+<text x="137" y="106" text-anchor="middle" class="ti">glob → grep → read loop</text>
+<text x="137" y="130" text-anchor="middle" class="ts">build: none · sync: none</text>
+<text x="137" y="148" text-anchor="middle" class="ts">freshness: structural</text>
+<text x="137" y="166" text-anchor="middle" class="ts">query: tokens + seconds</text>
+<text x="137" y="196" text-anchor="middle" class="ti">best: exact symbols,</text>
+<text x="137" y="214" text-anchor="middle" class="ti">keyword-dense code,</text>
+<text x="137" y="232" text-anchor="middle" class="ti">task agents that iterate</text>
+<text x="137" y="266" text-anchor="middle" class="ts">Claude Code · Codex</text>
+<rect x="266" y="52" width="218" height="240" rx="12" class="bxA"/>
+<text x="375" y="80" text-anchor="middle" class="tt">B · embedding index</text>
+<text x="375" y="106" text-anchor="middle" class="ti">chunk → embed → ANN store</text>
+<text x="375" y="130" text-anchor="middle" class="ts">build: pipeline · sync: on edit</text>
+<text x="375" y="148" text-anchor="middle" class="ts">freshness: must be engineered</text>
+<text x="375" y="166" text-anchor="middle" class="ts">query: milliseconds</text>
+<text x="375" y="196" text-anchor="middle" class="ti">best: meaning without</text>
+<text x="375" y="214" text-anchor="middle" class="ti">shared words, ms features,</text>
+<text x="375" y="232" text-anchor="middle" class="ti">100M-LOC scale</text>
+<text x="375" y="266" text-anchor="middle" class="ts">Cursor (hybrid) · Augment</text>
+<rect x="504" y="52" width="218" height="240" rx="12" class="bxK"/>
+<text x="613" y="80" text-anchor="middle" class="tt">C · symbol index</text>
+<text x="613" y="106" text-anchor="middle" class="ti">tree-sitter / LSP relations</text>
+<text x="613" y="130" text-anchor="middle" class="ts">build: parse · sync: cheap</text>
+<text x="613" y="148" text-anchor="middle" class="ts">freshness: from the toolchain</text>
+<text x="613" y="166" text-anchor="middle" class="ts">query: milliseconds</text>
+<text x="613" y="196" text-anchor="middle" class="ti">best: definitions, references,</text>
+<text x="613" y="214" text-anchor="middle" class="ti">who-calls-this, rename</text>
+<text x="613" y="232" text-anchor="middle" class="ti">— a derived artifact (I1)</text>
+<text x="613" y="266" text-anchor="middle" class="ts">aider repo map · Serena</text>
+<rect x="742" y="52" width="218" height="240" rx="12" class="bxG"/>
+<text x="851" y="80" text-anchor="middle" class="tt">D · knowledge graph</text>
+<text x="851" y="106" text-anchor="middle" class="ti">entity + relation database</text>
+<text x="851" y="130" text-anchor="middle" class="ts">build: extraction · sync: hard</text>
+<text x="851" y="148" text-anchor="middle" class="ts">freshness: the open problem</text>
+<text x="851" y="166" text-anchor="middle" class="ts">query: one hop, cheap</text>
+<text x="851" y="196" text-anchor="middle" class="ti">best: multi-hop structural</text>
+<text x="851" y="214" text-anchor="middle" class="ti">questions — measured 83%</text>
+<text x="851" y="232" text-anchor="middle" class="ti">quality at 10× fewer tokens</text>
+<text x="851" y="266" text-anchor="middle" class="ts">research (§5) · no backbone</text>
+<path d="M80 330 L900 330" class="edI6"/>
+<text x="80" y="356" class="ts">precomputation: none</text>
+<text x="700" y="356" class="ts">everything — and every byte of it can go stale</text>
+<text x="490" y="316" text-anchor="middle" class="ts">maintenance cost and attack surface grow with precomputation (§4)</text>
+</svg></div></div>
+<figcaption>The four lanes. The x-axis is the load-bearing one: everything precomputed is a second artifact with its own freshness problem (I3), its own storage bill, and its own security surface (M7). The lanes compose — §2's products mix them per query, and MCP makes the mix a tool-selection decision rather than a harness rewrite.</figcaption></figure>
+      <div class="callout"><div class="t">Lanes are tools, not religions</div><p>Nothing forces a harness to pick one lane. The visible trend of 2026 is that retrieval choices migrate to the <strong>tool boundary</strong>: Serena ships lane C as an MCP server, Augment ships its context engine as one, research prototypes ship lane D the same way — so the agent picks grep for an exact symbol, the symbol graph for "who calls this", and semantic search for a fuzzy concept, per query. The architecture question then becomes not "which retrieval?" but "which retrieval tools earn a place on the agent's belt?" — which is E9's harness-tuning question wearing different clothes.</p></div>
+
+      <h2 id="s2"><span class="n">2</span>What production agents actually shipped</h2>
+      <p>Positions first, arguments after. Everything in this section is a <strong>vendor statement about the vendor's own product</strong> — first-person and primary-sourced, but none of it independently benchmarked (E7's standing caveat), and all of it point-in-time mid-2026.</p>
+      <table class="map"><tr><th>Product</th><th>Retrieval architecture</th><th>Stated evidence / reasons</th></tr>
+      <tr><td>Claude Code</td><td>agentic search only — glob/grep/read; no index</td><td>"agentic search out-performed RAG"; simpler; security, privacy, staleness, reliability</td></tr>
+      <tr><td>OpenAI Codex</td><td>agentic search — ripgrep preferred in the core prompt</td><td>no stated anti-RAG position; semantic indexing an open feature request</td></tr>
+      <tr><td>Cursor</td><td><strong>hybrid</strong> — embedding index (Merkle-synced) + heavy grep</td><td>+12.5% avg QA accuracy from semantic search (internal bench)</td></tr>
+      <tr><td>Sourcegraph Cody</td><td>had embeddings → removed them (Feb 2024) for native code search</td><td>third-party processing, freshness ops, &gt;100k-repo scale</td></tr>
+      <tr><td>Devin (Cognition)</td><td><strong>indexes</strong> — DeepWiki auto-generated wiki + code graph over your repos</td><td>wiki-grounded answers; "advanced code search" on top</td></tr>
+      <tr><td>Windsurf</td><td>Riptide — an LLM run over candidates as the reranker, not embeddings alone</td><td>"3x the recall of state-of-the-art embedding systems" (vendor)</td></tr>
+      <tr><td>Augment Code</td><td>embeddings, doubled down — quantized vector search for 100M+ LOC</td><td>completions latency &gt;40% better; 2GB→250MB via quantization (vendor)</td></tr>
+      <tr><td>aider</td><td>lane C — tree-sitter repo map, graph-ranked, 1k-token budget</td><td>a derived map, not a search index</td></tr></table>
+      <h3>The no-index camp</h3>
+      <p>Claude Code is the flagship datum because the team tried the alternative first. Cherny on Hacker News (February 2025): "Claude Code doesn't use RAG currently. In our testing we found that agentic search out-performed RAG for the kinds of things people use Code for." He later restated the history with the reasons attached: "Early versions of Claude Code used RAG + a local vector db, but we found pretty quickly that agentic search generally works better. It is also simpler and doesn't have the same issues around security, privacy, staleness, and reliability." The Pragmatic Engineer's write-up of the story (March 2026) adds texture: the team tried "local vector databases, recursive model-based indexing, and other fancy approaches," all with downsides ("stale indexes, permission complexity") — "plain glob and grep, driven by the model, beat everything," an approach reportedly inspired by how engineers searched code at Meta when fancier tooling broke. Note what the stated reasons are <em>not</em>: nobody claims grep finds more relevant code than a good embedder — the case is systems-shaped (simplicity, freshness, privacy, reliability), and §3 shows the benchmark literature is consistent with that reading. OpenAI's Codex sits in the same lane with less ceremony: its core prompt bakes in a ripgrep preference ("prefer <span class="mono">rg</span>… since <span class="mono">rg</span> is faster than grep"), and semantic indexing exists mainly as an open feature request — a default, not a manifesto. Don't cite Codex as an anti-RAG <em>position</em>; cite it as the same architecture arrived at quietly.</p>
+      <h3>The hybrid, defended with a number</h3>
+      <p>Cursor is the measured counterpoint. Its semantic-search post (November 6, 2025) reports that adding embedding search to a grep-capable agent yields "on average 12.5% higher accuracy in answering questions (6.5%–23.5% depending on the model)" — measured on <em>Cursor Context Bench</em>, an internal, unpublished eval — and is explicit that the agent "makes heavy use of grep as well as semantic search, and the combination of these two leads to the best outcomes." Two details are worth repeating precisely: the 12.5% attaches to <em>semantic search's lift on their QA eval</em>, not to some grep-vs-index showdown; and the embedding model is custom, trained on ranked traces from their own agent sessions — a reminder that a serious lane-B commitment includes training and serving infrastructure, not an off-the-shelf vector DB.</p>
+      <h3>The retreat, and the counterexamples</h3>
+      <p>Sourcegraph ran the experiment in the other direction and published the result (February 15, 2024): "Embeddings have been at the backbone of Cody's retrieval stack since we launched… and now that Cody Enterprise is generally available, we're leaving them behind (for now)." Three stated reasons, all of them §4's index taxes in vendor prose: code "has to be sent to a 3rd party (OpenAI) for processing"; "creating embeddings and keeping them up-to-date introduces complexity"; and vector search over "&gt;100,000 repositories is complex and resource-intensive." (Precision on the product's fate: Cody's Free and Pro tiers were discontinued July 23, 2025 as Sourcegraph pivoted to its agentic tool Amp; Cody Enterprise continues — the embeddings retreat was 2024 and architectural, not part of the sunset.)</p>
+      <p>And the honest board has counterexamples. <strong>Devin indexes</strong> — its DeepWiki "automatically indexes your repos and produces wikis with architecture diagrams, links to sources, and summaries," and Devin's answers are wiki-grounded with code search layered on top; an earlier draft of this workbook claimed Devin followed the no-index pattern, and that was simply wrong. <strong>Windsurf's Riptide</strong> attacks the retrieval-quality problem with more compute rather than less: an LLM evaluates candidate snippets for relevance at search time, claiming "3x the recall of state-of-the-art embedding systems" (a Codeium-era post now hosted on Cognition's domain after the acquisitions — treat the details as historical). <strong>Augment</strong> made the strongest embeddings-at-scale case: quantized vector search serving 100-million-line codebases, with completions latency "improved by over 40%" and index memory cut "8x (from 2GB to 250MB for a 100M LOC codebase)" (June 2025, updated June 2026). Read the counterexamples carefully and a pattern falls out — flag it as this workbook's synthesis, not anyone's official doctrine: <strong>the split tracks product shape more than conviction</strong>. Millisecond features (completions, real-time navigation, answering over repos you haven't cloned) cannot wait for a grep loop, so they need an index; task agents that think in seconds can afford to search live. Where on that spectrum your client's use case sits is the first question of §6.</p>
+
+      <h2 id="s3"><span class="n">3</span>The evidence — what independent sources actually show</h2>
+      <p>Separate the lanes of evidence the way E7 taught: shared benchmarks first, practitioner testimony second, vendor numbers last.</p>
+      <h3>Retrieval caps single-shot performance — and the cap moved the paradigm</h3>
+      <p>The original SWE-bench paper (Jimenez et al., ICLR 2024, arXiv:2310.06770) ran the experiment everyone now forgets it ran: give the model issue text plus retrieved files (BM25), versus issue text plus the <em>oracle</em> files — the ones the real fix actually edited. Claude 2 resolved 1.96% with BM25 retrieval and 4.80% with the oracle; GPT-4, 1.74% even with the oracle (on a 25% subset). Two readings, both load-bearing. First, retrieval quality strictly caps a retrieve-then-edit pipeline — BM25 roughly halved the oracle score. Second, and more important for this chapter: <em>even perfect retrieval left single digits on the table</em>, so the field's answer was not better retrieval, it was abandoning single-shot — letting the model search, read, run and iterate. Retrieval stopped being a preprocessing stage and became part of the loop. That is the deepest sense in which "agentic search won": not grep over embeddings, but iteration over one-shot context stuffing.</p>
+      <p>Agentless (Xia et al., arXiv:2407.01489) is the cleanest demonstration that the middle ground works too: no autonomous agent, no vector index — a fixed three-phase pipeline whose localization is hierarchical and LLM-driven (repo structure → files → classes/functions → edit locations), scoring 32.00% on SWE-bench Lite at $0.70 average per issue (its 2024 numbers; the leaderboard has moved). Locating code by <em>structure</em>, letting the model read the tree the way a new hire would, needed no embeddings to beat contemporaneous agent frameworks.</p>
+      <h3>The folklore correction: grep does not win on retrieval quality</h3>
+      <p>CodeRAG-Bench (Wang et al., NAACL 2025 Findings, arXiv:2406.14497) benchmarked 10 retrievers × 10 generators on code tasks and reads as a caution in both directions: "notable gains are made in final code generation by retrieving high-quality contexts," but "current retrievers still struggle to fetch useful contexts especially with limited lexical overlap, and generators fail to improve with limited context lengths or abilities to integrate additional contexts." And here the folklore needs correcting: on these code benchmarks, <strong>dense code-trained embedders frequently surpass BM25</strong> — notable precisely because in general-domain IR, BM25 usually wins out-of-domain (CoIR, arXiv:2407.02883, is the dedicated code-retrieval benchmark to pin this). So do not repeat "lexical search is just better for code." The defensible claim is different: embeddings retrieve somewhat better on average, and the no-index camp wins anyway — on freshness, simplicity, privacy, and above all on the agent's ability to compensate for a dumb tool by iterating. Colin Flaherty, who built Augment's SWE-bench-topping agent before the industry's agentic turn, says exactly this: "We explored adding various embedding-based retrieval tools, but found that for SweeBench tasks this was not the bottleneck — grep and find were sufficient" — his stated reasons: benchmark repos are modest in size, code is keyword-dense, and a persistent agent recovers from bad first searches.</p>
+      <div class="callout amber"><div class="t">Benchmark shape is doing work in every direction</div><p>SWE-bench repos fit comfortably in the regime where grep thrives (Flaherty's own caveat), so "grep sufficed on SWE-bench" does not settle the 100M-LOC monorepo question — that is Augment's regime, and no shared benchmark covers it. Symmetrically, none of §2's vendor numbers (12.5%, 3× recall, 40% fewer tokens, 99.9% accuracy) were produced on a benchmark anyone else can run. Mid-2026 there is no public, adversarial grep-vs-index benchmark at enterprise scale. When the client asks "which is better?", the honest answer is: for task agents on normal repos, the production consensus and the SWE-bench-era evidence favor search loops; past that, you are choosing between vendors' self-measurements — so run your own (§6).</p></div>
+      <h3>The one measured head-to-head with structure</h3>
+      <p>The nearest thing to a controlled lane-A-vs-lane-D comparison is Codebase-Memory (arXiv:2603.27277, March 2026 — a young preprint, weight it accordingly): a tree-sitter-derived knowledge graph served over MCP reached "83% answer quality versus 92% for a file-exploration agent, at ten times fewer tokens and 2.1 times fewer tool calls" across 31 real repositories, matching or exceeding the explorer on graph-native queries (hubs, callers) in 19 of 31. That is the honest shape of the whole trade: the grep loop keeps a quality edge; the structure pays a <em>token tax</em> an order of magnitude smaller. Chroma's context-rot report (July 2025, vendor technical report, 18 models) and RepoQA (arXiv:2406.06025) close the loop from the long-context side: performance degrades as input grows and needle-finding in repos stays imperfect — so "just give the model a huge window and skip retrieval entirely" is not the exit; something still has to choose what enters the window (E2).</p>
+
+      <h2 id="s4"><span class="n">4</span>The index tax</h2>
+      <p>Whatever an index buys, it costs along three axes. This section is the part of the chapter a client's platform team should read twice, because every line item lands on them.</p>
+      <h3>Tax one: staleness — the index is a derived artifact that drifts</h3>
+      <p>An embedding index is a second copy of the codebase in another representation. In I1's taxonomy it is a <em>derived</em> artifact; I3's law applies in full: every derived copy is drifting toward wrong the moment it is written. Cherny's list put "staleness" in the middle of the reasons to skip the whole problem; Sourcegraph's retreat named "keeping them up-to-date" as a core complexity. The engineering answer, where the index is kept, is real but nontrivial: Cursor's indexing pipeline (January 27, 2026 post) hashes every file into a Merkle tree ("a cryptographic hash of every file, along with hashes of each folder that are based on the hashes of its children"), re-embeds only changed chunks, and caches embeddings by chunk content — and even the bookkeeping is material: "In a workspace with fifty thousand files, just the filenames and SHA-256 hashes add up to roughly 3.2 MB." Grep's freshness, by contrast, is <em>structural</em> — it searches the bytes on disk at query time, so there is nothing to sync and no window in which the agent can be confidently wrong about code that changed a minute ago. For a brownfield client, put it in governance terms: an adopted index needs an owner, an automated sync, and a freshness check (I3's per-category policy) exactly like any other derived artifact — if nobody will own that, that alone decides §6.</p>
+      <h3>Tax two: security — embeddings are recoverable code</h3>
+      <p>The comforting intuition that a vector index is an abstract mathematical residue of the code is false. Vec2Text (Morris et al., EMNLP 2023, arXiv:2310.06816) showed an iterative inversion attack that "is able to recover 92% of 32-token text inputs exactly"; follow-on work relaxed the assumptions — transferable attacks that need no query access to the victim embedder (ACL 2024, arXiv:2406.10280) and few-shot variants (arXiv:2502.11308). The demonstrations are on text, but the mechanism is content-agnostic; treat an embedding store as a <strong>recoverable copy of the source</strong> and classify it accordingly (M7): where the vectors live, who can query them, and what leaves the building are now questions about the code itself. This was Sourcegraph's first stated reason (embedding meant code "has to be sent to a 3rd party… for processing"), and it is what Cursor's content-proof design is engineered against — the server stores the Merkle tree "as a set of content proofs" and "the client can never see results for code it doesn't already have." Note the limit of the public record: Cursor's fetchable pages do not state that plaintext code is never persisted server-side — verify current guarantees directly before an enterprise adoption, point-in-time. And agentic search is not tax-free here either: it inherits whatever file-access the agent has (I2's write-permission discipline is the control surface), it just adds no <em>second</em> store to defend.</p>
+      <h3>Tax three: cost — the crossover arithmetic</h3>
+      <p>Practitioner Harrison Guo frames the choice as one formula worth stealing for client conversations: total cost = build cost + maintenance × time + per-query cost × queries. Grep sets the first two terms to zero and pays per query in tokens and round-trips; an index pays heavily up front to make queries nearly free. The crossover is therefore about scale and query volume, and the extremes are documented. At the top: Augment's stated arithmetic — good embedding models "require 20+ bytes per LOC to store and 20+ nanoseconds per LOC to search," so a 100M-LOC codebase means ~2 GB of vectors and 2+ seconds per brute search, which is why they quantize (their reported 8× memory reduction and sub-200ms search are the vendor's own numbers). At planetary scale the argument inverts entirely: GitHub's code search (the Blackbird engine, February 2023) indexes 15.5B documents and 115 TB across ~45M repositories into a 25 TB <em>lexical</em> sparse-ngram index — because brute grep at that scale would need "2,048 CPU cores for 96 seconds to serve a single query." Two lessons hide in that number: corpus-scale search needs an index, full stop — and the biggest code-search operator on earth chose an inverted lexical index, not embeddings, to build it. Meanwhile the vector-DB industry runs the token-cost argument against the grep loop — Milvus/Zilliz: "Token usage dropped by over 40%, without any loss in recall" with their semantic plugin (August 2025) — a claim from the vendor selling the fix, quoted here as the named opposing voice, not as evidence; the independent Codebase-Memory measurement (§3) at least confirms the <em>direction</em> that structure saves tokens. The honest summary: on a normal repo with a task agent, the grep loop's token tax is real but the index's three taxes are realer; the regimes where that flips are §6's triggers.</p>
+
+      <h2 id="s5"><span class="n">5</span>Knowledge graphs over code — the hype check</h2>
+      <p>Lane D attracts the most consultant enthusiasm and has shipped the least. Hold three facts together and the picture is sober.</p>
+      <div class="callout amber"><div class="t">The most common miscitation in this topic: GraphRAG is not a code technique</div><p>Microsoft's GraphRAG (arXiv:2404.16130) — the paper that made "knowledge graph + RAG" a boardroom phrase — is about <strong>query-focused summarization over document corpora</strong>: podcast transcripts and news articles at ~1M tokens, where an LLM-extracted entity graph plus community summaries answers global "what are the main themes" questions. Its reported wins over vector RAG (comprehensiveness 72–83%, diversity 62–82%) are <em>LLM-as-judge pairwise win rates</em> — self-evaluated by a method with known biases, and on the wrong corpus type entirely. Citing GraphRAG to justify a code knowledge graph is a category error; do it in front of the wrong audience and it costs you the room.</p></div>
+      <p>The actual code-KG literature is real but self-reported. CodexGraph (arXiv:2408.03910) puts an LLM in front of a graph database of repo structure and labels itself "work in progress"; RepoGraph (arXiv:2410.14684) is a plug-in repo-level graph reporting SWE-bench-Lite improvements for the systems it augments; CGM (arXiv:2505.16901) and KG-guided repair (arXiv:2503.21710) continue the line. Every headline gain in that list is the authors' own evaluation — no independent replication, no adversarial benchmark (E7 files these where vendor claims go). The one measured head-to-head we have is §3's Codebase-Memory result: ~90% of the explorer's answer quality at a tenth of the tokens, better on graph-native questions, worse when the answer needs full source context — a genuine, quantified niche, not a revolution.</p>
+      <p>And the shipping test: as of mid-2026 there is <strong>no public evidence that any major production coding agent uses a code knowledge graph as its retrieval backbone</strong> (a hard-to-prove negative — state it as "no public evidence," not impossibility). The nearest shipped relatives are telling about what actually survives contact with production: Devin's DeepWiki (a generated wiki plus code graph — an <em>onboarding and Q&amp;A</em> layer more than a retrieval backbone), and Greptile's AST-derived docstring-embedding graph — built for code <em>review</em>, a batch workload whose economics differ from an interactive agent's. The practical verdict for a client: the structural benefits a KG promises are mostly available today from lane C — LSP and tree-sitter tools, derived artifacts with toolchain-grade freshness and no graph database to feed. Put lane D on the watchlist, revisit when someone publishes an independent benchmark win plus a staleness story; do not put it in the harness.</p>
+
+      <h2 id="s6"><span class="n">6</span>The escalation ladder</h2>
+      <p><strong>This rubric is our synthesis</strong> — assembled from the evidence above, not an industry standard; flag it the way D1–D5 are flagged. The default is set by the production consensus and the price list; each rung above it is bought only by a measured trigger, never by architecture enthusiasm.</p>
+      <div class="comp"><div class="chead"><span class="cid">L0</span><h3>Agentic search + the map</h3><span class="role">the default — start every engagement here</span></div>
+      <p>Grep/glob/read driven by the model, over a repo whose always-loaded core is a map (I5): ARCHITECTURE.md for the hand-written topology (matklad's "10x more time to figure out <em>where</em>" is the cost being avoided), context files naming the load-bearing directories. The map is what makes search cheap — it turns the first three exploratory turns into zero turns. Cost: tokens per query. Prerequisites: none. This is what Claude Code and Codex ship, and it needs no procurement meeting.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L1</span><h3>Derived structure tools</h3><span class="role">cheap, fresh, undersold</span></div>
+      <p>Add lane C: a repo map computed from tree-sitter (aider-style), LSP-backed symbol tools (Serena-class MCP servers) for definitions/references/call sites. These are derived artifacts the toolchain keeps fresh nearly for free, they answer exactly the questions grep answers worst, and they capture most of the KG promise without a database. For a brownfield client with a real language server already in CI, this rung is close to free — take it early.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L2</span><h3>Hybrid: add an embedding index</h3><span class="role">bought by a trigger, run under governance</span></div>
+      <p>Adopt lane B only when a §-below trigger is <em>measured</em>, and adopt it with the full I-module governance: a named owner, automated Merkle-style sync, a security review of where vectors live and who queries them (§4, M7), and a before/after eval on the client's own query set — not the vendor's. Cursor's experience says the ceiling is real (+12.5% on their eval, with a custom-trained embedder); Sourcegraph's says the floor is real too.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">L3</span><h3>Code knowledge graph</h3><span class="role">watchlist — not a client recommendation</span></div>
+      <p>Experimental (§5). Revisit on independent benchmark evidence plus a credible freshness story. If a client is already being sold one, the questions that cut fastest: who re-extracts the graph on every merge, what did it score on a benchmark the vendor doesn't own, and what does lane C not give you?</p></div>
+      <table class="map"><tr><th>Trigger</th><th>What you observe</th><th>Escalate to</th></tr>
+      <tr><td>scale</td><td>repo approaching the ~1M-LOC-plus regime where grep loops visibly thrash (Guo's crossover; Augment's 100M-LOC world)</td><td>L1, then L2</td></tr>
+      <tr><td>query shape</td><td>recurring conceptual queries with little lexical overlap keep failing — the CodeRAG-Bench limit in the wild</td><td>L2</td></tr>
+      <tr><td>latency class</td><td>the use case is millisecond-shaped: completions, real-time navigation, org-wide code Q&amp;A</td><td>L2 (this is §2's product-shape split)</td></tr>
+      <tr><td>corpus breadth</td><td>search must span hundreds of repos the agent hasn't cloned — Blackbird's lesson: index yes, and lexical may suffice</td><td>L2 (consider lexical/Zoekt-class first)</td></tr>
+      <tr><td>token pressure</td><td>measured search-loop token spend dominates session cost (the Codebase-Memory 10× direction)</td><td>L1 first — structure is the cheap token fix</td></tr>
+      <tr><td>structural queries</td><td>"who calls this / what breaks if I change this" dominates and grep chains sprawl</td><td>L1 — this rung exists for exactly this</td></tr></table>
+      <figure><div class="figwrap"><div class="figscroll"><svg viewBox="0 0 980 340" role="img" aria-label="Escalation ladder for retrieval: L0 agentic search plus map is the default; L1 adds derived structure tools like repo maps and LSP symbol servers; L2 adds a governed embedding index; L3 code knowledge graph remains a watchlist item. Arrows between rungs carry the triggers: token pressure and structural queries move L0 to L1; measured scale, query-shape and latency triggers move L1 to L2; only independent evidence plus a freshness story would move L2 to L3.">
+<text x="24" y="30" class="tg">THE ESCALATION LADDER — EACH RUNG BOUGHT BY A MEASURED TRIGGER (OUR SYNTHESIS)</text>
+<rect x="28" y="150" width="210" height="130" rx="12" class="bxC"/>
+<text x="133" y="178" text-anchor="middle" class="tt">L0 · default</text>
+<text x="133" y="202" text-anchor="middle" class="ti">agentic search + map</text>
+<text x="133" y="222" text-anchor="middle" class="ts">grep/glob/read · I5 core</text>
+<text x="133" y="242" text-anchor="middle" class="ts">build: nothing</text>
+<text x="133" y="262" text-anchor="middle" class="ts">fresh by construction</text>
+<rect x="272" y="120" width="210" height="130" rx="12" class="bxK"/>
+<text x="377" y="148" text-anchor="middle" class="tt">L1 · derived structure</text>
+<text x="377" y="172" text-anchor="middle" class="ti">repo map · LSP symbols</text>
+<text x="377" y="192" text-anchor="middle" class="ts">tree-sitter / Serena-class</text>
+<text x="377" y="212" text-anchor="middle" class="ts">toolchain keeps it fresh</text>
+<text x="377" y="232" text-anchor="middle" class="ts">near-free for typed repos</text>
+<rect x="516" y="90" width="210" height="130" rx="12" class="bxA"/>
+<text x="621" y="118" text-anchor="middle" class="tt">L2 · hybrid index</text>
+<text x="621" y="142" text-anchor="middle" class="ti">+ embedding search</text>
+<text x="621" y="162" text-anchor="middle" class="ts">owner · auto-sync · M7 review</text>
+<text x="621" y="182" text-anchor="middle" class="ts">eval on the client's queries</text>
+<text x="621" y="202" text-anchor="middle" class="ts">Cursor-shaped commitment</text>
+<rect x="760" y="60" width="200" height="130" rx="12" class="bxG"/>
+<text x="860" y="88" text-anchor="middle" class="tt">L3 · code KG</text>
+<text x="860" y="112" text-anchor="middle" class="ti">watchlist only</text>
+<text x="860" y="132" text-anchor="middle" class="ts">no production backbone</text>
+<text x="860" y="152" text-anchor="middle" class="ts">public mid-2026 · §5</text>
+<text x="860" y="172" text-anchor="middle" class="ts">revisit on independent wins</text>
+<path d="M238 210 L268 200" class="edI6"/>
+<path d="M482 180 L512 170" class="edI6"/>
+<path d="M726 150 L756 140" class="edI6"/>
+<text x="253" y="310" text-anchor="middle" class="ts">token pressure ·</text>
+<text x="253" y="326" text-anchor="middle" class="ts">structural queries</text>
+<path d="M253 296 L253 232" class="edI6"/>
+<text x="497" y="310" text-anchor="middle" class="ts">measured scale · query shape ·</text>
+<text x="497" y="326" text-anchor="middle" class="ts">latency class · corpus breadth</text>
+<path d="M497 296 L497 202" class="edI6"/>
+<text x="741" y="310" text-anchor="middle" class="ts">independent benchmark win</text>
+<text x="741" y="326" text-anchor="middle" class="ts">+ a freshness story — not before</text>
+<path d="M741 296 L741 172" class="edI6"/>
+</svg></div></div>
+<figcaption>The ladder. Default at L0, take L1 early when it is nearly free, buy L2 only with a measured trigger and full derived-artifact governance, and leave L3 on the watchlist. The arrows only point right — but notice Sourcegraph walked left, and shipped the blog post to prove it.</figcaption></figure>
+      <div class="callout pine"><div class="t">Measure before you buy — the twenty-query bench</div><p>Before any L2 conversation, collect ~20 real retrieval queries from the client's actual agent sessions — the searches that preceded wrong answers are the valuable ones — and run them against L0/L1 and a candidate index. Score answer quality, tokens, and wall-clock. This is E7's discipline applied locally: every number in §2 is a vendor's self-measurement on a private eval; the only benchmark that binds your client's decision is the one built from their queries on their code. It also answers this topic's standing open question — "at what repo size does plain grep start losing?" — empirically, for the one repo that matters.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Week one at the client</h2>
+      <p>The retrieval audit runs in parallel with I5's disclosure audit — same week, same interviews.</p>
+      <div class="io"><div class="box"><div class="lab">Do — in this order</div><ul><li><strong>1 · Inventory the retrieval surface.</strong> For each agent in use: which lanes does it actually have — grep tools, an embedding index (whose? synced how?), symbol tools, MCP search servers? Most clients cannot answer this; the answer is the architecture.</li><li><strong>2 · Build the map before any index.</strong> ARCHITECTURE.md + context files naming load-bearing directories (I5). Cheapest retrieval upgrade that exists.</li><li><strong>3 · Take the free L1 rung.</strong> If the stack has a language server, wire symbol tools (repo map, LSP/MCP) into the harness.</li><li><strong>4 · Collect the twenty-query bench</strong> from real session transcripts (§6) and classify failures by trigger: scale, query shape, latency, structure.</li><li><strong>5 · If an index already exists, govern it:</strong> name an owner, verify sync automation, run the M7 questions (where do vectors live, who queries, what leaves) — and check it against I3 drift <em>today</em>.</li></ul></div>
+      <div class="box"><div class="lab">Don't</div><ul><li>let "we need a vector database" enter the SOW before the twenty-query bench exists</li><li>cite Cursor's 12.5%, Riptide's 3×, or Milvus's 40% as if they were independent — all vendor, all private evals (E7)</li><li>cite GraphRAG for code retrieval — wrong corpus, LLM-judged wins (§5)</li><li>treat an existing embedding index as harmless metadata — it is recoverable code (Vec2Text, M7)</li><li>promise the client grep "beats" embeddings on retrieval quality — the honest case is freshness, simplicity, privacy and iteration (§3)</li></ul></div></div>
+
+      <h2 id="s8"><span class="n">8</span>Where I6 sits in the framework</h2>
+      <table class="map"><tr><th>Topic</th><th>The connection</th></tr>
+      <tr><td>E1/E9</td><td>Retrieval tools are harness surface: which lanes sit on the agent's belt is a tunable, eval-driven decision (E9), not a vendor default.</td></tr>
+      <tr><td>E2</td><td>Search results are context: the grep loop's token tax and the index's millisecond answers are two ways of paying the same context bill.</td></tr>
+      <tr><td>E7</td><td>Every §2 number is a vendor self-measurement on a private eval; the twenty-query bench is E7's answer at client scale.</td></tr>
+      <tr><td>I1</td><td>Indexes, repo maps and graphs are derived artifacts — regenerated, never hand-edited, owned.</td></tr>
+      <tr><td>I3</td><td>Index staleness is drift with a vector store attached; the freshness policy applies before the first query is served.</td></tr>
+      <tr><td>I4</td><td>Memory retrieval is this chapter's question over the agent's own notes — and Momento's finding (agents over-trust stale memory) is the staleness tax in miniature.</td></tr>
+      <tr><td>I5</td><td>The map layer is the retrieval accelerant: disclosure stages what is known to matter, search finds the rest — each makes the other cheaper.</td></tr>
+      <tr><td>M5</td><td>Brownfield archaeology is retrieval under the worst conditions — undocumented code is exactly where the map is missing and search must carry everything.</td></tr>
+      <tr><td>M7</td><td>The vector store is an asset class: embedding inversion makes it recoverable source; agentic search inherits the agent's file permissions (I2) instead.</td></tr></table>
+
+      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <div class="callout pine"><div class="t">Three sentences</div><p>Production coding agents mostly answered the retrieval question against the 2023 folklore — no index, model-driven grep/glob/read — and the stated reasons are systems reasons (simplicity, freshness, privacy, reliability), not retrieval-quality reasons: on quality alone, dense code-trained embedders often beat lexical search, and the agent's iteration is what closes the gap. An index is a second copy of the code with three taxes — it drifts (I3), it is recoverable source (Vec2Text, M7), and it bills for build, sync and serving — so it must be bought by a measured trigger (scale, low-overlap queries, millisecond latency, corpus breadth), never by default. Our ladder — L0 search+map, L1 derived structure, L2 governed hybrid, L3 KG-watchlist — is this workbook's synthesis; the twenty-query bench on the client's own code is what moves anyone up a rung.</p></div>
+
+      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Boris Cherny — on Claude Code's retrieval (HN thread; later restatement)</div><div class="mt">news.ycombinator.com item 43164253 · February 2025 · first-person vendor</div><p>The primary quotes: "agentic search out-performed RAG for the kinds of things people use Code for," and the restated history — early RAG + local vector DB dropped for security, privacy, staleness, reliability.</p></div>
+      <div class="item"><div class="rt">The Pragmatic Engineer — Building Claude Code with Boris Cherny</div><div class="mt">newsletter.pragmaticengineer.com · March 4, 2026</div><p>The fuller story: local vector DBs and recursive model-based indexing tried and beaten by model-driven glob/grep; stale indexes and permission complexity named as the failure modes.</p></div>
+      <div class="item"><div class="rt">Cursor — Improving agent with semantic search · Securely indexing large codebases</div><div class="mt">cursor.com/blog · November 6, 2025 · January 27, 2026 · vendor-measured</div><p>The hybrid's case: +12.5% average QA accuracy (6.5–23.5% by model, internal Context Bench), a custom embedder trained on agent traces — and the Merkle-tree sync and content-proof design that a serious index commitment requires.</p></div>
+      <div class="item"><div class="rt">Sourcegraph — How Cody understands your codebase</div><div class="mt">sourcegraph.com/blog · February 15, 2024</div><p>The documented retreat: "we're leaving them behind (for now)" — third-party processing, freshness ops, and &gt;100k-repo scale as the three reasons. (Cody Free/Pro later sunset July 2025; Enterprise continues — separate event.)</p></div>
+      <div class="item"><div class="rt">Cognition — DeepWiki &amp; Devin's docs · Codeium — Riptide (migrated)</div><div class="mt">docs.devin.ai · cognition.com/blog · devin.ai/blog/codeium-dream-bigger (~Aug 2024) · vendor</div><p>The counterexamples: Devin auto-indexes repos into wikis and code graphs; Riptide runs an LLM as the retrieval reranker, claiming "3x the recall of state-of-the-art embedding systems."</p></div>
+      <div class="item"><div class="rt">Augment Code — quantized vector search for 100M+ line codebases</div><div class="mt">augmentcode.com/blog · June 11, 2025 (updated June 18, 2026) · vendor</div><p>The strongest embeddings-at-scale case: 20+ bytes and 20+ ns per LOC as the cost model, 8× memory reduction, sub-200ms search — for millisecond features on giant monorepos.</p></div>
+      <div class="item"><div class="rt">Jimenez et al. — SWE-bench · Xia et al. — Agentless</div><div class="mt">arXiv:2310.06770 (ICLR 2024) · arXiv:2407.01489 (2024)</div><p>The ceiling experiment (BM25 1.96% vs oracle 4.80%, Claude 2 — retrieval caps single-shot, and even the oracle stayed single-digit) and the hierarchical LLM-driven localization that needed no embeddings: 32.00% Lite at $0.70/issue.</p></div>
+      <div class="item"><div class="rt">Wang et al. — CodeRAG-Bench · CoIR benchmark</div><div class="mt">arXiv:2406.14497 (NAACL 2025 Findings) · arXiv:2407.02883</div><p>The evidence on retrieval quality for code: gains require high-quality contexts, retrievers struggle at low lexical overlap — and dense code-trained embedders frequently surpass BM25, the correction to grep folklore.</p></div>
+      <div class="item"><div class="rt">Vogel et al. — Codebase-Memory (tree-sitter KGs via MCP)</div><div class="mt">arXiv:2603.27277 · March 2026 · preprint — weight accordingly</div><p>The one measured lane-A-vs-lane-D head-to-head: 83% vs 92% answer quality at ten times fewer tokens and 2.1× fewer tool calls, across 31 repositories; better on graph-native queries, worse on full-source ones.</p></div>
+      <div class="item"><div class="rt">Edge et al. — GraphRAG · CodexGraph · RepoGraph</div><div class="mt">arXiv:2404.16130 · arXiv:2408.03910 · arXiv:2410.14684 · all self-evaluated</div><p>The KG shelf, honestly labeled: GraphRAG is query-focused summarization over documents (LLM-judged wins), not code; the code-graph papers are promising and self-reported; no production backbone mid-2026.</p></div>
+      <div class="item"><div class="rt">Morris et al. — Text Embeddings Reveal (Almost) As Much As Text</div><div class="mt">arXiv:2310.06816 · EMNLP 2023 · + arXiv:2406.10280 (ACL 2024), arXiv:2502.11308</div><p>The security tax: exact recovery of 92% of 32-token inputs from embeddings, with follow-on attacks needing no query access — the vector store is recoverable source (M7).</p></div>
+      <div class="item"><div class="rt">GitHub — The technology behind GitHub's new code search (Blackbird)</div><div class="mt">github.blog · February 6, 2023 · Timothy Clem</div><p>Corpus-scale ground truth: 15.5B documents, 115 TB, 45M repos in a 25 TB sparse-ngram <em>lexical</em> index — because brute grep would cost 2,048 cores for 96 seconds per query.</p></div>
+      <div class="item"><div class="rt">Liu — Why grep beat embeddings (Flaherty) · Turnbull — Agentic search is having a grep moment · Guo — Agent retrieval is a cost-curve problem</div><div class="mt">jxnl.co · September 11, 2025 · softwaredoug.com · April 6, 2026 · harrisonsec.com · May 25, 2026 · practitioner</div><p>The three practitioner pieces this chapter leans on: grep wasn't the SWE-bench bottleneck (and why), the two-loop harness as the real enabler, and the build/maintain/per-query cost formula with its crossover regimes.</p></div>
+      <div class="item"><div class="rt">Zhang — Why I'm against Claude Code's grep-only retrieval</div><div class="mt">milvus.io/blog · August 25, 2025 · vector-DB vendor — the opposing voice</div><p>The named rebuttal: "Token usage dropped by over 40%, without any loss in recall" via their semantic-search plugin. Quoted as the counter-position from the vendor selling it, not as independent evidence.</p></div>
+      <div class="item"><div class="rt">Report 3 — the information-architecture research notes (this workbook)</div><div class="mt">module M4 research notes · plane B</div><p>The retrieval section this chapter expands; the four-lane framing and the escalation ladder are this workbook's synthesis, flagged as such.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (I6-retrieval-deepdive.html). Its natural neighbours in the workbook are I5 (the map that makes search cheap), I1/I3 (indexes as derived artifacts that drift), I4 (the same question over memory), E2 (the context bill both lanes pay), E7 (vendor numbers vs the twenty-query bench), E9 (retrieval tools as tunable harness surface), and M7 (the vector store as recoverable source). All product facts point-in-time mid-2026 — this is the fastest-moving chapter in M4; re-verify the vendor roster before any client meeting. M4 continues with I7: linking product and engineering artifacts.</p>
+</main>
+</div>
+</body>
+</html>

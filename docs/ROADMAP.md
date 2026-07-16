@@ -117,7 +117,20 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     disclosure, vendor-flagged), HumanLayer CLAUDE.md guide, matklad ARCHITECTURE.md, aider
     repo map, Windsurf hard caps, agentskills.io cross-vendor roster. The core/map/leaves
     three-tier framing flagged as our synthesis. Fact fix: Galster re-pointed to
-    arXiv:2602.14690 ("Harness Engineering…"). Next: **I6** (retrieval) or **I7** (linking).
+    arXiv:2602.14690 ("Harness Engineering…").
+  - ~~**I6** `ia-retrieval` — retrieval: agentic search vs RAG vs knowledge graphs~~ —
+    **done (v1.37)**, with the three-teammate fact pass + spot-verify round (seed corrections:
+    the "Devin: same pattern" claim was WRONG — Devin indexes via DeepWiki, recast as the
+    counterexample; Cursor's +12.5% re-attached to semantic search's lift on internal Context
+    Bench; "precision" dropped from Claude Code's stated reasons — the Cherny quotes pinned to
+    HN 43164253 + his restatement tweet; spot-verify kills: a fabricated "second Anthropic
+    engineer" quote, Riptide "200%" paraphrase → verbatim "3x the recall"). Load-bearing new
+    sources: SWE-bench BM25-vs-oracle (1.96%/4.80%), Agentless, CodeRAG-Bench + CoIR (dense
+    code-trained embedders frequently beat BM25 — folklore correction), Codebase-Memory
+    arXiv:2603.27277 (83% vs 92% at 10× fewer tokens), Vec2Text embedding inversion (92%),
+    GitHub Blackbird, Augment quantized vectors, Cody retreat + consumer sunset, GraphRAG
+    anti-miscitation callout. The L0–L3 escalation ladder + twenty-query bench flagged as
+    our synthesis. Next: **I7** (linking) closes M4.
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
 

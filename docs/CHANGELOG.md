@@ -3,6 +3,47 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.37 · 2026-07-16
+
+**NEW DEEP DIVE I6 — Retrieval: Agentic Search, Embedding Indexes & Knowledge Graphs.** Sixth M4
+companion (`deep-dives/I6-retrieval-deepdive.html` + `#i6-deepdive` overlay), built on the standard
+three-teammate fact pass (i6jul16-facts-vendors / i6jul16-facts-research / i6jul16-scout) + the
+i6jul16-spotverify round. Content spine: four retrieval lanes (agentic search / embedding index /
+symbol-and-structure index / code knowledge graph); the vendor board with primary quotes — Boris
+Cherny on HN (Feb 2025, "agentic search out-performed RAG for the kinds of things people use Code
+for") and his restated reasons (simpler; security, privacy, staleness, reliability — "precision"
+dropped as never-stated), Codex's quiet ripgrep default (no anti-RAG manifesto), Cursor's hybrid
+(+12.5% avg QA accuracy, 6.5–23.5% by model, internal Cursor Context Bench, custom embedder trained
+on agent traces; Merkle-tree sync + content-proof design from the Jan 2026 post), Sourcegraph Cody's
+Feb-2024 embeddings retreat (verbatim + three reasons; consumer sunset Jul 2025 kept distinct from
+the architectural retreat), Devin as the index-building counterexample (DeepWiki), Windsurf Riptide
+("3x the recall", migrated Codeium post), Augment's embeddings-at-scale case (20+ bytes / 20+ ns per
+LOC, 8x quantization, sub-200ms — all vendor). Independent evidence: SWE-bench BM25 1.96% vs oracle
+4.80% (Claude 2; GPT-4 oracle 1.74% on 25% subset) read as "iteration, not better one-shot retrieval,
+was the fix"; Agentless 32.00% Lite / $0.70 hierarchical LLM localization; CodeRAG-Bench verbatims
+(NAACL 2025 Findings); the folklore correction — dense code-trained embedders frequently surpass BM25
+on code (CoIR pin), so grep's case is freshness/simplicity/privacy/iteration, not retrieval quality;
+Codebase-Memory arXiv:2603.27277 (83% vs 92% answer quality at ten times fewer tokens, 2.1× fewer
+tool calls, 31 repos — preprint-flagged). Index tax: staleness as I3 drift (Merkle mechanics, 3.2MB
+hash bookkeeping), security as embedding inversion (Vec2Text 92% exact recovery + no-query-access
+follow-ons — vector store = recoverable source, M7), cost as Guo's build/maintain/per-query curve
+with Blackbird's corpus-scale ground truth (15.5B docs, 25TB lexical index, "2,048 CPU cores for 96
+seconds" for brute grep) and the Milvus 40%-tokens claim quoted as the named vendor rebuttal.
+GraphRAG anti-miscitation callout (document summarization, LLM-judged wins — not code); code-KG shelf
+(CodexGraph/RepoGraph/CGM) flagged self-reported; "no public evidence of a KG retrieval backbone in
+production agents mid-2026". The L0–L3 escalation ladder + trigger table + twenty-query bench =
+**our synthesis, flagged like D1–D5**. Two new SVGs (marker `ahI6a`, edge `edI6`). **Seed-topic
+corrections:** the workbook's "Devin: same pattern" know-bullet was WRONG (Devin indexes) — fixed;
+"+12.5% from combining semantic + grep" re-attached to semantic search's lift; Claude Code reasons
+corrected to the actually-stated list. **Spot-verify kills (6th session in a row it paid):** the
+"second Anthropic engineer: outperformed by a lot / surprising" quote NOT FOUND (never existed in
+HN 43164253 — the long quote is Cherny's tweet, the HN quote is shorter and different); Riptide
+"200% improvement in retrieval recall" is a secondary paraphrase (verbatim: "3x the recall");
+Codebase-Memory latency and raw token/call counts not in the abstract (dropped); Cursor "plaintext
+never persisted server-side" not found on fetchable pages (re-verify before enterprise adoption).
+Topic `ia-retrieval` know/concepts/src/checks enriched (5 bullets, 9 concepts, 6 src incl. HN thread
++ CodeRAG-Bench, 3 checks incl. the E7-grade vendor-deck response and the GraphRAG category error).
+
 ## v1.36 · 2026-07-16
 
 **Highlight notes: write at save, read on hover, edit on click.** Building on the v1.35 fix and
