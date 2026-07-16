@@ -8,6 +8,8 @@ Prepared by Roman (senior software architect, Sudolabs) as the learning + refere
 for a potential client engagement. Working language of the *content* is English (established
 English technical terms preserved); working notes and commit messages may be in Slovak.
 
+**Live version:** [selmeci.github.io/agentic-sdlc-learning](https://selmeci.github.io/agentic-sdlc-learning/workbook/agentic-development-study.html)
+
 ---
 
 ## The core thesis we are developing
