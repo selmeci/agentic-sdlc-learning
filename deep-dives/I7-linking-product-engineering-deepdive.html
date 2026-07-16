@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I7 Deep Dive &mdash; Linking Product &amp; Engineering: IDs, Maps &amp; the MCP Bridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edI7{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahI7a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">I7 · DEEP DIVE</span>
+    <h1>Linking Product ↔ Engineering: IDs, Maps &amp; the MCP Bridge</h1>
+    <span class="bc">companion to module M4 · Information architecture</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · The two planes &amp; the key</a>
+  <a href="#s2"><b>2</b> · The ticket is the prompt</a>
+  <a href="#s3"><b>3</b> · The system map</a>
+  <a href="#s4"><b>4</b> · One master per artifact</a>
+  <a href="#s5"><b>5</b> · The MCP bridge</a>
+  <a href="#s6"><b>6</b> · Provenance &amp; llms.txt</a>
+  <a href="#s7"><b>7</b> · Week one at the client</a>
+  <a href="#s8"><b>8</b> · Framework map</a>
+  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> · Further reading</a>
+</nav>
+<main>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">Every engagement has two databases that both claim to describe the same work. The <strong>product plane</strong> — Jira, Linear, Notion — holds intent: epics, stories, acceptance criteria, the priority call that made this ticket matter. The <strong>engineering plane</strong> — git and the forge — holds change: branches, commits, PRs, tests, releases. Neither owns the other, and nothing keeps them telling the same story except the discipline of linking. How weak that discipline is by default has been measured for seventeen years: Bird et al.'s classic bias study (ESEC/FSE 2009) counted how many fixed bugs could be connected to the commit that fixed them and got 49.6% in Apache, 41.5% in Eclipse — and 8.1% in OpenOffice. Worse than the averages was the direction of the bias: in Apache, 63% of <em>minor</em>-severity bugs were linked but only 15% of <em>blockers</em> — the more severe the work, the less traceable it was, a trend that held across the projects with manually verified data. Agents turn this from a research-dataset nuisance into an operational problem, because the link now carries live traffic in both directions: downward, the ticket has become the agent's <em>prompt</em> — Copilot, Devin and Cursor all accept work by ticket assignment and read the issue text as the task spec (§2); upward, the agent's branches, commits and PRs are the only progress signal the product side ever sees, and an unlinked agent commit is unattributable archaeology within a week (§6). This chapter is the plumbing manual for that link: one key stamped everywhere and enforced deterministically (§1), a system map so agents and humans can traverse from product concept to code location (§3), one master per artifact so the two planes stop forking the truth (§4), MCP as the runtime bridge — priced and threat-modeled, because the link itself is now an attack surface (§5), and provenance so the upward direction survives audit (§6).</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the unified ID scheme — platform mechanics for Jira/Linear/GitHub/GitLab and an enforcement ladder from convention to server-side rule (§1)</li><li>the ticket-as-prompt pattern: what agent↔tracker integrations actually do, and the evidence that ticket quality caps agent output (§2)</li><li>the system map: C4 + arc42 + ARCHITECTURE.md, with the derived-diagram rule (§3)</li><li>one master per artifact and "reference, don't copy" — our synthesis, flagged (§4)</li><li>the MCP bridge: the roster, the token bill, the lethal trifecta and three named incidents (§5)</li><li>provenance and the outward layer: trailers, the 30× census, Agent Trace, llms.txt honestly labeled (§6)</li><li>a week-one linking audit for a brownfield client (§7)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>H3 — the in-repo half: requirement IDs, spec registry, suspect gate; this chapter extends the chain across the tool boundary</li><li>H1/H2 — what a good ticket contains; §2 is the evidence for why that matters</li><li>I1 — masters and derived artifacts; the map and the status roll-ups are derived</li><li>I3 — copies drift; "reference, don't copy" is the anti-drift rule at tool scale</li><li>I5/I6 — the map layer and retrieval; ARCHITECTURE.md serves both</li><li>E5 — advisory vs deterministic: the enforcement ladder is E5 applied to links</li><li>M7 — ticket text is untrusted input; §5's incidents are the proof</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>The two planes and the one key</h2>
+      <p>The cheapest piece of information architecture in this whole module is a string: the issue key. <span class="mono">PROJ-123</span> in the branch name, the commit message, the PR description and the test name is a foreign key joining two databases that share no schema — and every tracker and forge on the market already knows how to dereference it. H3 built the in-repo half of this chain (the five-move ID scheme: registry, contract, stamping, gates, bootstrap); this section extends it across the tool boundary, where the mechanics differ per platform and the defaults are weaker than most teams assume.</p>
+      <h3>What the platforms give you for free — and where they quietly don't</h3>
+      <div class="figwrap"><div class="figscroll"><table class="map"><tr><th>Platform</th><th>What links automatically</th><th>The catch</th></tr>
+      <tr><td>Jira</td><td>smart commits: <span class="mono">PROJ-123 #comment fixed indent</span>, <span class="mono">#time 2h</span>, <span class="mono">#close</span> act on the ticket from the commit message; the development panel shows branches/commits/PRs once the forge integration is linked</td><td>the issue key must be <em>in the commit message</em> with the command — a key in the branch name alone triggers nothing; smart commits must be enabled on the integration</td></tr>
+      <tr><td>Linear</td><td>a branch name containing the issue ID auto-links branch and PR to the issue ("Copy git branch name" exists precisely for this); magic words — <span class="mono">Fixes ENG-123</span>, <span class="mono">Closes</span>, <span class="mono">Refs</span> — work in PR titles and descriptions and move ticket state</td><td>magic words do <em>not</em> work in PR comments; closing vs non-closing word lists differ (<span class="mono">ref/part of</span> link without closing)</td></tr>
+      <tr><td>GitHub</td><td>closing keywords (<span class="mono">fixes #123</span> and variants) auto-close issues from merged PRs; custom autolink references turn <span class="mono">PROJ-\d+</span> into tracker links repo-wide</td><td>auto-close is <strong>same-repo only</strong> (and the PR must target the default branch) — <span class="mono">owner/repo#123</span> references cross-repo but closes nothing; custom autolinks need a paid plan (Pro/Team/Enterprise, not Free)</td></tr>
+      <tr><td>GitLab</td><td>closing patterns in commits/MRs; push rules can <em>require</em> a commit-message regex — "Messages must match the expression" — rejecting unlinked commits at the server</td><td>push rules are Premium/Ultimate tier; the regex is only as good as the key format it demands</td></tr></table></div></div>
+      <p>Two asymmetries in that table decide real rollouts. First, <strong>Linear links from the branch name; Jira does not.</strong> A team that standardizes <span class="mono">type/PROJ-123-slug</span> branch naming gets Linear's bidirectional links for free, but on Jira still needs the key repeated in the commit message — which is exactly what a <span class="mono">prepare-commit-msg</span> hook is for. Second, <strong>GitHub's auto-close stops at the repo boundary</strong> — in a multi-repo estate the "Closes" convention silently degrades to a plain mention, and ticket state stops advancing; teams discover this months later as a pile of "done but open" issues.</p>
+      <h3>The enforcement ladder</h3>
+      <p>E5's advisory-vs-deterministic split applies verbatim. A convention documented in CLAUDE.md ("branch <span class="mono">req/012-*</span>, trailer <span class="mono">Refs: PROJ-123</span>") is <em>advisory</em> — agents follow it more reliably than humans do, which is precisely why H3 calls stamping nearly free at agent speed, but nothing catches the exceptions. Client-side hooks are the next rung: <span class="mono">prepare-commit-msg</span> runs before the editor opens and can <em>auto-fill</em> the key parsed from the branch name (git's docs: it may "edit the message file in place"); <span class="mono">commit-msg</span> can <em>reject</em> — "exiting with a non-zero status causes the command to abort." Both are per-developer opt-in, not distributed with the repo, and <span class="mono">commit-msg</span> is one <span class="mono">--no-verify</span> away from bypassed — so hooks are convenience, not governance. The deterministic rungs live server-side and in CI: GitHub repository rulesets carry <strong>metadata restrictions</strong> that enforce commit-message patterns at push time; GitLab's push rules do the same on Premium; and a forge-agnostic CI gate (commitlint for Conventional-Commits shapes, a Danger rule or a plain grep for "PR body carries a valid key") is the safety net that works everywhere — the commitlint ecosystem's own framing is that the CI check exists to hold "even when local enforcement fails." The pattern to sell the client is the layering, not any single rung: convention for intent, hook for ergonomics, server rule + CI grep for the guarantee.</p>
+      <figure><div class="figwrap"><div class="figscroll"><svg viewBox="0 0 980 430" role="img" aria-label="Two planes joined by one key. The product plane (Jira, Linear, Notion) holds epic, story and acceptance criteria. The engineering plane (git and forge) holds branch, commits, PR and tests. The issue key PROJ-123 sits between them; downward arrows show the agent reading the ticket as prompt via MCP, upward arrows show links auto-created by smart commits, magic words and closing keywords. An enforcement column lists CLAUDE.md convention, prepare-commit-msg auto-fill, commit-msg reject, server-side ruleset and CI grep.">
+<defs><marker id="ahI7a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+<text x="24" y="30" class="tg">ONE KEY, TWO PLANES — THE LINK LAYER</text>
+<rect x="28" y="48" width="640" height="110" rx="12" class="bxC"/>
+<text x="48" y="76" class="tt">PRODUCT PLANE — Jira / Linear / Notion</text>
+<text x="48" y="100" class="ti">epic → story PROJ-123 · acceptance criteria · priority · discussion</text>
+<text x="48" y="122" class="ti">master for INTENT (§4) · untrusted input for agents (§5)</text>
+<text x="48" y="144" class="ts">status arrives here as links: branch · PR · deploy</text>
+<rect x="28" y="272" width="640" height="110" rx="12" class="bxK"/>
+<text x="48" y="300" class="tt">ENGINEERING PLANE — git / forge</text>
+<text x="48" y="324" class="ti">branch feat/PROJ-123-slug · commit + trailer Refs: PROJ-123</text>
+<text x="48" y="346" class="ti">PR "Closes PROJ-123" · test_proj123_* · release notes</text>
+<text x="48" y="368" class="ts">master for CHANGE · provenance trailers land here (§6)</text>
+<rect x="250" y="182" width="240" height="62" rx="10" class="bxA"/>
+<text x="370" y="208" text-anchor="middle" class="tt">THE KEY · PROJ-123</text>
+<text x="370" y="230" text-anchor="middle" class="ts">foreign key between two databases</text>
+<path d="M170 158 L170 272" class="edI7"/>
+<text x="36" y="208" class="ts">agent reads ticket</text>
+<text x="36" y="224" class="ts">as prompt (MCP · §2 §5)</text>
+<path d="M540 272 L540 158" class="edI7"/>
+<text x="552" y="200" class="ts">links auto-created (§1):</text>
+<text x="552" y="216" class="ts">smart commits · magic</text>
+<text x="552" y="232" class="ts">words · closing keywords</text>
+<rect x="712" y="48" width="240" height="334" rx="12" class="bxG"/>
+<text x="732" y="76" class="tt">ENFORCEMENT LADDER</text>
+<text x="732" y="104" class="ti">1 · CLAUDE.md convention</text>
+<text x="732" y="122" class="ts">advisory — agents comply</text>
+<text x="732" y="150" class="ti">2 · prepare-commit-msg</text>
+<text x="732" y="168" class="ts">auto-fill key from branch name</text>
+<text x="732" y="196" class="ti">3 · commit-msg reject</text>
+<text x="732" y="214" class="ts">client-side · --no-verify bypasses</text>
+<text x="732" y="242" class="ti">4 · server ruleset / push rule</text>
+<text x="732" y="260" class="ts">ruleset metadata · GitLab push rules</text>
+<text x="732" y="288" class="ti">5 · CI gate</text>
+<text x="732" y="306" class="ts">commitlint · Danger · grep on PR body</text>
+<text x="732" y="340" class="ti">metric: % commits linked</text>
+<text x="732" y="358" class="ts">baseline first, watch the curve (E7)</text>
+</svg></div></div>
+<figcaption>The link layer. The key is dumb on purpose — a greppable string both planes already understand. Downward traffic (ticket as prompt) and upward traffic (links as status) both ride on it; the enforcement ladder decides whether it is actually there. Rungs 1–3 are advisory or bypassable; governance lives at 4–5 (E5).</figcaption></figure>
+      <p>Measure it like E7 measures everything: <strong>% of commits (or PRs) carrying a valid key</strong>, baselined in week one, watched as a curve. There is industry precedent for the metric — LinearB surfaces unlinked branches as shadow work, and its published figure is blunt: "In 75% of teams, 31% of branches are unlinked" — so the client's likely starting point is far from 100%, and the severity inversion from Bird's study says the gap will be worst on the urgent work. The metric is also the honest test of the whole section: if the ladder works, the curve moves without anyone being nagged.</p>
+      <div class="callout"><div class="t">Keep the key boring</div><p>Everything in this section assumes the key is short, stable and greppable: <span class="mono">PROJ-123</span>, not a URL, not a title. Two corollaries clients trip on. Renaming the Jira project key breaks every historical link — treat the key namespace as append-only (I2's immutability instinct). And the key must survive <em>copy-paste into plain text</em>, because half its life is spent in commit messages, changelogs and agent prompts where markup dies; this is also why autolink references (turning bare keys into tracker links) beat pasting full URLs into code comments.</p></div>
+
+      <h2 id="s2"><span class="n">2</span>The ticket is the prompt</h2>
+      <p>The downward direction of the link stopped being metadata in 2025–26: for a growing class of work, the ticket <em>is</em> the input the agent executes. All three flagship integrations follow the same shape — everything in this paragraph is <strong>vendor documentation about the vendor's own product</strong>, point-in-time mid-2026. <strong>GitHub Copilot coding agent ↔ Jira</strong> (public preview March 5, 2026; GA June 25, 2026): assign a Jira issue to Copilot from the assignee dropdown and the agent reads the title, description, labels and comments, works in a GitHub Actions sandbox, opens a draft PR, and streams status back into the Jira ticket; the GA release added Confluence context via MCP. <strong>Devin ↔ Linear</strong>: assign the ticket to Devin and it reads the description, acceptance criteria and linked issues; playbook labels (<span class="mono">!plan</span>, <span class="mono">!implement</span>, <span class="mono">!triage</span>, <span class="mono">!review</span>) select behaviour, and ticket status auto-advances In&nbsp;Progress → In&nbsp;Review → Done through Linear's agent-session interface. <strong>Cursor ↔ Linear</strong> (August 2025): @-mention or assign <span class="mono">@Cursor</span> and a cloud agent pulls the issue description, comments and linked references, produces a branch and draft PR, and posts the link back to the issue. The pattern worth naming — this workbook's phrasing, not any vendor's — is that <strong>the product plane has become the agent's input queue and its output log</strong>: intent enters as issue text, progress exits as links and state transitions, and the quality of both rides on §1's key discipline.</p>
+      <p>Which makes ticket quality an engineering input with a measurable failure mode. The sharpest independent evidence comes from the SWE-bench audit line of work: Wang, Pradel and Liu (arXiv:2503.15223, ICSE 2026) re-examined "solved" issues on SWE-bench Verified and found that 29.6% of plausible, test-passing patches behaviourally diverge from the developer's actual fix — and when they traced the suspicious cases back, 66.2% of them were uncertain precisely because <em>the issue statement under-specified the requirement</em>. The agent did not fail to read the ticket; the ticket did not contain the answer, so the agent guessed, and a guess that passes the visible tests is worse than a failure because it merges. A human developer routes around a vague ticket with hallway context and a question in standup; H4 measured how rarely agents ask (HumanEvalComm: over 60% answer with code instead of a clarifying question). The practitioner discourse has converged on the same point in plainer language — the ticket-as-spec essays of the SDD wave all orbit the observation that vague tickets survived only because humans could infer intent from ambient context, and agents reading the same tickets inherit the vagueness without the context. The fix is not "write novels in Jira": it is H1's contract anatomy and H2's machine-checkable acceptance criteria applied at the ticket boundary, plus §1's links so the agent can traverse to the PRD, the spec and the ADRs when the ticket legitimately compresses (§4's excerpt-with-link rule).</p>
+      <div class="callout amber"><div class="t">Assignment is an autonomy decision</div><p>Assigning a ticket to an agent is not a workflow convenience — it is granting E6 autonomy with the product tool as the control surface. Two governance defaults follow. Restrict <em>who</em> can assign or @-mention the agent (and, where supported, <em>whose</em> issues it will act on — §5's GitLost incident turned exactly this knob's absence into a data leak). And treat the agent's ticket-side output — status transitions, comments, closing actions — as write operations under I2's permission matrix: an agent that can close tickets can mark its own guesses as Done.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>The system map</h2>
+      <p>The key joins <em>work items</em> to <em>changes</em>. It cannot answer the prior question every traverse starts with: where in this system does the product concept live? That is the map's job, and the two standards worth teaching a client have conveniently opposite shapes. <strong>C4</strong> (Simon Brown) is four zoom levels — system context → container → component → code — and its official framing is exactly the traverse metaphor: "a way to create 'maps of your code', at various levels of detail, in the same way you would use something like Google Maps to zoom in and out of an area you are interested in." <strong>arc42</strong> (Gernot Starke &amp; Peter Hruschka, CC BY-SA) is a twelve-section documentation template — context, constraints, solution strategy, building-block view, runtime view, deployment, cross-cutting concepts, decisions, quality, risks, glossary — that answers "where does each kind of architectural fact go"; in practice C4 diagrams slot into its building-block view (a pairing that is practitioner convention, not something either site mandates). They compose rather than compete: C4 is the picture language, arc42 the filing cabinet.</p>
+      <p>Three rules make the map agent-ready rather than shelf-ware. <strong>First, the entry point is a file, not a wiki page:</strong> <span class="mono">ARCHITECTURE.md</span> at the repo root, in matklad's original argument, because "the biggest difference between an occasional contributor and a core developer lies in the knowledge about the physical architecture of the project" — I5 already established this file as the map layer of progressive disclosure, and it is the first thing an agent's context assembly should surface. <strong>Second, the code level is derived (I1):</strong> C4's own guidance calls Level 4 "very much an optional level of detail" and recommends against hand-drawing it "because most IDEs can generate this level of detail on demand" — hand-drawn code diagrams are I3 drift with arrows. Generate what is derivable (docs-as-code toolchains: Structurizr DSL, PlantUML, docToolchain for arc42 — tool status point-in-time and currently shifting; Structurizr's cloud service is winding down toward self-hosted), hand-write only the two or three levels where human judgment decides what matters. <strong>Third, decisions live next to code:</strong> ADRs in source control — the ThoughtWorks Radar's long-standing recommendation ("a record that remains in sync with the code itself"), and I2's immutability rules — so the map explains not just what the containers are but why they are shaped that way, and the agent quoting an ADR quotes the current status line.</p>
+      <div class="callout"><div class="t">The map is for the traverse, not the wall</div><p>The test of a system map in an agentic SDLC is operational: given ticket text, can the agent (or the new hire) get from the product noun to the owning container and the entry-point files in two hops? An ARCHITECTURE.md that names the containers, their responsibilities and their top-level directories passes; a beautiful diagram exported to a wiki the agent cannot fetch does not. This is I6's lesson wearing map clothes — the map makes search cheap; it does not replace it.</p></div>
+
+      <h2 id="s4"><span class="n">4</span>One master per artifact</h2>
+      <p>Once traffic flows both ways across the link, the failure mode changes name: it stops being "missing link" and becomes "two truths." The PRD lives in Notion and a stale copy lives in <span class="mono">docs/</span>; the acceptance criteria live in Jira and a diverged paraphrase lives in the spec; the architecture lives in Confluence and a five-container sketch from 2023 lives in the README. Every copy is an I3 drift pair waiting to disagree, and an agent — which reads faster and wider than any human — is <em>more</em> likely to find the stale copy, not less. The rule this workbook recommends (our Report-3 synthesis, flagged as such) is <strong>one master per artifact, everything else a reference</strong>: each artifact class gets exactly one living home, chosen by who edits it, and every other appearance is a link — or, where the consumer genuinely needs inline text (a task spec an agent will execute offline), a <em>summarized excerpt with a link to master</em>, dated, so staleness is at least visible.</p>
+      <div class="figwrap"><div class="figscroll"><table class="map"><tr><th>Artifact</th><th>Master lives</th><th>Why there</th><th>Everything else is</th></tr>
+      <tr><td>PRD / product intent</td><td>product tool (Notion/Confluence/Jira)</td><td>product edits it; discussion threads attach</td><td>a link from the spec; excerpt in the contract if needed (H1 component E)</td></tr>
+      <tr><td>Feature spec / AC</td><td>repo — <span class="mono">specs/</span> (H3 registry)</td><td>versioned with the code it constrains; PR-reviewed</td><td>a link from the ticket; the ticket summarizes</td></tr>
+      <tr><td>ADR</td><td>repo — <span class="mono">docs/adr/</span></td><td>immutable + superseded chain (I2)</td><td>links from ARCHITECTURE.md and code seams</td></tr>
+      <tr><td>System map</td><td>repo — <span class="mono">ARCHITECTURE.md</span> (+ generated diagrams)</td><td>agents and contributors start here (I5)</td><td>exports; never a hand-maintained wiki twin</td></tr>
+      <tr><td>Status / progress</td><td>the tracker — <em>derived from links</em></td><td>state transitions ride §1 mechanics</td><td>roll-ups; never hand-authored status docs</td></tr>
+      <tr><td>Agent session traces</td><td>trace store (forge/vendor)</td><td>append-only, queryable (§6)</td><td>a commit-message link to the session</td></tr></table></div></div>
+      <p>The row that surprises clients is <strong>status</strong>: in a linked estate, status is not written, it is <em>computed</em> — the branch exists, the PR is open, the checks are green, the deploy shipped; the tracker's job is to render that, which is exactly what the §1 integrations do with state transitions. Any hand-authored "status page" is a derived artifact pretending to be durable (I1) and will be wrong by Friday. The counter-habit to coach is the copy-paste reflex: the PM who pastes the full PRD into the epic description, the engineer who pastes the AC table into the PR — each paste feels helpful and creates a fork. "Reference, don't copy" is cheap to say and hard to live; the excerpt-with-link compromise (short, dated, linked) is what makes it liveable, and it is precisely the pattern E2 wants for context anyway: the agent's context window should hold the excerpt and fetch the master on demand, not carry three stale copies of the same intent.</p>
+
+      <h2 id="s5"><span class="n">5</span>The MCP bridge</h2>
+      <p>Links let humans traverse; MCP lets the <em>agent</em> traverse. All three major trackers now ship official hosted MCP servers — Atlassian's Rovo MCP Server, Linear's at <span class="mono">mcp.linear.app</span> (May 2025), Notion's hosted server — all OAuth-based, and Atlassian's identity model is the one to hold up in the I2 conversation: the agent inherits the invoking user's permissions ("all actions respect users' existing access controls and permissions"), so the ticket the agent can read is the ticket <em>you</em> can read, and admin-side toggles gate read/write/search separately. Roster and auth details are point-in-time mid-2026; re-verify before a client meeting. Two costs arrive with the bridge, and both are now measurable rather than folklore.</p>
+      <p><strong>The token bill.</strong> Every connected server pre-loads tool definitions, and every tool result arrives as raw JSON in the context window; tracker payloads are notoriously padded (a Jira issue is kilobytes of custom fields around a paragraph of intent). Anthropic's own engineering numbers — vendor-measured, flagged as such — put the ceiling case vividly: a multi-server agent burning 150,000 tokens on tool definitions and intermediate results dropped to 2,000 when tool calls moved into code execution, "a time and cost saving of 98.7%," and the companion Tool Search work showed that <em>fewer tool definitions in context</em> improved accuracy while cutting tokens 85%. The independent corroboration is directional rather than threshold-shaped: on MCP-Universe, adding unrelated servers as distractors measurably degraded success rates. The practical rules for the product↔engineering bridge are modest: connect the servers the task actually needs, prefer summarized excerpts over full-payload dumps in anything durable (§4), and record project defaults (keys, board IDs, base URLs) in AGENTS.md so the agent does not re-discover them every session — a practitioner economy, not a benchmark result.</p>
+      <p><strong>The injection surface.</strong> Ticket text is the textbook instance of Simon Willison's lethal trifecta (June 2025): an agent with "access to your private data," "exposure to untrusted content," and "the ability to externally communicate" can be steered by anyone who can write text it will read — and a public issue tracker is an open submission box for exactly that text. This is not hypothetical; the incident list is now three deep and all three are product↔engineering-link-shaped. <strong>Invariant Labs, May 2025</strong> ("toxic agent flows"): a malicious issue in a public GitHub repo steers an agent connected to the GitHub MCP server into pulling private-repo data and publishing it in a PR — an architectural flaw of the tool combination, not a bug in any one server. <strong>General Analysis on Supabase's MCP, July 2025</strong>: injected support-ticket text made a Cursor agent with <span class="mono">service_role</span> credentials read the <span class="mono">integration_tokens</span> table and paste the secrets back into the ticket thread; Supabase's response — read-only mode, wrapping untrusted content, MCP off by default — is a defense catalogue in miniature. <strong>Noma Security's "GitLost", July 2026</strong>: GitHub's Agentic Workflows, configured to act on assigned issues, was steered by a public issue — filed by an unauthenticated attacker — into leaking a private repo's README into a public comment, with the built-in guardrails bypassed by prefixing the injected instructions with the single word "additionally," which the model parsed as a follow-on task rather than a new directive. Three incidents, one lesson: <strong>the link is the attack surface</strong> — the same channel that makes the ticket a prompt makes the ticket an exploit.</p>
+      <div class="callout amber"><div class="t">Defense defaults for the bridge</div><p>Write tools on "always ask"; read-only server modes until the workflow has earned writes (I2's matrix applied to MCP). Restrict which principals' tickets the agent acts on — GitLost's core mitigation — and scope tokens to single repos. Treat fetched ticket text as data, not instructions: wrap or quarantine it where the harness supports it. And audit the <em>combination</em>, not the servers: Invariant's toxic-flow analysis (and its <span class="mono">mcp-scan</span> tooling) exists precisely because each server can be individually safe while the trifecta emerges from their union (M7). None of this is exotic — it is the same E5 move as always: the defense that holds is the one enforced outside the context window.</p></div>
+      <figure><div class="figwrap"><div class="figscroll"><svg viewBox="0 0 980 360" role="img" aria-label="The lethal trifecta on the product-engineering bridge. An agent sits between the product plane and the engineering plane. From the product plane, untrusted ticket text flows in — anyone can file an issue. From the engineering plane, the agent has access to private repositories and secrets. A third arrow shows external communication: public comments, PRs and ticket replies. The three together form the lethal trifecta; three incident labels — GitHub MCP May 2025, Supabase MCP July 2025, GitLost July 2026 — sit under the diagram with the defenses listed at the right.">
+<text x="24" y="30" class="tg">THE TRIFECTA RIDES THE BRIDGE — WHY TICKET TEXT IS AN ATTACK SURFACE</text>
+<rect x="28" y="60" width="250" height="120" rx="12" class="bxC"/>
+<text x="153" y="90" text-anchor="middle" class="tt">product plane</text>
+<text x="153" y="114" text-anchor="middle" class="ti">issues · tickets · comments</text>
+<text x="153" y="136" text-anchor="middle" class="ti">⚠ anyone can write here</text>
+<text x="153" y="160" text-anchor="middle" class="ts">= exposure to untrusted content</text>
+<rect x="700" y="60" width="252" height="120" rx="12" class="bxK"/>
+<text x="826" y="90" text-anchor="middle" class="tt">engineering plane</text>
+<text x="826" y="114" text-anchor="middle" class="ti">private repos · secrets · DB</text>
+<text x="826" y="136" text-anchor="middle" class="ti">reachable via the agent's tools</text>
+<text x="826" y="160" text-anchor="middle" class="ts">= access to private data</text>
+<rect x="390" y="80" width="200" height="84" rx="12" class="bxA"/>
+<text x="490" y="112" text-anchor="middle" class="tt">agent + MCP</text>
+<text x="490" y="136" text-anchor="middle" class="ts">reads both · writes both</text>
+<path d="M278 120 L390 120" class="edI7"/>
+<text x="334" y="108" text-anchor="middle" class="ts">ticket = prompt</text>
+<path d="M590 120 L700 120" class="edI7"/>
+<text x="645" y="108" text-anchor="middle" class="ts">tools = reach</text>
+<path d="M490 164 L490 240" class="edI7"/>
+<rect x="330" y="240" width="320" height="66" rx="12" class="bxG"/>
+<text x="490" y="266" text-anchor="middle" class="ti">public comment · PR body · ticket reply</text>
+<text x="490" y="288" text-anchor="middle" class="ts">= ability to externally communicate → exfiltration path</text>
+<text x="36" y="336" class="ts">incidents: GitHub MCP toxic flow · May 2025 — Supabase MCP leak · Jul 2025 — GitLost / Agentic Workflows · Jul 2026</text>
+<text x="700" y="220" class="ti">defenses: read-only default ·</text>
+<text x="700" y="238" class="ti">writes "always ask" · author</text>
+<text x="700" y="256" class="ti">restrictions · single-repo tokens ·</text>
+<text x="700" y="274" class="ti">quarantine fetched text ·</text>
+<text x="700" y="292" class="ti">flow-level audit (mcp-scan)</text>
+</svg></div></div>
+<figcaption>Willison's lethal trifecta instantiated on the product↔engineering bridge: the ticket supplies untrusted content, the agent's tools supply private-data reach, and the same integrations supply the exfiltration channel. All three named incidents used this exact topology. The defenses column is enforced outside the model — E5's deterministic layer.</figcaption></figure>
+
+      <h2 id="s6"><span class="n">6</span>Provenance and the outward layer</h2>
+      <p>The upward direction of the link has a new passenger: <em>who — or what — did the work</em>. The measurement that should scare any audit-minded client comes from the multi-method agent census (Khosravani &amp; Mockus, arXiv:2606.24429, June 2026): across ~180 million repositories, multi-method detection identified 850,157 Claude Code commits in one snapshot, of which bot-account lookup — the signal most adoption studies rely on — recovered only 28,154, a 3.3% recall and a 30× gap; H3 drew the conclusion and it stands: <strong>if provenance is not stamped at write time, it cannot be reconstructed later, even by researchers trying hard.</strong> The stamping mechanics are pleasantly boring — git already has trailers (RFC-822-style lines that <span class="mono">git interpret-trailers</span> parses natively, the same footer position Conventional Commits formalizes) — but the convention is genuinely contested: <span class="mono">Co-authored-by:</span> makes the agent visible in forge UIs but implies co-authorship, which critics argue muddies CLA chains and personhood; the <span class="mono">Assisted-by:</span> camp keeps the human as sole author with the tool as annotation. The contest produced a real reversal: VS Code briefly flipped a default that added "Co-authored-by: Copilot" to commits (April 2026), drew immediate backlash — the trailer appeared even for users with Copilot disabled — and reverted to opt-in within weeks. Pick one convention per H3, write it into CLAUDE.md, enforce with a CI grep, and do not let the default of whatever tool arrives next pick it for you.</p>
+      <p>Above trailers, a trace layer is consolidating — point-in-time mid-2026, moving fast. <strong>Agent Trace</strong> (agent-trace.dev, v0.1.0 RFC, January 2026) is a Cursor-led, vendor-neutral spec — with Amp, Cognition, Cline and Cloudflare among the named collaborators — for JSON trace records linking code changes to the conversation and line ranges that produced them, storage-agnostic (files, git notes, a database), with explicit non-goals: it does not adjudicate ownership or code quality. GitHub shipped the same idea productized: every Copilot coding-agent commit carries a permanent link back to its full session logs (March 2026), and agent sessions can stream prompts, responses and tool calls to SIEM endpoints including Microsoft Purview (public preview, July 2026) — the session trace becoming a first-class, exportable SDLC artifact, which is exactly the tiered-artifact story I1 and H3 told: a durable decision-provenance spine with disposable payloads. For the EU-facing client, traj-compliance's clock applies — the AI Act's logging and record-keeping articles begin to bite in August 2026 — so "which sessions produced this release" is about to become a question with a legal deadline attached.</p>
+      <p>Last, the outward-facing corner of the link layer, kept honest: <strong>llms.txt</strong> (Jeremy Howard, September 2024) proposed a curated markdown index so LLMs can navigate a site's documentation. Mid-2026 status: publication is widespread because docs platforms (Mintlify, Fern, GitBook, Vercel) emit it by default — Anthropic's and Cursor's own docs carry one — but <em>consumption</em> has not materialized; Google's John Mueller: "FWIW no AI system currently uses llms.txt," and I1's Ahrefs study found 97% of published files received zero requests of any kind. The honest framing for a client: an llms.txt for your public developer docs is cheap and harmless, might help agent-fetched documentation at the margin (I5), and is not a discoverability strategy; inside the repo, AGENTS.md/CLAUDE.md and ARCHITECTURE.md do the real indexing work.</p>
+
+      <h2 id="s7"><span class="n">7</span>Week one at the client</h2>
+      <p>The linking audit runs alongside I5's disclosure audit and I6's retrieval audit — same week, same interviews, and the cheapest of the three to act on.</p>
+      <div class="io"><div class="box"><div class="lab">Do — in this order</div><ul><li><strong>1 · Baseline the link rate.</strong> One afternoon of git + tracker API: % of the last 500 commits/PRs carrying a valid issue key. Expect real gaps (LinearB: in 75% of teams, 31% of branches are unlinked); expect them to be worst on urgent work (Bird's severity inversion). This number is the E7 baseline the whole chapter improves.</li><li><strong>2 · Pick the key and ladder it.</strong> Branch pattern + trailer convention in CLAUDE.md; <span class="mono">prepare-commit-msg</span> auto-fill; then the deterministic rung — GitLab push rule, GitHub ruleset metadata restriction, or a CI grep — advisory first, enforced once the team stops noticing it.</li><li><strong>3 · Turn on what is free.</strong> Linear branch-name autolinks / Jira smart commits + development panel / GitHub custom autolinks for tracker keys. Ten minutes each; most estates have half of it off.</li><li><strong>4 · Establish masters.</strong> The §4 table as a one-hour workshop: for each artifact class, name the master, delete or link-ify the known twins (I3's two-truths pairs).</li><li><strong>5 · Bridge read-only.</strong> Connect the tracker MCP with reads only, writes "always ask," author restrictions on; record project defaults in AGENTS.md.</li></ul></div>
+      <div class="box"><div class="lab">Don't</div><ul><li>let anyone paste a PRD into the repo (or a spec into a ticket) — link it; excerpt-with-link where inline text is genuinely needed (§4)</li><li>trust "Closes PROJ-123" across GitHub repos — auto-close is same-repo only; multi-repo estates need the CI gate (§1)</li><li>let the agent act on tickets filed by arbitrary principals — GitLost is three weeks old at time of writing (§5)</li><li>cite the vendor integration claims (Copilot/Devin/Cursor §2) as measured outcomes — they are product documentation (E7)</li><li>hand-draw C4 Level 4 or hand-author status pages — both are derived artifacts (I1, §3–§4)</li><li>ship llms.txt as a "discoverability" line item — publish it if the docs platform emits it anyway, and expect nothing (§6)</li></ul></div></div>
+
+      <h2 id="s8"><span class="n">8</span>Where I7 sits in the framework</h2>
+      <table class="map"><tr><th>Topic</th><th>The connection</th></tr>
+      <tr><td>H1/H2</td><td>The ticket the agent executes is a handoff contract in tracker clothes; component E (context links) is §1's key chain, and EARS-shaped AC are the §2 fix for under-specified issues.</td></tr>
+      <tr><td>H3</td><td>The in-repo five-move ID scheme is the other half of this chapter; the % -linked metric extends H3's traceability coverage curve across the tool boundary.</td></tr>
+      <tr><td>H4</td><td>Agents guess instead of asking (HumanEvalComm) — which is why §2's ticket quality matters and why the return channel (H4) must flow through the same links.</td></tr>
+      <tr><td>I1</td><td>Masters vs copies is the taxonomy applied across tools; status pages and code-level diagrams are derived artifacts.</td></tr>
+      <tr><td>I3</td><td>Every copy across the boundary is a drift pair; "reference, don't copy" is the freshness policy at estate scale.</td></tr>
+      <tr><td>I5/I6</td><td>ARCHITECTURE.md is simultaneously the map layer (I5), a retrieval accelerant (I6) and §3's traverse entry point.</td></tr>
+      <tr><td>E2</td><td>Raw MCP payloads are context spend; excerpts-with-links are the E2-shaped diet for cross-tool content.</td></tr>
+      <tr><td>E5</td><td>The enforcement ladder is advisory-vs-deterministic applied to links: convention → hook → server rule + CI gate.</td></tr>
+      <tr><td>E6</td><td>Ticket assignment is autonomy granting; the tracker becomes a control surface and needs the same gates.</td></tr>
+      <tr><td>E7</td><td>% commits linked is the chapter's measurable; vendor integration claims stay in the vendor lane.</td></tr>
+      <tr><td>P2/P3</td><td>The PRD and decomposition artifacts live on the product plane; decomposition quality (P3) is what makes tickets executable prompts.</td></tr>
+      <tr><td>M7</td><td>Ticket text is untrusted input; the trifecta incidents are the security module's case studies for this chapter.</td></tr></table>
+
+      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <div class="callout pine"><div class="t">Three sentences</div><p>The product and engineering planes are two databases joined by one boring foreign key — the issue key in branches, commits, PRs and tests — and the default link rate is bad in the direction that hurts most (Bird 2009: the more severe the work, the less likely it is linked), so the key must be laddered from convention to hook to server-side rule and measured as % commits linked (E7). Agents raise the stakes in both directions: downward the ticket is now the prompt — and under-specified tickets measurably produce plausible-but-wrong patches — while upward, unstamped agent work is unrecoverable (the 30× census), so provenance trailers and session-trace links are stamped at write time or never. The bridge that makes this live — MCP into Jira/Linear/Notion — is paid in tokens and threatened through the very tickets it reads (three named incidents in fourteen months), so it ships read-only first, writes on always-ask, with one master per artifact and "reference, don't copy" keeping the two planes from forking the truth (our synthesis, flagged).</p></div>
+
+      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Bird, Bachmann, Aune, Duffy, Bernstein, Filkov, Devanbu — Fair and Balanced? Bias in Bug-Fix Datasets</div><div class="mt">ESEC/FSE 2009 · the classic missing-links measurement</div><p>Link rates from 8% (OpenOffice) to ~55% (NetBeans) — and the severity inversion: in Apache, 63% of minor bugs linked vs 15% of blockers. The empirical floor under this whole chapter.</p></div>
+      <div class="item"><div class="rt">Wang, Pradel, Liu — Are "Solved Issues" in SWE-bench Really Solved Correctly?</div><div class="mt">arXiv:2503.15223 · ICSE 2026 · independent</div><p>29.6% of plausible patches diverge from the real fix; 66.2% of suspicious cases trace to under-specified issue statements — the quantified case that ticket quality caps agent output.</p></div>
+      <div class="item"><div class="rt">Simon Brown — the C4 model · Starke &amp; Hruschka — arc42</div><div class="mt">c4model.com (CC BY 4.0) · arc42.org (CC BY-SA 4.0)</div><p>The picture language and the filing cabinet: "maps of your code… Google Maps" zoom levels, and the twelve-section template; Level 4 explicitly optional and generatable — the derived-diagram rule from the source.</p></div>
+      <div class="item"><div class="rt">matklad — ARCHITECTURE.md</div><div class="mt">matklad.github.io · February 6, 2021</div><p>The entry-point argument: occasional contributors vs core developers differ in knowledge of the physical architecture — one file closes most of the gap.</p></div>
+      <div class="item"><div class="rt">Atlassian · Linear · GitHub · GitLab — the link mechanics, from the docs</div><div class="mt">smart commits · magic words &amp; branch autolinks · closing keywords &amp; autolink references · push rules · point-in-time mid-2026</div><p>The §1 table's primary sources — including the two asymmetries that decide rollouts: Linear links from branch names, Jira needs the key in the commit message; GitHub auto-close is same-repo only.</p></div>
+      <div class="item"><div class="rt">GitHub Changelog — Copilot coding agent: Jira (preview → GA) · session-log links · SIEM/Purview streaming</div><div class="mt">github.blog/changelog · Mar 5 &amp; Jun 25, 2026 · Mar 20, 2026 · Jul 2, 2026 · vendor</div><p>The productized two-way link: assign a Jira ticket to the agent; every agent commit links to its session log; sessions stream to Purview. The ticket as input queue, the trace as exportable artifact.</p></div>
+      <div class="item"><div class="rt">Cognition — Devin ↔ Linear · Cursor — Linear integration</div><div class="mt">docs.devin.ai/integrations/linear · linear.app/changelog · August 21, 2025 · vendor</div><p>The other two ticket-as-prompt integrations: playbook labels and agent-session status flow; @Cursor assignment to background agents.</p></div>
+      <div class="item"><div class="rt">Simon Willison — The lethal trifecta for AI agents</div><div class="mt">simonwillison.net · June 16, 2025</div><p>Private data + untrusted content + external communication: "an attacker can easily trick it into accessing your private data and sending it to that attacker." The threat model §5's incidents instantiate.</p></div>
+      <div class="item"><div class="rt">Invariant Labs — GitHub MCP toxic agent flows (+ toxic-flow analysis, mcp-scan) · General Analysis — Supabase MCP leak · Noma Security — GitLost</div><div class="mt">invariantlabs.ai · May 26, 2025 · generalanalysis.com · July 2025 · via The Hacker News · July 7, 2026</div><p>Three incidents, one topology: the ticket/issue as injection channel, the agent's tools as reach, the public comment/PR as exfiltration. GitLost's guardrail bypass was the word "additionally."</p></div>
+      <div class="item"><div class="rt">Anthropic — Code execution with MCP · Advanced tool use</div><div class="mt">anthropic.com/engineering · November 4 &amp; 24, 2025 · vendor-measured</div><p>The token bill made vivid: 150,000 → 2,000 tokens ("a time and cost saving of 98.7%"); Tool Search cutting definitions 85% with accuracy up. Why the bridge needs an economy.</p></div>
+      <div class="item"><div class="rt">Khosravani &amp; Mockus — the multi-method agent census</div><div class="mt">arXiv:2606.24429 · June 2026</div><p>850,157 Claude Code commits found by multi-method detection; bot-account lookup recovers 3.3% — the 30× gap. Provenance is stamped at write time or lost.</p></div>
+      <div class="item"><div class="rt">Agent Trace — a vendor-neutral trace-record spec</div><div class="mt">agent-trace.dev · v0.1.0 RFC · January 2026 · Cursor-led, with Amp/Cognition/Cline/Cloudflare</div><p>JSON records linking changes to the conversations and line ranges that produced them; storage-agnostic; explicitly not an ownership or quality adjudicator. The trailer's grown-up sibling.</p></div>
+      <div class="item"><div class="rt">Jeremy Howard — llms.txt · Ahrefs — the adoption study</div><div class="mt">llmstxt.org · September 2024 · ahrefs.com · May 2026</div><p>The proposal and the reality check: 97% of published files got zero requests of any kind; "FWIW no AI system currently uses llms.txt" (Mueller). Publish if it is free; expect nothing.</p></div>
+      <div class="item"><div class="rt">Report 3 — the information-architecture research notes (this workbook)</div><div class="mt">module M4 research notes · plane C</div><p>The linking plane this chapter expands; the master-per-artifact table and "reference, don't copy" are this workbook's synthesis, flagged as such.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (I7-linking-product-engineering-deepdive.html). Its natural neighbours in the workbook are H3 (the in-repo ID scheme this chapter extends across the tool boundary), H1/H2 (what makes a ticket an executable contract), I1/I3 (masters, copies and drift), I5/I6 (the map and the traverse), E5 (the enforcement ladder), E6/E7 (assignment as autonomy; % linked as the metric) and M7 (ticket text as untrusted input). Platform mechanics, MCP rosters and the incident list are point-in-time mid-2026 — re-verify before any client meeting. With I7, module M4's deep-dive set is complete; the programme continues with M5: brownfield bootstrap.</p>
+</main>
+</div>
+</body>
+</html>

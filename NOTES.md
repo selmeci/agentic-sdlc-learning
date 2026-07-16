@@ -73,6 +73,41 @@ Use this for open questions, session hand-off notes, and things to check before 
   = 1.1% of the few fetches. NOT used: obra/superpowers star counts (unverifiable),
   aider 10x/10x/50x edge multipliers (secondary only).
 
+- Verified 2026-07-16 for I7 (primary sources; tool facts point-in-time): Bird et al. ESEC/FSE
+  2009 Table 1 read from the PDF (Eclipse 41.5%, Apache 49.6%, NetBeans 54.9%, OpenOffice 8.1%,
+  GNOME 38.9%, AspectJ 30.6%; verbatim "In the apache project, 63% of the fixed minor bugs are
+  linked, but only 15% of blocker bugs are linked"; severity trend = manually-verified projects
+  only, NOT AspectJ/Eclipse_Z); Wang/Pradel/Liu arXiv:2503.15223 (ICSE 2026; 29.6% / 28.6%-of-77
+  / 11.0% / 7.8% / 66.2%; inflation = 6.4 pts NOT 6.2; tool = PatchDiff); C4 "maps of your code…
+  Google Maps" verbatim + L4 "very much an optional level of detail" + "most IDEs can generate
+  this level of detail on demand" (c4model.com, CC BY 4.0; origin years NOT stated on-site);
+  arc42 = CC BY-SA 4.0 (not CC BY), 12 sections; Structurizr mid-transition (cloud EOL →
+  self-hosted open-core) — re-verify; Jira smart commits need key+command IN THE COMMIT MESSAGE
+  (branch name alone does nothing) vs Linear branch-name autolink (magic words in PR title/desc,
+  NOT comments); GitHub auto-close same-repo only + autolinks paid plans; GitLab push-rule regex
+  Premium/Ultimate; GitHub ruleset metadata restrictions (describe as GA, no over-precise plan
+  claims); matklad verbatim "the biggest difference between an occasional contributor and a core
+  developer lies in the knowledge about the physical architecture of the project"; Willison
+  trifecta verbatims (Jun 16 2025); Invariant Labs May 26 2025 "toxic agent flows"; General
+  Analysis Supabase Jul 2025 (service_role/RLS mechanism; supabase.com/blog/defense-in-depth-mcp);
+  Noma GitLost ~Jul 7 2026 ("additionally" bypass confirmed; "VP of Sales" + Agentic-Workflows
+  preview date UNCORROBORATED — not used); MCP-Universe arXiv:2508.14704 §4.5 (7 servers/94
+  tools: Claude-4.0-Sonnet Location Navigation 22.22%→11.11%, GPT-4.1 Browser Automation
+  23.08%→15.38%) — replaces the UNPINNABLE "2–3+ MCP servers reduce accuracy" claim; Copilot↔Jira
+  preview 2026-03-05 / GA 2026-06-25; Copilot commit→session-log Mar 20 2026 + session streaming
+  to SIEM/Purview preview Jul 2 2026; Agent Trace = CURSOR-led v0.1.0 RFC Jan 2026 (partners Amp/
+  Cognition/Cline/Cloudflare); Devin↔Linear playbook labels (docs.devin.ai); Linear changelog
+  2025-08-21 (Cursor agents; "up to eight" = general Cursor capability); LinearB verbatim "In 75%
+  of teams, 31% of branches are unlinked" (NOT a metric named "Branches Linked to Issues");
+  Mueller "FWIW no AI system currently uses llms.txt" (Bluesky; the Illyes Search-Central-Live
+  remark has NO primary transcript — report unquoted); Radar Lightweight ADRs verbatim "a record
+  that remains in sync with the code itself" (Trial Nov 2016 → Adopt Nov 2017; NO "Architecture
+  as code" entry found — don't assert one); census arXiv:2606.24429 = "Detecting AI Coding Agents
+  in Open Source…" Khosravani & Mockus — NOT "AIDev" (AIDev = arXiv:2602.09185, the separate PR
+  census compared against); 850,157 one-snapshot (3.3%/30× base) vs 886,122 cross-project total.
+  NOT citeable: "~42% of GitHub issues correctly linked" (unpinnable); "Jira has its own version
+  of reality" (not found); Conventional-Commits/interpret-trailers verbatims confirmed.
+
 ## Next scoped initiative — DARK MODE (evaluated in v1.16, deliberately deferred)
 Research backs dark mode as an **opt-in** (light stays default for a reading-heavy artifact;
 NN/g + a 2025 tablet study find no fatigue win, and extended-reading legibility slightly favours
@@ -100,6 +135,17 @@ not because it lacks merit. When picking it up, do it token-first — do NOT `fi
    `scripts/validate.py`. Screenshot both themes at desktop + mobile before shipping.
 
 ## Session hand-off
+- 2026-07-16 (I7 session): **I7 deep dive added (v1.38) — M4 COMPLETE (I1–I7).** Outline → 3
+  teammates (i7jul16-facts-links / i7jul16-facts-mcp / i7jul16-scout) → i7jul16-spotverify on
+  discovery finds (7th session in a row it paid: GitLost "VP of Sales" + preview-date dropped
+  as uncorroborated; LinearB re-pinned to verbatim; Bird "every project" softened; "Jira has
+  its own version of reality" NOT FOUND — excluded; Wang inflation 6.4 not 6.2). Fact fixes
+  elsewhere: H3 "AIDev census" → "multi-method agent census" in both copies (AIDev
+  arXiv:2602.09185 is the separate PR census that arXiv:2606.24429 compares against; verified
+  the abstract myself), 30× base tightened to 850,157 one-snapshot; CONTENT-MAP companion
+  count fixed 27→29 (I6 session had missed it). SVG lesson AGAIN: headless-chrome screenshot
+  caught fig-1 label clipping (left edge + text under a box) — fixed in all three copies
+  before commit. Full verified-facts list above. Next: M6 D2/D5, M5 B-topics, or T2.
 - 2026-07-16 (I5 session): **I5 deep dive added (v1.30) — M4 at 5/7.** Outline → 3 teammates
   (2 fact-verify + 1 discovery, session-unique names) → spot-verify round on discovery finds
   (catches: matklad "bottleneck" line was a paraphrase — verbatim is "2x more time to write a

@@ -3,6 +3,43 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.38 · 2026-07-16
+
+**NEW DEEP DIVE I7 — Linking Product ↔ Engineering: IDs, Maps & the MCP Bridge. M4 COMPLETE.**
+Seventh and final M4 companion (`deep-dives/I7-linking-product-engineering-deepdive.html` +
+`#i7-deepdive` overlay), built on the standard three-teammate fact pass (i7jul16-facts-links /
+i7jul16-facts-mcp / i7jul16-scout) + the i7jul16-spotverify round. Content spine: the two planes
+joined by one boring foreign key — the unified ID scheme with per-platform mechanics (Linear
+auto-links from branch names; Jira smart commits need key + command in the commit message;
+GitHub auto-close is same-repo only; GitLab push-rule regex) and an enforcement ladder from
+CLAUDE.md convention through `prepare-commit-msg`/`commit-msg` to server-side rulesets + CI grep
+(E5); the missing-links evidence (Bird et al. ESEC/FSE 2009 — 8–55% of fixed bugs linked per
+project and the severity inversion, 63% of minor vs 15% of blocker bugs linked in Apache;
+LinearB verbatim "In 75% of teams, 31% of branches are unlinked"); the ticket-as-prompt pattern
+(Copilot↔Jira preview Mar 5 → GA Jun 25 2026, Devin↔Linear playbook labels, Cursor↔Linear —
+all vendor-flagged) with its independent counterweight (Wang/Pradel/Liu arXiv:2503.15223,
+ICSE 2026: 29.6% of plausible SWE-bench patches diverge; 66.2% of suspicious ones trace to
+under-specified issue statements); the system map (C4 verbatims incl. the generate-not-draw
+L4 rule, arc42 12 sections CC BY-SA, matklad ARCHITECTURE.md, ThoughtWorks ADR-in-source-control
+verbatim); one master per artifact + "reference, don't copy" with the master table (our
+synthesis, flagged); the MCP bridge priced (Anthropic 150k→2k / "98.7%" vendor verbatim;
+MCP-Universe distractor-server evidence replacing the unpinnable "2–3+ servers" claim) and
+threat-modeled (Willison lethal-trifecta verbatims + three incidents: Invariant Labs GitHub MCP
+toxic flows May 2025, General Analysis / Supabase MCP Jul 2025, Noma Security GitLost Jul 2026);
+provenance (multi-method census 850,157/3.3%/30×, Agent Trace v0.1.0 RFC Jan 2026 Cursor-led,
+Copilot commit→session-log links Mar 2026 + SIEM/Purview streaming preview Jul 2026, the VS Code
+co-author-trailer revert per The Register May 2026); llms.txt honestly labeled (Mueller "FWIW no
+AI system currently uses llms.txt", Ahrefs 97%). Spot-verify (7th session in a row it paid):
+GitLost "VP of Sales" detail + Agentic-Workflows preview date dropped as uncorroborated; LinearB
+stat re-pinned to its verbatim (was "a third of git work"); Bird "every project" softened to the
+manually-verified projects; Wang inflation figure is 6.4 pts not 6.2 (not used); "Jira has its
+own version of reality" NOT FOUND — excluded. **Fact fix elsewhere:** H3's "AIDev census" naming
+corrected in both copies — arXiv:2606.24429 is the *multi-method census* (Khosravani & Mockus);
+AIDev (arXiv:2602.09185) is the separate PR census it compares against; the 30× base tightened
+to 850,157 one-snapshot commits (886,122 = cross-project total, now labeled). Topic I7
+know/concepts/src/checks rewritten with verified figures; CONTENT-MAP companion count fixed
+(27→29; the I6 session had missed it).
+
 ## v1.37 · 2026-07-16
 
 **NEW DEEP DIVE I6 — Retrieval: Agentic Search, Embedding Indexes & Knowledge Graphs.** Sixth M4

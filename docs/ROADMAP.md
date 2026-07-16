@@ -8,8 +8,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 - **Workbook**: 8 modules, 55 topics, 6 research reports, SDLC + Domain map sections. (v1.33 —
   M1 grew to E1–E11 in the July 2026 source-evaluation round: E9 harness tuning, E10 background
   agents, E11 formal methods, each with a deep-dive companion.)
-- **Deep-dive companions (27)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I5** (first five of M4).
+- **Deep-dive companions (29)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -130,7 +130,21 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     arXiv:2603.27277 (83% vs 92% at 10× fewer tokens), Vec2Text embedding inversion (92%),
     GitHub Blackbird, Augment quantized vectors, Cody retreat + consumer sunset, GraphRAG
     anti-miscitation callout. The L0–L3 escalation ladder + twenty-query bench flagged as
-    our synthesis. Next: **I7** (linking) closes M4.
+    our synthesis.
+  - ~~**I7** `ia-linking` — linking product ↔ engineering~~ — **done (v1.38)**, completing
+    M4. Three-teammate fact pass + spot-verify round (7th session in a row it paid: GitLost
+    "VP of Sales" + preview-date details dropped; LinearB stat re-pinned verbatim "In 75% of
+    teams, 31% of branches are unlinked"; a "Jira has its own version of reality" quote NOT
+    FOUND → excluded). Load-bearing evidence: Bird et al. ESEC/FSE 2009 (8–55% linked, the
+    severity inversion 63%-minor vs 15%-blocker), Wang/Pradel/Liu arXiv:2503.15223 ICSE 2026
+    (29.6% plausible-patch divergence; 66.2% traced to under-specified issues), the
+    ticket-as-prompt roster (Copilot↔Jira GA Jun 2026, Devin↔Linear, Cursor↔Linear — vendor),
+    lethal trifecta + three incidents (GitHub MCP May 2025, Supabase Jul 2025, GitLost
+    Jul 2026), MCP-Universe distractor evidence (replaced the unpinnable "2–3+ servers"
+    claim), Agent Trace RFC + Copilot session-log links + Purview streaming, multi-method
+    census 3.3%/30× (fact fix applied to H3: it is NOT "the AIDev census" — AIDev is the
+    separate PR census it compares against). Enforcement ladder + master-per-artifact table
+    flagged as our synthesis. **M4 complete.**
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
 
