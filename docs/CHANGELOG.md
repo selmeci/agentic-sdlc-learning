@@ -3,6 +3,58 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.27 · 2026-07-16
+
+Integrated the **session-persistence research** (internal artifact, Jul 2026:
+*Recording, Tracking, and Preserving AI Agent Work as First-Class SDLC Artifacts*,
+https://claude.ai/artifacts/latest/019f69a3-34f6-7731-9b61-d64eb733f782) as targeted
+summaries across five topics — not the whole report; each placement carries a `src`
+link back to the full artifact.
+
+- **`ia-taxonomy` (I1)** — the agent session/trajectory as the newest artifact to
+  classify, and the honest answer is *tiered*, not one bucket: the decision-provenance
+  spine (task id, agent+model+version+config, tool calls with outcomes, approvals,
+  artifact digests, PR links) is durable/immutable; full prompts, retrieval payloads
+  and thinking blocks are disposable on a 7–30-day incident-window TTL, then
+  metadata+hash; link-don't-inline (durable URL/ID from commit → session). New check
+  question on where a trace falls in the triad (key teaching point: nothing in it is
+  *derived* — a trace cannot be regenerated, which is why the spine is worth keeping).
+- **`hand-traceability` (H3)** — the chain gains the session link: the vendor-neutral
+  **Agent Trace** spec (agent-trace.dev — Cognition with Cursor, Cloudflare, Vercel,
+  Google Jules, Amp, OpenCode; one contract: attribute each change to conversation +
+  line ranges via a durable per-trajectory URL); GitHub Copilot commit→session-log
+  linking (Mar 2026) + enterprise session streaming to SIEM/Purview (preview Jul 2026);
+  the **task-centric record** (spec/ticket → task → session → code/PR → review); the
+  layered provenance stack for regulated work (W3C PROV/PROV-AGENT for process ·
+  SLSA/in-toto for artifact · CycloneDX ML-BOM / SPDX 3.0 AI Profile for model/data
+  lineage). Flagged point-in-time (Dec 2025–Jul 2026), adoption nascent, partly
+  vendor-driven.
+- **`ia-lifecycle` (I2)** — traces extend the ADR practice down to implementation-level
+  decisions ADRs never captured (Lore, arXiv:2603.15566), but are **decision
+  provenance, not rationale**: CoT-faithfulness data pinned (Anthropic 2025 — an
+  influential hint surfaces in stated reasoning only 25% of the time for Claude 3.7
+  Sonnet, 39% for DeepSeek R1; Korbak et al., arXiv:2507.11473 — monitorability is a
+  fragile opportunity). Promoted "why" fields stay human-gated: agent drafts from the
+  trace, human reviews before durable — agent-generated ADRs capture the what but can
+  fabricate the why.
+- **`sec-surfaces` (S7)** — the trace store as a new secrets surface: verbatim prompts,
+  tool results and thinking blocks quietly make it a regulated data store and a
+  secondary leakage path (arXiv:2606.30373: 132,853 Hugging Face apps — 14.15% — using
+  253,755 secrets; 936 apps logging secrets at runtime). Mitigation: PII/secret
+  redaction at the collector *before* storage, production-grade access control, tiered
+  retention so full payloads expire.
+- **`traj-compliance` (T4)** — research head-start for the backlog topic: EU AI Act
+  Art. 12 (automatic event logging over the system lifetime), Arts. 19/26(6)
+  (≥6-month retention), full high-risk application 2 Aug 2026, record-keeping fines up
+  to €15M or 3% of worldwide turnover (Art. 99); off-the-shelf LLM APIs are not
+  Art.-12-compliant by default; harmonised standards still drafts (prEN 18229-1,
+  ISO/IEC DIS 24970; ISO/IEC 42001 as the surrounding AIMS).
+
+Deliberately **not** imported: vendor observability comparisons (churn), cost
+multipliers (practitioner estimates, unaudited), Cognition's hedged SWE-Bench/cache
+claims, and the full W3C-PROV/AIBOM survey — the artifact link covers them. Vendor
+claims kept separated from independent evidence per house style.
+
 ## v1.26 · 2026-07-16
 
 Added the **I3 deep dive — Consistency, Drift & Documentation Debt** (topic
