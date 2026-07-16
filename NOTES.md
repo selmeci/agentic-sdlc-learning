@@ -33,6 +33,17 @@ Use this for open questions, session hand-off notes, and things to check before 
 - I5 tension to resolve in its session: workbook says CLAUDE.md "under ~300 lines"; official
   Claude Code docs say "Target under 200 lines. Longer files still load in full but may
   reduce adherence." Reconcile + attribute when I5's deep dive is written.
+- Verified 2026-07-16 for I3 (primary sources; tool facts point-in-time): Treude & Baltes
+  arXiv:2606.09090 (all numbers digit-checked), Tan arXiv:2212.01479 (28.9% = 265/918,
+  4.7yr), DocPrism arXiv:2511.00215, Lulla arXiv:2601.20404 (~28.64%/~16.58%), Galster
+  AIware '26 (Zenodo 10.5281/zenodo.19375880), DORA 2022 docs-quality lifts + DORA 2025
+  "AI-accessible internal data" (official capability name), SWE-at-Google ch.10 quotes,
+  Doc Detective v4.30.0 (active), Schemathesis/Specmatic (active), lychee (active),
+  HCP Terraform Health Assessments. Graveyard status to re-verify before client meetings:
+  Dredd archived, Optic archived 2026-01-12, driftctl maintenance since 2023-06,
+  DeepDocs "deprecated", Swimm pivoted to agentic-modernization services. Fluri WCRE 2007
+  97% figure: consistent across independent citations but primary PDF paywalled — not
+  eyeballed. McMaster "Impressive, But Wrong": year not determinable from page.
 - Verified 2026-07-15 for D1 (primary sources): Krebs slop audit numbers, NN/g State of UX 2026
   exact quote, Design2Code 49%/64% (GPT-4V-specific), DTCG 2025.10 status (CG deliverable, not
   W3C REC), CodeA11y CHI 2025, Code Connect frameworks, Frost quotes ("natural design system
@@ -65,6 +76,20 @@ not because it lacks merit. When picking it up, do it token-first — do NOT `fi
    `scripts/validate.py`. Screenshot both themes at desktop + mobile before shipping.
 
 ## Session hand-off
+- 2026-07-16 (I3 session): **I3 deep dive added (v1.26).** Outline → 3 teammates (2
+  fact-verify + 1 discovery) → spot-verification on discovery sources — **4th catch**:
+  scout's context-file population stats were materially wrong (real: Galster et al.
+  AIware '26, 4,768 files across 2,586 of 2,853 repos, CLAUDE.md 34.4% > AGENTS.md 31.6%);
+  also wolfejam post re-dated Jul **2026**, DocPrism 98%→14% is a *flag rate*, McMaster
+  year undeterminable (left unstated). Fact fixes in the topic: Tan 28.9%/4.7yr pinned to
+  **arXiv:2212.01479** (265/918; EMSE 2023 restates 28.9% only); DORA "2.4×" folklore
+  UNPINNABLE → excluded (2022 amplification framing + published lifts used); Rios TD study
+  = Rios/Mendonça-Neto/Spínola (not Seaman). Centerpiece source: Treude & Baltes
+  arXiv:2606.09090 (DOCER on CLAUDE.md/AGENTS.md: stale refs in 23.0% of 356 repos;
+  "without any visible error"; two-snapshot CI grep). Freshness policy flagged as
+  Report-3 synthesis. **Teammate-name collision gotcha**: SendMessage to "spotverify"
+  resumed the *I1-session* agent of the same name — use session-unique agent names.
+  Validator green.
 - 2026-07-15 (I1 session): **I1 deep dive added (v1.24) — M4 opened.** Outline → 3 teammates
   (2 fact-verify + 1 discovery) → spot-verification on discovery sources (caught a fabricated
   ".claudeignore"; two path/mechanism corrections). Load-bearing: the I1 src entry

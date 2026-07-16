@@ -3,6 +3,50 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.26 · 2026-07-16
+
+Added the **I3 deep dive — Consistency, Drift & Documentation Debt** (topic
+`ia-consistency`): embedded workbook overlay + standalone
+`deep-dives/I3-consistency-drift-deepdive.html`, written after the three-teammate fact
+pass (2× verification + 1 discovery) **plus the spot-verification round on discovered
+sources** — which earned its keep a fourth time: the scout had materially wrong
+context-file population statistics (corrected to the primary paper: 4,768 context files
+across 2,586 of 2,853 repos, 90.6%, CLAUDE.md leading at 34.4% — not 9,470/4,463 with
+AGENTS.md leading); a practitioner post was re-dated July **2026** (not 2025); DocPrism
+98%→14% relabelled a *flag rate*, not a false-positive rate; the McMaster post year
+found undeterminable and left unstated.
+
+Fact corrections applied to the topic itself: the 28.9%/4.7-year stale-references
+figures pinned to **arXiv:2212.01479 (Dec 2022)**, denominator 265/918 analyzable
+projects (the EMSE 2023 paper restates 28.9% but the 4.7-year average is the 2022
+study); the DORA "2.4× more likely" folklore multiplier was unpinnable in any primary
+source and is excluded — the 2022 amplification framing and published per-capability
+lifts used instead; the 2018 TD tertiary study credited to Rios, Mendonça-Neto &
+Spínola (not Seaman).
+
+New load-bearing sources: **Treude & Baltes, "Context Rot in AI-Assisted Software
+Development" (arXiv:2606.09090)** — DOCER applied unmodified to CLAUDE.md/AGENTS.md/
+copilot-instructions: stale code-element references in **23.0% of 356 repos** (95% CI
+18.8–27.2%), "degrade AI assistance without any visible error", the two-snapshot git
+grep as a CI check; Galster et al. (AIware 2026, context-file population) + Lulla et
+al. (JAWs 2026 @ ICSE: AGENTS.md presence ↔ ~29% lower median runtime, ~17% fewer
+output tokens); DocPrism (arXiv:2511.00215 — naive LLM drift review flags 98% of docs;
+filtered 14%, accuracy 94%); DORA 2022 documentation-quality capability (amplification
++ published lifts) and DORA 2025 ("AI doesn't fix a team; it amplifies what's already
+there"; "AI-accessible internal data" capability); SWE-at-Google ch.10 (freshness
+metadata + 3-month review reminders); Write the Docs docs-as-code; Silva's Docs as
+Tests + Doc Detective (active, v4.30.0); Schemathesis (ICSE 2022 paper) and Specmatic —
+with the tool graveyard flagged point-in-time (Dredd archived, Optic archived Jan 2026
+post-Atlassian, driftctl maintenance mode, DeepDocs deprecated, Swimm pivoted);
+Fluri/Würsch/Gall WCRE 2007 (97% same-revision comment changes); Chroma context rot
+(the in-window sense, disambiguated from the new repo-artifact sense).
+
+The per-category **freshness policy** (owner + last-reviewed + interval on durables;
+label + timestamp + expiry on AI-generated docs; zero-stale-references contract on
+agent config; expiry = suspect, not auto-delete) is flagged as **Report-3 synthesis**.
+Topic `know`/`concepts`/`checks` enriched; the I3 `src` list now opens the overlay and
+carries the corrected Tan citation + Treude & Baltes. Validator green.
+
 ## v1.25 · 2026-07-15
 
 Added the **I2 deep dive — Lifecycle & Write-Permissions as Governance** (topic

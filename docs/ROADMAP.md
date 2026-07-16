@@ -6,8 +6,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 ## Done
 
 - **Workbook**: 8 modules, 52 topics, 6 research reports, SDLC + Domain map sections. (v1.15)
-- **Deep-dive companions (21)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I2** (first two of M4).
+- **Deep-dive companions (22)**: SDLC Foundations, **E1–E8** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I3** (first three of M4).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -76,7 +76,20 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     Replit DB incident, Copilot coding-agent guardrails, restrict-file-paths rulesets,
     GitLab CODEOWNERS porosity, Rovo/Atlassian MCP identity model, Lore arXiv:2603.15566).
     The write-permission matrix + ADR code-seam grep test flagged as our synthesis.
-    Next: **I4** (memory — the fourth write-mode I2 opened) or **I3** (drift).
+  - ~~**I3** `ia-consistency` — consistency, drift & documentation debt~~ — **done (v1.26)**,
+    with the three-teammate fact pass + spot-verify round (4th catch: scout's context-file
+    population stats materially wrong — corrected to Galster et al.'s 4,768 files /
+    2,586-of-2,853 repos, CLAUDE.md leading 34.4%; Tan 28.9%/4.7yr pinned to
+    arXiv:2212.01479, 265/918; DORA "2.4×" folklore excluded as unpinnable; DocPrism
+    98%→14% relabelled flag rate). Load-bearing new sources: Treude & Baltes
+    arXiv:2606.09090 (context rot in agent config files, 23.0% of repos, two-snapshot CI
+    grep), Lulla JAWs 2026 (AGENTS.md ↔ ~29% lower runtime), DocPrism, DORA 2022 docs
+    quality + DORA 2025 AI-accessible internal data, SWE-at-Google ch.10 freshness,
+    Docs as Tests / Doc Detective, Schemathesis/Specmatic + the tool graveyard
+    (Dredd/Optic/driftctl/DeepDocs/Swimm-pivot) flagged point-in-time. The per-category
+    freshness policy flagged as our synthesis.
+    Next: **I4** (memory — the fourth write-mode I2 opened) or **I5** (progressive
+    disclosure; resolve the ~300-vs-200-line CLAUDE.md tension noted in NOTES.md).
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
 

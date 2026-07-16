@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I3 Deep Dive — Consistency, Drift &amp; Documentation Debt: Docs-as-Tests for the Agentic Era</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edI3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahI3a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">I3 · DEEP DIVE</span>
+    <h1>Consistency, Drift &amp; Documentation Debt: Docs-as-Tests for the Agentic Era</h1>
+    <span class="bc">companion to module M4 · Information architecture</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · The pre-AI baseline</a>
+  <a href="#s2"><b>2</b> · What agents change</a>
+  <a href="#s3"><b>3</b> · Docs-as-code</a>
+  <a href="#s4"><b>4</b> · Docs-as-tests</a>
+  <a href="#s5"><b>5</b> · The freshness policy</a>
+  <a href="#s6"><b>6</b> · Debt triage</a>
+  <a href="#s7"><b>7</b> · Week one at the client</a>
+  <a href="#s8"><b>8</b> · Framework map</a>
+  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> · Further reading</a>
+</nav>
+<main>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">Every chapter of M4 so far has assumed something this one finally confronts: that the artifacts agents read are <em>true</em>. I1 classified them, I2 decided who may write them — I3 is about what happens between writes, when the codebase moves and the prose does not. Documentation drift is an old disease, measured long before AI sped anything up. What agentic development changes is not the drift itself but its consequence: documentation used to be output — read by humans who could squint at a stale README and discount it. Now it is <strong>input</strong> — loaded into an agent's context at the start of every session and acted on without skepticism. A practitioner put the asymmetry in one line in July 2026: "A human reads a stale README and thinks 'hmm, that looks old.' An agent reads your AGENTS.md and acts on it." The academic version arrived a month earlier, with data: stale descriptions "can degrade AI assistance without any visible error" (Treude &amp; Baltes, June 2026). No exception is thrown; the agent simply builds on a fact that stopped being true — and the code it generates makes the prose one change further behind. The countermeasure is E5's move applied to documentation: stop asking people (or agents) to <em>remember</em> to update the prose, and make consistency a <strong>failing build</strong> — docs-as-tests, the deterministic gate on the one artifact class everyone still governs by good intentions.</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the pre-AI baseline: how much drift ordinary repos carry, measured (§1)</li><li>what agents change — docs as context, "context rot" in both senses, and the config-file evidence (§2)</li><li>docs-as-code: the substrate that makes docs governable at all (§3)</li><li>the docs-as-tests ladder: five deterministic checks, from doctests to contract tests (§4)</li><li>a freshness policy for the AI era — owners, timestamps, expiry, and what to measure from git alone (§5)</li><li>documentation debt triaged like technical debt, not confessed like sin (§6)</li><li>a week-one drift audit for a brownfield client (§7)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>I1 — the taxonomy: drift is what the derived discipline exists to prevent</li><li>I2 — write-permissions: who is allowed to fix what §4's checks catch</li><li>I5 — CLAUDE.md gardening and progressive disclosure, in depth</li><li>H3 — traceability: drift at the link level, suspect-flags on artifacts</li><li>E5 — the advisory/deterministic distinction this chapter keeps applying</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>Drift predates AI — the measured baseline</h2>
+      <p>It would be convenient to blame agents for documentation rot, but the baseline was measured before they arrived and it is bad. Tan, Wagner and Treude built DOCER, a detector for <em>outdated code-element references</em> — a method or file named in the documentation that has since been deleted from every source file — and ran it across the most popular GitHub projects ("Detecting Outdated Code Element References in Software Repository Documentation", arXiv:2212.01479, December 2022; journal version in <em>Empirical Software Engineering</em>, 2023). The result: <strong>28.9% of projects (265 of 918 analyzable) contained at least one outdated document</strong>, and the stale references had been wrong for <strong>4.7 years on average</strong>. These are the industry's flagship repositories, and the definition is conservative — it counts only references that provably point at nothing, not descriptions that are merely misleading.</p>
+      <p>The mechanism behind that number is older still. Fluri, Würsch and Gall asked "Do Code and Comments Co-Evolve?" (WCRE 2007) across ArgoUML, Azureus and Eclipse's JDT Core, and found that 97% of comment changes happen in the same revision as the associated code change — but newly added code, despite its growth rate, barely gets commented in the first place. Translation: prose that is going to be maintained gets maintained <em>with the change or never</em>. There is no later. Every process that schedules documentation updates "for after the release" is scheduling them for the 4.7-year bucket.</p>
+      <p>The phenomenon has a name in the technical-debt literature — <strong>documentation debt</strong> is a recognized debt type in the standard taxonomies (Alves et al.'s technical-debt ontology; Rios, Mendonça-Neto &amp; Spínola's 2018 tertiary study in <em>Information and Software Technology</em>, which catalogues it among fifteen types and maps it to SDLC phases). Naming matters here for one reason: it moves stale docs from the moral register ("we should be better") into the engineering register ("a liability with a principal, an interest rate, and repayment options" — §6).</p>
+      <p>And the stakes were quantified before AI raised them. DORA's 2022 State of DevOps report made <em>quality documentation</em> a headline capability and found it does not merely add value — it <strong>multiplies</strong> the value of everything else: "In the presence of quality documentation, technical practices help elevate an organization's performance… This interaction and impact applies to every single technical capability we studied in 2022." The published per-capability lifts for teams with above-average documentation are startling — trunk-based development's contribution to organizational performance amplified 1525%, continuous integration 750%, continuous delivery 656% (dora.dev, documentation-quality capability page). A widely-circulated "2.4× more likely" figure floats around secondary blogs; we could not pin it to any primary DORA text, so it does not appear in this workbook — the amplification framing and the published lift percentages are the citable versions.</p>
+
+      <h2 id="s2"><span class="n">2</span>What agentic development changes</h2>
+      <p>Three things change when agents enter the loop, and together they turn a chronic condition into an acute one.</p>
+      <h3>Docs became input</h3>
+      <p>The context files that steer coding agents — CLAUDE.md, AGENTS.md, copilot-instructions.md, .cursorrules — are documentation that is <em>consumed mechanically</em>. The population is no longer marginal: an exploratory study of agentically-engineered repositories (Galster, Mohsenimofidi, Lulla, Abubakar, Treude &amp; Baltes, AIware 2026) identified 4,768 context files across 2,586 of the 2,853 repositories in its sample — 90.6% — with CLAUDE.md the most common (34.4%), then AGENTS.md (31.6%) and copilot-instructions.md (29.2%), and found the files substantive rather than mere pointers. Freshness in these files is not cosmetic: a companion study (Lulla et al., JAWs 2026 @ ICSE, arXiv:2601.20404) associates the mere presence of AGENTS.md with roughly 29% lower median agent runtime and 17% lower output-token consumption at comparable task completion, across 10 repos and 124 PRs — the file is doing real work every session, which is exactly why it must not lie.</p>
+      <p>And it does lie, at a measurable rate. Treude &amp; Baltes ("Context Rot in AI-Assisted Software Development", arXiv:2606.09090, June 2026) took DOCER — the same detector from §1's baseline, unmodified — and pointed it at agent config files: <strong>23.0% of repositories in a 356-repo representative sample carried at least one stale code-element reference in their agent configuration</strong> (95% CI 18.8–27.2%; 230 stale references across 612 config files; the authors read it as "a feasibility signal rather than a precise prevalence" after manual inspection rated 64% of flagged cases genuine). The examples are mundane and deadly: a CLAUDE.md pointing at a function renamed away in a UI rewrite; an AGENTS.md referencing a type-definition path that no longer exists; a copilot-instructions file mandating a library the build had already dropped. Their definition is the one this chapter runs on: <em>"We call this context rot: the gradual divergence between what a configuration file says about a codebase, its tools, its architecture, or its conventions, and what actually holds."</em></p>
+      <div class="callout"><div class="t">"Context rot" — two senses, one lesson</div><p>The term originates with Chroma's July 2025 report ("Context Rot: How Increasing Input Tokens Impacts LLM Performance", Hong, Troynikov &amp; Huber — the study behind I1's context-hygiene rule): across 18 models, "model performance varies significantly as input length changes, even on simple tasks" — degradation <em>inside the context window</em>. Treude &amp; Baltes explicitly extend the term to <em>repository-versioned artifacts</em>: the file itself rotting relative to the codebase. The two compound: a bloated config file degrades attention (Chroma's sense) <em>and</em> a stale one injects falsehoods (the new sense). Both argue for the same discipline — short, load-bearing, verified context files.</p></div>
+      <p>The loop this closes is the reason I3 outranks its pre-AI ancestor in urgency. Stale doc → wrong context → wrong code, merged at agent speed → codebase and prose drift further apart → the next session loads a slightly more wrong context. Nothing errors. The practitioner framing from §0 completes it: the agent "runs the build command you renamed three sprints ago, skips the guardrail you added last week, follows the convention you already abandoned. Confidently." For an agent, <em>a stale cache is worse than an empty one</em> — absence triggers exploration, staleness triggers confident wrongness.</p>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 330" role="img" aria-label="The drift loop: durable docs and agent config files are loaded as context every session, the agent generates changes at machine speed, the codebase moves on, and nobody updates the prose — which is loaded again, slightly more wrong, next session. A docs-as-tests gate in CI cuts the loop by making a stale reference a failing build.">
+<defs><marker id="ahI3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+<text x="24" y="30" class="tg">THE DRIFT LOOP — DOCS ARE INPUT NOW</text>
+<rect x="24" y="60" width="200" height="64" rx="10" class="bxC"/><text x="124" y="86" text-anchor="middle" class="ti">durable docs &amp; config</text><text x="124" y="104" text-anchor="middle" class="ts">CLAUDE.md · AGENTS.md · spec</text>
+<path d="M224 92 L298 92" class="edI3"/><text x="230" y="80" class="ts">loaded</text>
+<rect x="302" y="60" width="170" height="64" rx="10" class="bx"/><text x="387" y="86" text-anchor="middle" class="ti">agent context</text><text x="387" y="104" text-anchor="middle" class="ts">every session, no skepticism</text>
+<path d="M472 92 L548 92" class="edI3"/>
+<rect x="552" y="60" width="180" height="64" rx="10" class="bx"/><text x="642" y="86" text-anchor="middle" class="ti">generated change</text><text x="642" y="104" text-anchor="middle" class="ts">merged at agent speed</text>
+<path d="M732 92 L806 92" class="edI3"/>
+<rect x="810" y="60" width="150" height="64" rx="10" class="bx"/><text x="885" y="86" text-anchor="middle" class="ti">codebase moves</text><text x="885" y="104" text-anchor="middle" class="ts">renames · deletes</text>
+<path d="M885 124 C860 215 260 215 130 128" class="edI3" style="stroke-dasharray:5 4"/>
+<text x="140" y="236" class="ts">the prose is not updated — stale, "without any visible error"</text>
+<rect x="384" y="248" width="250" height="56" rx="10" class="bxK"/><text x="509" y="271" text-anchor="middle" class="ti">docs-as-tests gate (CI)</text><text x="509" y="288" text-anchor="middle" class="ts">stale reference = failing build (§4)</text>
+<path d="M509 244 L509 214" class="edI3"/>
+<line x1="493" y1="182" x2="525" y2="202" stroke="#B26205" stroke-width="2.5"/><line x1="525" y1="182" x2="493" y2="202" stroke="#B26205" stroke-width="2.5"/>
+</svg></div>
+<figcaption>The compounding loop unique to agentic development: documentation errors used to decay quietly; now they are re-injected into generation every session. The deterministic gate (§4) intercepts the return edge — drift still happens, but it cannot survive a build.</figcaption></figure>
+      <h3>Docs get produced at AI volume — and read polished</h3>
+      <p>The second shift is on the output side. Agents produce documentation effortlessly — I1 measured the sprawl reflex — and the output <em>reads</em> authoritative regardless of whether it is true. A practitioner essay titled "Impressive, But Wrong" names the failure honestly: "The problem isn't just bad information — it's false confidence." Hand-written bad docs usually look bad; generated bad docs look like good docs. Review effort concentrates exactly where the surface gives no signal — which is why §5 insists AI-generated documentation carries a label, a timestamp and an expiry, and why I1 routes it through the derived category (regenerate, never hand-patch) or an explicit promotion gate.</p>
+      <h3>LLMs cannot police their own drift — naively</h3>
+      <p>The tempting fix — "have the agent check whether the docs match the code" — fails in a specific, measured way. DocPrism (Xu, Wahab, Holmes &amp; Lemieux, UBC, arXiv:2511.00215, October 2025) found that naively-prompted LLMs "identify natural gaps between high-level documentation and detailed code implementations as inconsistencies" — abstraction itself gets flagged as drift, drowning the real signal: their baseline flagged 98% of documentation as inconsistent, against 14% with their filtered approach (accuracy 14%→94%, precision 0.62 across four languages). The architecture that works is a division of labor both papers converge on: a <strong>deterministic detector finds the stale element</strong> (DOCER's check is "a lightweight two-snapshot git grep procedure" that "needs no new tooling and runs in continuous integration"), and the <strong>LLM proposes the repair</strong> — inspecting git history to suggest the updated reference — with a human gate on the merge (I2). Detection is a grep; judgment is the expensive part; spend the model on judgment.</p>
+      <p>The organizational stakes were restated by DORA's 2025 report, which reorients the whole research program around AI and lists <strong>"AI-accessible internal data"</strong> among its seven capabilities that magnify AI's positive impact: "AI doesn't fix a team; it amplifies what's already there. Strong teams use AI to become even better and more efficient. Struggling teams will find that AI only highlights and intensifies their existing problems." Internal documentation <em>is</em> the AI-accessible internal data — and amplification runs both directions. A shop with rotten docs that adopts agents is amplifying rot.</p>
+
+      <h2 id="s3"><span class="n">3</span>Docs-as-code — the substrate</h2>
+      <p>None of §4's checks can run against documentation living in someone's head, a wiki nobody exports, or an attachment named final_v2. The precondition is <strong>docs-as-code</strong> — Write the Docs' canonical definition: "a philosophy that you should be writing documentation with the same tools as code" — issue trackers, version control, plain-text markup, code review, automated tests. For engineering durables this is nearly free (the docs sit next to the code they describe); for product durables mastered in Notion or Confluence it is the SSOT-boundary problem I1 §5 handled — the bridge is a pointer or a labelled derived digest, never a fork.</p>
+      <p>The canonical industrial statement is <em>Software Engineering at Google</em>, chapter 10: "Documentation is often so tightly coupled to code that it should, as much as possible, be treated as code" — owned by someone, under source control, changed through review, its bugs tracked like code bugs, and — the part most shops skip — <strong>measured for freshness</strong>. Google's g3doc pages carry last-reviewed metadata, "and metadata in the documentation set will send email reminders when the document hasn't been touched in, for example, three months." Microsoft Learn runs the same discipline as editorial policy: contributors bump an <span class="mono">ms.date</span> field on substantial edits or freshness reviews, and the date is surfaced to every reader. Note what these precedents are and aren't: review-date metadata plus a reminder loop — a <em>nudge</em>, not a gate. They keep humans honest about age; they do not stop a stale doc from shipping. That is the right division: freshness metadata is the advisory layer (cheap, universal), §4's checks are the deterministic layer aimed at the failures that matter most.</p>
+      <p>The same discipline now has an official restatement for agent context files. Anthropic's Claude Code best-practices page: <strong>"Treat CLAUDE.md like code: review it when things go wrong, prune it regularly, and test changes by observing whether Claude's behavior actually shifts."</strong> The page's exclusion list is drift-avoidance stated as policy — keep out "information that changes frequently" and "detailed API documentation (link to docs instead)": volatile facts don't belong in an always-loaded file, because every volatile fact is a future stale fact. (It also warns that "bloated CLAUDE.md files cause Claude to ignore your actual instructions!" — Chroma's sense of context rot, from the vendor's own docs.) Treude &amp; Baltes close the loop with the review rule: treating configuration files as code, "reviewing them alongside refactors that rename or delete elements, prevents much of this rot at the source" — the same-PR discipline §1's Fluri result predicted in 2007: with the change or never.</p>
+
+      <h2 id="s4"><span class="n">4</span>Docs-as-tests — consistency as a failing build</h2>
+      <p>E5 drew the line this workbook keeps returning to — and the vendor docs now state it verbatim for context files: "Unlike CLAUDE.md instructions which are advisory, hooks are deterministic and guarantee the action happens." Applied to documentation: "keep docs updated" is advisory and bends under deadline pressure exactly like every other advisory rule; a CI check that fails the build on a stale reference is deterministic and does not. The term of art is <strong>docs-as-tests</strong> — Manny Silva's formulation (book: <em>Docs as Tests: A Strategy for Resilient Technical Documentation</em>): documentation "shouldn't just inform — it should also verify," treating each piece of documentation as a test case executed against the product. The checks form a ladder, from trivial to ambitious:</p>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 420" role="img" aria-label="The docs-as-tests ladder: five rungs of deterministic checks — executable examples, reference and link checks, docs exercised against the product, contract tests from the spec, and spec-to-code sync in the agent layer — with rising scope and cost, next to a graveyard of discontinued tools reminding that the principle outlives any vendor.">
+<text x="24" y="30" class="tg">THE DOCS-AS-TESTS LADDER — WHAT FAILS THE BUILD, AND WHERE</text>
+<path d="M44 384 L44 64" class="edI3"/><text x="36" y="52" class="ts">scope &amp; cost rise</text>
+<rect x="70" y="60" width="640" height="56" rx="8" class="bxG"/><text x="86" y="83" class="tt">5 · spec ↔ code sync in the agent layer</text><text x="86" y="102" class="ts">tasks/requirements behind the code — Kiro "Sync Files" (on demand, not automatic detection)</text>
+<rect x="70" y="128" width="640" height="56" rx="8" class="bxG"/><text x="86" y="151" class="tt">4 · contract tests from the API spec</text><text x="86" y="170" class="ts">implementation drifting from OpenAPI — Schemathesis (property-based) · Specmatic (spec as tests + stub)</text>
+<rect x="70" y="196" width="640" height="56" rx="8" class="bxG"/><text x="86" y="219" class="tt">3 · docs exercised against the product</text><text x="86" y="238" class="ts">UI/CLI steps that no longer work — Doc Detective runs the documented procedure and checks it</text>
+<rect x="70" y="264" width="640" height="56" rx="8" class="bxG"/><text x="86" y="287" class="tt">2 · reference &amp; link checks</text><text x="86" y="306" class="ts">dead files, commands, code elements, URLs — lychee · DOCER-style two-snapshot git grep in CI</text>
+<rect x="70" y="332" width="640" height="56" rx="8" class="bxK"/><text x="86" y="355" class="tt">1 · executable examples (doctests)</text><text x="86" y="374" class="ts">sample code that no longer compiles or runs — Python doctest · cargo test doc-tests · ExUnit.DocTest</text>
+<rect x="740" y="128" width="220" height="192" rx="10" class="bxA"/><text x="850" y="154" text-anchor="middle" class="ti">the graveyard</text><text x="850" y="178" text-anchor="middle" class="ts">Dredd — archived (Oracle)</text><text x="850" y="196" text-anchor="middle" class="ts">Optic — archived Jan 2026</text><text x="850" y="214" text-anchor="middle" class="ts">driftctl — maintenance mode</text><text x="850" y="232" text-anchor="middle" class="ts">DeepDocs — "deprecated"</text><text x="850" y="250" text-anchor="middle" class="ts">Swimm — pivoted away</text><text x="850" y="282" text-anchor="middle" class="ts">the shelf churns —</text><text x="850" y="298" text-anchor="middle" class="ts">the CI principle survives</text>
+</svg></div>
+<figcaption>Start at the bottom: rung 1 ships with your language, rung 2 is an afternoon of CI work. Rungs 4–5 earn their keep where an OpenAPI spec or spec-driven workflow already exists. The graveyard column is load-bearing: five of the tools this space produced since 2019 are already dead or repurposed — bind the practice to the check, not the vendor.</figcaption></figure>
+      <p><strong>Rung 1 is older than the docs-as-code movement</strong> and proves the concept ships in the standard library: Python's doctest (Tim Peters, standard library since the early 2000s) runs the examples embedded in docstrings; Rust made it a default — <span class="mono">cargo test</span> compiles and runs every documentation example, so a Rust crate's examples <em>cannot</em> silently rot; Elixir's ExUnit.DocTest generates tests from <span class="mono">@doc</span> examples. <strong>Rung 2</strong> is the cheapest high-value check for prose: lychee (an actively-maintained Rust link checker with a first-class GitHub Action) fails the build on dead links and file references; DOCER's two-snapshot git grep does the same for code-element references — including, per Treude &amp; Baltes, in CLAUDE.md and AGENTS.md, where §2 says it matters most. <strong>Rung 3</strong> is Silva's own tooling: Doc Detective (open source, actively released) executes documented procedures — click this, run that, expect this — against the product. <strong>Rung 4</strong> makes the API spec an executable contract: Schemathesis generates property-based test cases from an OpenAPI/GraphQL schema (independent evaluation in an ICSE 2022 paper; adopter lists are vendor-reported); Specmatic runs the spec as tests against the provider and as a stub for consumers, catching both sides of the drift. <strong>Rung 5</strong> is the agentic frontier and deserves precision: Kiro's "Sync Files" action updates task lists from changed requirements <em>on request</em>, and its agent hooks can regenerate docs on save — useful, but user-initiated sync, not automatic drift detection; third-party posts that call it "drift detection" overstate what the vendor documents (H3 made the same correction).</p>
+      <div class="callout amber"><div class="t">Point-in-time warning — this shelf churns faster than most</div><p>Half the tools once cited for this chapter died while the chapter was being researched: Dredd (the original OpenAPI contract tester, out of Apiary/Oracle) is archived; Optic was acquired by Atlassian in April 2024 and its repo archived in January 2026; driftctl has been in maintenance mode since mid-2023; DeepDocs — a 2025 "AI agent that keeps your docs in sync" GitHub app — already carries a "this app has been deprecated" notice; Swimm, whose patented Auto-sync (code-coupled snippets flagged and auto-patched when the referenced code changes) remains the best-documented mechanism of its kind, pivoted the company to agentic-modernization services. All tool facts here are mid-2026 and need re-verification before a client meeting. The durable content is the <em>rung</em>, not the logo: a deterministic check in CI that executes something the documentation claims.</p></div>
+      <p>The pattern has a decade of prior art one floor down the stack. Infrastructure-as-code treats drift — the live system diverging from the declared configuration — as a first-class, detectable condition: <span class="mono">terraform plan</span> computes it on demand, and HCP Terraform's Health Assessments re-check it automatically about every 24 hours with refresh-only plans. Nobody in that world proposes fixing drift with a "please keep the infrastructure matching the config" guideline. Documentation is a declared configuration of understanding; it deserves the same machinery.</p>
+
+      <h2 id="s5"><span class="n">5</span>A freshness policy for the AI era</h2>
+      <div class="callout amber"><div class="t">Flag: the policy packaging is our synthesis</div><p>Each ingredient below is independently attested — Google's review-date reminders, Microsoft's <span class="mono">ms.date</span>, Anthropic's prune-and-test guidance, DOCER's CI check, I1's derived rules. The packaging into one per-category freshness policy with thresholds is <strong>Report 3's synthesis, not an industry standard</strong> — present it as ours, like the taxonomy and the write-permission matrix it extends.</p></div>
+      <p>Detection (§4) needs a policy to enforce. The taxonomy already tells us freshness means something different per category, so the policy writes itself as a third column on I1's table — what "fresh" means, and which check proves it:</p>
+      <div class="figscroll"><table class="map">
+        <tr><th>Category</th><th>Freshness contract</th><th>Deterministic check</th><th>On violation</th></tr>
+        <tr><td>durable</td><td>named owner + last-reviewed date + review interval (90d default, per Google's precedent)</td><td>rung-1/2 checks in CI; interval breach surfaces on the dashboard</td><td>owner reviews: re-confirm, revise via PR, or demote honestly</td></tr>
+        <tr><td>derived</td><td>regenerated since its master last changed</td><td>regenerate-and-diff in CI (I2's check)</td><td>build fails; regenerate — never hand-patch</td></tr>
+        <tr><td>agent config</td><td>zero stale code-element references; volatile facts excluded</td><td>two-snapshot grep + lychee on CLAUDE.md/AGENTS.md; reviewed in the same PR as renames/deletes</td><td>build fails; fix in the refactor PR that broke it</td></tr>
+        <tr><td>AI-generated docs</td><td>label + generation timestamp + source + expiry date</td><td>expiry scan in CI (a date comparison)</td><td>expired = suspect (H3): revalidate and re-stamp, or delete</td></tr>
+        <tr><td>disposable</td><td>none — a TTL, not a freshness contract</td><td>prune sweep (I1 §4)</td><td>delete; it was never truth</td></tr>
+      </table></div>
+      <p>Two design choices deserve defense. First, <strong>expiry means "suspect", not "auto-delete"</strong> — H3's semantics: an expired AI-generated doc stops being citable context until a human revalidates it, which is cheap insurance against "impressive but wrong" surviving on its polish. Second, <strong>the agent-config row gets the strictest contract</strong> — zero stale references, checked every build — because §2 showed it is the highest-leverage rot in the system (loaded every session, trusted completely, measured at 23% of repos) and because the check is nearly free: the references are code elements, and grep is grep.</p>
+      <p>The client's Phase-1 question — "what staleness threshold triggers an alarm, and can we measure it from day one?" — now has a concrete answer derived entirely from git: <strong>(a)</strong> stale-reference count in agent config files (alarm at &gt;0 — cheap to hold at zero); <strong>(b)</strong> dead links/references across durable docs (lychee's count — alarm on increase, burn down the backlog); <strong>(c)</strong> review-interval breaches per durable (alarm per owner, not per repo); <strong>(d)</strong> the age gap between each durable doc's last commit and the last commit to the code it describes (a rough but automatable early-warning signal — a doc directory untouched for a year while its module churned weekly is §1's 4.7-year bucket forming in real time). None of these needs tooling the client doesn't already have.</p>
+
+      <h2 id="s6"><span class="n">6</span>Documentation debt — triage, not guilt</h2>
+      <p>Everything §4–§5 catch lands in a pile, and a brownfield client's pile is years deep on day one. The technical-debt frame earns its keep here because it forbids both bad responses: pretending the pile isn't there, and declaring bankruptcy ("the docs are useless, ignore them"). Fowler's quadrant (bliki, October 2009) — deliberate vs. inadvertent, prudent vs. reckless — sorts documentation debt as well as it sorts code debt. Prudent-deliberate: "we're shipping without updating the runbook; ticket filed, owner named" — debt as a financing decision. Reckless-inadvertent: the 23% of §2 — nobody decided anything; the drift just accrued, silently, in the files agents trust most. The entire point of §4's machinery is to <strong>convert inadvertent debt into deliberate debt</strong>: once a stale reference fails a build, ignoring it requires a decision someone owns, and I2's audit trail records who made it.</p>
+      <p>Triage per drifted artifact is I1 §6's promotion/demotion logic, applied at volume — three honest exits: <strong>delete or demote</strong> (the doc describes a world that no longer exists and nobody needs the history — most of the pile); <strong>regenerate</strong> (it's derived, or should be: fix the master, rerun the generator, and add the regenerate-and-diff check so it can't rot again); <strong>rewrite and own</strong> (it's genuinely durable: validate it, name an owner, stamp a review date, put future changes behind the PR gate). The state to refuse is the one I1 already refused: half-trusted, unowned, hand-patched — the middle state agents keep reading and compounding.</p>
+      <p>Agents themselves are the labor force that makes repayment tractable — with the division of labor §2 established. The deterministic detector produces the worklist (stale references, dead links, expired stamps); the agent drafts the repair, using git history to find what the reference became (DocPrism's filtered architecture and Treude &amp; Baltes' proposed hybrid are both exactly this shape); a human gate merges, because every one of these repairs is a write to a durable artifact and I2's matrix does not care that the proposer was fixing documentation. M5 extends the same pattern to generating missing docs for legacy code (agent archaeology) — with the I1 rule that generated legacy docs are <em>derived</em> until a human validates and adopts them. What agents must not do is the naive sweep — "review all docs and fix anything outdated" — which DocPrism measured: 98% of documentation flagged, the real signal drowned, and a mountain of confident rewrites for the human gate to review. Point the agent at a grep hit, not at the corpus.</p>
+
+      <h2 id="s7"><span class="n">7</span>Week one at the client — the drift audit</h2>
+      <p>I3's week-one move rides on I1's classification sweep (which listed the artifacts) and I2's matrix (which assigned the gates); it adds the freshness column and the first checks. Concretely, in order of effort-to-payoff:</p>
+      <div class="io"><div class="box"><div class="lab">Do in week one</div><ul><li>run lychee across the repo's markdown; count, don't fix — the number is the baseline</li><li>run the two-snapshot grep on CLAUDE.md / AGENTS.md / copilot-instructions; fix these immediately (small, high-leverage, §2)</li><li>wire both checks into CI as warnings; flip to failing once the baseline burns down</li><li>stamp every durable doc: owner, last-reviewed, interval (a header template, one PR)</li><li>label + timestamp + expiry on anything AI-generated the team already trusts</li><li>write the same-PR rule into CLAUDE.md/AGENTS.md stewardship: renames and deletes update the config files that mention them, in the same PR</li></ul></div>
+      <div class="box"><div class="lab">Refuse in week one</div><ul><li>"we'll keep docs updated going forward" as the plan — advisory; it is how the client got here (E5)</li><li>an LLM sweep over the whole doc corpus — the 98% flag rate is the measured outcome</li><li>a doc-sync tool purchase as the first move — §4's graveyard; principle first, vendor later, if ever</li><li>rewriting the wiki — triage (§6), don't refinance everything at once</li><li>contract tests where no OpenAPI spec exists yet — rung 4 needs H1/H2's groundwork first</li></ul></div>
+      <div class="box sdlc"><div class="lab">SDLC placement</div><ul><li>drift checks live in CI (the E4/E5 verification loop), freshness review lives in the maintenance cadence, and the debt worklist feeds sprint planning like any other debt — documentation stops being a separate hygiene project and becomes part of the same delivery loop as code</li></ul></div></div>
+
+      <h2 id="s8"><span class="n">8</span>Where I3 sits in the framework</h2>
+      <div class="figscroll"><table class="map">
+        <tr><th>Topic</th><th>Connection</th></tr>
+        <tr><td>E5 · governance</td><td>the advisory/deterministic distinction, applied to prose; the vendor now states it verbatim for CLAUDE.md vs hooks</td></tr>
+        <tr><td>I1 · artifact taxonomy</td><td>drift is the failure mode the derived discipline prevents; §5's policy is a third column on I1's table; §6's exits are I1's promotion/demotion</td></tr>
+        <tr><td>I2 · write-permissions</td><td>who may fix what the checks catch; regenerate-and-diff is the derived row's freshness check; repairs to durables stay behind the human gate</td></tr>
+        <tr><td>I4 · memory systems</td><td>agent memory rots the same way config files do — validate-before-write is freshness at write time</td></tr>
+        <tr><td>I5 · progressive disclosure</td><td>CLAUDE.md gardening in depth: short, load-bearing files are also the easiest to keep true</td></tr>
+        <tr><td>H3 · traceability</td><td>drift at the link level: suspect-flags are the freshness policy for links; expiry = suspect reuses its semantics</td></tr>
+        <tr><td>H4 · feedback loop</td><td>a stale-doc-caused failure routes through the return channel to the doc's owner, not just the code</td></tr>
+        <tr><td>E4 · verification first</td><td>docs-as-tests extends the verification loop to prose; doctests are literally tests</td></tr>
+        <tr><td>E7 · metrics</td><td>DORA 2022's documentation-quality amplification; DORA 2025's AI-accessible internal data; §5's four measurables join the dashboard</td></tr>
+        <tr><td>P2 · PRDs with AI</td><td>product durables drift too — the same policy applies across the SSOT boundary, enforced by review cadence instead of CI</td></tr>
+        <tr><td>B4 · agent archaeology (M5)</td><td>generating docs where none exist — the debt-repayment labor force, with the derived-until-validated rule</td></tr>
+        <tr><td>M7 · security</td><td>a stale config file is an integrity problem: agents act on it — context-rot detection is also poisoning detection (ASI06 neighbours)</td></tr>
+      </table></div>
+
+      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <div class="callout pine"><div class="t">Three sentences to keep</div><p>Documentation drift was already endemic before AI — 28.9% of flagship repos carried references stale for 4.7 years on average — but agents change its physics: docs became input, loaded every session and acted on without skepticism, so a stale line no longer decays quietly but is re-injected into generation "without any visible error," and the config files agents trust most are measurably rotten in about a quarter of repositories. The countermeasure is E5's move applied to prose: freshness metadata and same-PR review as the advisory layer, and docs-as-tests as the deterministic one — executable examples, reference and link checks (a two-snapshot grep covers CLAUDE.md and AGENTS.md), docs exercised against the product, and contract tests from the spec — each a build-failing check, because "keep docs updated" is how every client got here. Triage the resulting pile like the debt it is — delete or demote, regenerate, or rewrite-and-own; never the unowned middle — with deterministic detectors producing the worklist, agents drafting repairs, and humans gating the merge, since a documentation fix is still a write to a durable artifact.</p></div>
+
+      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Tan, Wagner &amp; Treude — Detecting Outdated Code Element References in Software Repository Documentation</div><div class="mt">arXiv:2212.01479 · December 2022 · journal version in Empirical Software Engineering, 2023</div><p>The baseline and the tool (DOCER): 28.9% (265/918) of top GitHub projects with at least one outdated document, stale for 4.7 years on average.</p></div>
+      <div class="item"><div class="rt">Treude &amp; Baltes — Context Rot in AI-Assisted Software Development</div><div class="mt">arXiv:2606.09090 · June 2026</div><p>DOCER pointed at agent config files: stale references in 23.0% of repos; the definition of config-file context rot, the "without any visible error" failure mode, and the two-snapshot CI grep.</p></div>
+      <div class="item"><div class="rt">Fluri, Würsch &amp; Gall — Do Code and Comments Co-Evolve?</div><div class="mt">WCRE 2007 · ArgoUML, Azureus, JDT Core</div><p>97% of comment changes ship in the same revision as the code change — prose is maintained with the change or never.</p></div>
+      <div class="item"><div class="rt">Rios, Mendonça-Neto &amp; Spínola — A tertiary study on technical debt</div><div class="mt">Information and Software Technology, vol. 102 · 2018 · with Alves et al.'s ontology (MTD)</div><p>Documentation debt as a recognized technical-debt type — the frame that moves stale docs from guilt to triage.</p></div>
+      <div class="item"><div class="rt">DORA — Documentation quality capability &amp; the 2022 State of DevOps report</div><div class="mt">dora.dev/capabilities/documentation-quality</div><p>Quality documentation as an amplifier of every technical capability studied — the published per-capability lifts, and the reason the folklore "2.4×" doesn't appear here.</p></div>
+      <div class="item"><div class="rt">DORA — 2025 State of AI-Assisted Software Development</div><div class="mt">dora.dev/dora-report-2025 · September 2025</div><p>"AI doesn't fix a team; it amplifies what's already there" — and "AI-accessible internal data" among the seven capabilities that magnify AI's impact.</p></div>
+      <div class="item"><div class="rt">Winters, Manshreck &amp; Wright — Software Engineering at Google, ch. 10 (Documentation)</div><div class="mt">O'Reilly 2020 · free at abseil.io/resources/swe-book</div><p>Docs treated as code: owned, reviewed, tracked — and freshness metadata that emails the owner when a page goes three months unreviewed.</p></div>
+      <div class="item"><div class="rt">Write the Docs — Docs as Code</div><div class="mt">writethedocs.org/guide/docs-as-code</div><p>The canonical definition of the substrate: same tools as code — VCS, review, plain text, automated tests.</p></div>
+      <div class="item"><div class="rt">Silva — Docs as Tests / Doc Detective</div><div class="mt">docsastests.com · Doc Detective, open source, actively released (v4.30.0, July 2026)</div><p>Documentation "shouldn't just inform — it should also verify": every documented procedure executed against the product in CI.</p></div>
+      <div class="item"><div class="rt">Xu, Wahab, Holmes &amp; Lemieux — DocPrism</div><div class="mt">arXiv:2511.00215 · October 2025</div><p>Why naive LLM drift-detection fails (98% of docs flagged; abstraction read as inconsistency) and the filtered architecture that works — detection deterministic, judgment from the model.</p></div>
+      <div class="item"><div class="rt">Galster et al. — Configuring Agentic AI Coding Tools · Lulla et al. — On the Impact of AGENTS.md Files</div><div class="mt">AIware 2026 · JAWs 2026 @ ICSE (arXiv:2601.20404)</div><p>The population (4,768 context files across 90.6% of sampled agentic repos; CLAUDE.md 34.4%) and the payoff (AGENTS.md presence: ~29% lower runtime, ~17% fewer tokens) — why config freshness is worth a build check.</p></div>
+      <div class="item"><div class="rt">Hong, Troynikov &amp; Huber — Context Rot: How Increasing Input Tokens Impacts LLM Performance</div><div class="mt">Chroma Research · July 14, 2025 · 18 models</div><p>The original sense of the term: degradation with input volume alone — the reason short, load-bearing context files beat exhaustive ones.</p></div>
+      <div class="item"><div class="rt">Anthropic — Claude Code best practices (CLAUDE.md guidance)</div><div class="mt">code.claude.com/docs · point-in-time mid-2026</div><p>"Treat CLAUDE.md like code: review it when things go wrong, prune it regularly, and test changes" — plus the exclusion list that keeps volatile facts out of always-loaded context.</p></div>
+      <div class="item"><div class="rt">wolfejam — Your AGENTS.md Is Already Stale — And Your Agent Trusts It Completely</div><div class="mt">dev.to · July 10, 2026 · practitioner post</div><p>The asymmetry in one line: a human discounts a stale README; an agent acts on it. "A stale cache is worse than an empty one."</p></div>
+      <div class="item"><div class="rt">Report 3 — the information-architecture research notes (this workbook)</div><div class="mt">module M4 research notes · plane A</div><p>The drift framing this chapter expands, and the freshness-policy synthesis flagged in §5.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (I3-consistency-drift-deepdive.html). Its natural neighbours in the workbook are I1 (the taxonomy drift violates), I2 (who may fix what the checks catch), I5 (context-file gardening in depth), H3 (drift at the link level and suspect semantics), E4/E5 (the verification loop and the advisory/deterministic line), E7 (the DORA evidence), and M5 (agent archaeology as debt repayment).</p>
+</main>
+</div>
+</body>
+</html>

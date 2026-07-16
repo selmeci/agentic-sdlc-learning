@@ -1,7 +1,7 @@
 # Content map
 
 The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.15):
-8 modules, 52 topics, 6 research reports, 2 inline map sections, 21 deep-dive companions.
+8 modules, 52 topics, 6 research reports, 2 inline map sections, 22 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -112,7 +112,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (21)
+## Deep-dive companions (22)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
@@ -122,8 +122,8 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `P1-ai-assisted-discovery` · `P2-prds-with-ai` · `P3-decomposition` · `P4-pm-role` ·
 `P5-assistance-scale` · `D1-design-system-artifact` · `H1-handoff-contract-anatomy` ·
 `H2-ears-gherkin` · `H3-traceability-spec-modes` · `H4-feedback-anti-patterns` ·
-`I1-artifact-taxonomy` · `I2-lifecycle-write-permissions`
+`I1-artifact-taxonomy` · `I2-lifecycle-write-permissions` · `I3-consistency-drift`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e8-deepdive`,
-`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive`, `#i2-deepdive` (each appears
+`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i3-deepdive` (each appears
 exactly twice: the "Go deeper" link + the JS open handler).
