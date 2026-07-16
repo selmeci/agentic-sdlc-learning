@@ -1,7 +1,7 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.15):
-8 modules, 52 topics, 6 research reports, 2 inline map sections, 24 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.33):
+8 modules, 55 topics, 6 research reports, 2 inline map sections, 27 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -14,7 +14,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
   V2 DDD context map, V3 operating loop with gates, V4 lethal trifecta & defense-in-depth,
   V5 per-component threat map.
 
-## Modules & topics (52)
+## Modules & topics (55)
 
 ### M1 · Engineering harness (id `m1`) — Report 1; 6 research-note sections
 | Topic | id | Deep dive |
@@ -27,6 +27,9 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | E6 The L1–L5 autonomy taxonomy | `eng-autonomy` | ✅ |
 | E7 Metrics & anti-patterns: what the hard data says | `eng-metrics` | ✅ (incl. DORA/METR explainer + how-to) |
 | E8 Spec-driven development (Spec Kit, Kiro, BMAD) | `eng-sdd` | ✅ (incl. Superpowers/Compound + BMAD brownfield) |
+| E9 Harness engineering as a discipline: eval-driven tuning | `eng-harness-tuning` | ✅ (v1.31) |
+| E10 Background & long-running agents: async delegation | `eng-background` | ✅ (v1.32) |
+| E11 Formal methods in the agentic loop: vericoding & runtime enforcement | `eng-formal` | ✅ (v1.33) |
 
 ### M2 · Product harness (id `m2`) — Report 2; 2 research-note sections
 | Topic | id | Deep dive |
@@ -112,19 +115,20 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (24)
+## Deep-dive companions (27)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
 `SDLC-foundations` · `E1-agent-model-harness` · `E2-context-engineering` ·
 `E3-harness-in-practice` · `E4-verification-first` · `E5-governance` ·
 `E6-autonomy-levels` · `E7-metrics-anti-patterns` · `E8-spec-driven-development` ·
+`E9-harness-tuning` · `E10-background-agents` · `E11-formal-methods` ·
 `P1-ai-assisted-discovery` · `P2-prds-with-ai` · `P3-decomposition` · `P4-pm-role` ·
 `P5-assistance-scale` · `D1-design-system-artifact` · `H1-handoff-contract-anatomy` ·
 `H2-ears-gherkin` · `H3-traceability-spec-modes` · `H4-feedback-anti-patterns` ·
 `I1-artifact-taxonomy` · `I2-lifecycle-write-permissions` · `I3-consistency-drift` · `I4-memory-systems` ·
 `I5-progressive-disclosure`
 
-Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e8-deepdive`,
+Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
 `#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i5-deepdive` (each appears
 exactly twice: the "Go deeper" link + the JS open handler).

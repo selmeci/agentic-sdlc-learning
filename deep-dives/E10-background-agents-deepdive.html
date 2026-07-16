@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E10 Deep Dive &mdash; Background &amp; Long-Running Agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edI5{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahI5a)}
+svg .edE9{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE9a)}
+svg .edE10{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE10a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E10 · DEEP DIVE</span>
+    <h1>Background &amp; Long-Running Agents: Async Delegation</h1>
+    <span class="bc">companion to module M1 · Engineering harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · The execution axis</a>
+  <a href="#s2"><b>2</b> · The evidence</a>
+  <a href="#s3"><b>3</b> · Persistence mechanics</a>
+  <a href="#s4"><b>4</b> · Verification at a distance</a>
+  <a href="#s5"><b>5</b> · Governance</a>
+  <a href="#s6"><b>6</b> · The adoption path</a>
+  <a href="#s7"><b>7</b> · Week one at the client</a>
+  <a href="#s8"><b>8</b> · Framework map</a>
+  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> · Further reading</a>
+</nav>
+<main>
+<h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">Everything in M1 so far assumes a developer watching an agent work. This chapter is about what happens when nobody is watching — agents that run <strong>in the cloud, decoupled from anyone's laptop, for hours or days, triggered by events rather than prompts</strong>. The pattern converged across every major vendor within about a year: OpenAI's Codex cloud tasks (May 2025), Cursor's background agents (GA June 2025), Google's Jules, GitHub's Copilot coding agent, and Ona — the ex-Gitpod platform whose background-agents guide this chapter dissects, and which OpenAI agreed to acquire in June 2026 precisely "to help Codex take on longer-running work." The capability curve says this is not hype timing: METR's time-horizon data — the E7 metric — now puts the frontier at roughly a <em>12-hour</em> 50%-success task length (Claude Opus 4.6, TH1.1 data), with the doubling time compressed to ~4.3 months since 2023. But the same measurement discipline cuts the other way: a July 2026 long-horizon benchmark built expressly for sustained work found the <em>best</em> frontier model completing only ~15% of 90-minute terminal tasks at a strict threshold — long-horizon execution is precisely where agents still run out of steam. That tension — capability doubling into a regime the benchmarks say is barely solved — is why this topic needs governance-first treatment, not enthusiasm. Our L1–L5 scale (E6) answers <em>how much</em> an agent may do; this chapter adds the orthogonal axes the scale does not cover: <em>where</em> it runs (your machine vs an isolated sandbox), <em>when</em> (interactive vs async), and <em>who initiates</em> (a human prompt vs a PR, a ticket, a CVE feed, a cron job).</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the background-agent execution model, and why every vendor converged on sandbox → work → PR (§1)</li><li>the long-horizon evidence, honestly cut: METR's curve up, LHTB's completion rates down (§2)</li><li>the persistence mechanics that actually work: Ralph loops, initializer/coding-agent splits, session-as-event-log (§3)</li><li>verification at a distance: evaluator ≠ generator, delegated approval, and the approval-fatigue numbers (§4)</li><li>governance: guardrails at the infrastructure layer, cost as a failure mode, the run as the audit record (§5)</li><li>the adoption path — maturity model, first use cases, traps — with every vendor number flagged as such (§6)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>E6 — the autonomy scale this chapter extends with execution axes</li><li>E9 — the harness being tuned is, increasingly, this async harness</li><li>E4/E7 — verification and measurement carry the whole model</li><li>S-module — sandboxing and the lethal trifecta become non-negotiable here</li><li>I4 — memory systems are the persistence layer's other half</li><li>T1/T2 — build-vs-buy economics and the pilot that proves any of it</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>The execution axis — what a background agent is</h2>
+      <p>Ona's definition is the cleanest on record: <em>"Background agents run in their own development environment in the cloud, with a full toolchain, test suite, and access to internal systems, completely decoupled from your device."</em> The contrast class is the laptop assistant — Claude Code or Cursor in a terminal, synchronous, watched. The background agent inverts every default: it gets an ephemeral, isolated environment provisioned per task; it works asynchronously (you review the result, not the process); and increasingly it is <strong>event-initiated</strong> — a PR comment, a Slack message, a Linear ticket, a webhook, a published CVE. That last inversion is the conceptually new one for our framework: E6's levels grade how much an agent may decide, but they quietly assume a human pressed enter. Event-driven initiation removes that assumption, which is why §5's governance cannot live in the prompt.</p>
+      <p>The industry convergence is striking and verifiable from primary launch materials, whatever one thinks of any vendor's numbers: OpenAI's Codex cloud (research preview May 16, 2025) runs each task in its own cloud sandbox preloaded with your repo, works many tasks in parallel, and proposes PRs; Cursor's background agents (v0.50 May 2025, GA in 1.0 on June 4, 2025) spin up an isolated Ubuntu VM, clone the repo, work on a dedicated branch and open a PR — extended in February 2026 to full desktop-and-browser "computer use" per agent; Google's Jules is an async coding agent with a CLI and public API (October 2025) for embedding in native workflows; GitHub's Copilot coding agent picks up issues and works them in an Actions-based sandbox into a PR. Five independent product teams, one shape: <strong>sandbox → work → verifiable artifact (PR) → human review</strong>. The shape is the finding — it encodes the assumption that agents at this autonomy level must be contained (S-module), must leave an auditable trail (§5), and must terminate in the one artifact engineering organizations already know how to gate: a pull request.</p>
+      <p>Addy Osmani's companion essay ("Long-Running Agents," April 28, 2026 — high-quality practitioner synthesis, our tiering) contributes the taxonomy this chapter uses throughout, separating three things vendors blur: <strong>long-horizon reasoning</strong> (planning across many dependent steps), <strong>long-running execution</strong> (a process that survives hours or days and thousands of model calls), and <strong>persistent agency</strong> (identity and memory outliving any single task — I4's territory, and the only one of the three that raises S6-style poisoning stakes). A background agent needs the second; it benefits from the first; it does not require the third — and conflating them is how pilots end up buying persistent memory infrastructure to solve what was actually a checkpointing problem.</p>
+
+      <h2 id="s2"><span class="n">2</span>The long-horizon evidence — both directions at once</h2>
+      <p>The capability line every deck quotes is METR's (arXiv:2503.14499, the E7 method): <em>"the frontier AI time horizon has been doubling approximately every seven months since 2019"</em> — with the abstract's own hedge, <em>"though the trend may have accelerated in 2024."</em> It did. The TH1.1 revision (January 2026) puts the doubling time since 2023 at roughly <strong>4.3 months</strong> (130.8 days, CI 107–161), and METR's current raw data (May 2026 update) places Claude Opus 4.6 at a <strong>~12-hour</strong> 50%-success horizon, with an early Claude Mythos preview point at ~17.4 hours. Osmani's essay quotes only the conservative seven-month figure — when citing this material, use the accelerated numbers and name the revision, or the client's planning horizon will be off by a factor of two. The 80%-success horizons remain far shorter than the 50% ones, which is the fine print that matters for unattended work: a coin-flip success rate is delegation-with-review; it is nowhere near fire-and-forget.</p>
+      <p>Now the other direction. The Long-Horizon Terminal-Bench (LHTB, arXiv:2607.08964, July 2026) was built specifically for sustained autonomous work: 46 terminal tasks across 9 categories, a 90-minute budget per task, hidden fake-proof verifiers, and dense partial credit — because binary pass/fail "collapses almost every model to zero." Agents consumed on average 9.9M tokens and ~231 episodes per task; the <em>best</em> frontier model achieved <strong>15.2% pass@1</strong> at a 0.95 reward threshold (10.9% at a perfect 1.0), with a cross-model mean of 4.3%. SWE-Bench Pro (arXiv:2509.16941) points the same way from the task side: its problems "may require hours to days for a professional software engineer to complete," and they were chosen precisely because current agents mostly cannot. Read together, the two lines say: the frontier <em>horizon</em> is growing fast, and the <em>reliability</em> at that horizon is low. Osmani's "three walls" name the mechanisms — finite context (E2's context rot arrives long before the token limit), no persistent state across sessions, and no trustworthy self-verification (models grade their own work too generously — E4's oldest lesson). Everything in §3 and §4 is engineering around those three walls.</p>
+      <div class="callout amber"><div class="t">Numbers that do NOT exist (yet)</div><p>No independent survey publishes a "share of developers delegating async background tasks" figure. DORA 2025 reports ~90% of developers using some form of AI assistance — general assistance, not background delegation; do not stretch it. The adoption evidence for background agents specifically is vendor case studies (§6), and they are tiered accordingly.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>Persistence mechanics — surviving the context window</h2>
+      <p>The primitive underneath every production pattern is embarrassingly small. Geoffrey Huntley's <strong>Ralph loop</strong> ("Ralph Wiggum as a 'software engineer'," ghuntley.com, July 14, 2025) is literally <code>while :; do cat PROMPT.md | claude-code ; done</code> — an amnesiac agent re-launched forever, with all state externalized to files (a PRD, a progress file, the repo itself). The insight that makes it more than a joke: <em>the agent is amnesiac, but the filesystem is not</em>. Fresh context each lap sidesteps context rot; durable files carry the plan forward; git carries the work. Every serious system since is a refinement of that split (attribute the pattern to Huntley, popularized with Ryan Carson — a practitioner pattern, not a standard).</p>
+      <p>Anthropic's two engineering posts supply the refined version, and E9 already met them as harness artifacts. The long-running harness (Nov 2025) splits roles: an <strong>initializer agent</strong> — "the very first agent session uses a specialized prompt that asks the model to set up the initial environment" — builds the feature list, progress notes and scripts; then a <strong>coding agent</strong> per session — "every subsequent session asks the model to make incremental progress, then leave structured updates." Its most load-bearing rule guards the work ledger itself: <em>"It is unacceptable to remove or edit tests because this could lead to missing or buggy functionality"</em> — which, per this workbook's I2 verification, protects the <em>feature-list entries</em> the harness tracks (Osmani's gloss "test ratchet" names the family of mechanism; I2/ImpossibleBench cover the protect-the-test-files variant). The Managed Agents architecture (Apr 2026) then virtualizes the whole thing: <em>"a session (the append-only log of everything that happened), a harness (the loop that calls Claude and routes Claude's tool calls…), and a sandbox (an execution environment where Claude can run code and edit files)"</em> — brain decoupled from hands. Recovery becomes an API call: <em>"When one fails, a new one can be rebooted with <code>wake(sessionId)</code>, use <code>getSession(id)</code> to get back the event log, and resume from the last event."</em> The reported payoff — p50 time-to-first-token down roughly 60%, p95 down over 90% — is a vendor number, but the design lesson is tier-free: <strong>the session log, not the agent process, is the unit of persistence</strong>. Harvey's summit formulation says the same thing from the audit side: "the run is the persistent record, not the agent."</p>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 340" role="img" aria-label="Brain, hands, session: the harness loop and model form the brain; sandboxed ephemeral execution environments are the hands; the session is an append-only event log below both. When a container dies, a fresh one calls wake with the session id, replays the log, and resumes. External state files — PRD, progress notes, feature list, git — feed each fresh context. A note says the log, not the process, is the unit of persistence.">
+      <defs><marker id="ahE10a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+      <rect x="0" y="0" width="980" height="340" fill="#FBFCFD" stroke="#D6DDE4"/>
+      <rect x="60" y="40" width="280" height="80" rx="10" fill="#2A4AD0"/>
+      <text x="200" y="72" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">BRAIN</text>
+      <text x="200" y="92" text-anchor="middle" font-size="10.5" fill="#C9D4F6">model + harness loop (routes tool calls)</text>
+      <rect x="640" y="30" width="280" height="44" rx="8" fill="#EDF1F4" stroke="#D6DDE4"/>
+      <text x="780" y="57" text-anchor="middle" font-size="11.5" fill="#1A2430">sandbox A · ephemeral, destroyed after run</text>
+      <rect x="640" y="86" width="280" height="44" rx="8" fill="#EDF1F4" stroke="#D6DDE4"/>
+      <text x="780" y="113" text-anchor="middle" font-size="11.5" fill="#1A2430">sandbox B · scoped creds, one artifact path</text>
+      <line x1="340" y1="66" x2="640" y2="52" class="edE10"/>
+      <line x1="340" y1="94" x2="640" y2="108" class="edE10"/>
+      <text x="490" y="140" text-anchor="middle" font-size="10.5" fill="#57656F">HANDS: tools run out there,</text>
+      <text x="490" y="156" text-anchor="middle" font-size="10.5" fill="#57656F">never in the brain</text>
+      <rect x="60" y="180" width="860" height="52" rx="8" fill="#E5F3EB" stroke="#177245"/>
+      <text x="490" y="202" text-anchor="middle" font-size="12.5" fill="#177245" font-weight="700">SESSION — append-only event log of everything that happened</text>
+      <text x="490" y="220" text-anchor="middle" font-size="10.5" fill="#177245">the unit of persistence, recovery and audit</text>
+      <line x1="200" y1="120" x2="200" y2="180" class="edE10"/>
+      <line x1="780" y1="130" x2="780" y2="180" class="edE10"/>
+      <path d="M60 206 L28 206 L28 80 L60 80" fill="none" class="edE10"/>
+      <text x="152" y="158" text-anchor="middle" font-size="10" fill="#57656F">every event appended</text>
+      <text x="812" y="158" text-anchor="middle" font-size="10" fill="#57656F">tool results appended</text>
+      <text x="130" y="262" font-size="10.5" fill="#B26205" font-weight="600">crash? wake(sessionId) → replay log → resume from last event</text>
+      <rect x="620" y="248" width="300" height="60" rx="8" fill="#FBF1E1" stroke="#B26205"/>
+      <text x="770" y="272" text-anchor="middle" font-size="11" fill="#B26205" font-weight="600">durable files beside the log</text>
+      <text x="770" y="290" text-anchor="middle" font-size="10" fill="#57656F">PRD · progress notes · feature list · git history</text>
+      <text x="490" y="330" text-anchor="middle" font-size="10.5" fill="#9AA7B1">Anthropic Managed Agents (Apr 2026) + the Ralph split: amnesiac agent, durable filesystem</text>
+      </svg></div><figcaption>Brain, hands, session. The process is disposable; the append-only log and the durable files are not — recovery is a replay, not a resurrection.</figcaption></figure>
+      <p>Two corollaries complete the mechanics. <strong>Context resets as a first-class operation:</strong> for very long tasks the working pattern is not rolling summarization but a full teardown — write a structured handoff document, kill the session, start clean from the handoff (the same discipline H1's contract imposes between humans and agents, applied agent-to-agent; and exactly what a Ralph lap does implicitly). <strong>Checkpoint-and-resume beats heroic sessions:</strong> commit early and often to git, treat each green state as a savepoint, and let recovery mean "reset to last savepoint and replay intent" — brownfield teams already know this discipline as trunk-based development; the agent inherits it for free if the harness enforces small increments (Anthropic's "incremental progress" prompt).</p>
+
+      <h2 id="s4"><span class="n">4</span>Verification at a distance — roles, reviews, and the fatigue data</h2>
+      <p>Unattended execution concentrates everything E4 says about self-verification. Both source guides converge on the same two rules. First, <strong>the evaluator is never the generator</strong>: Anthropic's harness-design post builds a GAN-inspired generator/evaluator pair (E9 §4); Ona's summit synthesis reports every adopting org giving agents the means to verify their own work <em>mechanically</em> — tests, telemetry queries, screenshots — rather than by self-assessment; OpenAI's internal Codex teams route agent output through agent-to-agent review before human review. Cursor reportedly goes further and splits three roles — planner / worker / judge — with different models per role, having found GPT models outlasting Opus for extended autonomous work because Opus "tended to stop early"; that detail reaches us only through Osmani's retelling, so treat it as secondhand practitioner report, not a benchmark. Second, <strong>delegated approval with escalation</strong>: pre-authorize the reversible (formatting, test additions, dependency bumps inside policy) and route the irreversible (schema changes, deletions, anything security-adjacent) to a human — E6's rubric, made operational because nobody is present to click.</p>
+      <p>The approval-fatigue telemetry explains why per-action human gating cannot be the answer at this scale. Anthropic's auto-mode post (March 2026) opens with the number: <em>"Claude Code users approve 93% of permission prompts."</em> A gate almost always answered yes is behaviourally no gate at all — and usage data shows auto-approve rates <em>rising</em> with experience, from roughly 20% for new users to over 40% by 750 sessions (partly deliberate trust calibration, per Anthropic, not pure fatigue). Even the mitigation carries a caveat worth quoting in any client conversation: Anthropic's own classifier for dangerous actions reports a <em>"17% false-negative rate on real overeager actions… the honest number."</em> The design conclusion is the S-module's, arrived at from the UX side: <strong>move enforcement from the approval dialog to the environment</strong> — which is §5.</p>
+
+      <h2 id="s5"><span class="n">5</span>Governance — the boundary is the infrastructure</h2>
+      <p>The single most reusable sentence in either source is Ona's: <em>"If the guardrail lives inside the same context window as the agent, it's a suggestion, not a boundary. Security enforcement needs to happen at the infrastructure layer."</em> That is E5's advisory-versus-deterministic distinction and S3's rules-file lesson, restated for the async regime — and every serious deployment in the summit material behaves accordingly: network policies, kernel-level controls, scoped short-lived credentials, air-gapped sandboxes for the most sensitive monorepos, ephemeral workers destroyed after each run with exactly one repo, one tool bundle, one artifact path and one audit trail each. Sandboxing is reported as universal — "every adopting organization sandboxes agents, no exceptions" — which we can believe as a design norm even while tiering the surrounding numbers as vendor claims, because it is the same conclusion the S-module reached from the lethal-trifecta side: an event-triggered agent processing untrusted inputs (PR comments, tickets, CVE feeds!) with repo access and an outbound channel is the trifecta by construction unless the infrastructure breaks one leg.</p>
+      <p><strong>Cost is a governance surface, not an accounting detail.</strong> A background fleet can fail by looping, and a looping agent burns money at machine speed with nobody watching — Uber's summit self-report of AI compute costs up 6× since 2024 shows the baseline growing even when everything works. The practitioner consensus pattern is tiered budgets plus a <em>token-velocity circuit breaker</em>: per-session and per-day caps with automatic termination, and a rate-based trip (one published tunable: a healthy agent runs ~3–4k tokens/minute; tripping at ~10k/min catches a runaway loop inside a minute). Cite the pattern as practitioner synthesis; the viral runaway-bill dollar figures circulating with it trace only to blogs citing each other — folklore until a primary incident report exists (the same discipline that retired Boehm's 100:1 in H4). Add the two remaining rails: <strong>credential hygiene</strong> — long-lived tokens are the async agent's most dangerous convenience; scope them per run, expire them with the sandbox — and <strong>observability as a precondition</strong>, not an afterthought: Ona's red-flag list is blunt that fleets without per-run cost and outcome visibility are pilots that will not survive contact with a CFO. Harvey's "the run is the persistent record" closes the loop: the same append-only session log that §3 uses for recovery is the audit artifact compliance will ask for (H3's provenance, T4's Article-12-style logging).</p>
+
+      <h2 id="s6"><span class="n">6</span>The adoption path — maturity, first use cases, and the vendor numbers</h2>
+      <p>Ona's maturity model is a useful narrative frame precisely because it is self-serving — read it with that light on. Phase one, laptop code assistants, it calls a <strong>"false summit"</strong>: a local maximum that speeds the individual developer without moving organizational throughput (the same individual-vs-system gap E7's measurement section documents from the DORA side). Phase two, background agents — "you can't skip this phase" — is where isolation, verification and progressive autonomy get built. Phase three, the <strong>"software factory,"</strong> is fleets responding to events end-to-end ("when a CVE is published, agents scan your repos and open a PR"), humans reviewing. The vendor incentive is obvious: phase two is what Ona sells. But the engineering claim underneath survives the discount — you cannot operate event-driven fleets without first having built sandboxing, verification, observability and budgets, and teams that try to jump from laptop assistants to the factory are skipping the harness. The trap list is corroborated by everything this workbook has verified independently: too-ambitious first projects, agents treated as junior devs needing chat supervision, laptop or shared-CI execution as a dead end, no observability, security bolted on in-context instead of infra-layer, and "waiting for a better model" instead of engineering the harness (E9's founding argument).</p>
+      <p>First use cases: <em>"repetitive, well-scoped work with clear success criteria and real business value"</em> — migrations, flaky-test fixes, dependency upgrades, security patching, documentation. Toil, not greenfield features. This matches our brownfield thesis (M5): the highest-value early work is exactly the work with the strongest mechanical verification and the lowest ambiguity. The build-vs-buy guidance — build only with a dedicated platform team, a 12–18-month horizon, and infrastructure as a differentiator; sandboxed environments alone are a 3–6-month build — is vendor-estimated but directionally consistent with T1's economics. The summit case studies, <strong>all self-reported at a vendor-hosted event, none independently audited</strong> — quote them as existence proofs of the pattern at scale, never as expected returns:</p>
+      <table class="map"><tr><th>Org (self-reported)</th><th>Claim</th><th>Mechanism detail worth keeping</th></tr>
+      <tr><td>Stripe</td><td>1,000+ agent PRs/week on a 100M-line Ruby monorepo</td><td>air-gapped sandboxes, no internet, no prod creds; pre-warmed devboxes ~10 s cold start; "if it's good for humans, it's good for LLMs"</td></tr>
+      <tr><td>Ramp</td><td>30% of merged PRs agent-authored; a security sweep fixed ~100 vulns incl. IDORs pen-testing missed</td><td>lightweight VMs re-imaged every 30 min; sandbox pre-warmed while the user types; agents query Sentry/Datadog and take screenshots</td></tr>
+      <tr><td>Spotify</td><td>1,500+ agent PRs merged; 60–90% time savings on migrations</td><td>migrations that took 20K lines of hand-coded AST transforms now specified in natural language; ran on existing fleet infra</td></tr>
+      <tr><td>Uber</td><td>92% of developers use agents monthly; 5,000+ generated unit tests/month</td><td>an MCP gateway turning any internal endpoint into an agent tool; AI compute up 6× since 2024 — the cost rail of §5</td></tr>
+      <tr><td>OpenAI</td><td>~1M LOC across 1,500 PRs in 5 months, team of 3→7</td><td>"strict architectural constraints, enforced by linters rather than humans, made agents more productive, not less" — E5 in one sentence</td></tr>
+      <tr><td>Harvey</td><td>100% sandboxed runs</td><td>"the run is the persistent record, not the agent" — ephemeral workers, one repo/tool bundle/credential set/artifact path/audit trail each</td></tr></table>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 300" role="img" aria-label="Three-phase adoption path. Phase one: laptop assistant, human initiates, synchronous, watched — labelled a false summit for organizational throughput. Phase two: background agents — cloud sandbox, async, human reviews PRs; the infrastructure built here is sandboxing, verification, observability, budgets. Phase three: software factory — event-driven fleets, humans manage by exception. An arrow warns against jumping from phase one to phase three: that skips the harness. Below, an axis contrasts who initiates: human prompt versus events such as PRs, tickets, CVEs and cron.">
+      <rect x="0" y="0" width="980" height="300" fill="#FBFCFD" stroke="#D6DDE4"/>
+      <rect x="40" y="50" width="260" height="96" rx="10" fill="#EDF1F4" stroke="#D6DDE4"/>
+      <text x="170" y="76" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">1 · laptop assistant</text>
+      <text x="170" y="96" text-anchor="middle" font-size="10.5" fill="#57656F">human initiates · synchronous · watched</text>
+      <text x="170" y="114" text-anchor="middle" font-size="10.5" fill="#B26205">"false summit": speeds the individual,</text>
+      <text x="170" y="130" text-anchor="middle" font-size="10.5" fill="#B26205">not the organization</text>
+      <rect x="360" y="50" width="260" height="96" rx="10" fill="#2A4AD0"/>
+      <text x="490" y="76" text-anchor="middle" font-size="12.5" fill="#fff" font-weight="700">2 · background agents</text>
+      <text x="490" y="96" text-anchor="middle" font-size="10.5" fill="#C9D4F6">cloud sandbox · async · human reviews PRs</text>
+      <text x="490" y="114" text-anchor="middle" font-size="10.5" fill="#C9D4F6">builds: isolation · verification ·</text>
+      <text x="490" y="130" text-anchor="middle" font-size="10.5" fill="#C9D4F6">observability · budgets</text>
+      <rect x="680" y="50" width="260" height="96" rx="10" fill="#EDF1F4" stroke="#D6DDE4"/>
+      <text x="810" y="76" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">3 · software factory</text>
+      <text x="810" y="96" text-anchor="middle" font-size="10.5" fill="#57656F">event-driven fleets · whole-SDLC</text>
+      <text x="810" y="114" text-anchor="middle" font-size="10.5" fill="#57656F">humans manage by exception</text>
+      <line x1="300" y1="98" x2="360" y2="98" class="edE10"/>
+      <line x1="620" y1="98" x2="680" y2="98" class="edE10"/>
+      <path d="M170 146 Q490 230 810 146" fill="none" stroke="#B26205" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#ahE10a)"/>
+      <text x="490" y="212" text-anchor="middle" font-size="11" fill="#B26205" font-weight="600">jumping 1 → 3 skips the harness ("you can't skip this phase" — vendor framing, sound engineering)</text>
+      <text x="140" y="256" font-size="10.5" fill="#57656F" font-weight="600">who initiates:</text>
+      <text x="330" y="256" font-size="10.5" fill="#57656F">phases 1–2: a human prompt / delegation</text>
+      <text x="660" y="256" font-size="10.5" fill="#57656F">phase 3: events — PR · ticket · CVE · cron</text>
+      <text x="490" y="284" text-anchor="middle" font-size="10.5" fill="#9AA7B1">Ona background-agents guide (mid-2026, vendor) — maturity frame useful, numbers self-reported</text>
+      </svg></div><figcaption>The adoption path. Phase two is where the governance gets built; the dashed shortcut is where pilots die.</figcaption></figure>
+
+      <h2 id="s7"><span class="n">7</span>Week one at the client</h2>
+      <p><strong>Day one — locate the client on the map.</strong> Almost certainly phase one; the useful question is which phase-two ingredient is furthest along (usually CI as verification) and which is absent (usually per-run observability and budgets). <strong>Day two — pick the first background task from toil, not features:</strong> one migration, dependency-upgrade or flaky-test class with mechanical success criteria, run through whichever background-agent surface the client's existing vendor already ships (Copilot coding agent, Codex cloud, Cursor — no new procurement for a pilot). <strong>Day three — write the delegation contract before the first run:</strong> goal, scope, non-goals, tool permissions, stopping condition, budget cap, escalation rule (H1's contract anatomy, pointed at an agent that cannot ask mid-flight). <strong>Day four — wire the three rails:</strong> sandbox with scoped credentials (infra-layer, not prompt-layer), token/cost cap with automatic termination, and the PR as the only exit channel. <strong>Day five — review the run record, not just the diff:</strong> the session log is the audit artifact; if the pilot's runs are not reconstructible from it, fix that before scaling — it is also the E7/T2 measurement substrate. Track E6-style operational metrics from day one: interventions per run, escalation rate, cost per merged change, defect escape rate.</p>
+
+      <h2 id="s8"><span class="n">8</span>Where E10 sits in the framework</h2>
+      <table class="map"><tr><th>Connects to</th><th>How</th></tr>
+      <tr><td>E6 · autonomy</td><td>L1–L5 grades decision scope; E10 adds execution axes — where it runs, when, who initiates — and the approval-fatigue data that breaks per-action gating</td></tr>
+      <tr><td>E9 · harness discipline</td><td>the initializer/coding-agent split, feature-list protection and generator/evaluator pairs are the async harness E9 tunes</td></tr>
+      <tr><td>E4 · verification</td><td>evaluator ≠ generator becomes structural: tests, telemetry and judge agents replace the absent human</td></tr>
+      <tr><td>E2 · context</td><td>context rot is the first wall; Ralph laps and context resets are its async countermeasures</td></tr>
+      <tr><td>S-module</td><td>event-triggered + repo access + outbound PR = the lethal trifecta unless infrastructure breaks a leg; "a guardrail in the context window is a suggestion"</td></tr>
+      <tr><td>I4 · memory / H1 · contract</td><td>persistent agency is I4's promotion path with S6 stakes; the delegation contract is H1 pointed at an executor that cannot ask</td></tr>
+      <tr><td>H3/T4 · provenance &amp; compliance</td><td>the append-only run record is both the recovery mechanism and the audit trail regulation will ask for</td></tr>
+      <tr><td>T1/T2 · economics &amp; pilot</td><td>build-vs-buy timelines (vendor-estimated), cost-per-merged-change as the pilot metric, the false-summit argument for measuring org throughput</td></tr></table>
+
+      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <div class="callout"><div class="t">Three sentences to keep</div><p>Background agents change the axes, not just the amount, of autonomy — where the agent runs, when, and who initiates — so governance must move from the approval dialog (93% approved, effectively unread) into the infrastructure: sandbox, scoped credentials, budgets, and the PR as the only exit. The frontier task horizon is doubling every ~4 months and sits near 12 hours at 50% success, but purpose-built long-horizon benchmarks show even the best models completing ~15% at strict thresholds — delegate toil with mechanical verification, and treat fire-and-forget as unearned. The unit of persistence, recovery and audit is the append-only run record, not the agent process — design for replay, and the same log serves the pilot's measurement and compliance for free.</p></div>
+
+      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Ona — The Background Agents Guide</div><div class="mt">ona.com/guides/background-agents · mid-2026 · vendor (ex-Gitpod; OpenAI acquisition agreed June 2026) — HIGH bias, all case numbers summit self-reports</div><p>The definition, the maturity model, the trap list, and the infra-layer guardrail line. Read for the frame; tier every number.</p></div>
+      <div class="item"><div class="rt">Addy Osmani — Long-Running Agents</div><div class="mt">addyosmani.com · April 28, 2026 · practitioner synthesis</div><p>The three-way taxonomy, the three walls, five production patterns, and the honest limitations list — cost, credentials, memory drift, auditing a 24-hour run.</p></div>
+      <div class="item"><div class="rt">METR — Measuring AI Ability to Complete Long Tasks + Time Horizon 1.1</div><div class="mt">arXiv:2503.14499 · metr.org TH1.1 (Jan 2026, data updated May 2026) · independent research</div><p>The time-horizon metric E7 borrows: doubling ~4.3 months since 2023; Opus 4.6 ~12 h at 50%. Always cite the revision — the 7-month figure alone is stale.</p></div>
+      <div class="item"><div class="rt">Long-Horizon Terminal-Bench (LHTB)</div><div class="mt">arXiv:2607.08964 · July 2026 · independent research (preprint)</div><p>The counterweight: 46 sustained tasks, dense reward, best model 15.2% pass@1 at 0.95 threshold, mean 4.3% — where agents run out of steam.</p></div>
+      <div class="item"><div class="rt">Anthropic — Effective harnesses for long-running agents · Scaling Managed Agents</div><div class="mt">anthropic.com/engineering · Nov 26, 2025 &amp; Apr 8, 2026 · vendor</div><p>Initializer/coding-agent split, the feature-list protection rule (I2-verified), session-as-append-only-log, wake(sessionId), and the TTFT numbers (vendor-tiered).</p></div>
+      <div class="item"><div class="rt">Geoffrey Huntley — Ralph Wiggum as a "software engineer"</div><div class="mt">ghuntley.com/ralph · July 14, 2025 · practitioner</div><p>The primitive: an amnesiac agent in a bash loop, all state in files. Everything since is a refinement.</p></div>
+      <div class="item"><div class="rt">Anthropic — How we built Claude Code auto mode · Project Vend (parts 1–2)</div><div class="mt">anthropic.com · March 25, 2026 · June 27, 2025 / Dec 2025 · vendor research</div><p>The 93% approval-fatigue number with its 17% false-negative caveat; and the month-long autonomous-business experiment ("We let Claude manage an automated store in our office…") that grounds the persistent-agency discussion.</p></div>
+      <div class="item"><div class="rt">Launch primaries for the cross-vendor pattern</div><div class="mt">openai.com (Codex, May 16 2025) · cursor.com changelog 1.0 (Jun 4 2025) · Google Jules Tools (Oct 2 2025) · GitHub Copilot coding agent docs · vendor</div><p>Five product teams, one shape: sandbox → work → PR → human review. The convergence is the evidence.</p></div>
+      </div>
+      <p class="closingnote">The background agent is the L4 question made concrete: not "can the model do it" but "what surrounds it when it does." Every load-bearing number here is tiered in place — METR and LHTB independent, everything with a company name attached self-reported — and every tool fact (vendors, features, acquisition status) is point-in-time as of mid-2026: re-verify before client use. E9 tunes this harness; the S-module contains it; T2 measures whether it earned its keep.</p>
+</main>
+</div>
+</body>
+</html>

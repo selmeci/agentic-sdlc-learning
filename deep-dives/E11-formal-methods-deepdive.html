@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E11 Deep Dive &mdash; Formal Methods in the Agentic Loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edI5{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahI5a)}
+svg .edE9{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE9a)}
+svg .edE10{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE10a)}
+svg .edE11{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahE11a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">E11 · DEEP DIVE</span>
+    <h1>Formal Methods in the Agentic Loop: Vericoding &amp; Runtime Enforcement</h1>
+    <span class="bc">companion to module M1 · Engineering harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · Two directions, one label</a>
+  <a href="#s2"><b>2</b> · The economics</a>
+  <a href="#s3"><b>3</b> · Vericoding evidence</a>
+  <a href="#s4"><b>4</b> · The intent gap</a>
+  <a href="#s5"><b>5</b> · Runtime enforcement</a>
+  <a href="#s6"><b>6</b> · Week one at the client</a>
+  <a href="#s7"><b>7</b> · Framework map</a>
+  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> · Further reading</a>
+</nav>
+<main>
+<h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">E4 built this workbook's verification hierarchy on tests — code that checks code, sampled one input at a time. Formal methods sit one rung higher: they check <em>all</em> inputs at once, by proof or exhaustive model checking, and for thirty years they stayed in avionics and hyperscaler infrastructure because writing the specifications cost too much. Two 2026 developments put them in this workbook. First, <strong>the economics flipped</strong>: when agents write both the code and the formal spec, the historically prohibitive authoring cost collapses — that is the argument of the antfly.io essay from the boss's reading list ("Cheap code means formal verification is reasonable now"), and it lands on prepared ground, because AWS documented the payoff back in 2015: <em>"in every case TLA+ has added significant value, either finding subtle bugs that we are sure we would not have found by other means"</em> — including a DynamoDB bug whose shortest error trace was 35 steps long. A benchmark now measures the practice — "vericoding," spec-to-verified-code — at 12,504 formal specifications, with off-the-shelf LLMs succeeding on 82% of Dafny tasks. Second, and separately, a research wave is applying formal methods <strong>to the agent itself</strong>: runtime enforcement frameworks (AgentSpec, ICSE 2026 — the only peer-reviewed source in this chapter) that watch an agent's actions against declarative safety rules, and predictive extensions that model-check where a trajectory is <em>heading</em>. The honest headline for both directions is the same: real prototypes, quantified trade-offs, and a state of the art that is <em>runtime monitoring, not proofs of agent correctness</em> — the December 2024 roadmap's verdict that "a fully comprehensive methodology for integrating formal methods into LLMs remains elusive" still stands. This chapter keeps the two directions rigorously apart, because conflating them is how formal verification gets oversold to clients.</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the two directions, kept apart: formal methods on the agent's <em>output</em> vs on the agent's <em>behaviour</em> (§1)</li><li>the economics that changed, with the AWS precedent and the antfly workflow read honestly (§2)</li><li>the vericoding evidence: 82/44/27, the 58% Dafny result, and the 8.6% TLA+ counterpoint (§3)</li><li>the intent gap — why the spec, not the proof, is the bottleneck (§4)</li><li>runtime enforcement of agent behaviour: reactive, predictive, and the measured safety–utility trade-off (§5)</li><li>what a brownfield client can actually use this year (§6)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>E4 — the verification hierarchy this chapter extends upward</li><li>H2 — EARS/Gherkin are the low ceremony end of the same formalization ladder</li><li>E5/S3 — advisory vs deterministic: runtime enforcement is the research frontier of deterministic</li><li>E10 — unattended agents are why behaviour enforcement matters at all</li><li>E8 — spec-driven development meets checkable specs</li><li>B2/B3 — characterization and mutation testing, the brownfield rungs below</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>Two directions, one label — keep them apart</h2>
+      <p>"Formal verification of agents" is used in the wild for two nearly unrelated practices, and the first discipline this chapter teaches is to ask <em>which one</em> a source means. <strong>Direction A — formal methods on the agent's output:</strong> the agent (or the human) writes a machine-checkable specification, and a verifier — Dafny's SMT backend, Lean's kernel, TLA+'s model checker TLC — proves the code or design meets it. The agent's role is authorship; the guarantee attaches to the <em>artifact</em>. The antfly essay lives here: its agent writes TLA+ models of a distributed key-value store and hunts race conditions. <strong>Direction B — formal methods on the agent's behaviour:</strong> the agent itself is treated as an opaque, stochastic component whose <em>actions at runtime</em> are checked against declarative rules — stop it before it deletes the database, whatever the model weights think. AgentSpec and its successors live here; so, at the deployed-practice end, do the learned guardrail filters (NeMo Guardrails, Llama Guard) that these formal approaches aim to outdo with provable semantics. The academic framing for why Direction B is runtime-only is Ferrando's FMAS 2025 vision paper ("Watchdogs and Oracles"): LLMs are "stochastic, non-deterministic, and continually updated," so static pre-deployment verification of the model's internals is impractical — a widely held position in the formal-methods literature, and the reason every serious system in §5 is a monitor, not a proof. Note what this means for vocabulary discipline: nothing in this chapter certifies "the agent is correct." Direction A certifies artifacts; Direction B bounds behaviours.</p>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 290" role="img" aria-label="Two directions of formal methods in the agentic loop. Direction A: the agent authors code plus a formal specification; a mechanical verifier such as Dafny, Lean or the TLC model checker checks the artifact; the guarantee attaches to the artifact. Direction B: the agent is an opaque component; a runtime monitor checks each proposed action against declarative safety rules before execution; the guarantee bounds behaviour. A centre note warns the two are routinely conflated under one label.">
+      <defs><marker id="ahE11a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+      <rect x="0" y="0" width="980" height="290" fill="#FBFCFD" stroke="#D6DDE4"/>
+      <text x="245" y="36" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">DIRECTION A · verify the OUTPUT</text>
+      <rect x="60" y="56" width="150" height="52" rx="8" fill="#2A4AD0"/>
+      <text x="135" y="79" text-anchor="middle" font-size="11.5" fill="#fff" font-weight="600">agent authors</text>
+      <text x="135" y="96" text-anchor="middle" font-size="10" fill="#C9D4F6">code + formal spec</text>
+      <rect x="280" y="56" width="150" height="52" rx="8" fill="#EDF1F4" stroke="#D6DDE4"/>
+      <text x="355" y="79" text-anchor="middle" font-size="11.5" fill="#1A2430" font-weight="600">mechanical verifier</text>
+      <text x="355" y="96" text-anchor="middle" font-size="10" fill="#57656F">Dafny · Lean · TLC</text>
+      <line x1="210" y1="82" x2="280" y2="82" class="edE11"/>
+      <rect x="60" y="150" width="370" height="46" rx="8" fill="#E5F3EB" stroke="#177245"/>
+      <text x="245" y="170" text-anchor="middle" font-size="11" fill="#177245" font-weight="600">guarantee attaches to the ARTIFACT</text>
+      <text x="245" y="186" text-anchor="middle" font-size="10" fill="#177245">vericoding · TLA+ design models · Cedar/Lean in production</text>
+      <line x1="355" y1="108" x2="300" y2="150" class="edE11"/>
+      <text x="735" y="36" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">DIRECTION B · bound the BEHAVIOUR</text>
+      <rect x="550" y="56" width="150" height="52" rx="8" fill="#2A4AD0"/>
+      <text x="625" y="79" text-anchor="middle" font-size="11.5" fill="#fff" font-weight="600">agent proposes</text>
+      <text x="625" y="96" text-anchor="middle" font-size="10" fill="#C9D4F6">action (opaque model)</text>
+      <rect x="770" y="56" width="150" height="52" rx="8" fill="#EDF1F4" stroke="#D6DDE4"/>
+      <text x="845" y="79" text-anchor="middle" font-size="11.5" fill="#1A2430" font-weight="600">runtime monitor</text>
+      <text x="845" y="96" text-anchor="middle" font-size="10" fill="#57656F">rules · DTMC + PCTL</text>
+      <line x1="700" y1="82" x2="770" y2="82" class="edE11"/>
+      <rect x="550" y="150" width="370" height="46" rx="8" fill="#E5F3EB" stroke="#177245"/>
+      <text x="735" y="170" text-anchor="middle" font-size="11" fill="#177245" font-weight="600">guarantee BOUNDS behaviour at runtime</text>
+      <text x="735" y="186" text-anchor="middle" font-size="10" fill="#177245">AgentSpec · ProbGuard · VeriGuard · behavioural contracts</text>
+      <line x1="845" y1="108" x2="790" y2="150" class="edE11"/>
+      <text x="490" y="236" text-anchor="middle" font-size="11" fill="#B26205" font-weight="600">one label, two practices — always ask which one a source means</text>
+      <text x="490" y="262" text-anchor="middle" font-size="10.5" fill="#9AA7B1">neither direction certifies "the agent is correct" — A certifies artifacts, B stops actions; static proof of LLM internals is impractical (Ferrando, FMAS 2025)</text>
+      </svg></div><figcaption>Two directions under one label. The antfly essay is Direction A; AgentSpec and its successors are Direction B; sales decks routinely blur them.</figcaption></figure>
+
+      <h2 id="s2"><span class="n">2</span>The economics that changed</h2>
+      <p>The cost objection is real and citable. The AWS team's CACM paper ("How Amazon Web Services Uses Formal Methods," Newcombe, Rath, Zhang, Munteanu, Brooker &amp; Deardeuff, April 2015) states the industry's prior plainly: <em>"formal methods have a reputation of requiring a huge amount of training and effort to verify a tiny piece of relatively straightforward code, so the return on investment is only justified in safety-critical domains"</em> — and then reports that seven Amazon teams found "that perception to be quite wrong," with TLA+ surfacing bugs no other technique caught (the DynamoDB replication bug's shortest error trace: 35 steps). They even avoided the words "formal," "verification" and "proof" internally, marketing the practice as "debugging designs." Ten years later the residual cost — a human sitting down to write the spec — is exactly the line item agents attack. Rowan Copley's antfly essay (May 6, 2026) makes the economic argument for the agent era: if generated code is nearly free, the historically expensive step of formal modelling is nearly free too, so <em>why wouldn't we</em> point an agent at TLA+ for anything concurrency-shaped? His workflow is worth keeping precisely because it is so disciplined about ownership: the human scopes hypotheses and boundaries in two files (assumptions.md, boundaries.md); the agent writes and runs the TLA+ models; every bug the model checker finds must be <strong>reproduced as a failing unit test</strong> before it counts; the fix and the test are kept, and the intermediate TLA+ models are <em>discarded</em> — the deliverable is small, the modelling is scaffolding (I1's disposable tier, applied to proofs).</p>
+      <p>Tier it honestly: Antfly is a vendor blog (the company sells agent retrieval infrastructure, not verification tooling — the technique is the pitch, not a product), the essay contains one validation anchor and no quantified metrics. And the anchor is weaker than its retellings: Copley took a real race-condition PR from the Pebble repo (CockroachDB's key-value store) recent enough to postdate the model's training data, checked out the commit before the merge — and his workflow <em>"actually homed in on another bug, which I was then able to verify was also fixed in another Pebble PR later."</em> It found <em>a</em> real, independently-confirmed bug; it did not rediscover <em>the</em> bug. That is still a genuine result — and precisely the kind of nuance a client deck will flatten if we let it. The strategic tailwind, meanwhile, is real and primary-sourced: Werner Vogels' February 2026 conversation with Byron Cook (who runs AWS's automated-reasoning group) frames the coupling directly — <em>"When AI systems generate code, make decisions, or provide information, we need efficient ways to verify that their outputs are correct"</em> — with Automated Reasoning checks already shipping in Bedrock Guardrails under the "neuro-symbolic" banner.</p>
+
+      <h2 id="s3"><span class="n">3</span>Vericoding — what the numbers actually say</h2>
+      <p>The practice of generating <em>verified</em> code from formal specifications now has a measuring stick: the vericoding benchmark (arXiv:2509.22908; BAIF and MIT authors including Max Tegmark; an arXiv preprint — no peer-reviewed venue, present it as such). It assembles <strong>12,504 formal specifications</strong> — 3,029 Dafny, 2,334 Verus/Rust, 7,141 Lean — and coins the term in explicit contrast to its opposite: vericoding generates "formally verified code from specifications… in contrast to vibe coding, which generates potentially buggy code from a natural language description." Off-the-shelf LLM success rates: <strong>82% in Dafny, 44% in Verus/Rust, 27% in Lean</strong> — language and toolchain maturity dominate, and the paper notes pure-Dafny verification improving from 68% to 96% over the prior year. The earlier peer-reviewed anchor points the same way: Misu, Lopes, Ma &amp; Noble (FSE 2024, arXiv:2402.00247 — UC Irvine, not Microsoft as often misattributed) got GPT-4 to produce <em>"verified, human-evaluated Dafny methods for 58% of the problems"</em> on 178 MBPP tasks with retrieval-augmented prompting (19% without context) — prompt-engineering, notably, not an agentic repair loop. Re:Form (arXiv:2507.16331) closes the training-side loop: RL with feedback from the Dafny verifier itself, "reducing human annotations" because the verifier is an incorruptible reward signal — the formal-methods version of E4's verifiable-reward argument.</p>
+      <p>Now the cold water, from the TLA+ side that antfly's essay lives on. A Loyola University Chicago study ("Can LLMs Write Correct TLA+ Specifications?", arXiv:2606.05792, June 2026) tested 30 LLMs across 205 natural-language-to-TLA+ tasks: up to <strong>26.6% syntactic correctness, and only 8.6% semantic correctness</strong> — with the sobering conclusion that "current LLMs do not generate reliable TLA+ specifications without expert oversight." SysMoBench (arXiv:2509.23130) reaches the same posture at systems scale, benchmarking AI formal modelling of real concurrent systems (Etcd, Redis, ZooKeeper) and documenting real limitations. The apparent contradiction with the 82%-Dafny number dissolves on inspection, and resolving it is the chapter's most useful technical lesson: <strong>Dafny vericoding starts from a formal spec and has a mechanical checker in the loop — the LLM iterates against ground truth. NL-to-TLA+ starts from prose and asks the model to invent the formalization — semantic correctness has no oracle.</strong> Generation against a verifier works; unsupervised formalization does not (yet). The antfly workflow quietly respects this: its human scopes the properties, and its bugs must reproduce as failing tests before they count. And the production existence proof for Direction A is AWS again: Cedar, the open-source authorization language, is developed by "verification-guided development" — the model formalized in Lean with mechanized proofs, differentially tested against the Rust implementation across millions of inputs, with the Cedar Symbolic Compiler itself implemented in Lean and proven correct. Formal verification of agent-adjacent infrastructure ships at hyperscaler scale today; what remains research is the agent writing the formalization unsupervised.</p>
+
+      <h2 id="s4"><span class="n">4</span>The intent gap — the spec is the bottleneck</h2>
+      <p>If verifiers are mechanical and generation is cheap, everything concentrates in one place: <em>where does the specification come from, and does it say what we meant?</em> Shuvendu Lahiri's grand-challenge paper (Microsoft Research, arXiv:2603.17150) names it: <em>"The gap between informal natural language requirements and precise program behavior — the intent gap — has always plagued software engineering, but AI-generated code amplifies it to an unprecedented scale."</em> His programme, intent formalization, is "the translation of informal user intent into a set of checkable formal specifications" — which readers of this workbook will recognize as H2's EARS/Gherkin ladder extended to its top rung. The ladder view is the practical takeaway: plain-language AC → EARS-structured requirements → Gherkin scenarios that execute → property-based tests → Dafny/TLA+ specifications that verify. Every rung up buys stronger guarantees for more authoring discipline; H2 argued most brownfield teams should climb one rung; this chapter's evidence says the top rungs are becoming climbable because the agent does the transcription while the human owns the intent. The failure mode is climbing the ladder with unowned intent — a formally verified implementation of the wrong requirement is E7's rework problem with a proof attached. That is also the honest frame for E8's spec-driven development: SDD makes the spec the primary artifact; intent formalization makes it <em>checkable</em>; neither makes it <em>correct</em> — only the humans who own the intent do (P-module, H4's clarification loop).</p>
+
+      <h2 id="s5"><span class="n">5</span>Direction B — runtime enforcement of agent behaviour</h2>
+      <p>The December 2024 academic roadmap (arXiv:2412.06512 — authors including PAT's creators; toolchain surveyed: Z3, Coq, Isabelle/HOL, PAT, Alloy, PRISM, UPPAAL) is the reference point for expectations: bidirectional ambitions — formal methods to make LLMs reliable, LLMs to make formal methods usable — and the verdict quoted in §0: a comprehensive methodology "remains elusive." What exists eighteen months later is a coherent runtime-enforcement stack, and it is worth teaching because it is the deterministic end-state of E5's advisory/deterministic distinction. <strong>Reactive enforcement:</strong> AgentSpec (Wang, Poskitt &amp; Sun, SMU — accepted at ICSE 2026, the one peer-reviewed system here) is a lightweight DSL — trigger, predicates, enforcement action — evaluated on every step of the agent loop. The authors report it preventing over 90% of unsafe code-agent executions and eliminating hazardous actions across ten embodied-agent task categories at millisecond overhead. Their most decision-relevant finding is negative: rules <em>auto-generated by an LLM</em> (o1, few-shot) reached 95.56% precision but only <strong>70.96% recall</strong> on embodied-agent risks, identified 87.26% of risky code, and prevented rule-breaking in only 5 of 8 autonomous-vehicle scenarios — the guardrail author cannot be the same class of system the guardrail guards, which is E4's evaluator-independence argument arriving in the safety layer. (The paper's "first runtime enforcement framework" claim is hedged "to the best of our knowledge" — NeMo Guardrails and TrustAgent predate it on adjacent ground; never state it as fact.)</p>
+      <p><strong>Predictive enforcement:</strong> ProbGuard — formerly Pro2Guard, and not to be confused with the Java obfuscator ProGuard — extends the idea forward in time (arXiv:2508.00500; same SMU group plus Jiali Wei, XJTU; a preprint whose v3 softened its own title from "enforcement" to "monitoring"). It learns a discrete-time Markov chain from agent execution traces and model-checks PCTL properties with PRISM at runtime, intervening when the <em>probability of reaching an unsafe state</em> crosses a threshold — reactive rules "lack foresight and struggle with long-horizon dependencies," in its framing (which doubles as its critique of the authors' own AgentSpec; a self-comparison, tier accordingly). Its SafeAgentBench numbers quantify the trade every client conversation about guardrails needs: baseline 40.63% of embodied-agent executions unsafe; AgentSpec-style reactive rules cut that to 19.79%; ProbGuard in hard-stop mode (θ=0.1) reaches <strong>2.60% unsafe — but task completion collapses to 10.42%</strong>; its reflect mode lands between, 14.07% unsafe at 47.74% completion. Safety is purchasable; the currency is utility; pick the operating point per blast radius (E6's rubric, now with a measured curve). The wave behind these two is real but young — VeriGuard (Google authors, arXiv:2510.05156) verifies synthesized per-agent policies offline and monitors actions against them online; Agent Behavioral Contracts (arXiv:2602.22302) port design-by-contract with runtime-checked preconditions, invariants, governance and recovery clauses at sub-10ms overhead — and the deployed baseline they all aim to beat is the <em>learned</em> filter (NeMo Guardrails, arXiv:2310.10501; Llama Guard, arXiv:2312.06674), which offers no semantics, only a classifier. Every system in this paragraph except AgentSpec is a non-peer-reviewed preprint; the 2025–26 trajectory is steep, the deployed base is thin, and both facts belong in any client sentence about "provable agent safety."</p>
+      <figure><div class="figwrap"><svg viewBox="0 0 980 300" role="img" aria-label="The measured safety-utility trade-off on SafeAgentBench. Four horizontal bars show unsafe-execution rates: no enforcement 40.63 percent unsafe with 59.38 percent task completion; reactive rules AgentSpec 19.79 percent unsafe; predictive reflect mode 14.07 percent unsafe with 47.74 percent completion; predictive hard-stop 2.60 percent unsafe but only 10.42 percent completion. A caption notes safety is purchasable and the currency is task utility.">
+      <rect x="0" y="0" width="980" height="300" fill="#FBFCFD" stroke="#D6DDE4"/>
+      <text x="490" y="34" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">the measured trade-off — SafeAgentBench, embodied agents (ProbGuard evaluation; preprint, self-comparison)</text>
+      <text x="235" y="70" text-anchor="end" font-size="11" fill="#1A2430">no enforcement</text>
+      <rect x="250" y="56" width="406" height="18" rx="3" fill="#B26205"/>
+      <text x="666" y="70" font-size="10.5" fill="#B26205" font-weight="600">40.63% unsafe · 59.38% completion</text>
+      <text x="235" y="126" text-anchor="end" font-size="11" fill="#1A2430">reactive rules (AgentSpec)</text>
+      <rect x="250" y="112" width="198" height="18" rx="3" fill="#B26205" opacity="0.75"/>
+      <text x="458" y="126" font-size="10.5" fill="#57656F">19.79% unsafe · 59.38% completion</text>
+      <text x="235" y="182" text-anchor="end" font-size="11" fill="#1A2430">predictive · reflect (θ=0.1)</text>
+      <rect x="250" y="168" width="141" height="18" rx="3" fill="#B26205" opacity="0.55"/>
+      <text x="401" y="182" font-size="10.5" fill="#57656F">14.07% unsafe · 47.74% completion</text>
+      <text x="235" y="238" text-anchor="end" font-size="11" fill="#1A2430">predictive · hard stop (θ=0.1)</text>
+      <rect x="250" y="224" width="26" height="18" rx="3" fill="#177245"/>
+      <text x="286" y="238" font-size="10.5" fill="#177245" font-weight="600">2.60% unsafe · but 10.42% completion</text>
+      <line x1="250" y1="48" x2="250" y2="252" class="edE11" style="marker-end:none"/>
+      <text x="490" y="282" text-anchor="middle" font-size="10.5" fill="#9AA7B1">safety is purchasable; the currency is utility — pick the operating point per blast radius (arXiv:2508.00500, Table 1)</text>
+      </svg></div><figcaption>The safety–utility curve, quantified. Hard-stop enforcement nearly eliminates unsafe executions — and nearly eliminates the work. Blast radius decides the threshold.</figcaption></figure>
+
+      <h2 id="s6"><span class="n">6</span>Week one at the client — what is usable now</h2>
+      <p>Almost nothing in §5 is procurable today, and saying so is part of the value. What a brownfield client can actually deploy this year, in ascending ambition: <strong>(1) The deterministic rails we already teach</strong> — E5's hooks, I2's write permissions, S8's rules — are runtime enforcement without the formal semantics; frame AgentSpec-style DSLs as where that stack is heading, not what to buy. <strong>(2) Direction A on the narrowest, hottest surface:</strong> one concurrency-critical or money-critical component, the antfly workflow with its ownership discipline intact — human-scoped properties in reviewed files, agent-written TLA+ or property-based models, every finding reproduced as a failing test before anyone believes it, models discarded, tests kept. This is a contained experiment with mechanical exit criteria (T2), and the 8.6% semantic-correctness number is the reason the human scoping step is non-negotiable. <strong>(3) The intent ladder, one rung:</strong> where H2 already put EARS/Gherkin in place, pilot property-based tests generated from AC on one module — the cheapest formalization step with a real oracle. <strong>(4) Watch, don't buy, Direction B:</strong> track AgentSpec (ICSE 2026) and the behavioural-contracts wave; revisit when something ships with support. The reusable client sentence: <em>proofs for the artifact where it is cheapest, rails for the agent where it is riskiest, and nobody certifies "the agent is correct."</em></p>
+
+      <h2 id="s7"><span class="n">7</span>Where E11 sits in the framework</h2>
+      <table class="map"><tr><th>Connects to</th><th>How</th></tr>
+      <tr><td>E4 · verification-first</td><td>the hierarchy's top rung: tests sample, proofs quantify over all inputs; the verifier as incorruptible reward (Re:Form) is E4's protect-the-oracle argument</td></tr>
+      <tr><td>H2 · EARS/Gherkin</td><td>one formalization ladder: EARS → Gherkin → property tests → Dafny/TLA+; the intent gap (arXiv:2603.17150) is H2's problem statement at scale</td></tr>
+      <tr><td>E5/S3 · advisory vs deterministic</td><td>runtime enforcement is the deterministic column's research frontier; AgentSpec's 70.96%-recall auto-rules warn against agent-authored guardrails</td></tr>
+      <tr><td>E10 · background agents</td><td>unattended execution is why behaviour bounding matters; the safety–utility curve is E10's delegation contract, quantified</td></tr>
+      <tr><td>E8 · SDD</td><td>spec-driven development supplies the artifact; vericoding makes it checkable; neither makes it correct — intent stays human-owned</td></tr>
+      <tr><td>E9 · harness discipline</td><td>enforcement monitors are harness components; ProbGuard's threshold is a tunable with a measured trade-off — E9's eval loop applies</td></tr>
+      <tr><td>B2/B3 · brownfield</td><td>characterization tests and mutation gates are the rungs a legacy codebase climbs first; formal models of one hot component come after, not instead</td></tr>
+      <tr><td>E6 · autonomy</td><td>blast radius picks the enforcement operating point: hard-stop for irreversible surfaces, reflect for the rest</td></tr></table>
+
+      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <div class="callout"><div class="t">Three sentences to keep</div><p>"Formal verification of agents" means two different things — proving properties of what the agent <em>produced</em> (real today where a mechanical verifier sits in the loop: 82% Dafny vericoding, Cedar/Lean in production) versus bounding what the agent <em>does</em> (a fast-moving research stack — AgentSpec, ICSE 2026 — whose state of the art is runtime monitoring, not proofs) — and every source should be asked which one it means. The economics genuinely flipped: agents collapse the spec-authoring cost that kept formal methods in avionics, but the 8.6% semantic-correctness result for unsupervised NL-to-TLA+ says the human still owns the intent and the properties. Safety from runtime enforcement is purchasable and now priced — 40.6% → 2.6% unsafe at the cost of 59% → 10% task completion — so the blast radius, not the vendor deck, picks the operating point.</p></div>
+
+      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Newcombe et al. — How Amazon Web Services Uses Formal Methods</div><div class="mt">CACM 58(4) · April 2015 · peer-reviewed industry report</div><p>The precedent and the cost-perception quote: seven teams, TLA+ finding 35-step bugs, "debugging designs" as the internal sales pitch.</p></div>
+      <div class="item"><div class="rt">Rowan Copley — Cheap code means formal verification is reasonable now</div><div class="mt">antfly.io/research · May 6, 2026 · practitioner (vendor blog; Antfly sells agent retrieval, not verification)</div><p>The economic thesis and the disciplined workflow — human-scoped properties, bugs must reproduce as failing tests, models discarded. One validation anchor (Pebble — found a different, later-fixed bug), zero quantified metrics.</p></div>
+      <div class="item"><div class="rt">A benchmark for vericoding: formally verified program synthesis</div><div class="mt">arXiv:2509.22908 · BAIF + MIT · preprint (no peer-reviewed venue — present as such)</div><p>12,504 specs; 82% Dafny / 44% Verus / 27% Lean; "vericoding" vs "vibe coding" coined.</p></div>
+      <div class="item"><div class="rt">Misu, Lopes, Ma &amp; Noble — Towards AI-Assisted Synthesis of Verified Dafny Methods</div><div class="mt">FSE 2024 (PACMSE) · arXiv:2402.00247 · peer-reviewed · UC Irvine + Noble</div><p>GPT-4: verified Dafny for 58% of 178 MBPP problems with retrieval-augmented prompting (19% contextless). Prompting, not an agentic repair loop.</p></div>
+      <div class="item"><div class="rt">Can LLMs Write Correct TLA+ Specifications? · SysMoBench</div><div class="mt">arXiv:2606.05792 (Loyola U Chicago) · arXiv:2509.23130 (UIUC/UBC/Nanjing) · independent research</div><p>The counterweight: 26.6% syntactic / 8.6% semantic correctness across 30 LLMs; "not without expert oversight." Formalization has no oracle; generation against a verifier does.</p></div>
+      <div class="item"><div class="rt">Lahiri — Intent Formalization: A Grand Challenge for Reliable Coding in the Age of AI Agents</div><div class="mt">arXiv:2603.17150 · Microsoft Research · position paper</div><p>The intent gap named and the programme defined: informal intent → checkable formal specifications. H2's ladder, top rung.</p></div>
+      <div class="item"><div class="rt">AgentSpec — runtime enforcement for LLM agents · ProbGuard (formerly Pro2Guard)</div><div class="mt">ICSE 2026, arXiv:2503.18666 (peer-reviewed) · arXiv:2508.00500 (preprint, same group — self-comparison)</div><p>Reactive rules (&gt;90% unsafe-execution prevention; auto-generated rules only 70.96% recall) and predictive DTMC+PCTL monitoring with the quantified safety–utility curve.</p></div>
+      <div class="item"><div class="rt">Ferrando — Watchdogs and Oracles · the FM-LLM roadmap</div><div class="mt">FMAS 2025, EPTCS 436 (arXiv:2511.14435) · arXiv:2412.06512 (Dec 2024)</div><p>Why Direction B is runtime-only (stochastic, non-deterministic, continually updated), and the sober roadmap: a comprehensive methodology "remains elusive."</p></div>
+      <div class="item"><div class="rt">AWS Cedar + Lean — verification-guided development · Vogels × Byron Cook on automated reasoning</div><div class="mt">AWS open-source blog / lean-lang.org use-cases · allthingsdistributed.com · Feb 17, 2026 · vendor</div><p>The production proof-point (mechanized Lean proofs + differential testing at scale) and the strategic frame: verify AI outputs with automated reasoning ("neuro-symbolic").</p></div>
+      </div>
+      <p class="closingnote">This chapter earns its place by refusing a conflation: proofs about artifacts are shipping, bounds on behaviour are research, and "the agent is formally verified" is a sentence that should never survive our review. The ladder metaphor carries the practice: most clients should climb one rung (H2 → property tests), a few should point an agent at TLA+ for one hot component with human-owned properties, and everyone should know the safety–utility price list before buying enforcement. All tool and paper statuses point-in-time mid-2026; the behavioural-contracts wave is moving fast — re-verify before citing.</p>
+</main>
+</div>
+</body>
+</html>

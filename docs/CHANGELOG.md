@@ -3,6 +3,93 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.33 · 2026-07-16
+
+**NEW TOPIC E11 + deep dive — Formal Methods in the Agentic Loop: Vericoding & Runtime
+Enforcement** (`eng-formal`; 54→55 topics; M1 now E1–E11, completing the three-topic July
+source-evaluation round). Companion `deep-dives/E11-formal-methods-deepdive.html` + overlay
+`#e11-deepdive`. The chapter's spine is an anti-conflation rule — "formal verification of
+agents" means two practices: Direction A, formal methods on the agent's OUTPUT (vericoding:
+arXiv:2509.22908, 12,504 specs, 82% Dafny / 44% Verus / 27% Lean, "vericoding vs vibe coding"
+verbatim; Misu et al. FSE 2024, 58% verified Dafny, UC Irvine — NOT Microsoft, prompt-based
+NOT a repair loop; AWS Cedar/Lean verification-guided development as the production
+proof-point) versus Direction B, formal methods on the agent's BEHAVIOUR (AgentSpec, ICSE
+2026 — the chapter's only peer-reviewed system: >90% unsafe-execution prevention, but
+LLM-auto-generated rules only 70.96% recall; ProbGuard — formerly Pro2Guard, never
+"ProGuard" — with the quantified safety–utility curve: 40.63%→2.60% unsafe at
+59.38%→10.42% completion; VeriGuard and Agent Behavioral Contracts as the 2025–26 wave;
+NeMo Guardrails/Llama Guard as the deployed learned-filter baseline). Economics thread:
+Newcombe CACM 2015 (cost-perception quote, 35-step DynamoDB bug, "debugging designs") →
+antfly May 2026 (practitioner/vendor blog — Antfly sells agent retrieval, not verification;
+its Pebble validation stated precisely: the workflow found a DIFFERENT bug independently
+fixed later, not a rediscovery; one anchor, zero metrics) → Vogels × Byron Cook Feb 2026
+(neuro-symbolic, Bedrock Automated Reasoning checks). Counterweight load-bearing:
+NL-to-TLA+ = 26.6% syntactic / 8.6% semantic correctness across 30 LLMs (arXiv:2606.05792,
+"not without expert oversight") — resolved against the 82%-Dafny number as
+oracle-in-the-loop vs oracle-free formalization; the human owns intent (Lahiri's intent
+gap, arXiv:2603.17150, extending H2's formalization ladder). Ferrando FMAS 2025 grounds
+why Direction B is runtime-only; the Dec 2024 roadmap's "remains elusive" verdict kept.
+
+## v1.32 · 2026-07-16
+
+**NEW TOPIC E10 + deep dive — Background & Long-Running Agents: Async Delegation**
+(`eng-background`; 53→54 topics). Companion `deep-dives/E10-background-agents-deepdive.html`
++ overlay `#e10-deepdive`. Second topic from the July source-evaluation round. Sections: the
+execution axis E6 does not cover — where the agent runs, when, who initiates — with the
+cross-vendor convergence on sandbox→work→PR cited from launch primaries (Codex cloud May 2025,
+Cursor background agents GA Jun 2025, Jules, Copilot coding agent, Ona); the evidence run both
+ways (METR TH1.1: doubling ~4.3 months since 2023, Claude Opus 4.6 ~12 h p50 — pinned from
+METR's raw benchmark_results_1_1.yaml, correcting the 14.5 h figure circulating in drafts;
+versus LHTB arXiv:2607.08964: best frontier model 15.2% pass@1 at 0.95 threshold on 46
+sustained terminal tasks, mean 4.3%); persistence mechanics (Ralph loop primary-sourced to
+ghuntley.com Jul 14 2025 with the verbatim one-liner; Anthropic initializer/coding-agent split;
+Managed Agents session-as-append-only-log + wake(sessionId)/getSession(id) verbatim, TTFT
+numbers vendor-tiered; the "unacceptable to remove or edit tests" rule kept I2-precise — it
+guards feature-list entries; "test ratchet" attributed as Osmani's term); verification at a
+distance (evaluator ≠ generator; Cursor planner/worker/judge + "Opus stopped early" flagged
+secondhand-via-Osmani; approval fatigue 93% / 20%→40% / 17% FN verbatim); governance (Ona's
+"guardrail inside the context window is a suggestion, not a boundary" as the infra-layer
+thesis; cost as a governance surface with token-velocity circuit breakers — pattern
+practitioner-tier, viral runaway-bill dollar figures excluded as folklore); adoption path
+(false summit → background agents → software factory; six summit case studies tabled with a
+hard ALL-vendor-self-reported flag; Ona = ex-Gitpod rebrand Sep 2025, OpenAI acquisition
+agreed Jun 11 2026 per openai.com/CNBC/Bloomberg; DORA 2025's ~90% explicitly NOT stretched
+to an async-delegation adoption stat — none exists). Osmani's long-horizon-reasoning /
+long-running-execution / persistent-agency taxonomy adopted as the chapter's spine.
+
+## v1.31 · 2026-07-16
+
+**NEW TOPIC E9 + deep dive — Harness Engineering as a Discipline: Eval-Driven Tuning**
+(`eng-harness-tuning`, first new M1 topic since the workbook's creation; 52→53 topics).
+Companion `deep-dives/E9-harness-tuning-deepdive.html` + in-page overlay `#e9-deepdive`.
+From the July source-evaluation round (the boss reading list), verified by a deep-research
+workflow (3-vote adversarial verification per claim) + four reader teammates + an E9-specific
+fact/discovery pass. Sections: the tunable surface (Claude Code single while-loop,
+arXiv:2604.14228, vs OpenDev compound ensemble, arXiv:2603.05344; the six runtime
+responsibilities, arXiv:2606.20683; apiad's Mode/Skill/Command/Subagent vocabulary); the
+evidence that the harness moves scores (arXiv:2605.23950 — harness-induced variance 7.80×
+model-induced in a controlled factorial, 34–48-pt scaffold swings on SWE-bench Verified Mini,
+the "disclose the harness" rule; Nemotron 3 Ultra 65–70.4% across five harnesses; Artificial
+Analysis customizing Terminus-2 turn-budget disclosure); the discipline (Hashimoto's rule,
+mitchellh.com Feb 2026 verbatim; Osmani's Ratchet as a provenance rule; "success is silent,
+failures are verbose"; HumanLayer's context-firewall subagents + anti-persona stance, flagged
+as one vendor's doctrine); the eval-driven tuning loop (LangChain playbook: traces →
+behaviour class → one change → cost ladder → keep-if-repeats; guidance placement; the
+94→96/127 middleware ablation; the flat-category = model-limit diagnostic — all vendor-tiered,
+with Braintrust EDD and Anthropic's generator/evaluator harness post as independent
+practitioners of the method); co-evolution (the named "Harness Robustness" post-training
+stage; HaaS/SDK trend; vendor-strategy implications, T6). Key disentanglement: the
+Terminal-Bench meme is TWO results — Opus 4.6 #33→#5 (HumanLayer) and deepagents-cli
+52.8→66.5 with gpt-5.2-codex fixed (Trivedy/LangChain, retold by Osmani) — both self-reported,
+point-in-time. Refuted claims excluded: "first-of-their-kind" harness profiles; the "1.6% AI
+decision logic" figure. Attribution fixes applied: "context engineering" popularized by
+Karpathy (Jun 2025), not solely Horthy; harness engineering "attributed to" Trivedy, not
+"coined" as fact. **Also: I5 fact refresh** against arXiv:2602.11988 v2 — the ETH benchmark
+is CTXBENCH (was misnamed AGENTbench) and developer-provided files bought +2.4% short of
+significance (was +4%); HumanLayer's "14-22% more reasoning tokens" gloss is NOT in the paper
+(cost is measured in USD/steps). Fixed in both copies; METR note for the record: TH1.1 raw
+data (May 2026 update) puts Opus 4.6 at ~12.0 h p50, doubling ~129 days from 2023.
+
 ## v1.30 · 2026-07-16
 
 Added the **I5 deep dive — Progressive Disclosure: Skills, Nested Context Files & the Map

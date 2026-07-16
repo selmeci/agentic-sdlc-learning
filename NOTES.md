@@ -60,7 +60,7 @@ Use this for open questions, session hand-off notes, and things to check before 
   CLAUDE.md "target under 200 lines" + subdirectory on-demand + four-hop imports-load-at-launch
   + CLAUDE.local.md supported (code.claude.com/docs/en/memory); AGENTS.md nearest-file verbatim
   + AAIF stewardship + "60k+" self-reported; ETH arXiv:2602.11988 (−0.5%/−2% success,
-  +20%/+23% cost — AGENTbench-specific pair; +4% human-written; 641 words/9.7 sections);
+  +20%/+23% cost — CTXBENCH-specific pair (v2 name; was misread as AGENTbench); +2.4% n.s. developer-written; 641 words/9.7 sections);
   McMillan arXiv:2605.10039 (1,650 sessions, BF10 0.05–0.10, ~5.6%/step OR 0.944);
   advanced-tool-use (Nov 24 2025: 58 tools/55K, 85% reduction, Opus 4 49%→74%, 4.5
   79.5%→88.1% — VENDOR) + code-exec-with-MCP (Nov 4 2025: 150k→2k "time and cost saving of
@@ -103,7 +103,7 @@ not because it lacks merit. When picking it up, do it token-first — do NOT `fi
 - 2026-07-16 (I5 session): **I5 deep dive added (v1.30) — M4 at 5/7.** Outline → 3 teammates
   (2 fact-verify + 1 discovery, session-unique names) → spot-verify round on discovery finds
   (catches: matklad "bottleneck" line was a paraphrase — verbatim is "2x more time to write a
-  patch… 10x more time to figure out where"; −2%/+23% is AGENTbench-specific, SWE-bench Lite
+  patch… 10x more time to figure out where"; −2%/+23% is CTXBENCH-specific (v2 name), SWE-bench Lite
   is −0.5%/+20%; aider "personalized PageRank" not in the 2023 blog — attribute to the
   implementation; HumanLayer URL is humanlayer.com and its instruction-capacity source is
   arXiv:2507.11538). Seed corrections applied: L1 ~100 tokens (not ~80), body 500 lines (not
