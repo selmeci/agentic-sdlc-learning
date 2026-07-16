@@ -320,14 +320,26 @@ footer .verlink:hover{color:var(--cobalt)}
 .e1ov .vitem .vd{font-family:var(--mono);font-size:11px;color:var(--soft)}
 .e1ov .vitem p{font-size:13.5px;margin:0;max-width:none}
 /* ------- highlight-notes ------- */
-mark.hl-note{background:linear-gradient(transparent 55%, #FCE8C0 55%);color:inherit;border-radius:2px;padding:0 .5px;cursor:default}
+mark.hl-note{background:linear-gradient(transparent 55%, #FCE8C0 55%);color:inherit;border-radius:2px;padding:0 .5px;cursor:pointer}
 mark.hl-note.flash{animation:hlflash 1.3s ease-out}
 @keyframes hlflash{0%{background:#F6C858}35%{background:#F6C858}100%{background:linear-gradient(transparent 55%, #FCE8C0 55%)}}
-#hlSave{position:fixed;z-index:70;display:none;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff;background:var(--cobalt-deep);border:0;border-radius:999px;padding:6px 12px;cursor:pointer;box-shadow:0 4px 14px rgba(20,40,90,.28)}
+#hlSave{position:fixed;z-index:250;display:none;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff;background:var(--cobalt-deep);border:0;border-radius:999px;padding:6px 12px;cursor:pointer;box-shadow:0 4px 14px rgba(20,40,90,.28)}
 #hlSave:hover{background:var(--cobalt)}
-#hlToast{position:fixed;z-index:71;left:50%;bottom:26px;transform:translateX(-50%);display:none;font-family:var(--mono);font-size:11px;color:#fff;background:#20303f;border-radius:8px;padding:8px 14px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#hlToast{position:fixed;z-index:251;left:50%;bottom:26px;transform:translateX(-50%);display:none;font-family:var(--mono);font-size:11px;color:#fff;background:#20303f;border-radius:8px;padding:8px 14px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 #hlToast.show{display:block;animation:hltoast 2.2s ease forwards}
 @keyframes hltoast{0%{opacity:0;transform:translate(-50%,8px)}12%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
+#hlNote{position:fixed;z-index:252;display:none;width:min(300px,calc(100vw - 24px));background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 34px rgba(20,30,45,.28);padding:10px}
+#hlNote textarea{width:100%;min-height:64px;resize:vertical;font-family:var(--mono);font-size:12px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;box-sizing:border-box}
+#hlNote textarea::placeholder{color:var(--idle)}
+#hlNote textarea:focus{border-color:var(--cobalt);outline:none}
+.hlnote-act{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.hlnote-act button{font-family:var(--mono);font-size:11px;font-weight:600;border-radius:999px;padding:5px 13px;cursor:pointer}
+.hlnsave{color:#fff;background:var(--cobalt-deep);border:1px solid var(--cobalt-deep)}
+.hlnsave:hover{background:var(--cobalt)}
+.hlnskip{color:var(--soft);background:var(--card);border:1px solid var(--line)}
+.hlnskip:hover{color:var(--ink)}
+#hlTip{position:fixed;z-index:253;display:none;max-width:min(320px,calc(100vw - 24px));background:#20303f;color:#fff;font-family:var(--mono);font-size:11.5px;line-height:1.45;border-radius:8px;padding:7px 11px;box-shadow:0 6px 20px rgba(0,0,0,.28);pointer-events:none;overflow-wrap:anywhere}
+#hlTip.hint{color:#cdd6df;font-style:italic}
 #notesBody{padding:4px 0 8px}
 .hlgroup{margin:0 0 22px}
 .hlgroup>h4{font-family:var(--disp);font-size:14px;margin:0 0 10px;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:6px}
@@ -343,6 +355,14 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
 .hlcard .hldel{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--soft);background:none;border:0;cursor:pointer}
 .hlcard .hldel:hover{color:#b3402e}
 .hlempty{font-size:14px;color:var(--soft);padding:14px 0}
+.hltopic[hidden]{display:none}
+.hltopic-n{font-family:var(--mono);font-weight:400;color:var(--soft)}
+.hltopic-list{display:flex;flex-direction:column;gap:8px}
+.hltopic-item{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:9px;padding:9px 12px}
+.hltopic-item blockquote{margin:0;font-family:var(--serif,inherit);font-size:13.5px;line-height:1.45;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.hltopic-thought{font-size:12px;color:var(--soft);margin-top:5px;overflow-wrap:anywhere}
+.hltopic .hlopen{margin-top:8px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:999px;padding:4px 11px;cursor:pointer}
+.hltopic .hlopen:hover{background:#DFE6F8}
 @media (max-width:760px){.e1ov .vitem{grid-template-columns:52px 1fr}.e1ov .vitem .vd{display:none}}
 
 /* ===== v1.16 — mobile diagram legibility, orientation & touch targets ===== */
@@ -2081,6 +2101,8 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.36</span><span class="vd">2026-07-16</span><p><strong>Highlight notes: write at save, read on hover, edit on click.</strong> You can now attach a note to a highlighted passage directly. After "+ save as note" a small popover opens with a text field so you write the note immediately (or skip). Hovering a highlight shows its note as a tooltip (empty notes show a "click to add a note" hint); clicking a highlight reopens the popover pre-filled to edit it. The note is the same <span class="mono">thought</span> shown in the per-topic "My highlights" list and the "my notes" modal — one source, three views, kept in sync. Close semantics: <strong>save</strong> or click-outside persists, <strong>skip</strong>/Esc discards (Cmd/Ctrl+Enter also saves). Both the popover (<span class="mono">z-index:252</span>) and tooltip (<span class="mono">253</span>) sit above the deep-dive overlay; marks now use a pointer cursor to signal they are interactive. Workbook-render-only; <span class="mono">state.highlights</span> schema unchanged.</p></div>
+      <div class="vitem"><span class="vv">v1.35</span><span class="vd">2026-07-16</span><p><strong>FIX + FEATURE for highlight-notes.</strong> <strong>Fix:</strong> the "+ save as note" button (and the "saved" toast) never appeared when selecting text in a deep dive — a z-index layering bug. Both were appended to <span class="mono">document.body</span> at <span class="mono">z-index:70/71</span>, below the deep-dive overlay's <span class="mono">z-index:200</span>; since they only ever show for selections <em>inside</em> an overlay, they always rendered behind it (present in the DOM, <span class="mono">display:block</span>, but visually occluded — confirmed by hit-testing <span class="mono">elementFromPoint</span> returning the overlay, not the button). Raised to <span class="mono">250/251</span>. Select-to-note now works end-to-end (button visible → save → persistent tint → toast). <strong>Feature:</strong> each topic card now shows a <strong>"My highlights (N)"</strong> section (between "Go deeper" and "My notes") listing the passages you highlighted in that topic's deep dive — quote preview, your note (read-only), and an <strong>"open at passage →"</strong> jump that opens the overlay scrolled to and flashing the passage. Creating/editing/deleting highlights still lives in the overlay + global "my notes" modal; the per-topic list is a contextual view that stays in sync via <span class="mono">renderTopicHls()</span> (hooked into save/delete/import/thought-edit/load). Workbook-render-only; <span class="mono">state.highlights</span> schema and the standalone deep dives are unchanged.</p></div>
       <div class="vitem"><span class="vv">v1.34</span><span class="vd">2026-07-16</span><p><strong>UX — deep-dive links now render as a distinct "Open panel" button, not a citation.</strong> In every topic's "Go deeper" section, the in-page deep-dive link was visually indistinguishable from external references: same <span class="mono">↗</span> "leaving-the-page" bullet, and the anchor even carried <span class="mono">target="_blank"</span> (neutralised only by the JS overlay interceptor). Deep dives now render as a bordered button-card (panel-with-lines icon, title, description, "Open panel →" affordance) above a separate "References" list; the <span class="mono">↗</span> glyph is now reserved for genuinely external citations. Added <span class="mono">aria-haspopup="dialog"</span> and dropped the misleading <span class="mono">target="_blank"</span> on in-page links. Purely presentational and workbook-render-only: the 26 <span class="mono">src</span> arrays are untouched (title/description parsed at render), the <span class="mono">#*-deepdive</span> anchor wiring is unchanged, so no progress keys move and no two-copies sync is triggered.</p></div>
       <div class="vitem"><span class="vv">v1.33</span><span class="vd">2026-07-16</span><p><strong>NEW TOPIC E11 + deep dive — Formal Methods in the Agentic Loop: Vericoding &amp; Runtime Enforcement.</strong> Third and last new M1 topic from the July source-evaluation round (54→55 topics; M1 now E1–E11). New companion (E11-formal-methods-deepdive.html + overlay). The chapter’s spine is an anti-conflation rule: Direction A (formal methods on the agent’s OUTPUT — vericoding: arXiv:2509.22908, 82% Dafny / 44% Verus / 27% Lean; Misu FSE 2024 58%; AWS Cedar/Lean shipping) vs Direction B (formal methods on the agent’s BEHAVIOUR — AgentSpec ICSE 2026, the chapter’s only peer-reviewed system; ProbGuard’s measured safety–utility curve 40.63%→2.60% unsafe at 59.38%→10.42% completion). The economics thread runs Newcombe CACM 2015 (cost-perception quote + 35-step DynamoDB bug) → antfly (May 2026, tiered practitioner/vendor; Pebble validation stated precisely — it found a DIFFERENT later-fixed bug) → Vogels×Byron Cook (Feb 2026, neuro-symbolic). Counterweight kept load-bearing: NL-to-TLA+ = 26.6% syntactic / 8.6% semantic across 30 LLMs (arXiv:2606.05792) — generation against a verifier works, unsupervised formalization does not; the human owns intent (Lahiri’s intent gap, arXiv:2603.17150, extending H2’s ladder). Corrections honoured from the fact pass: vericoding venue = none (preprint); Misu = UC Irvine, not MSR, and prompt-based, not repair-loop; ProbGuard never "ProGuard"; AgentSpec "first" only as hedged attribution; Antfly sells retrieval, not verification tooling.</p></div>
       <div class="vitem"><span class="vv">v1.32</span><span class="vd">2026-07-16</span><p><strong>NEW TOPIC E10 + deep dive — Background &amp; Long-Running Agents: Async Delegation.</strong> Second new M1 topic from the July source-evaluation round. New companion (E10-background-agents-deepdive.html + overlay): the execution axis beyond E6 (where/when/who initiates; cross-vendor convergence sandbox→work→PR, launch primaries cited); the evidence both ways (METR TH1.1 — doubling ~4.3 months since 2023, Opus 4.6 ~12 h at 50%, pinned from the raw data file; vs LHTB arXiv:2607.08964 — best model 15.2% pass@1 on sustained tasks); persistence mechanics (Ralph loop primary-sourced to Huntley Jul 2025; initializer/coding-agent split; Managed Agents session-as-append-only-log + wake(sessionId) verbatim; the feature-list protection rule kept I2-precise); verification at a distance (evaluator≠generator; Cursor planner/worker/judge flagged secondhand-via-Osmani; approval fatigue: 93% approvals, 20%→40% auto-approve, 17% classifier false-negatives); governance (Ona: "a guardrail inside the context window is a suggestion, not a boundary" — infra-layer enforcement; cost as governance with token-velocity circuit breakers, runaway-bill dollar folklore excluded); the adoption path (false summit → background agents → software factory; six summit case studies tabled, ALL flagged unaudited vendor self-reports; Ona = ex-Gitpod, OpenAI acquisition agreed Jun 11 2026 — confirmed via openai.com/CNBC/Bloomberg). METR correction applied vs the reading-list drafts: Opus 4.6 is ~12.0 h p50 in TH1.1 data, not the circulating 14.5 h.</p></div>
@@ -4264,7 +4286,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   </div>
 </div>
 <footer>
-  <b>v1.34</b> · 2026-07-16 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.36</b> · 2026-07-16 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
@@ -5470,7 +5492,7 @@ function importData(file){
       Object.assign(state.notes,p.notes||{});
       if(p.seen)Object.assign(state.seen,p.seen);
       if(Array.isArray(p.highlights)){var have={};state.highlights.forEach(function(h){have[h.id]=1;});p.highlights.forEach(function(h){if(h&&h.id&&!have[h.id]){state.highlights.push(h);have[h.id]=1;}});}
-      syncFromState();updateCounts();updateNotesCount();applyFilter();scheduleSave();
+      syncFromState();updateCounts();updateNotesCount();renderTopicHls();applyFilter();scheduleSave();
       setSave('ok','imported');
     }catch(e){setSave('err','import failed');}
   };
@@ -5498,8 +5520,14 @@ function topicEl(m,t){
     if(refs.length)h+='<div class="srclab">References</div><ul class="srcs">'+refs.map(s=>s.u?'<li><a href="'+s.u+'" target="_blank" rel="noopener">'+s.t+'</a></li>':'<li>'+s.t+'</li>').join('')+'</ul>';
     return h+'</div>';
   })();
+  const secHls=(()=>{
+    const d=(t.src||[]).filter(s=>s.u&&s.u.charAt(0)==='#')[0];
+    if(!d)return'';
+    const tok=d.u.replace(/^#/,'').replace(/-deepdive$/,'');
+    return '<div class="sec hltopic" data-hlov="'+tok+'" hidden><div class="lab">My highlights <span class="hltopic-n"></span></div><div class="hltopic-list"></div></div>';
+  })();
   const secNote='<div class="sec note"><div class="lab">My notes</div><textarea placeholder="notes on this topic… (saved automatically)" data-note="'+t.id+'"></textarea></div>';
-  a.innerHTML='<div class="t-head"><button class="t-toggle" type="button" aria-expanded="false"><span class="tid">'+t.code+'</span><h3>'+t.title+'</h3>'+(t.pri?'<span class="pri">research priority '+t.pri+'</span>':'')+'<svg class="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button><div class="status" role="group" aria-label="topic status">'+STATUSES.map(s=>'<button type="button" data-v="'+s+'" class="'+(s==='none'?'on':'')+'">'+LBL[s]+'</button>').join('')+'</div></div><div class="t-body">'+secKnow+secC+secO+secRQ+secChecks+secSrc+secNote+'</div>';
+  a.innerHTML='<div class="t-head"><button class="t-toggle" type="button" aria-expanded="false"><span class="tid">'+t.code+'</span><h3>'+t.title+'</h3>'+(t.pri?'<span class="pri">research priority '+t.pri+'</span>':'')+'<svg class="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button><div class="status" role="group" aria-label="topic status">'+STATUSES.map(s=>'<button type="button" data-v="'+s+'" class="'+(s==='none'?'on':'')+'">'+LBL[s]+'</button>').join('')+'</div></div><div class="t-body">'+secKnow+secC+secO+secRQ+secChecks+secSrc+secHls+secNote+'</div>';
   a.dataset.search=(t.code+' '+t.title+' '+(t.know||[]).join(' ')+' '+(t.concepts||[]).join(' ')+' '+(t.open||[]).join(' ')+' '+(t.rq||[]).join(' ')).toLowerCase();
   return a;
 }
@@ -6081,6 +6109,23 @@ function renderNotes(){
     return '<div class="hlgroup"><h4>'+esc(g.title)+'</h4>'+cards+'</div>';
   }).join('');
 }
+function renderTopicHls(){
+  var secs=document.querySelectorAll('.hltopic[data-hlov]');
+  for(var i=0;i<secs.length;i++){
+    var sec=secs[i],tok=sec.getAttribute('data-hlov');
+    var mine=state.highlights.filter(function(h){return h.ov===tok;});
+    if(!mine.length){sec.hidden=true;continue;}
+    mine.sort(function(a,b){return (b.created||'').localeCompare(a.created||'');});
+    var n=sec.querySelector('.hltopic-n');if(n)n.textContent='('+mine.length+')';
+    var list=sec.querySelector('.hltopic-list');
+    if(list)list.innerHTML=mine.map(function(h){
+      return '<div class="hltopic-item"><blockquote>'+esc(h.quote||'')+'</blockquote>'+
+        (h.thought?'<div class="hltopic-thought">'+esc(h.thought)+'</div>':'')+
+        '<button type="button" class="hlopen" data-hopen="'+esc(h.id)+'">open at passage →</button></div>';
+    }).join('');
+    sec.hidden=false;
+  }
+}
 function openNotes(){var ov=$('#notesov');if(!ov)return;renderNotes();ov.classList.add('show');document.body.style.overflow='hidden';var p=ov.querySelector('.panel');if(p)p.scrollTop=0;}
 function closeNotes(){var ov=$('#notesov');if(!ov)return;ov.classList.remove('show');document.body.style.overflow='';}
 function hlOpenNote(h){
@@ -6106,12 +6151,12 @@ function initNotes(){
     var op=e.target.closest('[data-hopen]');
     if(op){var h=state.highlights.filter(function(x){return x.id===op.getAttribute('data-hopen');})[0];if(h)hlOpenNote(h);return;}
     var del=e.target.closest('[data-hdel]');
-    if(del){var id=del.getAttribute('data-hdel');state.highlights=state.highlights.filter(function(x){return x.id!==id;});scheduleSave();updateNotesCount();renderNotes();return;}
+    if(del){var id=del.getAttribute('data-hdel');state.highlights=state.highlights.filter(function(x){return x.id!==id;});scheduleSave();updateNotesCount();renderNotes();renderTopicHls();return;}
   });
   var nb=$('#notesBody');
-  if(nb)nb.addEventListener('input',function(e){var ta=e.target.closest('textarea[data-hthought]');if(!ta)return;var id=ta.getAttribute('data-hthought');var h=state.highlights.filter(function(x){return x.id===id;})[0];if(h){h.thought=ta.value;scheduleSave();}});
+  if(nb)nb.addEventListener('input',function(e){var ta=e.target.closest('textarea[data-hthought]');if(!ta)return;var id=ta.getAttribute('data-hthought');var h=state.highlights.filter(function(x){return x.id===id;})[0];if(h){h.thought=ta.value;scheduleSave();renderTopicHls();}});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#notesov')&&$('#notesov').classList.contains('show'))closeNotes();});
-  updateNotesCount();
+  updateNotesCount();renderTopicHls();
 }
 
 /* ===== highlight-notes: shared anchoring helpers ===== */
@@ -6190,11 +6235,82 @@ function initCapture(){
   btn.addEventListener('click',function(){
     if(!pending)return;
     var h={id:hlId(),ov:pending.ov,title:pending.title,quote:pending.quote,prefix:pending.prefix,suffix:pending.suffix,occ:pending.occ,thought:'',created:new Date().toISOString()};
-    state.highlights.push(h);scheduleSave();updateNotesCount();
+    var sel=window.getSelection();
+    var rect=(sel&&sel.rangeCount)?sel.getRangeAt(0).getBoundingClientRect():null;
+    state.highlights.push(h);scheduleSave();updateNotesCount();renderTopicHls();
     var ov=document.getElementById(h.ov+'ov');if(ov&&typeof applyHighlights==='function')applyHighlights(ov);
-    var s=window.getSelection();if(s)s.removeAllRanges();
-    hide();hlToast('saved — add your thought in “my notes”');
+    if(sel)sel.removeAllRanges();
+    hide();
+    openNotePopover(h,rect);
   });
+
+  /* ---- note editor popover (write at save + edit on click) ---- */
+  var pop=document.createElement('div');pop.id='hlNote';
+  pop.innerHTML='<textarea placeholder="your note on this passage… (optional)"></textarea><div class="hlnote-act"><button type="button" class="hlnskip" data-hlnskip>skip</button><button type="button" class="hlnsave" data-hlnsave>save</button></div>';
+  document.body.appendChild(pop);
+  var popTa=pop.querySelector('textarea');
+  var editingId=null;
+  function placePop(rect){
+    pop.style.display='block';
+    var pw=pop.offsetWidth,ph=pop.offsetHeight;
+    var top=rect?rect.bottom+8:120,left=rect?rect.left:120;
+    if(top+ph>window.innerHeight-8)top=Math.max(8,(rect?rect.top:top)-ph-8);
+    left=Math.max(8,Math.min(left,window.innerWidth-pw-8));
+    top=Math.max(8,Math.min(top,window.innerHeight-ph-8));
+    pop.style.top=top+'px';pop.style.left=left+'px';
+  }
+  function openNotePopover(h,rect){editingId=h.id;popTa.value=h.thought||'';placePop(rect);setTimeout(function(){popTa.focus();},0);}
+  function closeNotePopover(){pop.style.display='none';editingId=null;}
+  function commitNote(){
+    if(!editingId){closeNotePopover();return;}
+    var h=state.highlights.filter(function(x){return x.id===editingId;})[0];
+    if(h){h.thought=popTa.value.trim();scheduleSave();renderTopicHls();var nov=$('#notesov');if(nov&&nov.classList.contains('show'))renderNotes();}
+    closeNotePopover();hlToast('note saved');
+  }
+  pop.querySelector('[data-hlnsave]').addEventListener('click',commitNote);
+  pop.querySelector('[data-hlnskip]').addEventListener('click',function(){closeNotePopover();});
+  popTa.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){e.preventDefault();closeNotePopover();}
+    else if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();commitNote();}
+  });
+  document.addEventListener('mousedown',function(e){if(pop.style.display==='block'&&!pop.contains(e.target))commitNote();},true);
+
+  /* ---- click a highlight to edit its note ---- */
+  document.addEventListener('click',function(e){
+    var mk=e.target.closest?e.target.closest('mark.hl-note'):null;
+    if(!mk)return;
+    var sel2=window.getSelection();if(sel2&&!sel2.isCollapsed)return;
+    var id=mk.getAttribute('data-note-id');
+    var h=state.highlights.filter(function(x){return x.id===id;})[0];
+    if(h)openNotePopover(h,mk.getBoundingClientRect());
+  });
+
+  /* ---- hover a highlight to see its note ---- */
+  var tip=document.createElement('div');tip.id='hlTip';document.body.appendChild(tip);
+  var tipMark=null;
+  function showTip(mk,h){
+    if(tipMark===mk&&tip.style.display==='block')return;
+    tipMark=mk;
+    var note=(h.thought||'').trim();
+    if(note){tip.textContent=note;tip.classList.remove('hint');}
+    else{tip.textContent='click to add a note';tip.classList.add('hint');}
+    tip.style.display='block';
+    var r=mk.getBoundingClientRect(),tw=tip.offsetWidth,th=tip.offsetHeight;
+    var top=r.top-th-8,left=r.left;
+    if(top<8)top=r.bottom+8;
+    left=Math.max(8,Math.min(left,window.innerWidth-tw-8));
+    tip.style.top=top+'px';tip.style.left=left+'px';
+  }
+  function hideTip(){tip.style.display='none';tipMark=null;}
+  document.addEventListener('mouseover',function(e){
+    var mk=e.target.closest?e.target.closest('mark.hl-note'):null;
+    if(!mk){if(tipMark)hideTip();return;}
+    if(pop.style.display==='block')return;
+    var id=mk.getAttribute('data-note-id');
+    var h=state.highlights.filter(function(x){return x.id===id;})[0];
+    if(h)showTip(mk,h);
+  });
+  document.addEventListener('scroll',function(){if(tip.style.display==='block')hideTip();},true);
 }
 
 /* ===== highlight-notes: locate + wrap + apply ===== */

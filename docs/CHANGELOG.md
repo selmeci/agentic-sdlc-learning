@@ -3,6 +3,51 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.36 · 2026-07-16
+
+**Highlight notes: write at save, read on hover, edit on click.** Building on the v1.35 fix and
+per-topic list, you can now attach a note to a highlighted passage directly at the mark. After
+clicking **"+ save as note"**, a small popover (`#hlNote`) opens with a text field so you write the
+note immediately (or **skip**). Hovering any highlight shows its note in a tooltip (`#hlTip`);
+empty notes show a subtle *"click to add a note"* hint. Clicking a highlight reopens the popover
+pre-filled to edit — disambiguated from drag-selecting a new highlight by requiring a collapsed
+selection. Marks now use a `pointer` cursor to signal interactivity.
+
+The note is the same `thought` field surfaced in the per-topic "My highlights" list and the global
+"my notes" modal — one source, three views, kept in sync via `renderTopicHls()` / `renderNotes()`
+on save. Close semantics: **save** or click-outside persists; **skip** / Escape discards (the
+highlight itself is already saved); Cmd/Ctrl+Enter also saves. The popover (`z-index:252`) and
+tooltip (`z-index:253`) sit above the deep-dive overlay (200), consistent with the v1.35 z-index
+fix. Verified in Chrome (popover on top, tooltip shows note + hint, click-to-edit prefills,
+persistence across reload) via hit-testing and screenshots. Workbook-render-only; the
+`state.highlights` schema, export/import, and standalone deep dives are unchanged.
+
+## v1.35 · 2026-07-16
+
+**Highlight-notes: fixed the invisible save button, and added a per-topic highlights list.**
+
+**Fix (root-caused via systematic debugging + visual confirmation).** Selecting text inside a
+deep-dive overlay never showed the floating **"+ save as note"** button, so no highlight could be
+created — the v1.29 feature was effectively unusable. Root cause was a z-index layering bug: `#hlSave`
+(z-index 70) and `#hlToast` (z-index 71) are appended to `document.body`, but the deep-dive overlay
+`.e1ov` is `position:fixed; inset:0; z-index:200` covering the whole viewport. Because the button only
+ever appears for selections *inside* an overlay, it always rendered **behind** it — present in the DOM
+and `display:block`, but visually occluded. This is why a DOM inspection would mislead: `elementFromPoint`
+at the button's centre returned the overlay's content (`DIV.body`), not the button. Fixed by raising both
+above the overlay: `#hlSave` → 250, `#hlToast` → 251. Verified in Chrome (button visible, save persists,
+passage tinted, toast shown, all confirmed by hit-testing and screenshots).
+
+**Feature — per-topic "My highlights" list.** Each topic card now shows a **"My highlights (N)"**
+section (between "Go deeper" and "My notes") listing the passages you highlighted in that topic's deep
+dive: a 2-line quote preview, your note (read-only), and an **"open at passage →"** button that opens
+the overlay scrolled to and flashing the source passage. The topic→deep-dive mapping comes from the
+topic's own `#<tok>-deepdive` src anchor; the list reuses the existing document-level `[data-hopen]`
+handler for the jump. Creating, editing, and deleting highlights stay in the overlay + global "my notes"
+modal (unchanged); the per-topic list is a contextual **view + jump** index kept in sync by a new
+`renderTopicHls()` hooked into save / delete / import / thought-edit / load. Sections with no highlights
+stay hidden. Workbook-render-only: `state.highlights` schema, export/import, and the standalone
+deep-dive files are all unchanged; no frozen progress keys move.
+
 ## v1.34 · 2026-07-16
 
 **UX — deep-dive links now render as a distinct "Open panel" button, not a citation.** In every
