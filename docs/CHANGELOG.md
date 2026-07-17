@@ -3,6 +3,56 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.41 · 2026-07-17
+
+**NEW DEEP DIVE B2 — Characterization & Golden-Master Testing with Agents.** Second M5
+companion (`deep-dives/B2-characterization-golden-master-deepdive.html` + in-workbook overlay),
+built on the three-teammate fact pass + spot-verify round (9th session in a row it paid).
+
+The two pinning techniques stated precisely: **Feathers characterization** (WELC 2004 ch. 13;
+verbatim "The purpose of characterization testing is to document your system's actual behavior,
+not check for the behavior you wish your system had" and "When a system goes into production,
+in a way, it becomes its own specification") and **Falco/Bache approval testing** — approval /
+golden master / snapshot / characterization mapped as one mechanism with four emphases (Bache's
+2021 anatomy quoted; Rainsberger = *popularizer* of golden master, never "coiner"; Hyrum's Law
+verbatim + Excel-1900 (Microsoft primary) and Java-8-HashMap (picard #139) as load-bearing-bug
+exhibits — the pairing flagged as our synthesis).
+
+Production evidence with contexts kept honest: TestGen-LLM (75/57/25 = Reels/Stories eval;
+11.5% / 73% = Instagram+Facebook test-a-thons; "Assured LLM-SE" = separate paper
+arXiv:2402.04380), **ACH pinned to arXiv:2501.12862** (FSE 2025; 10,795 Kotlin classes → 9,095
+mutants → 571 privacy-hardening tests, 73% accepted, 36% privacy-relevant; equivalent-mutant
+detector 0.79/0.47 → 0.95/0.96 with pre-processing; deployed Messenger/WhatsApp — NOT
+Instagram), Qodo Cover (first OSS implementation; huggingface/pytorch-image-models **PR #2331**,
+15 tests / 168 lines; Itamar Friedman quote with its full "…who run fully automated workflows"
+clause), UnitTenX, **YATE** (arXiv:2507.18316 — test *repair* beats regeneration: +32.06%
+lines / +21.77% mutants killed).
+
+Five traps, each with measured evidence: coverage vanity (MutGen 100%/4%; **TestGenEval**
+arXiv:2410.00752 — GPT-4o 35.2% coverage vs **18.8% mutation score**, the only test-gen
+benchmark grading mutation), oracle-passing-by-construction (arXiv:2412.14137, read both
+directions: fatal for bug-finding, definitional for characterization), **bug-as-spec measured**
+(arXiv:2607.05139 — fault detection ~25% → ~14% when the model sees the faulty implementation,
+five models, three benchmarks), flaky pins (ICSE SEIP 2026 DBMS study — 0.07% baseline vs
+0.29–0.71% generated, 63% unordered collections, "developers should prioritize fixing flaky
+tests before applying LLM-based generation approaches" verbatim), and the agent gaming its net
+(Beck's genie "disabling or deleting tests" verbatim from *Augmented Coding: Beyond the Vibes*;
+ImpossibleBench; ThoughtWorks Radar Vol. 34 "erode approve/deny chokepoints" verbatim) — plus
+Sapegin's approve-all-fatigue line ("developers just update snapshots without looking at them
+at all") as the human-scale substrate.
+
+The six-step workflow (document-don't-fix → deterministic filter → ~20%+all-suspected sampling
+→ two-door SUSPECTED-BUG triage → ~70% mutation gate → read-only commit) **flagged as our
+Report 4 synthesis**. Toolbox table point-in-time (ApprovalTests; Verify's Aug-2026 licensing
+change; Jest/Vitest; Texttest; VCR-style cassettes; Percy AI diff-reviewer as vendor claim) +
+a four-row deterministic exit-criteria table with the keep-or-discard decision recorded per
+module.
+
+**Fact fixes elsewhere:** the Report 4 notes' "there are no wrong answers — just documenting
+the way things exist" line was **Erik Dietrich's gloss misattributed to Feathers** — corrected
+with Feathers' real verbatim lines. Topic B2 `know`/`concepts`/`src`/`checks` enriched
+(bug-as-spec + flakiness bullet, ACH src link, read-only-tests check).
+
 ## v1.40 · 2026-07-17
 
 **NEW — cross-device sync (opt-in, local-first).** Progress and notes were saved only per

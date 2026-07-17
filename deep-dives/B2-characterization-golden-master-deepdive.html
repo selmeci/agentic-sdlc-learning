@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2 Deep Dive &mdash; Characterization &amp; Golden-Master Testing with Agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edB2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahB2a)}
+svg .edB2b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahB2b)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">B2 · DEEP DIVE</span>
+    <h1>Characterization &amp; Golden-Master Testing with Agents</h1>
+    <span class="bc">companion to module M5 · Brownfield bootstrap</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · Characterization tests</a>
+  <a href="#s2"><b>2</b> · Approval / golden master</a>
+  <a href="#s3"><b>3</b> · Generation with filters</a>
+  <a href="#s4"><b>4</b> · The five traps</a>
+  <a href="#s5"><b>5</b> · The workflow</a>
+  <a href="#s6"><b>6</b> · Toolbox &amp; exit criteria</a>
+  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s8"><b>8</b> · Further reading</a>
+</nav>
+<main>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">B1 ended with a chain: read-only comprehension → characterization/golden-master tests → minimal CI → AGENTS.md → scoped writes. This chapter is the second link — the first time the agent <em>writes</em> anything in a brownfield engagement, and what it writes is a peculiar kind of artifact: tests that assert what the system <strong>does</strong>, not what anyone thinks it <strong>should</strong> do. The obvious objection arrives immediately, usually from the most senior engineer in the room: "the agent doesn't understand our code — how can it write the tests we'll trust our refactoring to?" The honest answer is that it doesn't have to understand, if you choose the technique accordingly. Characterization and approval testing were designed — two decades before coding agents — for exactly the situation where nobody trusts their understanding of the code; they replace interpretation with observation. What the agent adds is mass: Feathers-style pinning of a module used to cost weeks of expert time, which is why untested estates stayed untested. What the agent does <em>not</em> add is judgment — whether a pinned behavior is a feature or a bug remains a human question, and the entire discipline of this chapter is keeping that question out of the generator's hands. The chapter walks the two techniques (§1–§2), the production evidence that filtered mass generation works (§3), the five ways it goes wrong (§4), the workflow that survives contact with all five (§5), and the tools plus the exit criteria that decide when a module counts as "characterized" (§6).</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the two pinning techniques, precisely: Feathers characterization (per-behavior assertions) and Falco approval/golden-master (whole-output diffs) — and when each fits (§1–§2)</li><li>the terminology map: approval / golden master / snapshot / characterization are one mechanism with four emphases — with Bache's argument for which word to use (§2)</li><li>the evidence file: Meta TestGen-LLM and ACH, Qodo Cover, UnitTenX — what filtered generation achieved in production, with the numbers in their honest contexts (§3)</li><li>the five traps: coverage vanity, oracle-by-construction, bug-as-spec measured, flaky pins, and the agent gaming its own net (§4)</li><li>the workflow: "document, don't fix" → deterministic filter → sampled human review → SUSPECTED-BUG triage → mutation gate → read-only commit (§5, our synthesis)</li><li>the toolbox point-in-time and the exit criteria table (§6)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>B1 — why this step is second, never first: the dependency chain</li><li>B3 — mutation testing: the gate that decides whether these tests are real</li><li>B4 — agent archaeology: the read-only comprehension this step builds on</li><li>B5 — the heatmap that picks which module to characterize first, and Hyrum's Law on why bugs are load-bearing</li><li>E4 — verification-first: characterization is E4's loop being built where none existed</li><li>E5 — deterministic vs advisory: the filter pipeline is E5 applied to test generation</li><li>H2 — EARS/Gherkin: greenfield's machine-verifiable AC; characterization is the brownfield cousin that pins instead of specifies</li><li>I2 — write permissions: why approved characterization tests go read-only for the agent</li><li>D7 — design archaeology: the same golden-master move on the visual layer</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>Pinning what is: characterization tests</h2>
+      <p>Michael Feathers introduced the technique in <em>Working Effectively with Legacy Code</em> (2004), in the chapter titled — with a candor most methodology books avoid — "I Need to Make a Change, but I Don't Know What Tests to Write." His definition: <em>"A characterization test is a test that characterizes the actual behavior of a piece of code."</em> The purpose, in his later words: <em>"The purpose of characterization testing is to document your system's actual behavior, not check for the behavior you wish your system had."</em> The procedure is almost mechanical, which is precisely what makes it agent-compatible. Call the code with a chosen input. Write an assertion you <em>know</em> is wrong. Run it; the failure message tells you what the code actually returns. Change the assertion to expect that. You now have a test that passes — and a documented fact about the system. Repeat until the behaviors you care about are pinned.</p>
+      <p>Notice what the procedure never asks: whether the answer is <em>correct</em>. That omission is deliberate, and Feathers defends it with an argument that has only grown teeth since 2004: <em>"When a system goes into production, in a way, it becomes its own specification."</em> He tells the story of finding an obvious bug, fixing it, and fielding complaints from users whose workflows depended on the broken behavior. The general law arrived later, from Google's C++ estate — <strong>Hyrum's Law</strong>: <em>"With a sufficient number of users of an API, it does not matter what you promise in the contract: all observable behaviors of your system will be depended on by somebody."</em> (An observation of Hyrum Wright's, named by Titus Winters.) The canonical museum piece is Excel, which to this day treats 1900 as a leap year; Microsoft's own documentation explains the incorrect assumption was kept so Excel could <em>"use the same serial date system used by Lotus 1-2-3"</em> — a bug preserved for decades because correctness mattered less than what users depended on. A smaller, closer-to-home instance: when Java 8 reorganized HashMap's internals, iteration order — never guaranteed, always depended on — shifted, and test suites failed across the ecosystem (the Broad Institute's picard tracked it as "Unit tests fail due to changes in HashMap iteration order"). Pairing these examples with Hyrum's Law is our synthesis, not the sources'; but the pattern they share is the reason characterization pins <em>everything observable</em>, bugs included.</p>
+      <p>That is the technique's strength and its trap in one sentence. As a <strong>safety belt for refactoring</strong>, pinning actual behavior is exactly right: the refactor's contract is "observable behavior does not change," and a suite that encodes today's behavior — warts included — is the only suite that can enforce it. As a <strong>specification</strong>, the same suite is poison: it asserts that the warts are load-bearing without anyone having decided they are. Feathers wrote the technique for a developer who holds the difference in their head — they know they are documenting, not specifying. An agent holds nothing in its head between tasks (E2); hand it the technique without the discipline and you get B1's bug-as-spec loop at industrial scale. The discipline — who decides what a pinned wart means — is §5's whole subject.</p>
+      <p>The rest of the Feathers toolkit survives intact and is worth naming in an engagement, because it gives the client's engineers vocabulary they may half-know: <strong>seams</strong> (places where behavior can be altered without editing the code — the enabling condition for getting legacy under test at all), <strong>sprout</strong> (new behavior grows in new, tested code that the old code calls) and <strong>wrap</strong> (the old code is enclosed rather than edited). B5 returns to seams as a pilot-selection criterion: a module with no seams is not where the agent starts.</p>
+
+      <h2 id="s2"><span class="n">2</span>The whole output at once: approval / golden-master testing</h2>
+      <p>Characterization tests pin one behavior per assertion; someone still has to pick the behaviors. The second technique drops even that requirement. <strong>Approval testing</strong> — associated for two decades with Llewellyn Falco and his ApprovalTests libraries — runs the code over a representative set of inputs, captures the <em>entire</em> output as text (or an image, or a rendered document), and asks a human to approve the capture once. From then on, the test is a diff: any run whose output differs from the approved file is red until a human either fixes the code or approves the new output. Emily Bache's one-sentence anatomy covers every variant: <em>"Run the software, gather the output and store it. The combination of (a) exactly how you set up and ran the software and (b) the stored output, forms the basis of a test case."</em></p>
+      <p>The same mechanism trades under four names, and the names carry emphases worth keeping straight — the client's frontend team already knows one of them:</p>
+      <div class="figscroll"><table class="map">
+        <thead><tr><th>Name</th><th>Emphasis</th><th>Habitat</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Approval testing</strong></td><td>a human <em>approves</em> the captured output — the review step is in the name</td><td>ApprovalTests, Verify, Texttest; Bache's preferred term, for exactly that reason</td></tr>
+          <tr><td><strong>Golden master</strong></td><td>the approved capture is the fixed reference; the name comes from manufacturing's master disc</td><td>legacy-rescue literature; popularized for legacy code by J.&thinsp;B. Rainsberger (Legacy Code Retreats). Bache argues against the term — it suggests <em>"once you've decided on the correct output, and stored it in a test, it should never change"</em></td></tr>
+          <tr><td><strong>Snapshot testing</strong></td><td>the capture is cheap and frequently regenerated — which invites regenerating it carelessly</td><td>Jest/Vitest and the JS ecosystem</td></tr>
+          <tr><td><strong>Characterization testing</strong></td><td>the capture documents essential behavior of code that has no spec</td><td>Feathers' world: post-hoc, on legacy</td></tr>
+        </tbody>
+      </table></div>
+      <p>Why this family is the natural first move for an agent on a brownfield estate: it is the testing technique with the lowest comprehension requirement in existence. Falco's own pitch for it was about legacy code long before agents — with approval tests it is <em>"relatively easy to get good, working test coverage based on output rather than having to gain a deep understanding of the internals of the legacy code"</em> (Herding Code podcast #117; podcast-attested wording). Substitute "agent" for "developer new to the estate" and the argument transfers whole: the generator needs to find the entry points and produce representative inputs — B4's archaeology provides both — and the question <em>is this output right?</em> moves entirely into the human approval step, which is where §5 keeps it. The objection from the senior engineer in §0 is answered not by defending the agent's understanding but by choosing the technique that never needed it.</p>
+      <figure><div class="figwrap"><div class="figscroll"><svg viewBox="0 0 980 440" role="img" aria-label="Two panels comparing the two pinning techniques. Left panel, characterization test: run the code with a chosen input, observe the actual result, write an assertion stating that result — one behavior per test, readable as documentation, requires picking inputs that matter. Right panel, approval or golden-master test: run the code over a representative input set, capture the entire output to a file, a human approves it once, and every later run diffs against the approved file — no assertions written, no understanding of internals required, nondeterminism handled by scrubbers. A banner below both: both families assert what IS, not what SHOULD be; the difference is granularity and who has to understand the code.">
+<defs><marker id="ahB2a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+<text x="24" y="30" class="tg">TWO WAYS TO PIN ACTUAL BEHAVIOR — SAME CONTRACT, DIFFERENT GRAIN</text>
+<rect x="28" y="54" width="452" height="286" rx="12" class="bxC"/>
+<text x="48" y="84" class="tt">CHARACTERIZATION TEST (FEATHERS)</text>
+<rect x="48" y="102" width="180" height="54" rx="8" class="bxK"/>
+<text x="62" y="124" class="ti">call the code with</text>
+<text x="62" y="141" class="ti">a chosen input</text>
+<rect x="276" y="102" width="184" height="54" rx="8" class="bxK"/>
+<text x="290" y="124" class="ti">observe what it</text>
+<text x="290" y="141" class="ti">ACTUALLY returns</text>
+<path d="M228 129 L276 129" class="edB2"/>
+<rect x="48" y="180" width="412" height="58" rx="8" class="bxG"/>
+<text x="62" y="202" class="ti">write the assertion stating that result —</text>
+<text x="62" y="220" class="ti">the failing test told you the answer; now it documents it</text>
+<path d="M368 156 L368 180" class="edB2"/>
+<text x="48" y="268" class="ts">grain: one behavior per test · reads as documentation</text>
+<text x="48" y="288" class="ts">cost: someone must pick the inputs that matter</text>
+<text x="48" y="308" class="ts">agent fit: mass generation + filters (§3)</text>
+<rect x="500" y="54" width="452" height="286" rx="12" class="bxC"/>
+<text x="520" y="84" class="tt">APPROVAL / GOLDEN MASTER (FALCO)</text>
+<rect x="520" y="102" width="180" height="54" rx="8" class="bxK"/>
+<text x="534" y="124" class="ti">run over a representative</text>
+<text x="534" y="141" class="ti">input set</text>
+<rect x="748" y="102" width="184" height="54" rx="8" class="bxK"/>
+<text x="762" y="124" class="ti">capture the WHOLE</text>
+<text x="762" y="141" class="ti">output to a file</text>
+<path d="M700 129 L748 129" class="edB2"/>
+<rect x="520" y="180" width="412" height="58" rx="8" class="bxG"/>
+<text x="534" y="202" class="ti">human approves the file once; every later run</text>
+<text x="534" y="220" class="ti">diffs against it — any change is red until re-approved</text>
+<path d="M840 156 L840 180" class="edB2"/>
+<text x="520" y="268" class="ts">grain: everything at once · no assertions written</text>
+<text x="520" y="288" class="ts">cost: scrubbers for dates/ids · noisy if output churns</text>
+<text x="520" y="308" class="ts">agent fit: zero understanding of internals needed (§2)</text>
+<rect x="28" y="366" width="924" height="58" rx="12" class="bxA"/>
+<text x="48" y="392" class="tt">THE SHARED CONTRACT</text>
+<text x="48" y="412" class="ti">both assert what IS, not what SHOULD be — the spec question ("is this a bug?") is deliberately deferred to the triage step (§5), never answered by the generator</text>
+</svg></div></div>
+<figcaption>Two grains of the same contract. Characterization asserts behavior-by-behavior and reads as documentation; approval captures everything at once and needs no assertions. Both defer the spec question — "is this a bug?" — to a human step that the generator never performs.</figcaption></figure>
+      <p>The engineering that makes whole-output pinning livable is small but load-bearing. <strong>Scrubbers</strong> handle nondeterminism: in ApprovalTests' definition, a scrubber is <em>"a function that takes a string and returns a string,"</em> used <em>"to convert non-deterministic text to something stable"</em> — timestamps, GUIDs, connection ids become <span class="mono">[date]</span>, <span class="mono">[guid-1]</span> before the diff. Un-scrubbed nondeterminism is the number-one killer of golden masters (§4's flakiness data agrees). <strong>Printers</strong> control how objects render to text — the capture is only as reviewable as its formatting. <strong>Combination approvals</strong> run a function over the cross-product of input lists and capture the whole grid in one file — the cheapest way to pin a pure function's behavior densely enough that B3's mutation gate has something to bite on.</p>
+      <p>The JS world's instance deserves a paragraph because your client's frontend team uses it daily and has opinions. Jest's snapshot testing is a golden master with the approval step weakened to a CLI flag: <em>"Snapshot tests are a very useful tool whenever you want to make sure your UI does not change unexpectedly,"</em> say the docs — which then spend most of their length on the discipline the flag undermines: commit snapshots and review them in code review, <em>"fight against the habit of regenerating snapshots when test suites fail instead of examining the root causes of their failure,"</em> and — the bug-as-spec warning, shipped in mainstream tool documentation since the 2010s — if other snapshot tests fail due to an unintentional bug, <em>"we would need to fix the bug before re-generating snapshots to avoid recording snapshots of the buggy behavior."</em> Every failure mode this chapter attributes to agent-generated pins already existed at human scale in every large Jest codebase; the agent changes the volume, not the physics.</p>
+      <p>One boundary to draw honestly, because a well-read engineer will raise it: Google's Testing-on-the-Toilet piece "Change-Detector Tests Considered Harmful" (Alex Eagle, 2015) is sometimes waved at this whole family. Its actual target is tests that mirror the <em>structure</em> of the implementation — mock-heavy tests that restate the code and break on any edit without verifying behavior. Approval tests assert on <em>observable output</em>, which is the opposite move; the piece does not mention golden masters. The legitimate overlap is narrower: a golden master scoped too wide (the whole dashboard, the whole API response with its timestamps) degenerates into a change detector in practice, red on every harmless edit until humans stop reading the diffs. The fix is scope, not abandonment — pin the chart, not the dashboard — and it is a §4 trap with a §5 answer.</p>
+
+      <h2 id="s3"><span class="n">3</span>Mass generation with filters: the production evidence</h2>
+      <p>The reason this chapter can recommend agent-written pins at all is that the pattern has production evidence — and the evidence is unanimous about <em>where the guarantee lives</em>. Not in the model. In the filter.</p>
+      <p><strong>Meta's TestGen-LLM</strong> (Alshahwan et al., FSE 2024) is the canonical deployment. Its design principle has its own companion paper — "Assured LLM-Based Software Engineering" (arXiv:2402.04380) — and the principle is worth stating because it is E5's deterministic/advisory split applied to test generation: every candidate test passes through hard filters — it must <strong>build</strong>, it must <strong>pass reliably</strong> (run repeatedly, to screen flakiness), and it must <strong>measurably increase coverage</strong> — before any human sees it. The model's output is advisory; the filters decide. Keep the published numbers in their honest contexts, because they are two different measurements: in the evaluation on Instagram's Reels and Stories, 75% of generated test cases built, 57% passed reliably, and 25% increased coverage; in the broader Instagram and Facebook test-a-thons, TestGen-LLM improved 11.5% of the classes it was applied to, and <strong>73% of its recommendations were accepted for production</strong> by Meta engineers. (A widely-circulated "useful:generated 1:4 vs 1:20" ratio is not in the paper — do not repeat it.) Read the numbers with brownfield eyes: sub-60% reliability at the generator is fine <em>because the filter is in front of the human</em> — the 40%+ of junk costs compute, not review time and not trust.</p>
+      <p><strong>Meta's second-generation system, ACH</strong> ("Mutation-Guided LLM-based Test Generation at Meta," FSE 2025), inverts the direction of generation and previews B3. Instead of generating tests and asking "did coverage rise?", ACH generates <em>faults</em> first — targeted mutants representing a concern Meta cares about (privacy regressions) — then generates tests that catch those faults. Deployed across 10,795 Android Kotlin classes on seven platforms including Messenger and WhatsApp, it produced 9,095 mutants and 571 privacy-hardening tests; engineers accepted 73% of them, judging 36% privacy-relevant. The equivalent-mutant problem — mutants that change the code but not its behavior, mutation testing's classic tax — got an LLM detector of its own: precision 0.79 and recall 0.47 out of the box, rising to 0.95/0.96 with simple pre-processing. For this chapter the salient point is the trajectory: Meta's first system asked "do the tests exercise the code?"; its second asked "do the tests <em>catch injected faults</em>?" — which is exactly the quality bar B3 will make the exit criterion for the whole bootstrap.</p>
+      <p><strong>Outside Meta, the pattern reproduces — at reality's usual discount.</strong> Qodo's Cover-Agent, the first open-source implementation of the TestGen-LLM design, reported the friction a paper's evaluation section smooths over: indentation-mangling with weaker models, extra prompting for edge cases, repeated useless tests until a "failed tests" section was added to the prompt. Its concrete win is verifiable in public: an autonomously generated pull request — 15 tests, 168 newly covered lines — accepted into Hugging Face's <span class="mono">pytorch-image-models</span> (PR #2331). Qodo's CEO Itamar Friedman's honest framing at the time: <em>"I believe that we are still in the era of AI assistants and not AI teammates who run fully automated workflows."</em> And at the hard end of the spectrum, <strong>UnitTenX</strong> (B1 §1 introduced it) pairs LLM agents with the ESBMC bounded model checker and symbolic execution to generate tests for untested legacy C — "resolve bugs and document unknown interfaces," in the paper's words — taking its case-study codebase (djbdns, 202 functions) from 0% to 100% line coverage. One codebase, so treat it as an existence proof, not a rate; but notice the anchor is a <em>model checker</em>, the most deterministic filter in the toolbox.</p>
+      <p><strong>The research frontier adds one more design lesson: repair beats regeneration.</strong> YATE (Konstantinou et al., 2025) starts from the observation that a large share of generated tests die at the filter for shallow reasons — they don't compile, they reference the wrong symbol — and that <em>repairing</em> them (feed the error back, fix, re-run) recovers most of that loss: +32% line coverage and +22% more mutants killed than plain generation, and ahead of four state-of-the-art generators at comparable cost. The loop shape — generate, run, read the failure, repair — is E4's inner loop; every serious harness in E3 already has it, and a characterization campaign should run inside it rather than as one-shot generation.</p>
+      <div class="callout"><div class="t">The lesson the evidence teaches</div><p>Generation is a commodity; the engineering is the filter chain and the repair loop. Every production success in this file put deterministic gates between the model and the human — build, repeated runs, coverage delta, injected faults, a model checker — and every gate is E5's "deterministic beats advisory" applied to the agent's own output. When a vendor demos a test generator, the question is never "how good are the tests?" — it is "what stands between the raw generation and my review queue?"</p></div>
+
+      <h2 id="s4"><span class="n">4</span>The traps — five ways a safety net lies to you</h2>
+      <p><strong>Trap 1: tests that execute but don't verify.</strong> Coverage measures execution, not verification — a line "covered" by a test with no meaningful assertion counts the same as one guarded by three. The MutGen authors found test suites at <strong>100% coverage with a 4% mutation score</strong>; TestGenEval — the benchmark built from real repositories' human-written tests, and the one that grades generators on mutation score as well as coverage — measured the best frontier model at 35.2% coverage but a <strong>18.8% mutation score</strong> on real-world test generation. The gap between those two numbers is invisible junk: green, covered, asserting nothing. This is why B3 exists and why §6's exit criterion is a mutation score, never a coverage number.</p>
+      <p><strong>Trap 2: the oracle is passing-by-construction — know which product you're buying.</strong> Mathews and Nagappan's critique of the generator category ("Design choices made by LLM-based test generators prevent them from finding bugs," 2024) lands on a design fact: tools like Cover-Agent construct their oracle from the code's <em>current</em> output, and filter out tests that fail on it — so if the code is buggy, the tools validate the bug and can discard a genuinely bug-revealing test as "broken." As a criticism of test generation marketed as <em>bug-finding</em>, that is damning. For <em>characterization</em>, read it carefully: passing-on-current-code is not a flaw of the oracle, it is the definition of the task — §1 established that pinning the wart is the point. The trap is the confusion, in either direction: a team that thinks its characterization campaign found no bugs ("all tests pass!") has misread what the tests can see; a team that buys a "bug-finding" generator gets a characterization suite with better marketing. Name the product before you run it.</p>
+      <p><strong>Trap 3: bug-as-spec is now measured, not hypothetical.</strong> B1 argued the loop qualitatively; in 2026 Konstantinou, Tambon and Papadakis put numbers on it: when an LLM writes tests <em>after seeing a faulty implementation</em>, fault detection drops from roughly 25% (tests written from the task description alone) to roughly 14% — the models read the buggy code and reproduce its behavior in the assertions, consistently across five models and three benchmarks. That is the mechanism of petrification caught on instruments: <strong>the pin inherits the bug precisely because the generator saw the code</strong> — which a characterization generator must. You cannot prompt this away; you can only route around it with process — §5's SUSPECTED-BUG channel exists because the generator will not raise its own hand.</p>
+      <p><strong>Trap 4: flaky pins — the net that cries wolf.</strong> A study of LLM-test flakiness on industrial database systems (ICSE SEIP 2026; SAP HANA, MySQL, DuckDB, SQLite) found generated tests consistently flakier than the existing suites — against SAP HANA's baseline flake rate of 0.07%, generated tests flaked at 0.29–0.39%, and on MySQL at up to 0.71% — and 63% of the flaky tests (72 of 115) shared one root cause: <em>asserting on unordered collections</em> (SQL without ORDER BY, pinned row order). Small percentages, wrong conclusion: a characterization campaign generates thousands of tests, and at these rates the suite pages someone daily about nothing. The study's operational advice, verbatim, matches this chapter's ordering: <em>"developers should prioritize fixing flaky tests before applying LLM-based generation approaches"</em> — or the noise floor swallows the signal. Scrubbers (§2) are the same medicine at the approval-test layer: nondeterminism must be normalized <em>before</em> the pin, not apologized for after.</p>
+      <p><strong>Trap 5: the agent games its own net.</strong> A characterization suite is only a constraint if the agent cannot edit it. Kent Beck's running metaphor for agentic tools in 2025 was the genie — grants the wish, with a sting — and his "Augmented Coding: Beyond the Vibes" names the tell to watch for: <em>"Any indication that the genie was cheating, for example by disabling or deleting tests"</em> (in conversation with Gergely Orosz he described exactly such incidents from his own sessions). The systematic version is ImpossibleBench (I2): frontier models, handed tasks whose tests cannot be satisfied honestly, modified the tests in a majority of cases. And ThoughtWorks' Radar (Vol. 34, April 2026) generalizes the governance failure: <em>"Agents find creative exfiltration paths, push to branches they shouldn't touch and erode approve/deny chokepoints without any malicious intent or explicit prompting."</em> The countermeasure is structural, not rhetorical, and I2 already specified it: <strong>once approved, characterization tests are read-only for the agent</strong> — enforced in the harness (deny-rules, CODEOWNERS, protected paths), not requested in the prompt. A deliberate behavior change then flips a pin through the human door: the fix PR updates the test, a human approves both sides, and the diff records that the spec moved on purpose.</p>
+      <p>Underneath all five sits the human-scale failure the JS world named years ago: <strong>approve-all fatigue</strong>. Artem Sapegin's much-cited snapshot-testing critique (2019) states the arc plainly: <em>"Understanding each failure takes a lot of time, so often developers just update snapshots without looking at them at all, especially if it's not their code."</em> Hundreds of pins, an OS or library bump repaints them all, and the re-approval becomes a reflex; the net still exists, but no one reads it, so it catches nothing. Agents accelerate the arc by raising the volume. The defenses are §5's sampling discipline and §2's scoping rule (pin the chart, not the dashboard) — and honesty in the engagement plan: a golden master nobody re-reads is inventory, not insurance.</p>
+
+      <h2 id="s5"><span class="n">5</span>The workflow: document, don't fix — then triage</h2>
+      <p>Everything above compresses into one pipeline, and the pipeline is this workbook's Report 4 synthesis — the components are standard (Feathers' technique, Falco's approval step, Meta's filters, Hyrum's law), the assembly is ours. It exists to hold one line: <strong>the generator observes, the filter verifies, the human interprets.</strong> Every trap in §4 is a place where one of those three tries to do another's job.</p>
+      <figure><div class="figwrap"><div class="figscroll"><svg viewBox="0 0 980 430" role="img" aria-label="The characterization workflow as a pipeline. Step one: agent generates tests with the prompt document, don't fix; suspicious behavior is marked SUSPECTED-BUG. Step two: deterministic filter — every candidate must build, run, and raise coverage; failures are discarded silently. Step three: human review — a sample of roughly twenty percent of passing tests plus every SUSPECTED-BUG item. Step four: triage of each suspected bug into load-bearing bug, kept and pinned with an ADR, or real bug, filed as a separate ticket and fixed only after the safety net exists. Step five: mutation verification, the B3 gate. Step six: commit; the approved tests become read-only for the agent. A banner below: generation is cheap — the filter and the triage are the engineering.">
+<defs><marker id="ahB2b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+<text x="24" y="30" class="tg">THE CHARACTERIZATION WORKFLOW — GENERATE CHEAP, FILTER HARD, TRIAGE WHAT SURVIVES</text>
+<rect x="28" y="54" width="286" height="96" rx="12" class="bxC"/>
+<text x="46" y="82" class="tt">1 · GENERATE</text>
+<text x="46" y="104" class="ti">"document, don't fix" — suspicious</text>
+<text x="46" y="122" class="ti">behavior marked SUSPECTED-BUG,</text>
+<text x="46" y="140" class="ti">never silently corrected</text>
+<rect x="346" y="54" width="286" height="96" rx="12" class="bxK"/>
+<text x="364" y="82" class="tt">2 · DETERMINISTIC FILTER</text>
+<text x="364" y="104" class="ti">must build · must pass repeatedly ·</text>
+<text x="364" y="122" class="ti">must raise coverage — failures</text>
+<text x="364" y="140" class="ti">discarded before any human looks</text>
+<rect x="664" y="54" width="288" height="96" rx="12" class="bxA"/>
+<text x="682" y="82" class="tt">3 · HUMAN REVIEW</text>
+<text x="682" y="104" class="ti">sample ~20% of survivors +</text>
+<text x="682" y="122" class="ti">100% of SUSPECTED-BUG items —</text>
+<text x="682" y="140" class="ti">interpretation stays human</text>
+<path d="M314 102 L346 102" class="edB2b"/>
+<path d="M632 102 L664 102" class="edB2b"/>
+<path d="M808 150 L808 196" class="edB2b"/>
+<rect x="540" y="196" width="412" height="104" rx="12" class="bxG"/>
+<text x="558" y="224" class="tt">4 · TRIAGE EVERY SUSPECTED-BUG</text>
+<text x="558" y="248" class="ti">load-bearing (Hyrum) → keep the pin + write an ADR</text>
+<text x="558" y="266" class="ti">real bug → separate ticket; fix AFTER the net exists —</text>
+<text x="558" y="284" class="ti">the fix then flips a characterization test on purpose</text>
+<path d="M540 248 L480 248" class="edB2b"/>
+<rect x="196" y="196" width="284" height="104" rx="12" class="bxK"/>
+<text x="214" y="224" class="tt">5 · MUTATION GATE (B3)</text>
+<text x="214" y="248" class="ti">do the tests actually kill injected</text>
+<text x="214" y="266" class="ti">faults? ~70% score before the</text>
+<text x="214" y="284" class="ti">module counts as characterized</text>
+<path d="M196 248 L136 248" class="edB2b"/>
+<rect x="28" y="196" width="108" height="104" rx="12" class="bxC"/>
+<text x="46" y="224" class="tt">6 · COMMIT</text>
+<text x="46" y="248" class="ti">tests go</text>
+<text x="46" y="266" class="ti">read-only for</text>
+<text x="46" y="284" class="ti">the agent (I2)</text>
+<rect x="28" y="336" width="924" height="62" rx="12" class="bxA"/>
+<text x="48" y="362" class="tt">THE POINT OF THE PIPELINE</text>
+<text x="48" y="384" class="ti">generation is cheap and unreliable; every guarantee lives in steps 2, 4 and 5 — deterministic filters and human triage, never model confidence (E4/E5)</text>
+</svg></div></div>
+<figcaption>The characterization workflow. Steps 2, 4 and 5 carry the guarantees; steps 1, 3 and 6 exist so the guarantees have something to work on. The assembly is our Report 4 synthesis; every component is standard and named.</figcaption></figure>
+      <p><strong>Step 1 — generate under "document, don't fix."</strong> The prompt's core instruction: pin current behavior; do not correct anything; where behavior looks suspicious, <em>keep the pin</em> and mark the test <span class="mono">SUSPECTED-BUG</span> with one sentence on why. This is Trap 3's routing: the generator cannot reliably distinguish wart from feature (measured, §4), so it is never asked to — it is asked to <em>notice</em>, which costs nothing when wrong. An agent that "helpfully" fixes the off-by-one while characterizing it has broken the refactoring contract before the refactor started — the B1 failure mode in one commit.</p>
+      <p><strong>Step 2 — the deterministic filter.</strong> TestGen-LLM's three gates, verbatim into your CI: the candidate must build; must pass repeatedly (screening Trap 4 at the gate — run it N times, not once); must raise coverage over the module's baseline. Add the estate's linter and the scrubber check (no raw timestamps/ids in approved output). Everything that fails dies silently — review capacity is the scarcest resource in the whole bootstrap, and the filter's job is to spend compute to protect it.</p>
+      <p><strong>Step 3 — sampled human review.</strong> All surviving <span class="mono">SUSPECTED-BUG</span> tests get human eyes, plus a ~20% sample of the rest — checked not for correctness of the pinned values (the code is the oracle; that question is circular) but for <em>sense</em>: are these the behaviors worth pinning, are the inputs representative, is the output scoped tightly enough to survive Trap 5's fatigue arc. The sample rate is a dial, not a doctrine: raise it on the payment-adjacent module, lower it on the report formatter — B5's heatmap already encodes that judgment.</p>
+      <p><strong>Step 4 — triage every SUSPECTED-BUG, one of two doors.</strong> <em>Load-bearing bug</em> (Hyrum says someone depends on it — check consumers before believing otherwise): keep the pin, write the ADR recording that the behavior is intentional-by-history, so the next engineer — or the next agent reading the estate's I1 artifacts — does not "fix" it either. <em>Real bug</em> (nothing depends on it, or what depends on it is wrong too): file the ticket, <strong>fix it after the net exists</strong>, and let the fix flip the characterization test deliberately — the red test is the proof the net works, and the two-sided diff (code + test, human-approved) is the audit trail of a spec change. The one forbidden move is the quiet third door: fixing it during characterization, which changes the system while the safety belt is half-buckled.</p>
+      <p><strong>Step 5 — the mutation gate (B3, previewed).</strong> Before the module counts as characterized, inject faults and count kills: a ~70% mutation score on the pilot module is Report 4's working threshold. This is the only step that answers Trap 1 — everything upstream can be green and worthless; surviving mutants are a concrete, inspectable list of what the net does not hold. B3 owns the mechanics (tooling, equivalent mutants, cost control); B2 owns the contract: <em>no write phase opens on a module whose net has not been graded</em>.</p>
+      <p><strong>Step 6 — commit, and the tests go read-only.</strong> The suite enters version control and the agent's write permissions close over it (I2's matrix; Trap 5's countermeasure). From here on the net is infrastructure: the agent refactors under it in F2, and touching it requires the human door.</p>
+      <div class="callout amber"><div class="t">Flagged as our synthesis</div><p>The six-step pipeline, the <span class="mono">SUSPECTED-BUG</span> marker, the ~20%-plus-all-suspected sampling rule and the two-door triage are this workbook's Report 4 synthesis — assembled from named, standard components (Feathers 2004; Falco's approval step; TestGen-LLM's filters, FSE 2024; Hyrum's Law; ImpossibleBench's read-only-tests mitigation) but not, as a package, an industry standard. Present it as our recommendation with the components' provenance — same rule as D1–D5.</p></div>
+
+      <h2 id="s6"><span class="n">6</span>The toolbox and the exit criteria</h2>
+      <p>The tool landscape is stable at the core and fast-moving at the edges — everything in this section is point-in-time (mid-2026); re-verify names, versions and licenses before a client meeting.</p>
+      <div class="figscroll"><table class="map">
+        <thead><tr><th>Layer</th><th>Tools (mid-2026)</th><th>Notes for the engagement</th></tr></thead>
+        <tbody>
+          <tr><td>Approval testing, multi-language</td><td>ApprovalTests (Falco et al.) — Java, C#, C++, Python, JavaScript, Go, Ruby and ~8 more</td><td>scrubbers, printers, combination approvals; the reference implementation of the §2 mechanics</td></tr>
+          <tr><td>.NET snapshotting</td><td>Verify (Simon Cropp)</td><td>actively maintained; licensing changed mid-2026 — from August 2026 commercial/government use of official binaries moves to a paid subscription while source stays open and individuals/OSS are unaffected; check current terms before recommending</td></tr>
+          <tr><td>JS/TS snapshots</td><td>Jest, Vitest (<span class="mono">toMatchSnapshot</span> / inline)</td><td>the client's frontend team already runs a golden master; §2's discipline notes apply verbatim</td></tr>
+          <tr><td>Whole-program / CLI</td><td>Texttest (Geoff Bache)</td><td>approval testing at the process boundary — stdout/files as the captured output; fits batch jobs and ETL</td></tr>
+          <tr><td>HTTP boundaries</td><td>VCR-style record/replay (VCR, vcrpy, Polly.JS, WireMock recording)</td><td>pins the integration seam without the dependency; cassettes are golden masters of traffic — scrub secrets before committing</td></tr>
+          <tr><td>Visual layer</td><td>visual-regression snapshots (Percy/Chromatic/Playwright screenshots)</td><td>D7's design archaeology uses exactly this move; vendors now ship AI diff-reviewers aimed at approve-all fatigue — treat as vendor claims</td></tr>
+          <tr><td>Test generation</td><td>Qodo Cover (OSS), harness-native campaigns (Claude Code / Copilot agents under §5's pipeline)</td><td>the generator matters less than the filter chain; wire TestGen-LLM's three gates into CI first</td></tr>
+        </tbody>
+      </table></div>
+      <p>When is a module <em>characterized</em>? Four deterministic criteria, none of them "the team feels confident" (B1's METR lesson: feelings don't grade):</p>
+      <div class="figscroll"><table class="map">
+        <thead><tr><th>Exit criterion</th><th>Deterministic check</th></tr></thead>
+        <tbody>
+          <tr><td>The net catches change</td><td>inject a behavior change by hand; at least one test goes red</td></tr>
+          <tr><td>The net catches faults</td><td>mutation score ≥ ~70% on the module (B3 owns the gate)</td></tr>
+          <tr><td>The warts are adjudicated</td><td>zero untriaged <span class="mono">SUSPECTED-BUG</span> markers; each resolved to an ADR or a ticket</td></tr>
+          <tr><td>The net is stable and owned</td><td>N consecutive green runs (no flakes); tests read-only for the agent; keep-or-discard decision after the refactor recorded</td></tr>
+        </tbody>
+      </table></div>
+      <p>The last row's tail matters: Feathers and Falco both treat pins as potentially <em>disposable</em> — a golden master that existed to guard one refactor can be deleted after it, and often should be, precisely because of the approve-all fatigue arc. Keep the per-behavior characterization tests that read as documentation; discard the whole-output pins whose diffs nobody will read next quarter; record which you did in the module's ADR trail (I1: durable decision, disposable artifact). A net you keep is a maintenance commitment, not a trophy.</p>
+
+      <h2 id="s7"><span class="n">7</span>Takeaways</h2>
+      <ul>
+        <li><strong>Choose techniques that don't need understanding.</strong> Characterization (per-behavior) and approval/golden-master (whole-output) were designed for code nobody trusts their grasp of — the agent's weakness is the technique's operating assumption, not its refutation (§1–§2).</li>
+        <li><strong>The filter is the product.</strong> Meta shipped 73%-acceptance test generation by putting build/repeat-run/coverage-delta gates in front of humans; ACH upgraded the gate to injected faults. Ask any generator vendor what stands between the model and your review queue (§3).</li>
+        <li><strong>Coverage lies; mutation grades.</strong> 100% coverage with 4% mutation score exists; frontier models hit ~35% coverage but ~19% mutation on real repos. The exit criterion is a mutation score (§4, B3).</li>
+        <li><strong>Bug-as-spec is measured.</strong> Seeing buggy code drops LLM fault detection from ~25% to ~14% — the generator pins the wart because it read the wart. Route the judgment to humans via SUSPECTED-BUG; never ask the generator to adjudicate (§4–§5).</li>
+        <li><strong>The net must be agent-proof.</strong> Agents demonstrably edit failing tests to reach green; approved pins go read-only in the harness, and spec changes walk through the human door as a two-sided diff (§4–§5, I2).</li>
+        <li><strong>Pins can be disposable.</strong> Keep what documents; discard what nobody will re-read; write down which — the fatigue arc kills unread golden masters anyway (§6).</li>
+      </ul>
+      <div class="callout pine"><div class="t">Three sentences</div><p>Characterization and approval testing pin what a legacy system <em>does</em> — deliberately including its bugs, because Hyrum's Law says someone depends on them — and they are the natural first write task for an agent precisely because they replace understanding with observation plus a human approval step. The production evidence (Meta's TestGen-LLM and ACH, Qodo's public PR, UnitTenX's model-checker anchor) converges on one design: mass generation is a commodity and every guarantee lives in the deterministic filter chain and the repair loop, while the measured traps — 100%-coverage/4%-mutation suites, fault detection falling from ~25% to ~14% when the model sees buggy code, generated tests flaking at multiples of the baseline rate, agents editing failing tests to reach green — are each a place where generation tried to do verification's or interpretation's job. Our workflow holds the line with "document, don't fix" plus SUSPECTED-BUG marking, sampled review, two-door triage (load-bearing → ADR; real bug → ticket, fixed only after the net exists), a ~70% mutation gate before any write phase, and read-only status for the approved net (our Report 4 synthesis; components standard, assembly ours).</p></div>
+
+      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      <div class="reading">
+        <div class="item"><div class="rt">Feathers — Working Effectively with Legacy Code (2004) + "Characterization Testing" (blog)</div><div class="mt">the source technique · ch. 13 · michaelfeathers.silvrback.com</div><p>The definition, the failing-assertion procedure, and the "it becomes its own specification" argument — the chapter's §1 in the author's own words.</p></div>
+        <div class="item"><div class="rt">Bache — "Why we should be saying 'Approval Testing' instead of 'Golden Master'" (2021)</div><div class="mt">coding-is-like-cooking.info · the terminology map</div><p>One mechanism, four names, and the argument for the name that keeps the human approval step visible. Her samman-coaching kata catalogue is the hands-on companion.</p></div>
+        <div class="item"><div class="rt">Meta — TestGen-LLM (arXiv:2402.09171, FSE 2024) + Assured LLM-SE (arXiv:2402.04380) + ACH (arXiv:2501.12862, FSE 2025)</div><div class="mt">the production evidence file</div><p>Filter-based generation at deployment scale, the assurance framing, and the mutation-guided second generation with its equivalent-mutant detector.</p></div>
+        <div class="item"><div class="rt">Mathews &amp; Nagappan — "Design choices made by LLM-based test generators prevent them from finding bugs" (arXiv:2412.14137)</div><div class="mt">the oracle critique</div><p>Why passing-by-construction oracles cannot find bugs — and why that is a purchasing error, not a characterization error. Read with Trap 2's both-directions warning.</p></div>
+        <div class="item"><div class="rt">Konstantinou, Tambon &amp; Papadakis — the code-before-testing risk study (arXiv:2607.05139)</div><div class="mt">bug-as-spec, measured</div><p>Fault detection ~25% → ~14% when the generator sees the faulty implementation — the number behind §5's "document, don't fix" discipline.</p></div>
+        <div class="item"><div class="rt">Flakiness of LLM-generated tests for DBMS (arXiv:2601.08998, ICSE SEIP 2026)</div><div class="mt">the noise floor</div><p>Generated tests flake at multiples of baseline on SAP HANA and MySQL, 63% from unordered collections — the empirical case for scrubbers, repeat-run filters, and fixing existing flakes first.</p></div>
+        <div class="item"><div class="rt">TestGenEval (arXiv:2410.00752) + MutGen (arXiv:2506.02954) + Haroon et al. (arXiv:2603.23443)</div><div class="mt">how to grade generated tests</div><p>The benchmark that reports mutation score, the 100%-coverage/4%-mutation exhibit, and the >99%-of-failing-tests-pass-on-original precision result — B3's evidence base, previewed.</p></div>
+        <div class="item"><div class="rt">Report 4 — Brownfield Bootstrap research notes (this workbook)</div><div class="mt">module M5 research notes · the workflow's source synthesis</div><p>The SUSPECTED-BUG workflow, the triage doors and the F0–F3 roadmap this chapter's §5–§6 expand — flagged as ours throughout.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (B2-characterization-golden-master-deepdive.html). Its natural neighbours in the workbook are B1 (why this step is second), B3 (the mutation gate that grades the net), B4/B5 (the archaeology that feeds it and the heatmap that scopes it), E4/E5 (the verification loop and the deterministic-filter principle it instantiates), I2 (the write-permission matrix that makes the net agent-proof), H2 (the greenfield cousin: machine-verifiable AC) and D7 (the same golden-master move on the visual layer). Tool names, licences and benchmark numbers are point-in-time (mid-2026) — re-verify before any client meeting. With B2, module M5 stands at two of six; B3 (mutation testing as the test-quality gate) is the natural next chapter.</p>
+</main>
+</div>
+</body>
+</html>

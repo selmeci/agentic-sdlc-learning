@@ -159,7 +159,24 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     arXiv:2510.05441, Ehsani et al. arXiv:2601.15195 (MSR 2026, AIDev-pop failure taxonomy:
     38% Abandoned/Not Reviewed; docs/CI/build merge best), Xia TSE 2018 (58% comprehension),
     DORA 2025 AI Capabilities Model (7 capabilities). The five-step dependency chain flagged
-    as our synthesis. Next: **B2** (characterization & golden-master).
+    as our synthesis.
+  - ~~**B2** `brown-characterization` — characterization & golden-master testing~~ — **done
+    (v1.41)**, with the three-teammate fact pass + spot-verify round (9th session in a row it
+    paid: the "no wrong answers — just documenting the way things exist" line = Erik Dietrich's
+    gloss, NOT Feathers — misattribution fixed in the Report 4 notes; Beck's "immutable tests"
+    idea UNVERIFIED → dropped; the "after the third bulk approval" fatigue line = scout
+    paraphrase → replaced with Sapegin's real 2019 sentence; ICSE SEIP 2026 venue + "Berndt et
+    al." authorship unverified → name dropped; Bache's golden-master objection re-pinned to her
+    exact wording). Load-bearing new sources: Feathers' blog verbatims ("it becomes its own
+    specification"), Bache 2021 terminology anatomy, ACH arXiv:2501.12862 (FSE 2025,
+    Messenger/WhatsApp), Qodo PR huggingface/pytorch-image-models#2331, YATE arXiv:2507.18316
+    (repair beats regeneration), TestGenEval arXiv:2410.00752 (35.2% coverage vs 18.8% mutation),
+    Mathews & Nagappan arXiv:2412.14137 (oracle-by-construction, read both directions),
+    Konstantinou et al. arXiv:2607.05139 (bug-as-spec measured: ~25% → ~14%), DBMS flakiness
+    arXiv:2601.08998 (0.07% vs 0.29–0.71%, 63% unordered collections), Beck "Beyond the Vibes"
+    genie verbatim, Radar Vol. 34 chokepoints verbatim. Six-step workflow + two-door triage +
+    exit-criteria table flagged as our synthesis. Next: **B3** (mutation gate) — much of its
+    evidence base (MutGen, Haroon, ACH, TestGenEval) is already verified.
 
 ### 4. Trajectory research (M8, the backlog) — turn T-topics into real modules
 These are the client-facing deliverables; each needs a research pass before a deep dive.
