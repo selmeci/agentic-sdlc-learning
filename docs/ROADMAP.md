@@ -8,8 +8,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 - **Workbook**: 8 modules, 55 topics, 6 research reports, SDLC + Domain map sections. (v1.33 —
   M1 grew to E1–E11 in the July 2026 source-evaluation round: E9 harness tuning, E10 background
   agents, E11 formal methods, each with a deep-dive companion.)
-- **Deep-dive companions (29)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4).
+- **Deep-dive companions (30)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1** (first of M5).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -147,6 +147,19 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     flagged as our synthesis. **M4 complete.**
 - **M5 Brownfield bootstrap** (B1–B6): the safe ordering, characterization/golden-master,
   mutation gate (B3 already cross-referenced from E4), strangler-fig + heatmap.
+  - ~~**B1** `brown-paradox` — the bootstrap paradox and safe ordering~~ — **done (v1.39)**,
+    with the three-teammate fact pass + spot-verify round (8th session in a row it paid: a
+    fabricated Böckeler mutation-testing quote killed; UnitTenX "characterization tests" =
+    paraphrase + 0%→100% scoped to djbdns; TestGen-LLM 1:4/1:20 retired as UNPINNABLE — fixed
+    in topic B2 + Report 4 notes; DORA 2024 mechanism reframed to its own "small batch sizes
+    and robust testing mechanisms" wording + the 2025 throughput sign flip). Load-bearing new
+    sources: METR RCT arXiv:2507.09089 (19% slower vs 20% believed faster), SWE-EVO
+    arXiv:2512.18470 (72.80% → 25%), Epoch AI SWE-bench-Verified teardown (Jun 13 2025),
+    Böckeler guides/sensors trilogy (Aug 2024 / Apr 2026 / May 2026), UnitTenX
+    arXiv:2510.05441, Ehsani et al. arXiv:2601.15195 (MSR 2026, AIDev-pop failure taxonomy:
+    38% Abandoned/Not Reviewed; docs/CI/build merge best), Xia TSE 2018 (58% comprehension),
+    DORA 2025 AI Capabilities Model (7 capabilities). The five-step dependency chain flagged
+    as our synthesis. Next: **B2** (characterization & golden-master).
 
 ### 4. Trajectory research (M8, the backlog) — turn T-topics into real modules
 These are the client-facing deliverables; each needs a research pass before a deep dive.

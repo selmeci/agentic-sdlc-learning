@@ -3,6 +3,44 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.39 · 2026-07-17
+
+**NEW DEEP DIVE B1 — The Bootstrap Paradox & Safe Ordering. M5 OPENED.**
+First M5 companion (`deep-dives/B1-bootstrap-paradox-deepdive.html` + `#b1-deepdive` overlay),
+built on the standard three-teammate fact pass (b1jul17-facts-dora / b1jul17-facts-legacy /
+b1jul17-scout) + spot-verify round (b1jul17-spotverify). The chapter states the paradox as three
+separately-true claims (agent needs a verification loop — E4; legacy = "simply code without
+tests" — Feathers 2004 Preface; the agent is the cheapest tool to build the missing
+prerequisites) and shows how, unanchored, it closes into the bug-as-spec loop; the evidence file
+with honest weights (DORA 2024 −1.5%/−7.2% associated with +25% adoption, DORA's OWN mechanism
+quoted — "small batch sizes and robust testing mechanisms" — and the 2025 sign flip flagged:
+throughput positive, instability persists, "AI's primary role is as an amplifier" + the
+seven-capability AI Capabilities Model; METR RCT 16/246/19%-slower-vs-24%-expected/20%-believed
+on 22k+-star/1M+-LOC repos; GitClear vendor-flagged copy/paste 8.3%→12.3% + moved ~24%→9.5% +
+churn 5.5%→7.9%, "8×"/"4×" headlines pinned to their dated reports; Stack Overflow 2025 45.7%
+distrust / 66% "almost right, but not quite"); the benchmark greenfield-bias corollary
+(SWE-bench keeps only fail-to-pass instances, 2,294 of ~90k PRs; Epoch AI teardown: ~90% under
+an hour, Django ≈ half, top-5 >80%; SWE-EVO 72.80% → 25% on evolution tasks); the five-step
+dependency chain flagged as our Report 4 synthesis, mapped onto Böckeler's guides/sensors
+vocabulary, with the ETH −2%/+23% numbers anchoring "AGENTS.md extracted, not decreed"; Phase 0
+read-only as the paradox-breaker (Xia TSE 2018 58% comprehension share; Ehsani MSR 2026 on
+AIDev-pop: docs/CI/build tasks merge best, 38% Abandoned/Not Reviewed; the 2024 Böckeler "pipe
+dream" → 2025 UnitTenX arc, 0%→100% on the djbdns case study); four wrong-order failure modes
+(WO1–WO4); per-step exit-criteria table.
+
+**Spot-verify (8th session in a row it paid):** a fabricated Böckeler mutation-testing quote
+killed (real line: acceptance tests "give us a false sense of security in test effectiveness —
+mutation testing helps us monitor that gap"); UnitTenX "characterization tests" is NOT the
+paper's term (says "resolve bugs and document unknown interfaces"), 0%→100% scoped to djbdns
+(202 functions); Stack Overflow 66%-vs-45.2% attribution settled.
+
+**Fact fixes elsewhere:** TestGen-LLM "useful:generated 1:4 controlled vs 1:20 real-world" is
+UNPINNABLE (not in arXiv:2402.09171) — dropped from topic B2's know and flagged in the Report 4
+research notes; topic B1's "DORA mechanism" know bullet reframed to DORA's own
+batch-size/testing-discipline hypothesis + the 2025 reversal; MutGen 89.5% pinned to
+HumanEval-Java (89.1% LeetCode-Java) in topic B3's know. Topic B1 know/concepts/src/checks
+enriched (greenfield-bias bullet, METR self-report check, METR src link).
+
 ## v1.38 · 2026-07-16
 
 **NEW DEEP DIVE I7 — Linking Product ↔ Engineering: IDs, Maps & the MCP Bridge. M4 COMPLETE.**
