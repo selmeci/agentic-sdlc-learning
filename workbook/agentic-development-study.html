@@ -70,7 +70,10 @@ button{font-family:var(--mono);cursor:pointer}
 /* let the scrollable diagrams clip inside their track instead of stretching it
    (grid/flex items default to min-width:auto = min-content, which a wide SVG grows) */
 .app>main{min-width:0}
-.side{position:sticky;top:86px;min-width:0}
+.side{position:sticky;top:86px;min-width:0;max-height:calc(100vh - 100px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.side::-webkit-scrollbar{width:8px}
+.side::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.side::-webkit-scrollbar-track{background:transparent}
 .side .cap{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin:0 0 8px 2px}
 .mnav{list-style:none;display:flex;flex-direction:column;gap:4px;margin-bottom:22px}
 .mnav a{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:8px;text-decoration:none;color:var(--ink);font-family:var(--disp);font-size:13.5px;font-weight:600;border:1px solid transparent}
@@ -84,9 +87,13 @@ button{font-family:var(--mono);cursor:pointer}
 .fchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .fchip[data-f="studying"].on{background:var(--amber);border-color:var(--amber)}
 .fchip[data-f="done"].on{background:var(--pine);border-color:var(--pine)}
-.bulk{display:flex;gap:6px;flex-wrap:wrap}
-.bulk button{font-size:10.5px;padding:5px 10px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--soft)}
-.bulk button:hover{background:var(--card);color:var(--ink)}
+.bulk{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
+.bulk button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink);transition:background .12s,border-color .12s}
+.bulk button:hover{background:var(--card);border-color:var(--line-soft)}
+.bulk button:active{background:var(--paper)}
+.bulk button svg{width:15px;height:15px;flex:none;color:var(--soft);transition:color .12s}
+.bulk button:hover svg{color:var(--cobalt)}
+.bulk button .bn{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--pine)}
 
 .intro{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin-bottom:30px}
 .intro h2{font-family:var(--disp);font-size:16px;font-weight:700;margin-bottom:8px}
@@ -235,7 +242,7 @@ footer li::before{content:"·";position:absolute;left:2px}
 
 @media (max-width:900px){
   .app{grid-template-columns:1fr;gap:14px}
-  .side{position:static}
+  .side{position:static;max-height:none;overflow:visible}
   .mnav{flex-direction:row;flex-wrap:wrap;gap:5px}
   .mnav a{padding:9px 11px;font-size:12.5px}
   .mnav .cnt{display:none}
@@ -245,7 +252,9 @@ footer li::before{content:"·";position:absolute;left:2px}
   /* larger tap targets on touch screens (WCAG 2.2 target-size) */
   .status button{padding:10px 12px;font-size:10.5px}
   .fchip{padding:8px 14px;font-size:11.5px}
-  .bulk button{padding:9px 13px;font-size:11.5px}
+  .bulk{flex-direction:row;flex-wrap:wrap;gap:5px;margin-bottom:0}
+  .bulk button{width:auto;padding:9px 12px;font-size:12.5px}
+  .bulk button .bn{margin-left:4px}
   .dtabs button{padding:9px 13px;font-size:11.5px}
   .t-toggle{padding:10px 6px}
   .t-toggle h3{font-size:14.5px}
@@ -495,15 +504,15 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     </div>
     <p class="cap">View</p>
     <div class="bulk">
-      <button id="expAll">expand all</button>
-      <button id="colAll">collapse all</button>
+      <button id="expAll"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="2.8" width="10.4" height="10.4" rx="2.4"/><path d="M8 5.4v5.2M5.4 8h5.2"/></svg>expand all</button>
+      <button id="colAll"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="2.8" width="10.4" height="10.4" rx="2.4"/><path d="M5.4 8h5.2"/></svg>collapse all</button>
     </div>
     <p class="cap">Data</p>
     <div class="bulk">
-      <button id="expData" title="Download progress + notes as JSON (storage is per-origin — take your data with you)">export data</button>
-      <button id="impData" title="Merge a previously exported JSON back in">import data</button>
-      <button id="notesbtn" type="button" data-notesopen title="Your saved highlight-notes from the deep dives">my notes <span id="notesN">(0)</span></button>
-      <button id="syncbtn" type="button" data-syncopen title="Sync progress across devices with a short code">sync across devices</button>
+      <button id="expData" title="Download progress + notes as JSON (storage is per-origin — take your data with you)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5v7M5.5 7 8 9.5 10.5 7M3.5 13h9"/></svg>export data</button>
+      <button id="impData" title="Merge a previously exported JSON back in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9.5v-7M5.5 5 8 2.5 10.5 5M3.5 13h9"/></svg>import data</button>
+      <button id="notesbtn" type="button" data-notesopen title="Your saved highlight-notes from the deep dives"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 2.5h6.4v11H4.8z"/><path d="M6.6 6h2.8M6.6 8.4h2.8M6.6 10.8h1.8"/></svg>my notes <span class="bn" id="notesN">(0)</span></button>
+      <button id="syncbtn" type="button" data-syncopen title="Sync progress across devices with a short code"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 6.5a4.5 4.5 0 0 1 7.9-1.2M12.4 9.5a4.5 4.5 0 0 1-7.9 1.2"/><path d="M11.5 2.5v2.8H8.7M4.5 13.5v-2.8h2.8"/></svg>sync across devices</button>
     </div>
     <input id="impFile" type="file" accept="application/json,.json" style="display:none">
   </aside>
@@ -2130,6 +2139,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.43</span><span class="vd">2026-07-17</span><p><strong>UX &mdash; sidebar actions restyled as an action menu.</strong> The <span class="mono">View</span> (expand/collapse&nbsp;all) and <span class="mono">Data</span> (export/import&nbsp;data, my&nbsp;notes, sync&nbsp;across&nbsp;devices) controls were laid out as a wrapping row of chips directly under the filter pills, so they read as more filters rather than actions. They are now a <strong>vertical menu of full-width rows</strong>, each with a leading inline-SVG icon (muted &rarr; cobalt on hover) and a hover highlight &mdash; echoing the Modules nav&rsquo;s clickable-row pattern but marked as actions by an icon rather than a code chip. The sidebar now carries three distinct visual languages: nav rows (code chip), filter pills (toggle state), action rows (icon). The <span class="mono">Filter by status</span> pills are unchanged. The sidebar is also now <strong>height-safe</strong>: it caps at the viewport and scrolls internally (<span class="mono">max-height:calc(100vh - 100px);overflow-y:auto</span>), so the Data actions are never clipped on short screens or as more modules are added; on mobile it reverts to a static horizontal wrap. No topic-id or content changes.</p></div>
       <div class="vitem"><span class="vv">v1.42</span><span class="vd">2026-07-17</span><p><strong>NEW DEEP DIVE B3 &mdash; Mutation Testing as the Test-Quality Gate.</strong> Third M5 companion (B3-mutation-testing-gate-deepdive.html + overlay), built on the three-teammate fact pass + spot-verify round (10th session in a row it paid: the SpecBench quote re-pinned to its verbatim "Oversight therefore collapses onto a single surface: the automated test suite." with the 28&nbsp;pp/tenfold figure flagged as the abstract headline over a ~27&nbsp;pp 90th-percentile fit, R&sup2;=0.21; the Augment-blog JFreeChart "256K mutants / 109 minutes" figure identified as third-hand &mdash; excluded; the ISSTA 2019 flakiness numbers pulled verbatim from the PDF). Theory grounded with verbatims: DeMillo/Lipton/Sayward 1978 (competent-programmer + coupling as stated observations; Hamlet 1977 parallel origin), Just et al. FSE 2014 (coupling for <strong>73% of real faults</strong>, 17% not coupled; mutant detection correlates with real-fault detection "independently of code coverage"; Defects4J credited to the ISSTA 2014 companion, not the FSE paper), Inozemtseva &amp; Holmes ICSE 2014 ("should not be used as a <em>quality target</em>" &mdash; their word, not "stopping criterion"). LLM-era evidence file made precise: MUTGEN pinned to its real title ("Mutation-Guided Unit Test Generation with a Large Language Model", accepted IEEE TSE; the 53% plateau is one HumanEval-Java subject; 89.5%/89.1% are corpus scores across 1,144/1,900 mutants), Haroon et al. setup clarified (23,977 = the failing subset of 119,163 SAC-generated tests; preprint-flagged), TestGenEval GPT-4o 35.2%/18.8% verbatim, Yoshimoto arXiv:2603.13724 (AI authored 16.4% of test-adding commits; coverage comparable &mdash; the premise, not the payoff), Rethinking arXiv:2602.07900 (test volume &ne; outcomes). NEW reward-hacking section: ImpossibleBench 54.0% Conflicting-SWEbench vs 76% Oneoff disambiguated; SpecBench arXiv:2605.21384; Rajan arXiv:2606.16062 (28.5% of a 49-task SWE-bench Verified sample accept a verified-incorrect patch; Pass@1 +14.14&nbsp;pp on hackable tasks, 123/134 models positive). Feedback-loop evidence: MuTAP (IST 171, 2024: up to 28% more faulty snippets, 17% caught only by it, 93.57%), ACH reused from B2, YATE +21.77% mutants, AdverTest arXiv:2602.08146 (co-evolution verbatims; Defects4J +8.56%/+63.30%), LLMorpheus arXiv:2404.09952. Industry: the Google trilogy with verbatims (one mutant per line; changed/covered/non-arid only; Critique via Tricorder; usefulness 20%&rarr;80%; &gt;24,000 developers / 1,000+ projects; ~15M mutants; "developers using mutation testing write more tests") and the fact-check correction that Google&rsquo;s no-score stance is a <em>practical</em> dismissal ("infeasably expensive&hellip; no good way to surface it") not a normative one &mdash; distilled into the consumption-mode lesson (survivors-in-review at scale vs module score at the bootstrap boundary). The three taxes with the classic numbers: Schuler &amp; Zeller STVR 2013 (~45% of undetected mutants equivalent; ~15&nbsp;min/mutant manual triage), TCE ICSE 2015 (7.4% + 21% for C; 5.7% + 5.4% Java), pseudo-tested methods (concept coined by Niedermayr et al. 2016; EMSE 2019: present in all 21 projects, single headline % UNPINNABLE &mdash; not cited), ISSTA 2019 (scores vary 4&nbsp;pp between runs; 9% of mutant-test pairs non-deterministic). Cost ladder + toolbox point-in-time (PIT incremental / Arcmutate PR-scoped / Descartes extreme mutation / StrykerJS --incremental since v6.2; gremlins over stale go-mutesting; Stryker thresholds high:80/low:60/break:null and PIT default 0 &mdash; <strong>no mainstream tool ships a mandatory score gate</strong>, so ~70% is presented as Report 4&rsquo;s working heuristic). The two-mode gate (diff-scoped advisory survivors + module-level held-out-mutants score as the F1&rarr;F2 exit criterion) flagged as our synthesis, with the practice-sheet-vs-exam principle and six anti-patterns. Topic B3 know/concepts/checks enriched (Google-scale bullet, flakiness bullet, held-out-mutants check).</p></div>
       <div class="vitem"><span class="vv">v1.41</span><span class="vd">2026-07-17</span><p><strong>NEW DEEP DIVE B2 &mdash; Characterization &amp; Golden-Master Testing with Agents.</strong> Second M5 companion (B2-characterization-golden-master-deepdive.html + overlay), built on the three-teammate fact pass + spot-verify round (9th session in a row it paid). The two pinning techniques stated precisely: Feathers characterization (WELC 2004 ch. 13; verbatim "The purpose of characterization testing is to document your system's actual behavior, not check for the behavior you wish your system had" and "When a system goes into production, in a way, it becomes its own specification") and Falco/Bache approval &mdash; golden master &mdash; snapshot as one mechanism with four emphases (Bache 2021 anatomy quoted; Rainsberger = popularizer, never "coiner"; Hyrum's Law + Excel-1900/Java-8-HashMap as load-bearing-bug exhibits, pairing flagged as ours). The production evidence file with contexts kept honest: TestGen-LLM (75/57/25 = Reels/Stories eval; 11.5%/73% = test-a-thons; "Assured LLM-SE" = separate paper arXiv:2402.04380), ACH pinned to arXiv:2501.12862 (FSE 2025; 10,795 Kotlin classes &rarr; 9,095 mutants &rarr; 571 privacy tests, 73% accepted, 36% privacy-relevant; equivalence detector 0.79/0.47 &rarr; 0.95/0.96; Messenger/WhatsApp NOT Instagram), Qodo Cover (huggingface/pytorch-image-models PR #2331, 15 tests/168 lines; Friedman quote with its full "&hellip;who run fully automated workflows" clause), UnitTenX, YATE (arXiv:2507.18316: repair beats regeneration, +32.06% lines/+21.77% mutants). Five traps, each with measured evidence: coverage vanity (MutGen 100%/4%; TestGenEval arXiv:2410.00752 &mdash; GPT-4o 35.2% coverage vs 18.8% mutation, the only benchmark grading mutation), oracle-passing-by-construction (arXiv:2412.14137 read both directions: fatal for bug-finding, definitional for characterization), bug-as-spec measured (arXiv:2607.05139: ~25% &rarr; ~14% fault detection when the model sees faulty code), flaky pins (ICSE SEIP 2026 DBMS study: 0.07% baseline vs 0.29&ndash;0.71% generated, 63% unordered collections, "prioritize fixing flaky tests" verbatim), and the agent gaming its net (Beck's genie "disabling or deleting tests" verbatim from Beyond the Vibes; ImpossibleBench; ThoughtWorks Radar Vol. 34 "erode approve/deny chokepoints" verbatim) &mdash; plus Sapegin's approve-all-fatigue line as the human-scale substrate. The six-step workflow (document-don't-fix &rarr; deterministic filter &rarr; ~20%+all-suspected sampling &rarr; two-door SUSPECTED-BUG triage &rarr; ~70% mutation gate &rarr; read-only commit) flagged as our Report 4 synthesis. Toolbox table point-in-time (ApprovalTests, Verify licensing change Aug 2026, Jest/Vitest, Texttest, VCR-cassettes, Percy AI reviewer as vendor claim) + four-row deterministic exit-criteria table with the keep-or-discard decision. <strong>Fact fixes elsewhere:</strong> the Report 4 notes' "there are no wrong answers &mdash; just documenting the way things exist" line was Erik Dietrich's gloss misattributed to Feathers &mdash; corrected with Feathers' real verbatim. Topic B2 know/concepts/src/checks enriched (bug-as-spec bullet, ACH src, read-only-tests check).</p></div>
       <div class="vitem"><span class="vv">v1.40</span><span class="vd">2026-07-17</span><p><strong>NEW — cross-device sync.</strong> Progress and notes were saved only in this browser; you can now opt in to sync them across devices with no account. From the sidebar <span class="mono">Data → sync across devices</span>, "Enable sync" uploads your current state and returns a random <strong>4-character code</strong>; every change from then on syncs automatically. On another device, enter the code to pull and merge that state in — that device is then linked too. Merging is handled by <strong>Yjs</strong>, a conflict-free replicated data type (CRDT), on both the browser and a small Cloudflare Worker — so edits made on two devices reconcile correctly with no data loss and no custom merge logic. <strong>Local storage stays primary:</strong> the sync engine loads from a CDN and is best-effort; if it is blocked (e.g. inside the Claude preview) or you are offline, saving still works exactly as before, and the top bar shows a <span class="mono">synced · CODE</span> / <span class="mono">sync error</span> status. Rate-limited server-side. No topic-id or content changes. <em>(v1.39 reserved for the parallel B1 deep-dive branch.)</em></p></div>
@@ -5219,7 +5229,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
 </div>
 
 <footer>
-  <b>v1.42</b> · 2026-07-17 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.43</b> · 2026-07-17 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>

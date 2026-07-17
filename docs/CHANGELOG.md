@@ -3,6 +3,25 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.43 · 2026-07-17
+
+**UX — sidebar actions restyled as an action menu.** The **View** (expand/collapse all) and
+**Data** (export/import data, my notes, sync across devices) controls were laid out as a
+wrapping row of chips directly under the filter pills, so they read as more filters rather than
+actions. They are now a **vertical menu of full-width rows**, each with a leading inline-SVG
+icon (muted → cobalt on hover) and a hover highlight — echoing the Modules nav's clickable-row
+pattern (`.mnav a`) but marked as actions by an icon rather than a code chip. The sidebar now
+carries three distinct visual languages: nav rows (code chip), filter pills (toggle state),
+action rows (icon).
+
+The sidebar is also now **height-safe**: it caps at the viewport and scrolls internally
+(`max-height:calc(100vh - 100px); overflow-y:auto`), so the Data actions are never clipped on
+short viewports or as more modules are added — a pre-existing sticky-sidebar flaw that the
+taller vertical menu exposed. On mobile (`≤900px`) the sidebar reverts to a static horizontal
+wrap with no cap. Changes are confined to the `.side`, `.bulk`, and `.bulk button` rules plus
+the six action-button icons; the **Filter by status** pills are unchanged; no topic-id or
+content changes.
+
 ## v1.42 · 2026-07-17
 
 **NEW DEEP DIVE B3 — Mutation Testing as the Test-Quality Gate.** Third M5 companion
