@@ -63,6 +63,33 @@ Progress + notes persist under key **`agentic-study-v1`**, debounced ~700ms, wit
   re-located by text-quote anchoring and wrapped in runtime-only `<mark>`
   elements on overlay open; nothing is written back to the file.
 
+### Cross-device sync layer (Yjs CRDT — optional, additive)
+Opt-in sync (v1.40) lets progress/notes travel between devices via a 4-character code,
+**without** disturbing the local-first store above.
+- **Local-first invariant.** The JSON `store` path (`agentic-study-v1`) stays the canonical
+  local store and never depends on the network or on Yjs. Sync is a best-effort layer on top;
+  if the sync engine fails to load (claude.ai CSP) or the network is down, saving works exactly
+  as before. The sync UI is a modal opened from the sidebar *Data* group; a chip in the save
+  indicator shows `synced · CODE` / `syncing…` / `sync error`.
+- **Yjs, not a hand-rolled merge.** Merge is a `Y.applyUpdate` library call on both ends —
+  chosen over Automerge/Loro because Yjs is pure-JS (18 kB, no WASM), so it runs in the browser
+  (loaded from a CDN like `marked`) *and* inside the Cloudflare Worker. The "schema" is a `Y.Doc`
+  with four maps: `progress` (topicId→status, LWW), `notes` (topicId→text, LWW), `seen` (a
+  grow-only set of `"<ovId>:<idx>"` keys), `highlights` (id→object). It is materialized into the
+  plain-JSON `state` on remote change and mirrored back on local save, at the single `saveNow`
+  choke-point (guarded by a re-entrancy flag).
+- **Local keys.** `agentic-study-v1` (canonical JSON, unchanged); `agentic-study-ydoc-v1`
+  (base64 of the encoded Y.Doc, the sync vehicle, written only when syncing);
+  `agentic-study-sync-v1` (`{code, lastSyncAt}` — device linkage, never uploaded). All go
+  through the same `store` backend.
+- **Backend** lives in `sync-worker/` (Hono + KV Cloudflare Worker, deployed to
+  `agentic-study-sync.selmeci.workers.dev`). KV stores the encoded Y.Doc per code; the Worker
+  merges pushes server-side with `Y.applyUpdate` (`POST /new`, `GET`/`POST /r/:code`, binary
+  bodies), rate-limited via the native Cloudflare Rate Limiting binding. Bindings are typed from
+  `wrangler types` (`worker-configuration.d.ts`), so they track `wrangler.toml`. This is the one
+  part of the project that is **not** a zero-build single-file artifact by design — it is a
+  separate deployable backend.
+
 ## The overlay pattern (how deep dives embed)
 
 A deep dive lives in **two places from one shared body**:

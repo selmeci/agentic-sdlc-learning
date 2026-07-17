@@ -45,6 +45,26 @@ button{font-family:var(--mono);cursor:pointer}
 .savebox{font-family:var(--mono);font-size:10.5px;color:var(--soft);text-align:right;min-width:120px}
 .savebox .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--idle);margin-right:6px;vertical-align:1px}
 .savebox.ok .dot{background:var(--pine)} .savebox.busy .dot{background:var(--amber)} .savebox.err .dot{background:#B3362B}
+.syncchip{font-family:var(--mono);font-size:10.5px;color:var(--soft);margin-left:10px}
+.syncchip.err{color:#B3362B}
+/* device-sync modal controls — mirror the workbook's button/input system */
+#syncbody{max-width:560px}
+#syncbody>p{margin:0 0 14px}
+#syncbody .kicker{margin:22px 0 6px}
+#syncbody .kicker:first-child{margin-top:0}
+#syncbody button{font-family:var(--mono);font-size:12px;padding:8px 15px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--soft);cursor:pointer;transition:background .12s,border-color .12s,color .12s}
+#syncbody button:hover{color:var(--ink);border-color:var(--idle)}
+#syncbody #syncenable,#syncbody #synclink{background:var(--cobalt-deep);border-color:var(--cobalt-deep);color:#fff;font-weight:600}
+#syncbody #syncenable:hover,#syncbody #synclink:hover{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
+#syncbody button[disabled]{opacity:.55;cursor:default}
+.syncrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}
+#synccodein{font-family:var(--mono);font-size:16px;letter-spacing:6px;text-transform:lowercase;text-align:center;width:132px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#FDFEFE;color:var(--ink)}
+#synccodein:focus{border-color:var(--cobalt);outline:none}
+#synccodein::placeholder{color:var(--idle)}
+.synccode-box{display:inline-flex;align-items:center;gap:16px;background:var(--idle-bg);border:1px solid var(--line);border-radius:12px;padding:12px 20px;margin:4px 0 16px}
+.synccode-box .code{font-family:var(--mono);font-size:27px;font-weight:600;letter-spacing:7px;color:var(--ink);text-transform:lowercase}
+.syncmeta{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin:0 0 14px}
+#syncmsg{font-family:var(--mono);font-size:12px;color:var(--amber);min-height:15px;margin:8px 0 0}
 
 .app{max-width:1220px;margin:0 auto;padding:22px 20px 80px;display:grid;grid-template-columns:236px 1fr;gap:30px;align-items:start}
 /* let the scrollable diagrams clip inside their track instead of stretching it
@@ -452,7 +472,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
       <div class="gbar"><div class="gd" id="gd" style="width:0%"></div><div class="gs" id="gs" style="width:0%"></div></div>
     </div>
     <button class="verbtn" id="verbtn" type="button" data-veropen>version history</button>
-    <div class="savebox" id="savebox"><span class="dot"></span><span id="savetxt">loading…</span></div>
+    <div class="savebox" id="savebox"><span class="dot"></span><span id="savetxt">loading…</span><span class="syncchip" id="syncchip"></span></div>
   </div>
 </header>
 
@@ -479,6 +499,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
       <button id="expData" title="Download progress + notes as JSON (storage is per-origin — take your data with you)">export data</button>
       <button id="impData" title="Merge a previously exported JSON back in">import data</button>
       <button id="notesbtn" type="button" data-notesopen title="Your saved highlight-notes from the deep dives">my notes <span id="notesN">(0)</span></button>
+      <button id="syncbtn" type="button" data-syncopen title="Sync progress across devices with a short code">sync across devices</button>
     </div>
     <input id="impFile" type="file" accept="application/json,.json" style="display:none">
   </aside>
@@ -570,7 +591,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
       <p class="dcap"><strong>How to read:</strong> match the left (problem shape) to the right (model); green = highest agentic leverage, grey = gated models where the gates are the point. The full deep dive gives each model's pros/cons and how agents behave inside it.</p>
       </div>
 
-      <p style="font-size:13px;color:var(--soft);margin:6px 4px 2px">Full explanation with per-model pros &amp; cons: <a href="#sdlc-deepdive"><strong>↳ open the SDLC Foundations deep dive</strong></a>.</p>
+      <div style="margin-top:14px"><a class="ddgo" href="#sdlc-deepdive" aria-haspopup="dialog"><span class="ddgo-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="14" y2="13"/></svg></span><span class="ddgo-txt"><span class="ddgo-title">SDLC Foundations Deep Dive</span><span class="ddgo-desc">the full explanation — each model's pros &amp; cons and how agents behave inside it</span></span><span class="ddgo-act">Open panel <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></div>
     </section>
 
     <section class="dmap" id="dmap">
@@ -2105,6 +2126,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.40</span><span class="vd">2026-07-17</span><p><strong>NEW — cross-device sync.</strong> Progress and notes were saved only in this browser; you can now opt in to sync them across devices with no account. From the sidebar <span class="mono">Data → sync across devices</span>, "Enable sync" uploads your current state and returns a random <strong>4-character code</strong>; every change from then on syncs automatically. On another device, enter the code to pull and merge that state in — that device is then linked too. Merging is handled by <strong>Yjs</strong>, a conflict-free replicated data type (CRDT), on both the browser and a small Cloudflare Worker — so edits made on two devices reconcile correctly with no data loss and no custom merge logic. <strong>Local storage stays primary:</strong> the sync engine loads from a CDN and is best-effort; if it is blocked (e.g. inside the Claude preview) or you are offline, saving still works exactly as before, and the top bar shows a <span class="mono">synced · CODE</span> / <span class="mono">sync error</span> status. Rate-limited server-side. No topic-id or content changes. <em>(v1.39 reserved for the parallel B1 deep-dive branch.)</em></p></div>
       <div class="vitem"><span class="vv">v1.39</span><span class="vd">2026-07-17</span><p><strong>NEW DEEP DIVE B1 — The Bootstrap Paradox &amp; Safe Ordering. M5 OPENED.</strong> First M5 companion (B1-bootstrap-paradox-deepdive.html + overlay), built on the three-teammate fact pass + spot-verify round. The chapter states the paradox as three separately-true claims — the agent needs a verification loop (E4); legacy is "simply code without tests" (Feathers 2004, Preface verbatim); the agent is the cheapest tool to build the missing prerequisites — and shows how, unanchored, it closes into the bug-as-spec loop. The evidence file with honest weights: DORA 2024 (+25% AI adoption associated with −1.5% throughput / −7.2% stability, with DORA’s OWN mechanism quoted — "small batch sizes and robust testing mechanisms" — and the 2025 sign flip flagged: throughput positive, instability persists, "AI’s primary role is as an amplifier", seven-capability AI Capabilities Model); the METR RCT (16 devs / 246 tasks / 19% slower vs 24% expected &amp; 20% still believed, on 22k+-star / 1M+-LOC repos — the self-report disqualifier); GitClear vendor-flagged (copy/paste 8.3%→12.3%, moved ~24%→9.5%, churn 5.5%→7.9%; the "8×"/"4×" headlines pinned to their dated reports); Stack Overflow 2025 (45.7% distrust vs 32.7% trust; 66% "AI solutions that are almost right, but not quite"). The benchmark greenfield-bias corollary: SWE-bench keeps only fail-to-pass instances (2,294 of ~90k PRs; Epoch AI: ~90% under an hour, Django ≈ half, top-5 repos &gt;80%) and agents drop 72.80% → 25% on evolution-style tasks (SWE-EVO). The five-step dependency chain (read-only comprehension → characterization → minimal CI → AGENTS.md extracted-not-decreed, with the ETH −2%/+23% numbers → scoped writes) is flagged as our Report 4 synthesis and mapped onto Böckeler’s guides/sensors vocabulary; Phase 0 read-only as the paradox-breaker (Xia TSE 2018: 58% of professional time is comprehension; Ehsani MSR 2026 on AIDev-pop: docs/CI/build tasks merge best, Abandoned/Not Reviewed = 38% of failed agentic PRs; the 2024 "pipe dream" → 2025 UnitTenX arc, 0%→100% line coverage on the djbdns case study); four wrong-order failure modes (WO1–WO4) with detection signals; per-step exit-criteria table. <strong>Spot-verify (8th session in a row it paid):</strong> a fabricated Böckeler mutation-testing quote killed (her real line: acceptance tests "give us a false sense of security in test effectiveness — mutation testing helps us monitor that gap"); UnitTenX "characterization tests" is NOT the paper’s term (it says "resolve bugs and document unknown interfaces") and its 0%→100% is scoped to one case-study codebase (djbdns, 202 functions); the Stack Overflow 66%-vs-45.2% split settled (top frustration vs debugging time). <strong>Fact fixes elsewhere:</strong> TestGen-LLM "useful:generated 1:4 vs 1:20" is UNPINNABLE (not in arXiv:2402.09171) — dropped from topic B2 and flagged in the Report 4 notes; topic B1’s "DORA mechanism" know bullet reframed to DORA’s own batch-size/testing-discipline hypothesis + the 2025 reversal; MutGen 89.5% pinned to HumanEval-Java (89.1% LeetCode-Java) in topic B3. Topic B1 know/concepts/src/checks enriched (greenfield-bias bullet, METR self-report check).</p></div>
       <div class="vitem"><span class="vv">v1.38</span><span class="vd">2026-07-16</span><p><strong>NEW DEEP DIVE I7 — Linking Product ↔ Engineering: IDs, Maps &amp; the MCP Bridge. M4 COMPLETE.</strong> Seventh and final M4 companion (I7-linking-product-engineering-deepdive.html + overlay), built on the three-teammate fact pass + spot-verify round. The chapter joins the two planes with one boring foreign key: the unified ID scheme with per-platform mechanics (Linear auto-links from branch names; Jira smart commits need key + command in the commit message; GitHub auto-close is same-repo only) and an enforcement ladder from CLAUDE.md convention through <span class="mono">prepare-commit-msg</span> to server-side rulesets + CI grep (E5); the missing-links evidence (Bird et al. ESEC/FSE 2009 — 8–55% of fixed bugs linked, and the severity inversion: 63% of minor vs 15% of blocker bugs linked in Apache; LinearB verbatim "In 75% of teams, 31% of branches are unlinked"); the ticket-as-prompt pattern (Copilot↔Jira GA Jun 2026, Devin↔Linear, Cursor↔Linear — vendor-flagged) with its independent counterweight (arXiv:2503.15223, ICSE 2026: 29.6% of plausible SWE-bench patches diverge from the real fix; 66.2% of suspicious ones trace to under-specified issue statements); the system map (C4 verbatims incl. the generate-not-draw L4 rule, arc42 CC BY-SA, matklad); one master per artifact + "reference, don't copy" (our synthesis, flagged); the MCP bridge priced (150k→2k vendor verbatim; MCP-Universe distractor evidence) and threat-modeled (lethal trifecta verbatim + three incidents: GitHub MCP toxic flows May 2025, Supabase MCP Jul 2025, GitLost Jul 2026); provenance (multi-method census 3.3%/30×, Agent Trace RFC Jan 2026, Copilot session-log links + Purview streaming, the VS Code co-author-trailer revert) and llms.txt honestly labeled (Mueller verbatim, Ahrefs 97%). <strong>Spot-verify (7th session in a row it paid):</strong> GitLost "VP of Sales" detail + Agentic-Workflows preview date dropped as uncorroborated; LinearB stat re-pinned to its verbatim (was "a third of git work"); Bird "every project" softened to the manually-verified projects; "Jira has its own version of reality" NOT FOUND — excluded. <strong>Fact fix elsewhere:</strong> H3's "AIDev census" naming corrected in both copies — arXiv:2606.24429 is the <em>multi-method census</em> (Khosravani &amp; Mockus); AIDev (arXiv:2602.09185) is the separate PR census it compares against; the 30× base tightened to 850,157 one-snapshot commits. Topic I7 know/concepts/src/checks rewritten with verified figures.</p></div>
       <div class="vitem"><span class="vv">v1.37</span><span class="vd">2026-07-16</span><p><strong>NEW DEEP DIVE I6 — Retrieval: Agentic Search, Embedding Indexes &amp; Knowledge Graphs.</strong> Sixth M4 companion (I6-retrieval-deepdive.html + overlay), built on the three-teammate fact pass + spot-verify round. The chapter maps four retrieval lanes (agentic search / embedding index / symbol index / code KG), the vendor board with primary quotes (Cherny's HN + restated reasons — <em>simpler, security, privacy, staleness, reliability</em>; Cursor's +12.5% on internal Context Bench, correctly attached to semantic search's lift; Cody's 2024 embeddings retreat with the consumer-sunset precision; Riptide "3x recall" pinned to the migrated Codeium post), the independent evidence (SWE-bench BM25 1.96% vs oracle 4.80%; Agentless 32.00%/$0.70; CodeRAG-Bench verbatims; the folklore correction — dense code-trained embedders frequently beat BM25, grep wins on systems properties; Codebase-Memory 83%-vs-92% at 10× fewer tokens), the index tax (I3 drift, Vec2Text 92% embedding inversion, Guo's cost-curve, Blackbird's 2,048-core stat), a GraphRAG anti-miscitation callout, and the L0–L3 escalation ladder + twenty-query bench (our synthesis, flagged). <strong>Seed-topic corrections:</strong> the "Devin: same pattern" claim was WRONG — Devin indexes (DeepWiki wiki + code graph), now the counterexample; "+12.5% from combining semantic + grep" re-attached; "precision" dropped from Claude Code's stated reasons. Spot-verify kills: a "second Anthropic engineer / outperformed by a lot" quote (NOT FOUND), Riptide "200% recall improvement" (paraphrase; verbatim is "3x the recall"), Codebase-Memory latency/raw-token figures (not in the abstract), Cursor "plaintext never persisted" (unverified on fetchable pages). Topic know/concepts/src/checks enriched to match.</p></div>
@@ -4857,8 +4879,15 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   </div>
 </div>
 
+<div class="e1ov" id="syncov" role="dialog" aria-modal="true" aria-label="Sync across devices">
+  <div class="panel">
+    <div class="bar"><span class="tag">DEVICE SYNC</span><h3>Sync across devices</h3><button class="x" type="button" data-syncclose>✕ close</button></div>
+    <div class="body" id="syncbody"><p class="kicker">Loading…</p></div>
+  </div>
+</div>
+
 <footer>
-  <b>v1.39</b> · 2026-07-17 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.40</b> · 2026-07-17 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
@@ -5378,6 +5407,13 @@ Claude Code's model = three deterministic layers plus a programmable one: **perm
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+<script type="module">
+  try {
+    const Y = await import('https://cdn.jsdelivr.net/npm/yjs@13/+esm');
+    window.Y = Y;
+    window.dispatchEvent(new Event('yjs-ready'));
+  } catch (e) { /* sync stays disabled; local save is unaffected */ }
+</script>
 <script>
 /* ============ DATA — stable IDs, never change, only add ============ */
 const MODULES=[
@@ -5996,9 +6032,50 @@ src:[{t:"OWASP agentic top 10; published incident postmortems; large-company gov
 
 /* ============ APP LOGIC ============ */
 const KEY='agentic-study-v1';
+const SYNC_URL='https://agentic-study-sync.selmeci.workers.dev';
+const SYNCKEY='agentic-study-sync-v1';
+var sync={code:null,status:'off',lastSyncAt:null};
+var pushTimer=null;
 const STATUSES=['none','studying','done'];
 const LBL={none:'not started',studying:'studying',done:'mastered'};
 let state={progress:{},notes:{},seen:{},highlights:[],updatedAt:null};
+/* Sync layer (Yjs). Additive: the canonical local store is still the JSON `state`
+   above via `store` (agentic-study-v1). The Y.Doc exists only when sync is used. */
+var ydoc=null, DOCKEY='agentic-study-ydoc-v1', applyingRemote=false;
+function yReady(){return typeof window.Y!=='undefined'&&!!window.Y;}
+function stateBlob(){return{progress:state.progress,notes:state.notes,seen:state.seen,highlights:state.highlights,updatedAt:state.updatedAt};}
+function refreshAll(){syncFromState();updateCounts();updateNotesCount();renderTopicHls();applyFilter();}
+function b64(u){var s='';for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s);}
+function unb64(str){var s=atob(str),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}
+function seenKeys(sn){var out=[];Object.keys(sn||{}).forEach(function(ov){(sn[ov]||[]).forEach(function(i){out.push(ov+':'+i);});});return out;}
+function mirrorToDoc(){
+  if(!ydoc)return;
+  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights');
+  ydoc.transact(function(){
+    Object.keys(state.progress).forEach(function(k){if(P.get(k)!==state.progress[k])P.set(k,state.progress[k]);});
+    Object.keys(state.notes).forEach(function(k){if(N.get(k)!==state.notes[k])N.set(k,state.notes[k]);});
+    seenKeys(state.seen).forEach(function(k){if(S.get(k)!==true)S.set(k,true);});
+    var have={};(state.highlights||[]).forEach(function(h){if(h&&h.id){have[h.id]=1;if(JSON.stringify(H.get(h.id))!==JSON.stringify(h))H.set(h.id,h);}});
+    Array.from(H.keys()).forEach(function(id){if(!have[id])H.delete(id);});
+  });
+}
+function materializeFromDoc(){
+  if(!ydoc)return;
+  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights');
+  state.progress=P.toJSON();state.notes=N.toJSON();
+  var sn={};Array.from(S.keys()).forEach(function(k){var i=k.lastIndexOf(':'),ov=k.slice(0,i),n=parseInt(k.slice(i+1),10);if(!sn[ov])sn[ov]=[];sn[ov].push(n);});
+  Object.keys(sn).forEach(function(ov){sn[ov].sort(function(a,b){return a-b;});});
+  state.seen=sn;
+  state.highlights=Array.from(H.values());
+}
+function persistDoc(){if(!ydoc)return;try{store.set(DOCKEY,b64(window.Y.encodeStateAsUpdate(ydoc)));}catch(e){}}
+async function initYjsDoc(){
+  if(ydoc||!yReady())return ydoc;
+  ydoc=new window.Y.Doc();
+  try{var r=await store.get(DOCKEY);if(r&&r.value)window.Y.applyUpdate(ydoc,unb64(r.value));}catch(e){}
+  mirrorToDoc();persistDoc();
+  return ydoc;
+}
 let storeOK=false, saveTimer=null;
 const $=(s,r)=>(r||document).querySelector(s);
 const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
@@ -6043,8 +6120,76 @@ async function saveNow(){
     const r=await store.set(KEY,JSON.stringify(state));
     if(!r){setSave('err','save error');return;}
     setSave('ok','saved '+new Date().toTimeString().slice(0,5));
+    if(sync.code&&!applyingRemote)schedulePush();
   }catch(e){setSave('err','save error');}
 }
+
+function setSyncStatus(st){sync.status=st;var el=document.getElementById('syncchip');if(!el)return;var map={off:'',syncing:'syncing…',ok:'synced · '+(sync.code||''),error:'sync error'};el.textContent=map[st]||'';el.className='syncchip'+(st==='error'?' err':'');}
+async function loadSyncMeta(){try{var r=await store.get(SYNCKEY);if(r&&r.value){var m=JSON.parse(r.value);sync.code=m.code||null;sync.lastSyncAt=m.lastSyncAt||null;}}catch(e){}}
+function saveSyncMeta(){try{return store.set(SYNCKEY,JSON.stringify({code:sync.code,lastSyncAt:sync.lastSyncAt}));}catch(e){return Promise.resolve(false);}}
+function schedulePush(){if(!sync.code||!ydoc)return;clearTimeout(pushTimer);pushTimer=setTimeout(syncPush,900);}
+function afterRemote(bytes){
+  applyingRemote=true;
+  try{
+    mirrorToDoc(); /* fold in any local edits not yet pushed (e.g. made within the save debounce) BEFORE the remote union, so a pull/focus can't erase them */
+    window.Y.applyUpdate(ydoc,bytes);
+    materializeFromDoc();persistDoc();
+    store.set(KEY,JSON.stringify(stateBlob()));
+    refreshAll();
+  }finally{applyingRemote=false;}
+}
+async function syncPush(){
+  if(!sync.code||!ydoc)return;
+  setSyncStatus('syncing');
+  try{
+    mirrorToDoc();persistDoc();
+    var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(sync.code),{method:'POST',body:window.Y.encodeStateAsUpdate(ydoc)});
+    if(res.status===404){unlinkSync();setSave('err','sync link broken');return;}
+    if(!res.ok)throw 0;
+    afterRemote(new Uint8Array(await res.arrayBuffer()));
+    sync.lastSyncAt=Date.now();saveSyncMeta();setSyncStatus('ok');
+  }catch(e){setSyncStatus('error');}
+}
+async function syncPull(){
+  if(!sync.code||!ydoc)return;
+  setSyncStatus('syncing');
+  try{
+    var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(sync.code));
+    if(res.status===404){unlinkSync();setSave('err','sync link broken');return;}
+    if(!res.ok)throw 0;
+    afterRemote(new Uint8Array(await res.arrayBuffer()));
+    sync.lastSyncAt=Date.now();saveSyncMeta();setSyncStatus('ok');
+  }catch(e){setSyncStatus('error');}
+}
+async function enableSync(){
+  if(!yReady())return null;
+  await initYjsDoc();
+  setSyncStatus('syncing');
+  try{
+    mirrorToDoc();persistDoc();
+    var res=await fetch(SYNC_URL+'/new',{method:'POST',body:window.Y.encodeStateAsUpdate(ydoc)});
+    if(!res.ok)throw 0;
+    var newcode=res.headers.get('X-Sync-Code');
+    if(!newcode||!/^[a-z0-9]{4}$/.test(newcode))throw 0;
+    sync.code=newcode;sync.lastSyncAt=Date.now();await saveSyncMeta();
+    afterRemote(new Uint8Array(await res.arrayBuffer()));setSyncStatus('ok');return sync.code;
+  }catch(e){setSyncStatus('error');return null;}
+}
+async function linkSync(code){
+  if(!yReady())return{ok:false,err:'Sync is unavailable here.'};
+  await initYjsDoc();
+  code=(code||'').trim().toLowerCase();
+  if(!/^[a-z0-9]{4}$/.test(code))return{ok:false,err:'A code is 4 letters/numbers.'};
+  setSyncStatus('syncing');
+  try{
+    var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(code));
+    if(res.status===404)return{ok:false,err:'No data found for that code.'};
+    if(!res.ok)throw 0;
+    sync.code=code;sync.lastSyncAt=Date.now();await saveSyncMeta();
+    afterRemote(new Uint8Array(await res.arrayBuffer()));setSyncStatus('ok');schedulePush();return{ok:true};
+  }catch(e){setSyncStatus('error');return{ok:false,err:'Network error. Try again.'};}
+}
+function unlinkSync(){sync.code=null;sync.lastSyncAt=null;saveSyncMeta();setSyncStatus('off');}
 
 /* Export/import: storage is per-origin, so moving hosts (preview → GitHub Pages → local file)
    starts fresh. The JSON file is how progress + notes travel with the reader. Import merges. */
@@ -6241,6 +6386,43 @@ if(st){st.addEventListener('click',function(e){
   $$('.sviz').forEach(function(p){p.classList.toggle('on',p.id==='sv-'+b.dataset.v);});
 });}
 
+function renderSyncModal(){
+  var b=document.getElementById('syncbody');if(!b)return;
+  if(!yReady()){
+    b.innerHTML='<p class="kicker">Sync unavailable here</p>'
+      +'<p>Device sync needs its engine, which could not load in this context (it is blocked inside the Claude preview, and offline). Open the workbook on its normal web address and sync will work. Your progress is still saved locally in the meantime.</p>';
+    return;
+  }
+  if(sync.code){
+    var when=sync.lastSyncAt?new Date(sync.lastSyncAt).toLocaleString():'—';
+    b.innerHTML='<p class="kicker">Synced</p>'
+      +'<p>This device is syncing. Enter this code on your other devices to pull this progress there.</p>'
+      +'<div class="synccode-box"><span class="code" id="synccode">'+sync.code+'</span><button type="button" id="synccopy">copy</button></div>'
+      +'<p class="syncmeta">Anyone with this code can read and change this progress — keep it to yourself.</p>'
+      +'<p class="syncmeta">Last synced '+when+'</p>'
+      +'<p><button type="button" id="syncunlink">Unlink this device</button></p>'
+      +'<p class="syncmeta">Unlinking stops sending changes to the server; your local progress stays on this device.</p>';
+  }else{
+    b.innerHTML='<p class="kicker">Sync across devices</p>'
+      +'<p>Keep your progress and notes on a small server so you can pick up on another device. No account — just a 4-character code.</p>'
+      +'<p><button type="button" id="syncenable">Enable sync &amp; get my code</button></p>'
+      +'<p class="kicker">Have a code from another device?</p>'
+      +'<div class="syncrow"><input id="synccodein" type="text" maxlength="4" placeholder="abcd" autocomplete="off"><button type="button" id="synclink">Link this device</button></div>'
+      +'<p id="syncmsg"></p>';
+  }
+}
+var syncov=document.getElementById('syncov');
+if(syncov){
+  document.addEventListener('click',function(e){
+    if(e.target.closest('[data-syncopen]')){renderSyncModal();syncov.classList.add('show');document.body.style.overflow='hidden';syncov.querySelector('.panel').scrollTop=0;return;}
+    if(e.target.closest('[data-syncclose]')||e.target===syncov){syncov.classList.remove('show');document.body.style.overflow='';return;}
+    if(e.target.id==='syncenable'){e.target.disabled=true;enableSync().then(function(c){renderSyncModal();if(!c){var m=document.getElementById('syncmsg');if(m)m.textContent='Could not reach the sync server. Try again.';}});return;}
+    if(e.target.id==='synclink'){var btn=e.target,inp=document.getElementById('synccodein'),msg=document.getElementById('syncmsg');btn.disabled=true;if(msg)msg.textContent='linking…';linkSync(inp?inp.value:'').then(function(r){if(r.ok){renderSyncModal();}else{btn.disabled=false;if(msg)msg.textContent=r.err;}});return;}
+    if(e.target.id==='syncunlink'){unlinkSync();renderSyncModal();return;}
+    if(e.target.id==='synccopy'){var code=sync.code||'';if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(code).catch(function(){});}e.target.textContent='copied';setTimeout(function(){e.target.textContent='copy';},1200);return;}
+  },true);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&syncov.classList.contains('show')){syncov.classList.remove('show');document.body.style.overflow='';}});
+}
 var verov=document.getElementById('verov');
 if(verov){
   var vfirst=verov.querySelector('.vitem .vv'),vbtn=document.getElementById('verbtn');
@@ -6959,6 +7141,12 @@ function applyHighlights(ov){
   syncFromState();
   updateCounts();
   applyFilter();
+  loadSyncMeta().then(function(){
+    if(!sync.code)return;
+    function go(){initYjsDoc().then(function(){setSyncStatus('ok');syncPull();});}
+    if(yReady())go(); else window.addEventListener('yjs-ready',go,{once:true});
+  });
+  window.addEventListener('focus',function(){if(sync.code&&ydoc)syncPull();});
   wrapFigures();
   initOrientation();
   initDeepDiveNav();

@@ -3,6 +3,28 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.40 · 2026-07-17
+
+**NEW — cross-device sync (opt-in, local-first).** Progress and notes were saved only per
+browser; readers can now sync them across devices with no account. From the sidebar
+**Data → sync across devices**, "Enable sync" uploads the current state and returns a random
+**4-character code**; every change from then on syncs automatically. Entering the code on another
+device pulls and merges that state in, linking it too.
+
+Merge is handled by **Yjs**, a CRDT, on both the browser and a small Cloudflare Worker — chosen
+over Automerge/Loro because it is pure-JS (18 kB, no WASM) and runs in both places, so there is
+**no hand-rolled merge logic**. The synced "schema" is a `Y.Doc` (progress/notes maps, a
+grow-only `seen` set, a highlights-by-id map). Local storage stays canonical and
+Yjs-independent: the engine loads from a CDN and is best-effort, so if it is blocked (claude.ai
+CSP) or offline, saving works exactly as before. The save indicator gains a `synced · CODE` /
+`sync error` chip.
+
+Backend: `sync-worker/` — a Hono + KV Worker (deployed to `agentic-study-sync.selmeci.workers.dev`)
+that stores the encoded Y.Doc per code and merges pushes server-side with `Y.applyUpdate`,
+rate-limited via Cloudflare's native Rate Limiting binding. Worker bindings are generated from
+`wrangler types`. No topic-id or content changes; the local JSON store (`agentic-study-v1`) is
+untouched. *(v1.39 is reserved for the parallel B1 deep-dive branch, so this ships as v1.40.)*
+
 ## v1.39 · 2026-07-17
 
 **NEW DEEP DIVE B1 — The Bootstrap Paradox & Safe Ordering. M5 OPENED.**

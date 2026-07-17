@@ -1,0 +1,13 @@
+name = "agentic-study-sync"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+account_id = "fb0866add4b7bc5813b01a16ce090bfc"
+
+[[kv_namespaces]]
+binding = "SYNC_KV"
+id = "34619ddc8e4348a3be4b96263b6d88f2"
+
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+simple = { limit = 60, period = 60 }
