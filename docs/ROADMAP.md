@@ -8,8 +8,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 - **Workbook**: 8 modules, 55 topics, 6 research reports, SDLC + Domain map sections. (v1.33 —
   M1 grew to E1–E11 in the July 2026 source-evaluation round: E9 harness tuning, E10 background
   agents, E11 formal methods, each with a deep-dive companion.)
-- **Deep-dive companions (32)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B3** (first three of M5).
+- **Deep-dive companions (33)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B4** (first four of M5).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -193,6 +193,31 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     2019, Stryker/PIT default thresholds (no tool ships a mandatory gate). Two-mode gate +
     held-out-mutants principle + ~70% heuristic flagged as our synthesis. Next: **B4**
     (agent archaeology) or **B5** (strangler fig + heatmap).
+  - ~~**B4** `brown-archaeology` — agent archaeology: reverse-engineering legacy~~ — **done
+    (v1.44)**, with an 8-agent fact + discovery swarm and a 4-agent spot-verify round (11th
+    session in a row it paid: CodeConcise is graph-traversal-AUGMENTED RAG, not "instead of
+    plain RAG"; the 60,000 person-days and 240 FTE-years are the SAME projection in two units;
+    the 3h-vs-3-weeks fix is "best cases", a ThoughtWorks pair, a different client; AWS
+    "~7B lines/year" NOT FOUND → replaced with the verified 1.1B lines analyzed / 810k hours
+    cumulative; Western Union is 2.5M lines not 250k, six weeks = discovery→testing, ongoing
+    pilot; the "15–20k lines" sizing UNPINNABLE → dropped; Siala & Lano's zero-spurious holds
+    for Java, 0.14 on Python; Soliman & Keim affiliation split Paderborn/KIT; Willison title
+    "least dangerous" vs body "least harmful" pinned). WCA for Z → IBM Bob timeline pinned
+    (unveiled Oct 2025, GA Mar 2026, global availability Apr 28 2026; WCA supported with
+    adoption path). Load-bearing new sources: Malykhin's Archaeologist's Copilot
+    (martinfowler.com, Jul 16 2026 — "structural lie", Tourist-vs-Archaeologist prompts, time
+    capsule, lying tests; every quote spot-verified verbatim), CROZ Nov 2025 review verbatims,
+    Unum AVP "if you cannot understand it, you cannot verify" (re:Invent 2025), GitHub/Microsoft
+    COBOL framework ($2–5/1k LOC), Soliman & Keim ICSA 2025 (0.395 precision), Siala & Lano
+    Frontiers 2025, arXiv:2504.04372 (78% brittle comprehension), Xia TSE 2018 (~58% measured,
+    3,148 hours), Minelli ICPC 2015, Corbi IBM SJ 1989 ("part historian, part detective, and
+    part clairvoyant"), Glass 2001 attribution fix for the 40–80% factoid, Sim & Holt ICSE 1998,
+    Rastogi ESEM 2015, Uddin & Robillard 2015, Wen ICPC 2019 (13–20% comment co-evolution),
+    Tan SOSP 2007, Cursor support-bot incident Apr 2025, Spring REST Docs / Doc Detective /
+    Schemathesis, AgenticAKM arXiv:2602.04445 (validation-agent convergence), HADAS
+    arXiv:2404.01588. Discovery finding: confidence-labeled generated docs = unclaimed
+    territory → hypothesis-with-confidence labels + sampling + promote-through-verification +
+    F0 workflow flagged as our synthesis. Next: **B5** (strangler fig + heatmap).
 
 ### 4. Trajectory research (M8, the backlog) — turn T-topics into real modules
 These are the client-facing deliverables; each needs a research pass before a deep dive.

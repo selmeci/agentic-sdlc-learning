@@ -3,6 +3,34 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.44 · 2026-07-17
+
+**NEW DEEP DIVE B4 — Agent Archaeology: reverse-engineering legacy.** Fourth M5 companion
+(`deep-dives/B4-agent-archaeology-deepdive.html` + in-workbook overlay), built on an 8-agent
+fact-verification + discovery swarm plus a 4-agent spot-verify round (11th session in a row
+it paid).
+
+Corrections the swarm surfaced: CodeConcise is graph-traversal-*augmented* RAG, not "instead
+of RAG"; the 60,000 person-days headline and the 240 FTE-years figure are the same projection
+in two units; the 3h-vs-3-weeks anecdote comes from a different client, "best cases"; the AWS
+"~7B lines/year" figure was NOT FOUND → replaced with the verified 1.1B lines analyzed / 810k
+hours saved, cumulative; Western Union is 2.5M lines, not 250k, and the six weeks run
+discovery→testing (pilot); the "15–20k lines" module sizing was unpinnable → dropped; Siala &
+Lano's AgileUML zero-spurious result holds for Java (0.14 on Python); the WCA for Z → IBM Bob
+timeline pinned (GA Mar 2026).
+
+Load-bearing new sources: Malykhin's *Archaeologist's Copilot* (martinfowler.com, Jul 16 2026,
+verbatims spot-verified), the CROZ Nov 2025 review verbatims, Unum's AVP "if you cannot
+understand it, you cannot verify", Soliman & Keim ICSA 2025 (0.395 architecture-answer
+precision), Siala & Lano Frontiers 2025, arXiv:2504.04372 (78% brittle comprehension), Xia
+TSE 2018 (~58%, 3,148 hours), Corbi IBM SJ 1989, the Glass 2001 attribution fix, Wen ICPC
+2019, Uddin & Robillard 2015, Tan SOSP 2007, the Cursor support-bot incident (Apr 2025),
+Spring REST Docs / Doc Detective / Schemathesis, AgenticAKM arXiv:2602.04445, and the
+GitHub/Microsoft COBOL framework ($2–5 per 1k LOC). The hypothesis-with-confidence labels,
+the sampling protocol, promote-through-verification and the F0 workflow are flagged as our
+Report 4 synthesis. Topic `brown-archaeology` know/checks/src rewritten with the verified
+figures.
+
 ## v1.43 · 2026-07-17
 
 **UX — sidebar actions restyled as an action menu.** The **View** (expand/collapse all) and
