@@ -3,6 +3,68 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.42 · 2026-07-17
+
+**NEW DEEP DIVE B3 — Mutation Testing as the Test-Quality Gate.** Third M5 companion
+(`deep-dives/B3-mutation-testing-gate-deepdive.html` + in-workbook overlay), built on the
+three-teammate fact pass + spot-verify round (10th session in a row it paid).
+
+Spot-verify catches: the SpecBench quote re-pinned verbatim ("Oversight **therefore** collapses
+onto a single surface: the automated test suite."), with the 28 pp/tenfold-LOC figure flagged as
+the abstract headline over a ~27 pp 90th-percentile fit (R²=0.21); the Augment-blog JFreeChart
+"256K mutants / 109 minutes" figure identified as third-hand (unnamed cost survey) and excluded;
+the ISSTA 2019 flakiness numbers pulled verbatim from the PDF.
+
+Theory grounded with verbatims: DeMillo/Lipton/Sayward 1978 (competent programmer + coupling
+stated as observations; Hamlet 1977 as the parallel origin); Just et al. FSE 2014 (coupling for
+**73% of real faults**, 17% not coupled; mutant detection correlates with real-fault detection
+"independently of code coverage"; Defects4J credited to the ISSTA 2014 companion paper);
+Inozemtseva & Holmes ICSE 2014 (coverage "should not be used as a *quality target*" — their
+word, not "stopping criterion").
+
+LLM-era evidence made precise: MUTGEN pinned to its real title ("Mutation-Guided Unit Test
+Generation with a Large Language Model", accepted IEEE TSE; the 53% plateau is one
+HumanEval-Java subject; 89.5%/89.1% are corpus scores across 1,144/1,900 mutants); Haroon et al.
+clarified (23,977 = the failing subset of 119,163 SAC-generated tests; preprint-flagged);
+TestGenEval GPT-4o 35.2%/18.8% verbatim; Yoshimoto arXiv:2603.13724 (AI authored 16.4% of
+test-adding commits, coverage comparable to human tests — the premise, not the payoff);
+Rethinking arXiv:2602.07900 (test volume ≠ outcomes).
+
+New reward-hacking section: ImpossibleBench 54.0% Conflicting-SWEbench vs 76% Oneoff-SWEbench
+disambiguated; SpecBench arXiv:2605.21384; Rajan arXiv:2606.16062 (28.5% of a 49-task SWE-bench
+Verified sample accept a Docker-verified incorrect patch; Pass@1 +14.14 pp higher on hackable
+tasks, 123/134 models positive).
+
+Feedback-loop evidence: MuTAP (IST 171, 2024 — up to 28% more faulty snippets detected, 17%
+caught only by it, 93.57% mutation score); ACH reused from B2; YATE +21.77% mutants; AdverTest
+arXiv:2602.08146 (adversarial co-evolution verbatims; Defects4J +8.56% over best LLM baselines,
++63.30% over EvoSuite); LLMorpheus arXiv:2404.09952 (LLM-generated mutants beyond operators).
+
+Industry: the Google trilogy with verbatims (one mutant per line; changed/covered/non-arid lines
+only; findings in Critique via Tricorder; usefulness 20%→80%; >24,000 developers / 1,000+
+projects; ~15M mutants; "developers using mutation testing write more tests") and the fact-check
+correction that Google's no-score stance is a *practical* dismissal ("infeasably expensive…
+no good way to surface it"), not a normative one — distilled into the consumption-mode lesson:
+survivors-in-review at scale vs module score at the bootstrap boundary.
+
+The three taxes with the classic numbers: Schuler & Zeller STVR 2013 (~45% of undetected
+mutants equivalent; ~15 min/mutant manual triage); TCE ICSE 2015 (7.4% equivalent + 21%
+duplicated for C; 5.7%/5.4% Java); pseudo-tested methods (concept coined by Niedermayr et al.
+2016; EMSE 2019 study found them in all 21 projects; a single headline % is UNPINNABLE — not
+cited); ISSTA 2019 (mutation scores vary 4 pp between repeated runs; 9% of mutant-test pairs
+non-deterministic).
+
+Cost ladder + toolbox point-in-time: PIT incremental analysis, Arcmutate PR-scoped git
+integration, Descartes extreme mutation, StrykerJS `--incremental` (since v6.2), gremlins over
+stale go-mutesting; Stryker report thresholds `high: 80, low: 60, break: null` and PIT
+`mutationThreshold` default 0 — **no mainstream tool ships a mandatory score gate**, so the
+~70% bar is presented as Report 4's working heuristic, not an industry standard.
+
+The two-mode gate (diff-scoped advisory survivors + module-level held-out-mutants score as the
+F1→F2 exit criterion) flagged as **our synthesis**, with the practice-sheet-vs-exam principle
+and six anti-patterns. Topic B3 `know`/`concepts`/`checks` enriched (Google-scale bullet,
+flakiness bullet, held-out-mutants check).
+
 ## v1.41 · 2026-07-17
 
 **NEW DEEP DIVE B2 — Characterization & Golden-Master Testing with Agents.** Second M5

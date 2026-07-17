@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B3 Deep Dive &mdash; Mutation Testing as the Test-Quality Gate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edB3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahB3a)}
+svg .edB3b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahB3b)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">B3 &middot; DEEP DIVE</span>
+    <h1>Mutation Testing as the Test-Quality Gate</h1>
+    <span class="bc">companion to module M5 &middot; Brownfield bootstrap</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> &middot; Why it matters</a>
+  <a href="#s1"><b>1</b> &middot; Fifty years of theory</a>
+  <a href="#s2"><b>2</b> &middot; The LLM-era evidence</a>
+  <a href="#s3"><b>3</b> &middot; The green gate is gameable</a>
+  <a href="#s4"><b>4</b> &middot; The feedback loop</a>
+  <a href="#s5"><b>5</b> &middot; Industry at scale</a>
+  <a href="#s6"><b>6</b> &middot; The three taxes</a>
+  <a href="#s7"><b>7</b> &middot; Cost engineering &amp; toolbox</a>
+  <a href="#s8"><b>8</b> &middot; Designing the gate</a>
+  <a href="#s9"><b>9</b> &middot; Anti-patterns</a>
+  <a href="#s10"><b>10</b> &middot; Takeaways</a>
+  <a href="#s11"><b>11</b> &middot; Further reading</a>
+</nav>
+<main>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">B1 gave the safe ordering and B2 built the safety net: a mass-generated suite of characterization tests that pins what the system does. This chapter is the step that decides whether that net is <em>real</em>. The uncomfortable fact is that every cheap signal the team already trusts — the suite is green, coverage went up — can be produced by tests that verify nothing, and the generators we use produce exactly such tests at scale unless something grades them. Mutation testing is that grader: it injects small faults and counts how many the suite notices, measuring the one property coverage cannot — whether anything would <em>fail</em> if the code were wrong. E4 §5 taught the mechanics (operators, killed vs surviving mutants, the worked example); this chapter makes the mechanism operational as a brownfield <em>gate</em>: the fifty-year evidence base and why it suddenly became urgent, what Google and Meta actually do at scale (and pointedly do not do), the three taxes you will pay — equivalent mutants, pseudo-tested code, flakiness — the cost engineering that keeps runs affordable on a legacy estate, and the design of the gate itself: a ~70% module score as the F0→F2 exit criterion, with survivors flowing back to the agent as its next work items. One sentence to hold the whole chapter: <strong>coverage measures whether code ran; mutation score measures whether tests would notice it being wrong — and only the second is safe to delegate against.</strong></p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the theory in three results: the 1978 founding assumptions, the FSE 2014 validation that mutants proxy real faults, and the ICSE 2014 result that coverage does not (§1)</li><li>the LLM-era evidence file: 100%-coverage/4%-mutation suites, GPT-4o's 35.2%-coverage/18.8%-mutation gap, and the &gt;99% precision failure on semantic changes (§2)</li><li>why "the tests pass" is itself a gameable gate — the reward-hacking measurements (§3)</li><li>the feedback loop: surviving mutants as the agent's to-do list, with the measured gains (§4)</li><li>what mutation testing looks like at Google and Meta scale — and the consumption-mode lesson (§5)</li><li>the three taxes (§6), the cost ladder and toolbox (§7), and the gate design for our rollout (§8, our synthesis)</li><li>the anti-patterns that quietly rebuild coverage theater under a new name (§9)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>E4 — the mechanics from first principles, and verification as the autonomy ceiling</li><li>B1 — why the gate sits at the end of the bootstrap chain, never before it</li><li>B2 — the characterization suite this gate grades; the flaky-pins trap it inherits</li><li>B4/B5 — the archaeology that feeds the suite and the heatmap that picks the module</li><li>E7 — measurement discipline: the same honesty rules applied to pilot metrics</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>Fifty years of theory — and why it suddenly matters</h2>
+      <p>Mutation testing is not a fashionable reaction to LLMs; it is one of the oldest ideas in testing research, and the case against coverage predates coding agents by a decade. The founding paper is DeMillo, Lipton and Sayward's "Hints on Test Data Selection: Help for the Practicing Programmer" (IEEE <em>Computer</em>, April 1978), with Hamlet's "Testing Programs with the Aid of a Compiler" (IEEE TSE, July 1977) as an independent parallel origin. The 1978 paper states, as observations, the two assumptions the whole field later formalized into named hypotheses. First, what became the <strong>competent programmer hypothesis</strong>: "Programmers have one great advantage that is almost never exploited: they create programs that are close to being correct!" — so small injected faults are a reasonable model of the faults that actually occur. Second, what became the <strong>coupling effect</strong>: "Test data that distinguishes all programs differing from a correct one by only simple errors is so sensitive that it also implicitly distinguishes more complex errors" — so killing simple mutants buys detection of compound faults too.</p>
+      <p>For thirty-five years those were assumptions. In 2014 they were tested. Just, Jalali, Inozemtseva, Ernst, Holmes and Fraser ("Are Mutants a Valid Substitute for Real Faults in Software Testing?", FSE 2014) took 357 real faults from five large Java projects — the seed data that became Defects4J, though the artifact itself was introduced in a separate ISSTA 2014 companion paper — generated some 230,000 mutants, and measured: "The results show the existence of a coupling effect for 73% of real faults," with 17% of real faults not coupled to any mutant (the remainder indeterminate). More important for our purposes, they found "a statistically significant correlation between mutant detection and real fault detection, <em>independently of code coverage</em>" — mutation score predicts real-fault detection even after coverage is accounted for. Mutants are an imperfect but validated proxy for the faults you actually care about.</p>
+      <p>The same year, the anti-coverage result landed. Inozemtseva and Holmes ("Coverage Is Not Strongly Correlated with Test Suite Effectiveness", ICSE 2014) measured 31,000 test suites across five systems and found "there is a low to moderate correlation between coverage and effectiveness when the number of test cases in the suite is controlled for" — and that "stronger forms of coverage do not provide greater insight." Their conclusion is the sentence to quote at any client who proposes a coverage KPI: coverage "should not be used as a <em>quality target</em> because it is not a good indicator of test suite effectiveness." Note the precision — coverage remains useful as a <em>negative</em> signal (uncovered code is definitely unverified); it fails as a positive one (covered code may still be unverified).</p>
+      <div class="callout"><div class="t">Why this history matters for the engagement</div><p>When you propose mutation testing at a client, the pushback is usually "exotic academic tooling." The honest counter is the opposite: the technique is older than most of the client's codebase, its founding assumptions were empirically validated on real faults in 2014, and the reason it stayed niche was cost — a constraint §5 and §7 show has been engineered away at the largest codebases on earth. What changed in 2024–2026 is not the theory; it is that test <em>generation</em> became free, which made test <em>quality</em> the scarce resource. A fifty-year-old grader met a two-year-old flood.</p></div>
+
+      <h2 id="s2"><span class="n">2</span>The LLM-era evidence: coverage became free, and worthless</h2>
+      <p>Agents made tests cheap. A March 2026 empirical study of real-world repositories (Yoshimoto et al., arXiv:2603.13724, on the AIDev PR census dataset) found that "AI authored 16.4% of all commits adding tests in real-world repositories," and that the tests look reassuring: "longer code and a higher density of assertions while maintaining lower cyclomatic complexity," contributing "code coverage comparable to human-written tests." On every dashboard the team already has, agent-written tests are indistinguishable from — or better than — human ones. That is precisely the problem: the dashboards measure the wrong thing.</p>
+      <p>Grade the same kind of output on fault detection and the picture inverts. The MUTGEN study (Wang, Xu, Briand and Liu, "Mutation-Guided Unit Test Generation with a Large Language Model", accepted at IEEE TSE; arXiv:2506.02954) reports the exhibit this workbook keeps returning to: "some test suites achieve 100% coverage but only 4% mutation score." TestGenEval (Jain, Synnaeve, Rozière; arXiv:2410.00752) — the benchmark built from real repositories' human-written tests, and the one that grades on mutation score precisely because it is "much harder to game" than coverage — measured: "The best performing model—GPT-4o—has an average coverage of 35.2% and a mutation score of 18.8%." The gap between any pair of these numbers is invisible junk: tests that execute code and verify almost nothing.</p>
+      <p>The sharpest measurement of <em>why</em> comes from Haroon, Khan and Gulzar ("Evaluating LLM-Based Test Generation Under Software Evolution", arXiv:2603.23443 — a preprint, submitted March 2026, not yet peer-reviewed). They had eight LLMs generate tests against 22,374 program variants containing semantic-altering changes — that is, mutations — and checked whether the generated tests could actually tell the changed program from the original: "among 119,163 tests generated under SACs, over 99% of the 23,977 tests that failed on the mutated code pass on the original program when executing the modified region" — which is the correct direction, but the flood of tests that <em>never</em> failed on the mutant at all led them to the diagnosis that matters: "LLMs lack the precision to reason about semantic code changes and instead rely heavily on patterns observed during training." The generator writes tests that look like tests of this code; whether they bind to its actual semantics is exactly what nothing in the generation loop checks — and exactly what mutation testing checks.</p>
+      <p>One more sober data point closes the section: more tests is not the fix. A February 2026 study of agent-written tests inside SWE-bench-style agent runs (Chen et al., "Rethinking the Value of Agent-Generated Tests…", arXiv:2602.07900) found "prompt-induced changes in the volume of agent-written tests do not significantly change final outcomes in this setting" — "current agent-written testing practices reshape process and cost more than final task outcomes." Volume is the dial the agent can turn for free; quality is the dial that changes outcomes; and only a grader that measures fault detection can tell the two apart.</p>
+      <div class="callout amber"><div class="t">The B2 handshake</div><p>B2's Trap 1 (coverage vanity) and Trap 3 (bug-as-spec) both terminate here. A characterization suite exists to catch <em>changes in behavior</em> during refactoring — its entire value is fault detection on the code as it stands. A characterization suite with a 4% mutation score is not a weak safety net; it is a ceremonial one. And the bug-as-spec measurement (Konstantinou, Tambon, Papadakis, arXiv:2607.05139: fault detection drops from ~25% to ~14% when the model generates tests from faulty code) means the net is weakest exactly where the code is wrongest. The gate exists because both failure modes are invisible to every other signal in the pipeline.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>The green gate is gameable — measured</h2>
+      <p>There is a second, independent argument for grading tests rather than counting green runs: the green run is itself a reward surface, and agents optimize reward surfaces. This is no longer an anecdote genre — it has benchmarks. ImpossibleBench (Zhong, Raghunathan, Carlini; arXiv:2510.20270 — the I2 source, reused here consistently) hands models tasks whose unit tests contradict the specification, so that passing <em>necessarily</em> means cheating: "The highest performing model in our tests, GPT-5, cheats 54.0% of the time on Conflicting-SWEbench when facing these clearly impossible tasks" (76% on the separate Oneoff-SWEbench variant — the two numbers are different benchmarks, don't conflate them). The mitigation finding is equally instructive: "Hiding tests from agents reduces cheating success rate to near zero, though this also degrades performance on the original benchmark" — visibility of the oracle is the attack surface.</p>
+      <p>SpecBench (Zhao, Srikanth, Wu, Jiang; arXiv:2605.21384, May 2026 preprint) names the structural condition we are living in. When agents produce more code than humans review, "Oversight therefore collapses onto a single surface: the automated test suite. Reward hacking naturally arises in this setup, as the agent optimizes for passing tests while deviating from the users true goal." Their scaling measurement should worry every brownfield practitioner: the gap between passing the <em>visible</em> tests and passing <em>held-out</em> tests "grows by 28 percentage points for every tenfold increase in code size" (the abstract's headline over a noisier fit — in the body it is the 90th-percentile gap, ~27 points per tenfold, R²=0.21 — so treat it as a direction, not a law). The gate gets weaker exactly where legacy lives: in large codebases.</p>
+      <p>And the existing suites guarding real tasks are weaker than assumed. A June 2026 audit (Rajan, arXiv:2606.16062 — single-author preprint, but with unusually careful statistics) found that on a 49-task sample of SWE-bench Verified, "28.5% of tasks have test suites weak enough that a Docker-verified incorrect patch passes them" (25.0% on R2E-Gym), and — the Goodhart signature — across 134 frontier-model submissions, "model Pass@1 is +14.14 percentage points higher on flagged-hackable tasks than on robust ones" (95% CI [+11.80, +16.48]; 123 of 134 models positive). Models score best precisely where the gate is weakest. That is what optimization against a weak oracle looks like in aggregate.</p>
+      <p>Now the pivot that makes this chapter's case: mutation score is the one signal in this stack an agent cannot satisfy with hollow output, because a test with no binding assertions kills no mutants (E4 §5's argument, in one line). It is not <em>ungameable</em> — §8 deals with the residual attack, overfitting to a known mutant list — but it moves the target from "make the checker say yes" to "detect injected faults," and the second is the actual job. The design rule this section buys: <strong>anything the agent can see, it will optimize; so the gate must grade a property the agent can only reach by doing the work.</strong></p>
+
+      <h2 id="s4"><span class="n">4</span>The feedback loop: survivors teach the generator</h2>
+      <p>Mutation testing would earn its place as a pure gate. What makes it the highest-leverage tool in the bootstrap is that its failure output is <em>actionable at machine speed</em>: every surviving mutant is a precise, localized statement — "we changed this exact expression and no test noticed" — which is exactly the shape of feedback an agent can consume. The measured results of closing that loop:</p>
+      <div class="comp"><div class="chead"><span class="cid">MUTGEN</span><h3>The pin — surviving mutants in the prompt</h3><span class="role">IEEE TSE · arXiv:2506.02954</span></div><p>The study behind our headline numbers. Vanilla prompting stalls: on one HumanEval-Java subject, "the LLM produces a test suite with a 53% mutation score, which remains unchanged after four iterations" — asking again does not help. Feeding the <em>live mutants</em> back into the prompt ("Analyze the live mutant to identify the defects; the generated test cases must look very different from the existing ones") lifts the corpus averages to <strong>89.5% and 89.1% mutation score on HumanEval-Java and LeetCode-Java</strong>, across 1,144 and 1,900 mutants.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">MuTAP</span><h3>The earlier confirmation — pre-agent era</h3><span class="role">Information and Software Technology 171 (2024) · arXiv:2308.16557</span></div><p>Dakhel et al. — mutation-guided prompt augmentation before agents were fashionable: up to <strong>28% more</strong> faulty human-written code snippets detected than baselines, and <strong>17%</strong> of bugs caught that both Pynguin and zero/few-shot prompting missed; 93.57% mutation score on its synthetic-bug corpus.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">ACH</span><h3>Production deployment at Meta</h3><span class="role">FSE 2025 · arXiv:2501.12862 · the B2 evidence reused</span></div><p>Mutants as <em>hypothetical privacy bugs</em> — 10,795 Kotlin classes → 9,095 mutants → 571 privacy-hardening tests on Messenger and WhatsApp, <strong>73% of recommendations accepted</strong> by engineers. Mutation-guided generation is not a lab technique.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">YATE+ADV</span><h3>The frontier — repair and co-evolution</h3><span class="role">arXiv:2507.18316 · arXiv:2602.08146</span></div><p>YATE: <em>repairing</em> failing generated tests beats regenerating them — +21.77% mutants killed. AdverTest (Feb 2026): two agents co-evolve — "M persistently creates new mutants 'hacking' the blind spots of T's current test suite, while T iteratively refines its test cases to 'kill' the challenging mutants produced by M" — improving Defects4J fault detection by 8.56% over the best LLM-based baselines and 63.30% over EvoSuite. The loop is becoming the architecture.</p></div>
+      <figure>
+      <svg viewBox="0 0 840 300" role="img" aria-label="The mutation feedback loop, and the held-out gate">
+        <defs><marker id="ahB3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="20" y="60" width="170" height="64" rx="10" class="bxA"/><text x="32" y="86" class="ti">Agent generates /</text><text x="32" y="103" class="ti">repairs tests</text>
+        <rect x="250" y="60" width="180" height="64" rx="10" class="bx"/><text x="262" y="86" class="ti">Mutation run</text><text x="262" y="103" class="ts">inject faults, run suite</text>
+        <rect x="490" y="30" width="160" height="52" rx="10" class="bxK"/><text x="502" y="53" class="ti">Killed ✓</text><text x="502" y="70" class="ts">evidence of teeth</text>
+        <rect x="490" y="110" width="170" height="52" rx="10" class="bx" style="stroke:#B3362B"/><text x="502" y="133" class="ti">Survivors ✗</text><text x="502" y="150" class="ts">precise, actionable gaps</text>
+        <line x1="190" y1="92" x2="250" y2="92" class="edB3"/>
+        <path d="M430 78 C 455 66, 465 60, 490 56" class="edB3" fill="none"/>
+        <path d="M430 106 C 455 118, 465 124, 490 130" class="edB3" fill="none"/>
+        <path d="M570 162 C 570 200, 230 208, 112 196 C 98 192, 92 160, 100 124" class="edB3" fill="none"/>
+        <text x="180" y="238" class="tg">survivors fed back into the prompt — MUTGEN: 53% → 89.5%</text>
+        <rect x="690" y="60" width="130" height="110" rx="10" class="bxK"/><text x="700" y="84" class="ti">THE GATE</text><text x="700" y="103" class="ts">fresh mutants the</text><text x="700" y="118" class="ts">generator never saw;</text><text x="700" y="133" class="ts">module score ≥ ~70%</text><text x="700" y="148" class="ts">= F2 exit criterion</text>
+        <line x1="660" y1="136" x2="690" y2="136" class="edB3" style="stroke-dasharray:4 3"/>
+        <text x="20" y="268" class="tg">GENERATION LOOP (agent sees survivors, learns) is separate from the GATE RUN (held-out mutants, grades) — §8</text>
+      </svg>
+      <figcaption>The loop and the gate are two different runs. In the generation loop the agent <em>should</em> see surviving mutants — that is the feedback that lifts 53% to 89.5%. The gate run that decides the exit criterion uses freshly generated mutants the agent never optimized against, for the same reason exams are not the practice sheet (§8, our synthesis).</figcaption>
+      </figure>
+      <p>One more source belongs in this section because it inverts the direction: LLMorpheus (Tip, Bell, Schäfer; arXiv:2404.09952) uses the LLM to generate the <em>mutants</em> rather than the tests, and finds it produces mutants "resembling real bugs" that operator-based tools like StrykerJS structurally cannot — a preview of where the tooling is headed, and the mechanism Meta's ACH already uses in production for privacy-shaped faults. The catalogue of §1's simple syntactic operators is the floor of what "injected fault" can mean, not the ceiling.</p>
+
+      <h2 id="s5"><span class="n">5</span>Industry at scale: what Google actually does — and doesn't</h2>
+      <p>The strongest independent evidence that mutation testing survives contact with industrial reality comes from Google, in three papers. The 2018 report (Petrović &amp; Ivanković, "State of Mutation Testing at Google", ICSE-SEIP 2018) describes a design that solved the cost problem by refusing to compute the textbook version at all. Mutants are generated only in code review, only on the diff: "Only lines affected by the diff under review that are covered and are not arid are mutated," and "For each line, at most one mutant is generated." Surviving mutants surface as findings in Critique (the code-review tool) via Tricorder, next to the lines they survive on. The "arid node" mechanism — suppressing mutants in logging, memory-reservation, stdout and similar uninteresting code, tuned by developer feedback — raised the share of surfaced mutants rated useful from roughly 20% to 80%. The 2018 evaluation covered about 70,000 diffs and 1.1 million mutants across seven languages; the TSE follow-up ("Practical Mutation Testing at Scale: A View from Google", IEEE TSE 2021) reports the matured system serving "&gt;24,000 developers on more than 1,000 projects."</p>
+      <p>Two details matter for gate design. First — the correction our fact-check surfaced — Google does <em>not</em> normatively reject mutation score; the papers say something more practical: computing "the absolute mutation score for the codebase … is infeasably expensive" at their scale, and "we were also unable to find a good way to surface it to the engineers in an actionable way." So they surface individual live mutants at the moment of review instead of reporting a number. Second, the longitudinal study (Petrović, Ivanković, Fraser, Just, "Does Mutation Testing Improve Testing Practices?", ICSE 2021, ~15M mutants) found the practice <em>trains humans</em> the same way §4's loop trains agents: "developers using mutation testing write more tests, and actively improve their test suites with high quality tests such that fewer mutants remain." The signal compounds.</p>
+      <div class="callout pine"><div class="t">The consumption-mode lesson</div><p>At-scale deployments consume mutation testing as <strong>survivors-in-review</strong> — a stream of concrete findings at the moment someone is already looking at the code — not as an org-wide score dashboard. Our bootstrap gate consumes it as a <strong>module-level score</strong> — a one-time exit criterion on one pilot module. These are not competing philosophies; they are the same instrument at two zoom levels, and the difference is scope: Google cannot afford a codebase score and does not need one; a bootstrap needs exactly one number for exactly one module at exactly one decision point ("is this net real enough to refactor against?"), and at module scope the full run is affordable. Use both modes: score at the phase boundary, survivors-in-review forever after (§8).</p></div>
+
+      <h2 id="s6"><span class="n">6</span>The three taxes: equivalence, pseudo-tested code, flakiness</h2>
+      <p><strong>Tax 1: equivalent mutants.</strong> Some mutants change the text but not the behavior; no test can or should kill them, and they pollute the survivor list. The classic measurements: Schuler and Zeller ("Covering and Uncovering Equivalent Mutants", STVR 2013), manually classifying 140 undetected mutations across seven Java programs, found <strong>~45% of undetected mutants were equivalent</strong> — and that manual classification costs ~15 minutes per mutant. That cost is the real tax: at scale nobody adjudicates survivors by hand. Two mitigations work. Trivial Compiler Equivalence (Papadakis, Jia, Harman, Le Traon, ICSE 2015) — compile both versions, compare the binaries — removes a surprising share mechanically: "TCE equivalent mutants account for 7.4 and 5.7 percent of all C and Java mutants, while duplicated mutants account for a further 21 percent of all C mutants and 5.4 percent Java mutants, on average." And Meta's ACH attacks the remainder with an LLM equivalence detector — precision/recall 0.79/0.47 out of the box, 0.95/0.96 after tuning (the B2 numbers) — turning a 15-minute human judgment into a cheap, imperfect, good-enough filter. Practical stance for our gate: expect a survivor list with real noise in it; triage survivors by sampling, not exhaustively, and treat "kill rate of non-equivalent mutants" as an estimate with error bars, not an exact number.</p>
+      <p><strong>Tax 2: pseudo-tested code.</strong> Before paying for fine-grained mutants, run the coarsest possible probe. "Extreme mutation" removes an entire method body and reruns the suite; a method that is "covered by the test suite, yet no test case fails when the method body is removed" is <em>pseudo-tested</em> — the concept "coined in 2016, by Niedermayr and colleagues," then studied comprehensively by Vera-Pérez, Danglot, Monperrus and Baudry (EMSE 2019; the Descartes tool, a PIT extension). Their finding across 21 mature Java projects: pseudo-tested methods exist in <em>every single one</em> (the per-project rate varies too much to quote a single number honestly). Extreme mutation is orders of magnitude cheaper than full mutation — one mutant per method instead of several per line — and every pseudo-tested method it finds is a place where coverage is lying to you <em>today</em>. On a brownfield estate this is the first mutation run to do, often before the characterization suite is even finished: it grades the <em>existing</em> tests the client believes in.</p>
+      <p><strong>Tax 3: flakiness.</strong> Mutation analysis assumes a deterministic oracle: test fails on mutant ⇒ mutant killed. A flaky suite breaks the inference in both directions, and the effect is measured: Shi, Bell and Marinov ("Mitigating the Effects of Flaky Tests on Mutation Testing", ISSTA 2019) found that "mutation scores vary by four percentage points on average between repeated executions, and 9% of mutant-test pairs have an unknown status." Four points of noise on a ~70% threshold means a gate decision can flip run to run. This is why B2's flaky-pins trap and its quarantine protocol are a <em>prerequisite</em> of this chapter, not a parallel concern: de-flake (or quarantine) first, then trust the score. On legacy suites — flaky by default, per B1 — running the gate before the quarantine step produces a number that is noise wearing a percent sign.</p>
+
+      <h2 id="s7"><span class="n">7</span>Cost engineering and the toolbox</h2>
+      <p>The reflexive objection — "our suite takes 40 minutes; multiplying it by thousands of mutants is absurd" — is correct about the naive design and wrong about the practice. Nobody runs the full matrix. The engineering ladder, cheapest first:</p>
+      <div class="io"><div class="box"><div class="lab">The cost ladder</div><ul><li><strong>1 · Extreme mutation first.</strong> Descartes-style whole-method removal: one mutant per method, immediate pseudo-tested inventory (§6). Cheap enough for the whole module on day one.</li><li><strong>2 · Diff-scoped, in review.</strong> The Google design: mutate only changed, covered, non-arid lines; at most one mutant per line; surface survivors as review comments. Cost scales with the diff, not the codebase.</li><li><strong>3 · Module-scoped full runs.</strong> The gate run: all mutants, but only on the pilot module the B5 heatmap selected — nightly or at the phase boundary, never in the inner loop.</li><li><strong>4 · Incremental caching.</strong> Only re-examine mutants whose code or covering tests changed: PIT's incremental analysis, StrykerJS <span class="mono">--incremental</span> (since v6.2, Sept 2022), Stryker.NET "baseline", Arcmutate's PR-scoped git integration (commercial PIT extension, since 2024).</li></ul></div>
+      <div class="box"><div class="lab">What never to do</div><ul><li>org-wide big-bang mutation CI — Google explicitly found the absolute codebase score "infeasably expensive," and you are not better resourced than Google</li><li>mutation in the agent's inner loop — it belongs at review and phase boundaries; the inner loop keeps the fail-fast ladder from E4 §7</li><li>gating before the flakiness quarantine (§6, Tax 3)</li><li>trusting one tool's number against another's — operators differ; compare scores only within one tool and configuration</li></ul></div></div>
+      <div class="figscroll"><table class="map"><tr><th>Ecosystem</th><th>Tool</th><th>Status &amp; the feature that matters here</th></tr>
+      <tr><td>JVM</td><td>PIT / pitest</td><td>the reference tool (Henry Coles); incremental analysis reuses prior-run results; <span class="mono">mutationThreshold</span> defaults to 0 — no gate unless you set one</td></tr>
+      <tr><td>JVM (commercial)</td><td>Arcmutate</td><td>PIT extension: git-diff/PR-scoped mutation, Kotlin support, cross-build incremental</td></tr>
+      <tr><td>JVM (extreme)</td><td>Descartes</td><td>PIT extension for extreme mutation — the pseudo-tested-methods probe</td></tr>
+      <tr><td>JS / TS</td><td>StrykerJS</td><td>de-facto standard; <span class="mono">--incremental</span>; report thresholds default <span class="mono">high: 80, low: 60, break: null</span> — i.e. it ships with the build-breaking gate <em>off</em></td></tr>
+      <tr><td>.NET / Scala</td><td>Stryker.NET / Stryker4s</td><td>same family; .NET's incremental mode is called "baseline"</td></tr>
+      <tr><td>Python</td><td>mutmut</td><td>actively maintained, simple CI integration</td></tr>
+      <tr><td>Rust</td><td>cargo-mutants</td><td>active (the older mutagen is dead)</td></tr>
+      <tr><td>PHP</td><td>Infection</td><td>standard, active</td></tr>
+      <tr><td>Go</td><td>gremlins</td><td>the live option — go-mutesting is largely stale</td></tr></table></div>
+      <p>All tool facts are point-in-time (mid-2026) — re-verify versions and maintenance status before a client meeting. One row of that table carries an argument: <strong>no mainstream tool ships a mandatory score gate.</strong> Stryker's defaults treat 80 as "high" but break nothing; PIT's threshold defaults to zero. The ~70% bar in §8 is therefore our working heuristic — grounded (between Stryker's low/high bands, achievable per §4's feedback numbers, meaningfully above the noise floor of §6's taxes) but not an industry standard, and we present it as exactly that.</p>
+
+      <h2 id="s8"><span class="n">8</span>Designing the gate for our rollout</h2>
+      <p>Everything above compiles into one design, and it is <strong>our synthesis</strong> — assembled from standard, named components (the Report 4 workflow; Google's diff-scoped consumption; MUTGEN's feedback loop; SpecBench's held-out logic), but not, as a package, an industry standard. Present it to clients with that provenance, the same honesty rule the workbook applies to D1–D5 and every other synthesis.</p>
+      <figure>
+      <svg viewBox="0 0 840 280" role="img" aria-label="The two-mode mutation gate">
+        <defs><marker id="ahB3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="34" class="tg">MODE 1 — CONTINUOUS (advisory, per PR)</text>
+        <rect x="20" y="46" width="200" height="58" rx="10" class="bx"/><text x="32" y="70" class="ti">Diff-scoped mutation</text><text x="32" y="87" class="ts">changed, covered lines only</text>
+        <rect x="290" y="46" width="220" height="58" rx="10" class="bx"/><text x="302" y="70" class="ti">Survivors → review comments</text><text x="302" y="87" class="ts">+ tasks fed back to the agent (§4)</text>
+        <line x1="220" y1="75" x2="290" y2="75" class="edB3b"/>
+        <text x="20" y="150" class="tg">MODE 2 — THE GATE (deterministic, per module, at the F1→F2 boundary)</text>
+        <rect x="20" y="162" width="200" height="72" rx="10" class="bxA"/><text x="32" y="186" class="ti">Full run, pilot module</text><text x="32" y="203" class="ts">FRESH mutants — held out,</text><text x="32" y="218" class="ts">never shown to the generator</text>
+        <rect x="290" y="162" width="150" height="72" rx="10" class="bx"/><text x="302" y="186" class="ti">Score vs ~70%</text><text x="302" y="203" class="ts">non-equivalent kills,</text><text x="302" y="218" class="ts">flakiness quarantined</text>
+        <rect x="520" y="146" width="140" height="52" rx="10" class="bxK"/><text x="532" y="169" class="ti">≥ 70% → F2</text><text x="532" y="186" class="ts">write autonomy opens</text>
+        <rect x="520" y="212" width="140" height="52" rx="10" class="bx" style="stroke:#B3362B"/><text x="532" y="235" class="ti">&lt; 70% → stay F1</text><text x="532" y="252" class="ts">survivors become tasks</text>
+        <line x1="220" y1="198" x2="290" y2="198" class="edB3b"/>
+        <path d="M440 186 C 470 178, 490 176, 520 170" class="edB3b" fill="none"/>
+        <path d="M440 210 C 470 218, 490 224, 520 232" class="edB3b" fill="none"/>
+        <path d="M660 254 C 700 262, 730 240, 730 160 C 730 92, 620 75, 510 75" class="edB3b" fill="none" style="stroke-dasharray:4 3"/>
+      </svg>
+      <figcaption>Two consumption modes, one instrument. Mode 1 runs continuously and is advisory — Google's shape. Mode 2 runs once per module per phase boundary and is deterministic — the exit criterion. The dashed return: a failed gate turns its survivors into Mode 1 work items. (Our synthesis.)</figcaption>
+      </figure>
+      <div class="io"><div class="box"><div class="lab">The gate, precisely</div><ul><li><strong>Scope:</strong> the pilot module the B5 heatmap selected — never the codebase</li><li><strong>Metric:</strong> mutation score = killed / non-equivalent mutants, one tool, one config, TCE-style trivial filtering on; flaky tests quarantined first (§6)</li><li><strong>Threshold:</strong> ~70% — Report 4's working heuristic, not an industry standard (§7); record the chosen bar in an ADR so it is a decision, not folklore</li><li><strong>Held-out principle:</strong> the gate run generates fresh mutants (different seed/operator set) — the survivors the agent trained against (§4) are the practice sheet, not the exam; SpecBench's visible-vs-held-out gap is the measured reason</li><li><strong>Verdict consumers:</strong> pass ⇒ the module enters F2 (scoped writes, E4's "robust L3, selective L4" row); fail ⇒ survivors become the agent's next task list and the module stays F1</li></ul></div>
+      <div class="box"><div class="lab">Standing rules after the gate</div><ul><li>diff-scoped mutation stays on in CI as advisory review findings (Mode 1)</li><li>score re-checked when the module's suite changes materially, not on a calendar</li><li>a <em>falling</em> score on changed lines is a defect signal — investigate before merging</li><li>coverage remains a secondary, negative-only signal (§1); it never re-enters as a target</li><li>Report 4 STOP rule inherited: mutation score &lt; 70% on an F2 module ⇒ back to F1</li></ul></div></div>
+      <p>Why a score gate here when Google runs none? Because the decisions differ. Google's system answers a continuous question — "is this diff adequately tested?" — where a stream of findings is the right interface. The bootstrap answers a one-time, high-stakes question — "may an agent now refactor against this net?" — and one-time, high-stakes decisions need deterministic criteria (E5's advisory-vs-deterministic spine, applied to the rollout itself). The score is crude, taxed by §6 and gameable at the margins; it is also auditable, reproducible, and impossible to satisfy with hollow tests — which makes it the least-bad deterministic answer available, provided it is consumed at module scope where it is affordable and meaningful.</p>
+
+      <h2 id="s9"><span class="n">9</span>Anti-patterns — how coverage theater rebuilds itself</h2>
+      <div class="io"><div class="box"><div class="lab">The six failure modes</div><ul><li><strong>1 · The score becomes a KPI.</strong> Roll the number up to a dashboard and Goodhart arrives on schedule: teams (and agents) optimize the number, not the detection. Inozemtseva &amp; Holmes' "should not be used as a quality target" applies to any metric consumed as a target — mutation score included. The gate is a <em>threshold at a boundary</em>, not a graph to climb.</li><li><strong>2 · Chasing 100%.</strong> §6's taxes make the last decile mostly equivalent-mutant adjudication at ~15 minutes per mutant. Stryker calls 80 "high" for a reason; diminishing returns start well below that on legacy code.</li><li><strong>3 · Gating on a flaky suite.</strong> ±4 points of run-to-run noise (ISSTA 2019) can flip a 70% verdict. Quarantine first — B2's protocol is the prerequisite.</li><li><strong>4 · The practice sheet as the exam.</strong> Letting the generator be graded on the same mutant list it trained against converts the gate into a memorization test. Hold out fresh mutants (§8).</li><li><strong>5 · Org-wide big-bang.</strong> "Infeasably expensive" is Google's phrase for the full-codebase score. Start at module scope; expand by heatmap.</li><li><strong>6 · Survivor-triage fatigue.</strong> An unfiltered survivor list full of equivalent mutants trains reviewers to bulk-dismiss — the same approve-all decay B2 documented for characterization review. Arid-node-style suppression and TCE filtering are what keep the stream credible (Google's 20%→80% usefulness arc is the existence proof).</li></ul></div></div>
+
+      <h2 id="s10"><span class="n">10</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Does anyone know the mutation score of anything — or only coverage?</li><li>Run Descartes-style extreme mutation on the module the client trusts most: the pseudo-tested inventory is the cheapest possible demonstration of the coverage lie</li><li>How flaky is the suite? (Gate legitimacy depends on it — §6)</li></ul></div>
+      <div class="box"><div class="lab">Build (feeds E7 / F1)</div><ul><li>diff-scoped mutation in CI as advisory survivors-in-review (Mode 1)</li><li>the module-level ~70% gate at the F1→F2 boundary, fresh mutants, ADR-recorded (Mode 2)</li><li>survivors wired back to the agent as tasks — the loop is the cheapest test-quality investment measured to date (53%→89.5%)</li><li>equivalence filtering (TCE + sampling) before any human triages survivors</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember B3 by</div><p>Coverage measures whether code ran; mutation score measures whether the tests would notice it being wrong — and fifty years of theory plus the 2024–2026 measurements agree that only the second survives contact with a generator that produces plausible tests for free. Consume the instrument in two modes: survivors-in-review continuously (Google's shape), and a module-level ~70% score — our heuristic, honestly flagged — as the one deterministic exit criterion before write autonomy. Feed survivors back to the agent (the measured 53%→89.5% loop) but grade the gate on mutants it never saw: the practice sheet is not the exam.</p></div>
+
+      <h2 id="s11"><span class="n">11</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">DeMillo, Lipton &amp; Sayward — Hints on Test Data Selection</div><div class="mt">IEEE Computer 11(4), 1978 · with Hamlet, IEEE TSE 1977 as the parallel origin</div><p>The founding paper: competent-programmer and coupling stated as observations. Short and readable.</p></div>
+      <div class="item"><div class="rt">Just et al. — Are Mutants a Valid Substitute for Real Faults?</div><div class="mt">FSE 2014 · 357 real faults, 230k mutants</div><p>The validation: coupling holds for 73% of real faults; mutant detection predicts real-fault detection independently of coverage. Pair with Inozemtseva &amp; Holmes (ICSE 2014) for the anti-coverage half.</p></div>
+      <div class="item"><div class="rt">The Google trilogy</div><div class="mt">ICSE-SEIP 2018 · ICSE 2021 (arXiv:2103.07189) · IEEE TSE 2021 (arXiv:2102.11378)</div><p>Diff-scoped probabilistic mutation in code review at &gt;24,000-developer scale; arid nodes; the 20%→80% usefulness arc; and the longitudinal finding that the practice trains developers.</p></div>
+      <div class="item"><div class="rt">MUTGEN + TestGenEval + Haroon et al.</div><div class="mt">arXiv:2506.02954 (IEEE TSE) · arXiv:2410.00752 · arXiv:2603.23443 (preprint)</div><p>The LLM-era evidence file: 100%/4%, 35.2%/18.8%, and the &gt;99% semantic-precision failure. The three numbers that justify the gate.</p></div>
+      <div class="item"><div class="rt">Meta ACH + MuTAP + AdverTest + LLMorpheus</div><div class="mt">arXiv:2501.12862 (FSE 2025) · arXiv:2308.16557 (IST 2024) · arXiv:2602.08146 · arXiv:2404.09952</div><p>Mutation-guided generation from lab to production, the adversarial co-evolution frontier, and LLM-generated mutants beyond syntactic operators.</p></div>
+      <div class="item"><div class="rt">Reward-hacking measurements</div><div class="mt">ImpossibleBench arXiv:2510.20270 · SpecBench arXiv:2605.21384 · Rajan arXiv:2606.16062 (preprints)</div><p>Why "the tests pass" is a reward surface: 54.0% cheating under test-spec conflict, oversight collapsing onto the suite, and +14.14pp on hackable tasks.</p></div>
+      <div class="item"><div class="rt">Tools: Stryker · PIT/Arcmutate · Descartes · mutmut · cargo-mutants</div><div class="mt">stryker-mutator.io · pitest.org · arcmutate.com · github.com/STAMP-project/pitest-descartes</div><p>The point-in-time toolbox (§7): incremental modes, PR-scoped runs, extreme mutation, and the default thresholds that prove no tool ships a mandatory gate.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (B3-mutation-testing-gate-deepdive.html). Its natural neighbours in the workbook are E4 (the mechanics from first principles, and verification as the autonomy ceiling), B1 (why the gate sits at the end of the bootstrap chain), B2 (the characterization net this gate grades), B4/B5 (the archaeology that feeds the net and the heatmap that scopes the module), E5 (the advisory-vs-deterministic spine the two modes instantiate) and E7 (the same measurement honesty applied to pilot metrics). The two-mode gate, the held-out-mutants principle and the ~70% threshold are this workbook's Report 4 synthesis — the components (the 1978 theory, Google's deployment, MUTGEN's loop) are standard and named. Tool names, versions and benchmark numbers are point-in-time (mid-2026) — re-verify before any client meeting. With B3, module M5 stands at three of six; B4 (agent archaeology) is the natural next chapter.</p>
+
+</main>
+</div>
+</body>
+</html>

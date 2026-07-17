@@ -8,8 +8,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 - **Workbook**: 8 modules, 55 topics, 6 research reports, SDLC + Domain map sections. (v1.33 —
   M1 grew to E1–E11 in the July 2026 source-evaluation round: E9 harness tuning, E10 background
   agents, E11 formal methods, each with a deep-dive companion.)
-- **Deep-dive companions (30)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1** (first of M5).
+- **Deep-dive companions (32)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B3** (first three of M5).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -175,8 +175,24 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     Konstantinou et al. arXiv:2607.05139 (bug-as-spec measured: ~25% → ~14%), DBMS flakiness
     arXiv:2601.08998 (0.07% vs 0.29–0.71%, 63% unordered collections), Beck "Beyond the Vibes"
     genie verbatim, Radar Vol. 34 chokepoints verbatim. Six-step workflow + two-door triage +
-    exit-criteria table flagged as our synthesis. Next: **B3** (mutation gate) — much of its
-    evidence base (MutGen, Haroon, ACH, TestGenEval) is already verified.
+    exit-criteria table flagged as our synthesis.
+  - ~~**B3** `brown-mutation` — mutation testing as the test-quality gate~~ — **done (v1.42)**,
+    with the three-teammate fact pass + spot-verify round (10th session in a row it paid:
+    SpecBench quote re-pinned verbatim + 28 pp flagged as abstract headline over R²=0.21 fit;
+    Augment-blog JFreeChart cost figure identified as third-hand → excluded; ISSTA 2019
+    numbers pulled verbatim). Theory verbatims: DeMillo/Lipton/Sayward 1978 + Hamlet 1977;
+    Just FSE 2014 (73% coupling, coverage-independent correlation; Defects4J = ISSTA 2014
+    companion); Inozemtseva & Holmes ("quality target", not "stopping criterion"). Fact
+    corrections: MUTGEN real title + TSE acceptance, 53% plateau = single subject; Haroon
+    23,977 = failing subset of 119,163; Google's no-score stance = practical ("infeasably
+    expensive"), not normative; gremlins over stale go-mutesting; pseudo-tested % UNPINNABLE.
+    Load-bearing new sources: the Google trilogy (ICSE-SEIP 2018 / ICSE 2021 / TSE 2021),
+    MuTAP (IST 2024), LLMorpheus, AdverTest arXiv:2602.08146, SpecBench arXiv:2605.21384,
+    Rajan arXiv:2606.16062, Yoshimoto arXiv:2603.13724, Rethinking arXiv:2602.07900,
+    Schuler & Zeller STVR 2013, TCE ICSE 2015, Descartes/EMSE 2019, Shi/Bell/Marinov ISSTA
+    2019, Stryker/PIT default thresholds (no tool ships a mandatory gate). Two-mode gate +
+    held-out-mutants principle + ~70% heuristic flagged as our synthesis. Next: **B4**
+    (agent archaeology) or **B5** (strangler fig + heatmap).
 
 ### 4. Trajectory research (M8, the backlog) — turn T-topics into real modules
 These are the client-facing deliverables; each needs a research pass before a deep dive.
