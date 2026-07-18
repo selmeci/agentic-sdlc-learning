@@ -8,8 +8,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 - **Workbook**: 8 modules, 55 topics, 6 research reports, SDLC + Domain map sections. (v1.33 —
   M1 grew to E1–E11 in the July 2026 source-evaluation round: E9 harness tuning, E10 background
   agents, E11 formal methods, each with a deep-dive companion.)
-- **Deep-dive companions (33)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B4** (first four of M5).
+- **Deep-dive companions (35)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
+  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B6** (all of M5).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -217,7 +217,26 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     Schemathesis, AgenticAKM arXiv:2602.04445 (validation-agent convergence), HADAS
     arXiv:2404.01588. Discovery finding: confidence-labeled generated docs = unclaimed
     territory → hypothesis-with-confidence labels + sampling + promote-through-verification +
-    F0 workflow flagged as our synthesis. Next: **B5** (strangler fig + heatmap).
+    F0 workflow flagged as our synthesis. Next: **B5** (strangler fig + heatmap). *(Done — see below.)*
+  - ~~**B5** `brown-strangler` — strangler fig, the heatmap and the first battlefield~~ — **done
+    (v1.45)**, shipped by the parallel session on 2026-07-18 with an 8-agent fact + discovery
+    swarm; see the v1.45 CHANGELOG entry for the corrections and new sources.
+  - ~~**B6** `brown-roadmap` — roadmap F0–F3, metrics and STOP criteria~~ — **done (v1.46)**,
+    **completing M5**. Three-teammate fact/discovery pass + adversarial spot-verify (12th
+    session in a row it caught real errors: DORA deployment rework rate re-dated to its true
+    2024 introduction — fixed in E7/E8/H4/B1 both copies; MIT NANDA "95%" pinned to real
+    wording + methodology 300+/52/153, the circulating "150/350" is a misquote; DX = 425
+    organizations; Faros 2026 exact 441.5%/31.3%; DORA 2025 strong conditional belongs to
+    user-centric focus, not platform quality). Honest analogue check: F0–F3 has NO published
+    canonical equivalent (July 2026) — nearest cousins stage oversight per task (Sharma's D³
+    Discover–Define–Deliver n=52 self-report; GAIE's HITL/HOTL/AWM tiers), so it stays flagged
+    as Report 4 synthesis. Load-bearing new sources: GitGuardian 2026 (Claude Code commits
+    3.2% vs 1.5% secret-leak baseline; MCP configs 24,008 secrets/2,117 valid), Microsoft
+    instrumented rollout study arXiv:2607.01418 (~24% sustained PR-merge lift, peer-network
+    diffusion), DX Q4 impact report (structured enablement, onboarding 91→49 days), DORA AI
+    Capabilities Model, Digital Apprentice automatic-demotion asymmetry, Swarmia five levels,
+    KPMG stall mechanism, safety-standards traceability anchor (ISO 26262/IEC 62304/DO-178C).
+    Gate table + back-triggers + F0–F3 × R1/R2/R3/R6 master-plan table = our synthesis.
 
 ### 4. Trajectory research (M8, the backlog) — turn T-topics into real modules
 These are the client-facing deliverables; each needs a research pass before a deep dive.

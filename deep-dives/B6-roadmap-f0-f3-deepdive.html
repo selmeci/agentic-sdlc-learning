@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B6 Deep Dive &mdash; Roadmap F0&ndash;F3, Metrics and STOP Criteria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edB6{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahB6a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head><body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">B6 &middot; DEEP DIVE</span>
+    <h1>Roadmap F0&ndash;F3, Metrics and STOP Criteria</h1>
+    <span class="bc">companion to module M5 &middot; Brownfield bootstrap</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> &middot; Why it matters</a>
+  <a href="#s1"><b>1</b> &middot; The four phases</a>
+  <a href="#s2"><b>2</b> &middot; Gates, not vibes</a>
+  <a href="#s3"><b>3</b> &middot; What to measure</a>
+  <a href="#s4"><b>4</b> &middot; Secrets from day 0</a>
+  <a href="#s5"><b>5</b> &middot; STOP criteria &amp; back-arrows</a>
+  <a href="#s6"><b>6</b> &middot; Day 1 and the master plan</a>
+  <a href="#s7"><b>7</b> &middot; Takeaways</a>
+  <a href="#s8"><b>8</b> &middot; Further reading</a>
+</nav>
+<main>
+      
+<h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">Module M5 has so far produced techniques: B1 the safe ordering and its evidence, B2 the characterization net, B3 the gate that grades the net, B4 the read-only archaeology that starts everything, B5 the heatmap that picks the first battlefield. What a client actually asks for is none of these — it is a plan: <em>where do we start on Monday, what do we promise the board, and how do we know when to widen access and when to pull back?</em> This chapter is that assembly. Four phases (F0–F3), each defined by what the agent is <strong>allowed to touch</strong>, gates between them defined by <strong>measured exit criteria</strong> rather than calendar dates, a small set of metrics that survive contact with the measurement literature, a secrets discipline that starts before the first write, and — the part most rollout decks omit — explicit STOP criteria: the conditions under which the honest recommendation is to halt, shrink, or never start. The roadmap and its thresholds are this workbook's <strong>Report 4 synthesis</strong>, not an industry standard; we checked in July 2026, and no published canonical equivalent exists. What does exist is convergent support — DORA's AI Capabilities Model wants a clear organizational stance, strong version control and small batches; Anthropic's enterprise guidance rolls out in waves with tiered permissions and a read-only plan mode; ThoughtWorks' Böckeler starts legacy engagements with reverse engineering; and the nearest published cousins (Sharma's D³, GAIE's oversight tiers) stage <em>oversight per task</em>, not <em>access over time</em>. The phased-permission ladder itself remains ours to defend, which this chapter does.</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the four phases with per-phase permissions, artifacts and autonomy levels (§1)</li><li>exit criteria as deterministic gates — the table, and who signs off (§2)</li><li>the metrics that survive scrutiny: delivery health vs bootstrap progress, with the self-report trap and the vendor-telemetry file (§3)</li><li>secrets from day 0: the 2026 evidence that agent-assisted commits leak more, and the toolbox (§4)</li><li>STOP criteria and back-arrows: never-start conditions, automatic demotion, and the human factor (§5)</li><li>the day-1 recipe and the master plan that merges Reports 1–3 and 6 into one table (§6, our synthesis)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>B1 — the dependency chain these phases operationalize, and why the ordering is not optional</li><li>B2/B3 — what F1 builds (the net) and the gate that grades it</li><li>B4 — F0's workflow in full: archaeologist prompts, hypothesis registers, sampling</li><li>B5 — the heatmap that picks F2's modules and drives F3's expansion</li><li>E5/E6 — deterministic vs advisory, and the L1–L5 autonomy scale the phases map onto</li><li>E7/T2 — how the pilot inside F2 is measured; baseline discipline</li><li>I2 — write permissions as governance: the enforcement layer under every phase</li><li>M7 — the security module this roadmap inherits its blast-radius logic from</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>The four phases — permissions, not quarters</h2>
+      <p>The first thing to say about F0–F3 is what the F stands not for: not "fiscal", not a schedule. A phase is a <strong>permission tier plus a proof obligation</strong> — the agent's write scope stays fixed until the exit criteria are met, however long that takes, and widens only when a gate opens (§2). This is the same logic the write-permission matrix gave individual artifacts in I2, applied to the engagement as a whole; it is also why the roadmap survives the awkward fact, established in B1, that agent throughput is worthless while the verification loop beneath it is missing. Phases are cheap to describe and expensive to skip: every failure pattern catalogued in B1 — the bug-as-spec loop, the review pile-up, the deleted-tests incident — is a phase boundary crossed without its proof.</p>
+
+      <figure>
+      <svg viewBox="0 0 1000 342" role="img" aria-label="F0 to F3 rollout pipeline with gates, back-arrows and the STOP band">
+        <defs><marker id="ahB6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">ROADMAP F0–F3 · PERMISSION TIERS WITH MEASURED GATES · REPORT 4 SYNTHESIS</text>
+        <path class="edB6" d="M560 96 C 520 56, 400 56, 328 92" />
+        <text x="380" y="52" class="ts">mutation &lt; ~70% → back to F1</text>
+        <path class="edB6" d="M810 96 C 770 66, 660 66, 588 92" />
+        <text x="640" y="58" class="ts">rework / CFR rising → smaller batches</text>
+        <rect x="22" y="100" width="196" height="96" rx="10" class="bxG"/>
+        <text x="36" y="124" class="tt">F0 · Read-only</text>
+        <text x="36" y="142" class="ti">archaeology (B4)</text>
+        <text x="36" y="158" class="ti">hypothesis register, heatmap</text>
+        <text x="36" y="174" class="ti">draft (B5), trust-building</text>
+        <rect x="272" y="100" width="196" height="96" rx="10" class="bxC"/>
+        <text x="286" y="124" class="tt">F1 · Verification infra</text>
+        <text x="286" y="142" class="ti">characterization + mutation</text>
+        <text x="286" y="158" class="ti">gate (B2/B3), ~20-line CI,</text>
+        <text x="286" y="174" class="ti">AGENTS.md, secrets scan</text>
+        <rect x="522" y="100" width="196" height="96" rx="10" class="bxC"/>
+        <text x="536" y="124" class="tt">F2 · Scoped writes</text>
+        <text x="536" y="142" class="ti">low-risk modules only (B5),</text>
+        <text x="536" y="158" class="ti">L1–L2, full loop + handoff</text>
+        <text x="536" y="174" class="ti">contracts (M3), small batches</text>
+        <rect x="772" y="100" width="206" height="96" rx="10" class="bxK"/>
+        <text x="786" y="124" class="tt">F3 · Expansion</text>
+        <text x="786" y="142" class="ti">by heatmap; new modules</text>
+        <text x="786" y="158" class="ti">agent-first (strangler fig);</text>
+        <text x="786" y="174" class="ti">never outrun review capacity</text>
+        <path class="edB6" d="M218 148 L 268 148" />
+        <path class="edB6" d="M468 148 L 518 148" />
+        <path class="edB6" d="M718 148 L 768 148" />
+        <text x="228" y="140" class="ts">gate</text>
+        <text x="478" y="140" class="ts">gate</text>
+        <text x="728" y="140" class="ts">gate</text>
+        <text x="36" y="216" class="ts">L1 · agent reads, humans decide</text>
+        <text x="286" y="216" class="ts">writes tests/config only</text>
+        <text x="536" y="216" class="ts">L1–L2 on production code</text>
+        <text x="786" y="216" class="ts">autonomy per module, earned</text>
+        <path class="edB6" style="stroke-dasharray:5 4" d="M500 226 L 500 252" />
+        <rect x="22" y="256" width="956" height="62" rx="10" class="bxA"/>
+        <text x="36" y="280" class="tt">STOP — from any phase</text>
+        <text x="36" y="300" class="ti">active production credential found → halt writes, rotate first · no CI loop possible / safety-critical without provenance / no audit trail → stay read-only (F0)</text>
+      </svg>
+      <figcaption>Fig. 1 — The roadmap as a permission ladder. Gates open on measured exit criteria (§2); the two back-arrows and the STOP band are as much a part of the plan as the forward path. F0–F3 is this workbook's Report 4 synthesis.</figcaption>
+      </figure>
+
+      <div class="comp"><div class="chead"><span class="cid">F0</span><h3>Read-only: earn the map and the trust</h3><span class="role">autonomy L1 · write scope: nothing</span></div>
+      <p>The agent reads everything and changes nothing. Its outputs are B4's artifacts — a hypothesis register with confidence labels, validated entry points, reconstructed decision history — plus B5's scored heatmap draft. Two things are being built and only one of them is technical: the map, and the maintaining team's willingness to believe the map. The team that says "the agent doesn't understand our system" is often right (B4's independent accuracy file says roughly half of architecture-level claims are noise), which is why F0's discipline — every claim labeled, anchored and sampled by the seniors who can grade it — is also the trust-building program. F0 ends when the seniors have signed off on a sampled register, not when a week has passed.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">F1</span><h3>Verification infrastructure: build the loop before the writes</h3><span class="role">autonomy L1 · write scope: tests, CI config, docs — never production code</span></div>
+      <p>The first writes are a peculiar kind: characterization and golden-master tests that pin what the pilot modules actually do (B2's six-step workflow), graded by the mutation gate (B3's two-mode design, with ~70% on the pilot module as Report 4's working heuristic — no tool ships a mandatory threshold), a minimal CI that runs them (~20 lines: build, lint, test — the empty test job on day 1 is deliberate, it makes the loop exist before it has content), an <span class="mono">AGENTS.md</span> extracted descriptively from code and pruned of hallucinations by a human, and a full-history secrets scan (§4). Everything the agent writes in F1 is meta-code; production behavior does not change. That is the point: when F2 starts, every future change lands inside an already-running verification loop.</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">F2</span><h3>Scoped writes: the pilot, measured</h3><span class="role">autonomy L1–L2 · write scope: heatmap-selected low-risk modules</span></div>
+      <p>The agent now changes production code — in the modules B5's heatmap scored as isolable, characterized and non-critical, at L1–L2 (human reviews everything; the agent proposes), through the full loop: handoff contract in, verified diff out (M3). Batches stay small — DORA's own capability wording, and its 2024 report's mechanism for teams that kept stability while adopting AI, is adherence to <em>"small batch sizes and robust testing mechanisms"</em>. Swarmia's Holkeri, mapping five autonomy levels in March 2026, locates the industry's honest position exactly here: <em>"Most teams hit a ceiling somewhere between Level 2 and Level 3, and the reason is usually not the tool, but how purposefully they're using it."</em> F2 is also where the baseline discipline of E7 becomes non-negotiable: the pilot's success criteria are pre-registered before the first task, because self-report will not save you (§3).</p></div>
+
+      <div class="comp"><div class="chead"><span class="cid">F3</span><h3>Expansion: scale what the numbers earned</h3><span class="role">autonomy per module, promoted on evidence · write scope: widening by heatmap</span></div>
+      <p>Expansion is heatmap-driven, module by module — each new module gets the F1 treatment (characterize, gate, then write) before the agent touches it, while genuinely new code starts agent-first behind an anti-corruption layer (B5's strangler fig). Two findings should shape how F3 is run. First, diffusion is social: Microsoft's study of its own early-2026 CLI-agent rollout — tens of thousands of engineers, independent and instrumented, not surveyed — found <em>"first use spread primarily through social networks, retention was associated more with engineers' coding activity than with demographics,"</em> and concludes <em>"organizations should treat visible peer use as central to rollout strategy."</em> The same study supplies F3's headline metric: adopters <em>"merged roughly 24% more pull requests than they would have otherwise,"</em> a lift that <em>"persists across our four-month window"</em> — sustained, not a novelty spike. Second, the ceiling is review capacity: Report 1's rule — never scale agent count beyond code-review capacity — binds hardest in F3, and §3's vendor telemetry shows what ignoring it looks like.</p></div>
+
+      <h2 id="s2"><span class="n">2</span>Gates, not vibes: exit criteria as deterministic checks</h2>
+      <p>E5 drew the line this workbook keeps returning to: advisory guidance bends under pressure, deterministic checks do not. Applied to the rollout itself, the principle says each gate should be decided by <strong>checkable facts</strong> — a mutation score, a green CI run, a clean scan, a signed sample — not by "the team feels ready" or, worse, "the quarter ended." A gate that cannot be stated as a check is a gate that will be argued open the first time a deadline leans on it. The table states each gate both ways: the criterion, and the check that decides it.</p>
+      <div class="figscroll"><table class="map">
+        <tr><th>Gate</th><th>Opens when</th><th>Deterministic check</th><th>Closes again when (back-trigger)</th></tr>
+        <tr><td>F0 → F1</td><td>The map is trusted: hypothesis register sampled and signed by the estate's seniors; entry points validated; heatmap scored (B5)</td><td>Sampling sign-off recorded; every register claim carries a confidence label and a file-and-line anchor (B4)</td><td>Sampled error rate too high → re-run archaeology with tighter anchoring; team still defensive → extend F0, find a champion (§5)</td></tr>
+        <tr><td>F1 → F2</td><td>The loop exists: characterization tests on the pilot modules pass the mutation gate; CI runs on every push; <span class="mono">AGENTS.md</span> pruned; secrets history clean or rotated</td><td>Mutation score ≥ ~70% on pilot modules (Report 4 heuristic, B3); CI green; gitleaks/TruffleHog full-history report closed out</td><td>Mutation score falls below threshold; suite flakiness rises (B2's flaky-pin trap); an active credential surfaces → STOP writes, rotate</td></tr>
+        <tr><td>F2 → F3</td><td>The pilot measured well: pre-registered success criteria met; rework/change-fail stable against the F1 baseline; review load sustainable</td><td>Baseline-vs-pilot comparison on the §3 metrics (not self-report); review-time and no-review-merge share within agreed bounds</td><td>Rework or change-fail rate rising → shrink batch size, hold scope; review queue saturating → fewer agents, not more reviewers on paper</td></tr>
+        <tr><td>F3 steady state</td><td>Expansion continues module-by-module, each through its own F1 treatment first</td><td>Heatmap re-scored on a cadence; per-module mutation and rework tracked; autonomy promotions recorded with a named approver</td><td>Any module's numbers regress → automatic demotion of that module's autonomy tier — rollback needs no meeting (§5)</td></tr>
+      </table></div>
+      <p>Who signs off matters as much as what is checked. Two 2026 preprints — both flagged as such, neither peer-reviewed — supply useful precedents for making sign-off proportional rather than uniform. <strong>GAIE</strong> (Kang, arXiv:2606.22484) routes oversight by task risk across four dimensions — regulatory impact, customer proximity, reversibility, data sensitivity — into three tiers (human-in-the-loop, human-over-the-loop, automated-with-monitoring), reframing the question as <em>"not 'should agents code autonomously?' but 'what level of oversight is appropriate for this code's regulatory context?'"</em> <strong>The Digital Apprentice</strong> (Weber &amp; Taneja, arXiv:2606.04321) treats autonomy as a per-skill state machine with a dual-key promotion — <em>"Promotion from one tier to the next requires both empirical evidence of competence on that skill and a recorded human authorization"</em> — and, the detail worth stealing outright, asymmetric demotion: <em>"the system rolls a skill back automatically when quality degrades, without waiting for human action."</em> Our back-triggers in the table are exactly that mechanism, driven by the mutation and rework numbers.</p>
+      <div class="callout"><div class="t">The honest analogue check (July 2026)</div><p>We looked for a published equivalent of F0–F3 before claiming it as ours. GitHub's Engineering System Success Playbook is a continuous-improvement loop (identify → evaluate → implement) over twelve metrics in four zones — useful for §3, but not a phase model. Anthropic's enterprise guidance recommends wave-based rollout, tiered access levels and a read-only plan mode — the ingredients, not the ladder (vendor). Sharma's D³ — "Beyond Greenfield," arXiv:2512.01155, single-author, n=52 self-report survey, 26.9% <em>perceived</em> gain, with the author's own caveat that results are <em>"preliminary evidence of practitioner sentiment rather than causal effects"</em> — stages the <em>work of one task</em> (Discover → Define → Deliver, no relation to this workbook's D-scale), and GAIE stages <em>oversight per task</em>. None stages <em>access over time</em> against measured exit criteria. F0–F3 therefore stays flagged as Report 4's synthesis: assembled from named, standard components, but ours.</p></div>
+
+      <h2 id="s3"><span class="n">3</span>What to measure — and what measurement lies to you</h2>
+      <p>Two metric families, deliberately kept apart. <strong>Delivery health</strong> is DORA's territory, and worth citing with its current vocabulary: the canonical set is now five — change lead time, deployment frequency, <strong>change fail rate</strong> (<em>"the ratio of deployments that require immediate intervention following a deployment"</em>), failed deployment recovery time, and <strong>deployment rework rate</strong> (<em>"the ratio of deployments that are unplanned but happen as a result of an incident in production"</em>). A dating correction this workbook itself needed: rework rate was introduced in the <strong>2024</strong> report — DORA's metrics history calls 2024 <em>"the most significant structural change to the metrics"</em>, added to test whether change failure rate was proxying rework — and carried into the 2025 benchmarks. Rework rate is the roadmap's load-bearing delivery metric precisely because AI-era throughput can look healthy while instability accumulates beneath it: DORA 2025 found the throughput relationship turned positive (2024's small negative did not persist) while the instability relationship remained negative — a shape rework rate is designed to catch.</p>
+      <p><strong>Bootstrap progress</strong> is this module's own territory, and its metrics come from the preceding chapters: mutation score on characterized modules (primary — B3, diff-scoped advisory plus module-level exit scores), the verified share of the hypothesis register (B4's promote-through-verification path, a real documentation-coverage number rather than a page count), onboarding time, and sustained per-developer PR-merge lift. The last two now have independent anchors: DX's Q4 2025 impact report (135,000 developers, 425 organizations; practitioner research, method-transparent) measured onboarding — time to tenth PR, across six multinationals — falling <em>"from 91 days with no AI usage to just 49 days with daily use"</em>; Microsoft's instrumented rollout study put the sustained merge lift at roughly 24% (§1). The two 24%-ish PR findings arrive by different methods from different populations — cite both, never merge them into one number.</p>
+      <div class="callout amber"><div class="t">The measurement traps, in evidence order</div><p><strong>Self-report is disqualified.</strong> The METR RCT (arXiv:2507.09089): 16 experienced developers, 246 real tasks on mature repos — AI increased completion time 19% while participants forecast a 24% speedup and, <em>after</em> experiencing the slowdown, still believed they had been ~20% faster. Every F2 exit decision therefore compares instrumented baseline against instrumented pilot; developer sentiment is a health signal, not an exit criterion (E7, T2).</p>
+      <p><strong>Vendor telemetry shows the failure shape.</strong> Faros AI's 2025 telemetry (10,000+ developers) found +21% tasks completed and +98% PRs merged per developer against +91% median review time, +154% PR size and flat organizational delivery — the "AI Productivity Paradox." Its 2026 follow-up ("The Acceleration Whiplash," ~22,000 developers, 4,000+ teams, analysis as of March 2026) revised the shape sharper: +33.7% tasks, +16.2% PRs merged, median review time up 441.5% (their summary: increased 5×), +51.3% PR size — and 31.3% more PRs <em>"merging without any review"</em>. Vendor numbers from a self-selected customer base, flagged as such — but the mechanism (production outruns verification until verification is skipped) is exactly what the F2→F3 gate exists to catch.</p>
+      <p><strong>The boardroom number needs handling.</strong> "95% of AI pilots fail" — MIT NANDA's "The GenAI Divide: State of AI in Business 2025" (Challapally et al., July 2025, not peer-reviewed) actually says <em>"95% of organizations are getting zero return"</em> and <em>"Just 5% of integrated AI pilots are extracting millions in value, while the vast majority remain stuck with no measurable P&amp;L impact"</em> — measured on enterprise GenAI initiatives broadly (methodology: <em>"a systematic review of over 300 publicly disclosed AI initiatives, structured interviews with representatives from 52 organizations, and survey responses from 153 senior leaders"</em> — the widely-circulated "150 interviews / 350 employees" version is a misquote), with P&amp;L impact as the bar and nothing coding-agent-specific in it. Do not cite it as evidence about coding tools; do let it argue for the thing it genuinely supports — pre-registered success criteria, because "zero measurable return" is what a pilot without a baseline reports by default. KPMG's 2026 diagnosis of why scale stalls lands closer to this module's thesis: <em>"Enterprise AI doesn't stall because pilots fail. It stalls because the IT readiness required for AI scale was never fully in place"</em> — and its readiness gaps (data infrastructure, governance, <em>legacy architecture built for human workflows</em>) are what F1 exists to close. DORA 2025's amplifier finding points the same way: without user-centric focus AI adoption's team-level effect turns negative, and a high-quality internal platform correlates directly with the ability to unlock AI's value — infrastructure first is not our idiosyncrasy.</p></div>
+
+      <h2 id="s4"><span class="n">4</span>Secrets from day 0</h2>
+      <p>Legacy git history is an archive of every credential anyone ever pasted, and the agent is about to read all of it — then write commits at machine speed. The 2026 numbers make this concrete. GitGuardian's State of Secrets Sprawl 2026 (vendor measurement of public GitHub, March 2026): <em>"28.65 million new hardcoded secrets were added to public GitHub commits in 2025 alone, a 34% increase year over year"</em>; AI-service credentials were the fastest-growing category (<em>"in 2025, AI service secrets reached 1,275,105, up 81% year over year"</em>); and — the finding that names this section — <em>"Claude Code-assisted commits showed a 3.2% secret-leak rate, versus a 1.5% baseline across all public GitHub commits."</em> Roughly 2×, replacing the older and weaker Copilot correlation (2025 report: 6.4% of Copilot-active repos leaked vs 4.6% baseline — +40%). Leaks also do not age out: 70% of secrets confirmed valid in 2022 were still valid in January 2025, and <em>"when we retested that same dataset in January 2026, the validity rate was still above 64%."</em> One more 2026 surface belongs in this module's threat model: <em>"24,008 unique secrets exposed in MCP-related configuration files across public GitHub, including 2,117 unique valid credentials"</em> — the agent's own configuration layer is now a leak path (M7, sec-surfaces).</p>
+      <p>The discipline is cheap and front-loaded. <strong>Before any write access</strong> — during F1's day-1 recipe, and before the agent's context ever ingests history — run a full-history scan; every hit gets triaged; a <strong>verified-active production credential is a STOP</strong>, not a ticket: writes halt until it is rotated, because from that moment the credential exists in scan output, agent context and possibly generated text. From day 1 the scan also runs in CI and, where available, at push time, so the ~2× generation-side rate meets a deterministic gate instead of a reviewer's attention span (E5).</p>
+      <div class="figscroll"><table class="map">
+        <tr><th>Tool</th><th>What it does</th><th>License / cost</th><th>Point-in-time note (mid-2026)</th></tr>
+        <tr><td>gitleaks</td><td>Fast regex/entropy detection over working tree and full history</td><td>CLI/binary MIT — free for any use</td><td>v8.30.x; feature-complete, security patches only. The separate <span class="mono">gitleaks-action</span> is commercial-EULA since v2: free on public repos, license key for org/private repos — run the MIT binary directly to stay free</td></tr>
+        <tr><td>TruffleHog</td><td>Detection plus live verification — calls the issuing service to flag which secrets are <em>currently active</em>; 800+ detectors; scans beyond git (S3, CI, images)</td><td>AGPL-3.0 open source; commercial enterprise tier</td><td>The verification step is the differentiator: it turns "1,400 historical hits" into "12 active credentials to rotate today"</td></tr>
+        <tr><td>GitHub push protection</td><td>Blocks pushes containing detectable secrets at the boundary</td><td>Free and on by default for public repos (since 2024)</td><td>Private repos need the paid Secret Protection product (standalone since April 2025); a free one-time Secret Risk Assessment exists</td></tr>
+      </table></div>
+      <p>Pair the pipeline with the boundary: the scanners find what leaked, push protection stops the next one, and the I2 write-permission matrix keeps <span class="mono">.env</span> and credential stores out of the agent's readable scope in the first place. All three tool rows are fast-moving facts — re-verify before a client meeting.</p>
+
+      <h2 id="s5"><span class="n">5</span>STOP criteria, back-arrows and the human factor</h2>
+      <p>A roadmap that cannot say "no" is a sales document. Three conditions mean the engagement stays at F0 — read-only, indefinitely — because the later phases' preconditions cannot exist:</p>
+      <p><strong>No verification loop is buildable.</strong> If the system cannot be put under CI at all — no reproducible build, no environment that can run tests, coupling so total that B5's heatmap finds no seam anywhere — then F1 has no substrate, and every agent write is an unverified write. B1 established what that produces; the answer to "can we skip the tests part?" is this STOP rule.</p>
+      <p><strong>Safety-critical scope without provenance.</strong> Regulated safety standards — ISO 26262 (automotive), IEC 62304 (medical), DO-178C (aerospace), IEC 61508 — mandate bidirectional traceability from requirement through test to code; compliance-tooling vendors' guidance (Ketryx, Parasoft — vendor readings of the standards, flagged as such) converges on the operational consequence: AI-generated artifacts without recorded provenance — prompt, model version, inputs, approver — cannot serve as safety-case evidence, because they cannot be reproduced for an auditor. Until the provenance layer exists (H3's traceability machinery; EU AI Act Articles 12/19 impose the logging cousin of the same duty from August 2026), the agent contributes comprehension, not commits.</p>
+      <p><strong>No audit trail.</strong> Same logic, general form: if the organization cannot say after the fact what the agent did and who approved it, autonomy has no substrate to be earned against — I2's matrix and the session-trace discipline (I1) come first.</p>
+      <p>Below STOP sit the <strong>back-arrows</strong> — cheaper, automatic, and used far more often. Mutation score sinking below the working threshold on a module sends that module back to F1: the net degraded, so writes against it stop counting as verified. Rework or change-fail rate rising against baseline shrinks batch size before it shrinks scope — DORA's stability mechanism, applied as a dial. And the whole point of borrowing the Digital Apprentice's asymmetry (§2) is that demotion needs no meeting: thresholds are agreed at gate-opening, so pulling back is the default consequence of a number, not a confrontation with whoever championed the tool.</p>
+      <p>The last back-arrow is human. A defensive maintaining team is listed in Report 4 as a threshold condition — extend F0, find a champion — and 2026 gave that advice an evidence base. DX's report is blunt about the mechanism: <em>"Simply handing out licenses is not enough"</em> — organizations that invested in structured enablement (training, office hours, named champions, internal patterns) saw a modeled 25% enablement increase correlate with +10.6% change confidence, +8.0% maintainability, −16.1% knowledge gaps and −18.2% time loss. Microsoft's rollout study says who actually spreads adoption: peer networks, not mandates — make the champion's wins <em>visible</em>, since <em>"visible peer use"</em> is the study's own recommended lever. Both findings convert "find a champion" from folklore into the cheapest intervention on this page.</p>
+
+      <h2 id="s6"><span class="n">6</span>Day 1, and the master plan</h2>
+      <p>The roadmap compresses to a first week that a client can start without ceremony — Report 4's day-1 recipe, every step read-only or meta-code:</p>
+      <div class="figscroll"><table class="map">
+        <tr><th>Step</th><th>Action</th><th>Output</th><th>Feeds</th></tr>
+        <tr><td>1</td><td>Map the structure read-only — parser-derived dependency graph and repo map before any prompt</td><td>The deterministic anchor layer</td><td>B4 archaeology; F0</td></tr>
+        <tr><td>2</td><td>Draft <span class="mono">AGENTS.md</span> descriptively from the code; a human prunes hallucinations the same day</td><td>First advisory artifact, verified</td><td>F1; I3's freshness policy</td></tr>
+        <tr><td>3</td><td>Stand up the ~20-line CI: build, lint, empty test job</td><td>The loop exists, awaiting content</td><td>F1; E4</td></tr>
+        <tr><td>4</td><td>First golden-master test on the most isolated pure module</td><td>The net's first knot</td><td>B2; the F1→F2 gate</td></tr>
+        <tr><td>5</td><td>gitleaks/TruffleHog full-history scan; triage; rotate anything verified active</td><td>Clean (or honest) secrets baseline</td><td>§4; the STOP rule</td></tr>
+      </table></div>
+      <p>And it composes. Each research report in this workbook carries its own staged introduction — the engineering harness's maturity ladder, the product layer's P-scale, the information architecture's artifact lifecycle, the design harness's F0–F4, security's staged rollout. The topic's open question asked how they merge; the answer is that F0–F3 is the <strong>spine and the others are rails</strong> — each report's stages map onto the same four permission tiers, so the client gets one plan, not six:</p>
+      <div class="figscroll"><table class="map">
+        <tr><th>Phase</th><th>Engineering harness (R1)</th><th>Product &amp; handoff (R2)</th><th>Information architecture (R3)</th><th>Security (R6)</th></tr>
+        <tr><td>F0</td><td>Read-only tools; plan-mode-style sessions; no hooks yet</td><td>PM reads generated analyses; no agent-facing specs yet</td><td>Hypothesis register; provenance from the first session (I1)</td><td>Secrets scan; threat model of the estate; deny-by-default</td></tr>
+        <tr><td>F1</td><td>CI as the feedback loop; deterministic gates before autonomy (E4/E5)</td><td>First handoff-contract templates drafted against pilot modules (H1)</td><td><span class="mono">AGENTS.md</span> + write-permission matrix agreed (I2)</td><td>Scanning in CI; push protection; agent-readable scope excludes credential stores</td></tr>
+        <tr><td>F2</td><td>L1–L2 on pilot modules; hooks enforce the loop</td><td>Contracts in use; EARS/Gherkin AC on pilot tasks (H2)</td><td>Session traces linked to tickets (I7); freshness checks live (I3)</td><td>Blast-radius containment on write paths; incident playbook tested</td></tr>
+        <tr><td>F3</td><td>Autonomy per module, promoted on evidence (E6)</td><td>P-scale rises with the modules; PM as editor (P4)</td><td>Retrieval and memory layers earn their keep (I4–I6)</td><td>Continuous verification; audit trail feeding compliance (Art. 12/19)</td></tr>
+      </table></div>
+      <p>The mapping is this workbook's synthesis — the rows are standard components from the named chapters; the assembly into one table is ours, and it is the artifact to put in front of a client when the six reports would be five too many.</p>
+
+      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (before proposing dates)</div><ul><li>Can a verification loop exist here at all — build, test environment, one seam? If not, the proposal is F0-only and says so.</li><li>Is any scope safety-regulated or audit-bound? Then provenance machinery precedes write access, whatever the demo showed.</li><li>What does the full-history secrets scan return — and is anyone prepared for the answer to be "active production credentials"?</li><li>Who would the champion be, and would their wins be visible to peers?</li></ul></div>
+      <div class="box"><div class="lab">Commit (the plan itself)</div><ul><li>Phases as permission tiers with proof obligations; gates stated as deterministic checks with named sign-off; dates estimated, criteria fixed.</li><li>Baseline instrumented before F2; success criteria pre-registered; self-report demoted to a health signal.</li><li>Back-triggers agreed at gate-opening so demotion is automatic — a number acts, no meeting needed.</li><li>One master table (§6) as the client-facing plan; the six reports behind it as appendices.</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember B6 by</div><p>The roadmap is a permission ladder, not a schedule: each phase fixes what the agent may touch, and the gate out of it is a measured exit criterion — mutation score, clean scan, stable rework rate — checked deterministically and signed by a named human, with demotion automatic when the numbers regress. The evidence file says infrastructure decides outcomes — METR disqualified self-report, Faros' telemetry shows production outrunning review until review is skipped, DORA's amplifier findings and KPMG's stall diagnosis both point at readiness rather than models, and GitGuardian's 2026 measurement (agent-assisted commits leaking at ~2× baseline) makes the secrets scan a day-1 gate rather than a hardening task. F0–F3 has no published canonical equivalent as of July 2026 — its cousins stage oversight per task, not access over time — so it ships flagged as Report 4's synthesis: assembled from named, standard components, defensible piece by piece, and ours.</p></div>
+
+      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">DORA — metrics history, the five metrics, and the AI Capabilities Model</div><div class="mt">dora.dev/insights/dora-metrics-history · dora.dev/guides/dora-metrics-four-keys · 2025 AI Capabilities Model PDF</div><p>The current vocabulary (change fail rate, deployment rework rate — introduced 2024), verbatim definitions, and the seven capabilities; stance, version control and small batches are the roadmap-relevant three.</p></div>
+      <div class="item"><div class="rt">Murphy-Hill, Butler &amp; Savelieva — CLI coding agents at Microsoft</div><div class="mt">arXiv:2607.01418 · July 2026 · independent, instrumented</div><p>Tens of thousands of engineers: ~24% sustained PR-merge lift over four months, adoption spreading through peer networks — the F3 diffusion evidence and the anti-mandate argument.</p></div>
+      <div class="item"><div class="rt">DX — AI-Assisted Engineering: Q4 Impact Report</div><div class="mt">getdx.com · Laura Tacho · Nov 2025 · 135,000 developers / 425 organizations</div><p>Structured enablement's measured effects, onboarding 91→49 days (time to tenth PR, six multinationals), 22% of merged code AI-authored; practitioner research, method-transparent.</p></div>
+      <div class="item"><div class="rt">Faros AI — the Productivity Paradox and the Acceleration Whiplash</div><div class="mt">faros.ai · 2025 telemetry + AI Engineering Report 2026 (Apr 2026)</div><p>The failure shape in vendor telemetry: review time up 441.5%, PR size up 51.3%, 31.3% more PRs merging without any review — what the F2→F3 gate exists to catch. Flag as vendor.</p></div>
+      <div class="item"><div class="rt">METR — Measuring the Impact of Early-2025 AI on Developer Productivity</div><div class="mt">arXiv:2507.09089 · the RCT</div><p>19% slower against a believed 20% speedup — the study that disqualifies self-report as an exit criterion and mandates instrumented baselines (E7, T2).</p></div>
+      <div class="item"><div class="rt">GitGuardian — State of Secrets Sprawl 2026 (and 2025)</div><div class="mt">blog.gitguardian.com · Mar 2026 · vendor measurement of public GitHub</div><p>Claude Code-assisted commits at 3.2% vs 1.5% baseline; 28.65M new secrets (+34%); AI-service secrets +81%; MCP config files as a leak surface (24,008 secrets, 2,117 valid); the 70%-still-active persistence line.</p></div>
+      <div class="item"><div class="rt">Kang — Governed AI-Assisted Engineering · Weber &amp; Taneja — The Digital Apprentice</div><div class="mt">arXiv:2606.22484 · arXiv:2606.04321 · 2026 preprints, flagged</div><p>Risk-routed oversight tiers, and the per-skill autonomy state machine with dual-key promotion and automatic demotion — the two mechanisms §2 borrows.</p></div>
+      <div class="item"><div class="rt">Sharma — Beyond Greenfield: the D³ framework</div><div class="mt">arXiv:2512.01155 · Dec 2025 · practitioner preprint, n=52 self-report</div><p>The nearest published cousin, honestly weighed: a per-task Discover→Define→Deliver workflow with human gates — not a permission-staged rollout; its own caveat says sentiment, not causal effect.</p></div>
+      <div class="item"><div class="rt">Holkeri — Five levels of AI coding agent autonomy (Swarmia)</div><div class="mt">swarmia.com/blog · Mar 2026 · practitioner</div><p>The L2–L3 ceiling observation, and levels-as-tradeoffs rather than a ladder to climb — the practitioner frame for F2's restraint.</p></div>
+      <div class="item"><div class="rt">KPMG (Muir) — Why Enterprise AI Stalls After Pilot Success · MIT NANDA — The GenAI Divide</div><div class="mt">kpmg.com, 2026 · mlq.ai PDF, Jul 2025 (not peer-reviewed)</div><p>The stall mechanism (IT readiness, "legacy architecture built for human workflows") and the boardroom's 95% number with its real wording, methodology and limits — cite the mechanism, handle the number.</p></div>
+      <div class="item"><div class="rt">Report 4 — Brownfield Bootstrap research notes (this workbook)</div><div class="mt">module M5 research notes · roadmap, thresholds, day-1 recipe</div><p>The source synthesis this chapter operationalizes — F0–F3, the ~70% working threshold, the STOP list and the recipe — flagged as ours throughout.</p></div>
+      </div>
+
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (B6-roadmap-f0-f3-deepdive.html). Its natural neighbours in the workbook are B1–B5 (the chain, the net, the gate, the archaeology and the map this plan assembles), E5/E6 (deterministic gates and the autonomy scale the phases climb), E7/T2 (the measurement discipline the F2 gate depends on), I2 (the write-permission matrix under every phase) and M7 (the security rollout this roadmap inherits). The F0–F3 ladder, the gate table, the back-triggers and the §6 master plan are this workbook's Report 4 synthesis — the components are standard and named; the assembly is ours. Tool rows, vendor telemetry and every benchmark number are point-in-time (mid-2026) — re-verify before any client meeting. With B6, module M5's deep-dive set completes alongside B5 — the brownfield bootstrap now runs read-only comprehension to measured expansion with a companion at every step.</p>
+
+</main>
+</div>
+</body>
+</html>

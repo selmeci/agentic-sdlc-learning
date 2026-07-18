@@ -3,6 +3,71 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.46 · 2026-07-18
+
+**NEW DEEP DIVE B6 — Roadmap F0–F3, metrics and STOP criteria.** Sixth M5 companion
+(`deep-dives/B6-roadmap-f0-f3-deepdive.html` + in-workbook overlay) — **module M5 complete**.
+Built on a three-teammate fact/discovery pass + an adversarial spot-verify round (12th session
+in a row it caught real errors).
+
+- The roadmap as a **permission ladder with measured gates** (Report 4 synthesis, honestly
+  analogue-checked: no published canonical equivalent as of July 2026 — nearest cousins stage
+  oversight per task, not access over time: Sharma's D³, GAIE).
+- Gate table with deterministic checks, named sign-off and **automatic demotion** (borrowing
+  GAIE's risk-routed tiers, arXiv:2606.22484, and the Digital Apprentice's dual-key promotion /
+  asymmetric demotion, arXiv:2606.04321 — both flagged as preprints).
+- Metrics: delivery health (DORA five, current names) vs bootstrap progress; the self-report
+  trap (METR RCT) and the vendor-telemetry file (Faros 2026 "Acceleration Whiplash": review
+  time +441.5%, +51.3% PR size, 31.3% more PRs merging without any review — flagged vendor).
+- Secrets from day 0 on the 2026 evidence: GitGuardian — Claude Code-assisted commits at
+  3.2% vs 1.5% baseline (~2×), MCP config files as a leak surface (24,008 secrets / 2,117
+  valid), 70%-still-active persistence; toolbox table (gitleaks licensing split, TruffleHog
+  verification, push protection) point-in-time.
+- STOP criteria anchored to safety standards (ISO 26262 / IEC 62304 / DO-178C / IEC 61508
+  bidirectional traceability, via compliance-vendor guidance, flagged) + EU AI Act Art. 12/19.
+- Day-1 recipe table and the F0–F3 × R1/R2/R3/R6 **master-plan table** (our synthesis),
+  answering the topic's open question.
+- **Fact fixes from the swarm:** DORA's deployment rework rate re-dated to its true **2024**
+  introduction (dora.dev metrics history) — fixed in E7, E8, H4 and B1, both copies; current
+  DORA vocabulary "change fail rate" noted; MIT NANDA "95%" pinned to real wording and
+  methodology (300+ initiatives / 52 org interviews / 153 senior leaders — the circulating
+  "150 interviews / 350 employees" is a misquote); DX dataset corrected to 425 organizations;
+  unverifiable sub-figures (DX daily/monthly split, GitGuardian "2.4× peak") excluded.
+- New load-bearing sources: Microsoft instrumented rollout study (arXiv:2607.01418 — ~24%
+  sustained PR-merge lift, peer-network diffusion, "visible peer use"), DX Q4 impact report
+  (structured-enablement evidence, onboarding 91→49 days), DORA AI Capabilities Model (7
+  capabilities), Swarmia five autonomy levels, KPMG stall mechanism, MIT NANDA handled with
+  caveats.
+- Topic `brown-roadmap` enriched: metrics/secrets know-bullets re-pinned, gates + diffusion
+  bullet added, concepts extended, new self-check; src updated (GitGuardian 2026, Microsoft
+  study, DORA metrics history).
+
+## v1.45 · 2026-07-18
+
+**NEW DEEP DIVE B5 — Strangler fig, the heatmap and picking the first battlefield.** Fifth
+M5 companion (`deep-dives/B5-strangler-heatmap-deepdive.html` + in-workbook overlay), built
+on an 8-agent fact-verification + discovery swarm.
+
+The rewrite question honestly framed (Spolsky, Brooks, the Basecamp counterexample that is
+really strangler economics in disguise, FreshBooks/BillSpring, FogBugz/Wasabi), the strangler
+fig with its real origin story (Fowler 2004, Stevenson/XP-2004 credit, the retitle that
+"strangled the old one"), the plumbing toolbox (seams, anti-corruption layer, branch by
+abstraction, expand/contract, dark launching, feature flags), the churn × complexity heatmap
+with caveats (Nagappan & Ball ICSE 2005 as the honest citation), a scored pilot-selection
+model with the exclusionary criticality gate (our synthesis, flagged), Hyrum's Law, god
+classes vs the agent's context budget, the database (dual-write/outbox/CDC, Stripe's
+four-phase playbook), and what agents reprice in 2026 (Anthropic's COBOL post vs GitClear's
+rot counterweight; fitness-function ratchet).
+
+Key swarm corrections: branch-by-abstraction attribution pinned (Stacy Curl coined the name;
+Paul Hammant first detailed the technique publicly, 2007; Fowler popularized it); Code Red
+printed as issues taking **124% longer** to resolve in the worst code-health band, not the
+marketing "faster" reframe; the hotspot-concentration folklore corrected ("4% of the code,
+70%+ of defects" is a single-system anecdote — the defensible form is Pareto-shaped, ~20%
+of modules carrying ~80% of defects); and no empirical rewrite failure rate exists (Standish
+CHAOS figures dismantled by Eveleens & Verhoef 2010 — the case rests on case studies and
+expert judgment, printed as such). Topic `brown-strangler` src now opens the overlay first.
+
 ## v1.44 · 2026-07-17
 
 **NEW DEEP DIVE B4 — Agent Archaeology: reverse-engineering legacy.** Fourth M5 companion
