@@ -138,7 +138,8 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `I1-artifact-taxonomy` · `I2-lifecycle-write-permissions` · `I3-consistency-drift` · `I4-memory-systems` ·
 `I5-progressive-disclosure` · `I6-retrieval` · `I7-linking-product-engineering` ·
 `B1-bootstrap-paradox` · `B2-characterization-golden-master` · `B3-mutation-testing-gate` ·
-`B4-agent-archaeology` · `B5-strangler-heatmap` · `B6-roadmap-f0-f3`
+`B4-agent-archaeology` · `B5-strangler-heatmap` · `B6-roadmap-f0-f3` ·
+`D2-design-tokens-dtcg` · `PB1-assess-runbook`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
 `#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive` (each appears

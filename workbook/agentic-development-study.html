@@ -7432,7 +7432,7 @@ function importData(file){
       Object.assign(state.progress,p.progress||{});
       Object.assign(state.notes,p.notes||{});
       if(p.seen)Object.assign(state.seen,p.seen);
-      if(p.pb)Object.keys(p.pb).forEach(function(rb){var cur=state.pb[rb]||(state.pb[rb]=[]);(p.pb[rb]||[]).forEach(function(sid){if(cur.indexOf(sid)===-1)cur.push(sid);});});
+      if(p.pb)Object.keys(p.pb).forEach(function(rb){var merged=Array.from(new Set((state.pb[rb]||[]).concat(p.pb[rb]||[]).map(function(s){return (s||'').trim();}).filter(Boolean)));if(merged.length)state.pb[rb]=merged;});
       if(Array.isArray(p.highlights)){var have={};state.highlights.forEach(function(h){have[h.id]=1;});p.highlights.forEach(function(h){if(h&&h.id&&!have[h.id]){state.highlights.push(h);have[h.id]=1;}});}
       syncFromState();updateCounts();updateNotesCount();renderTopicHls();applyFilter();scheduleSave();
       setSave('ok','imported');
