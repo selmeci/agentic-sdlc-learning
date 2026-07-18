@@ -122,7 +122,7 @@ def check_workbook():
     dups = {i for i in ids if ids.count(i) > 1}
     note(len(set(ids)) == len(ids), f"topic ids unique ({len(ids)} topics)"
          if not dups else f"DUPLICATE topic ids: {dups}")
-    print(f"  ->  topic count = {len(ids)} (expected 52 unless intentionally changed)")
+    print(f"  ->  topic count = {len(ids)} (expected 60 unless intentionally changed)")
 
     # CONTENT-MAP.md must list exactly the workbook's topic ids (ids are frozen
     # progress keys — a wrong id in the docs invites a progress-wiping "fix")

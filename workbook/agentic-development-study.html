@@ -6954,6 +6954,49 @@ rq:[`Who approves a team's move to a higher autonomy level (L↑ / P↑), and on
 `What is the accountability chain for an agent-written production bug — prompt author, reviewer, harness owner?`,
 `Which audit requirements follow from T4, and how do we cover them technically (logs, provenance)?`],
 src:[{t:"OWASP agentic top 10; published incident postmortems; large-company governance patterns"}]}
+]},
+
+{id:"m9pb",code:"M9",name:"Playbook — from theory to practice",base:"runbook layer distilled from M1–M7 (no new research)",
+desc:"The practice layer: five runbooks ordered by the engagement journey at a brownfield client — assess, bootstrap the verification base, stand up the harness, run the handoff, measure the pilot. Each runbook is a checklist with templates whose every step links back to the theory topic that justifies it. Built for the internal team; progress is saved in this workbook.",
+topics:[
+{id:"pb-assess",code:"PB1",title:"Assess: client maturity & the F0 entry gate",
+know:[`The runbook: baseline the verification loop (test suite, CI signal) and capture the delivery baseline up front (DORA keys + cost per merged PR — a pilot without a baseline can be neither proven nor disproven), inventory source-of-truth artifacts, check the governance minimum (env separation, secrets, write permissions), name the review owner — then score it into an L1–L5 recommendation and a go/no-go at the F0 gate.`,
+`Why assess before build: DORA 2024 associates +25% AI adoption with −7.2% delivery stability — AI amplifies the surrounding system, so the surrounding system is measured first (E7, B1).`,
+`The scoring model and the non-compensable gate criteria are our synthesis (Report 4 + E6/B6 material), not an industry standard.`,
+`Output artifacts: a filled questionnaire, a delivery-baseline snapshot, an assessment report from the template, and a recorded F0 go/no-go decision with STOP criteria attached.`],
+concepts:["maturity assessment","delivery baseline","entry gate","non-compensable criteria","autonomy recommendation","assessment report"],
+open:[`Which client signals that the questionnaire cannot capture (politics, incentive structure) should still veto a go decision?`],
+src:[{t:"E6 autonomy levels, B1 safe ordering, B6 gates & STOP criteria, E7 metrics — the theory this runbook distils (open those topics' deep dives)"}],
+checks:[{q:`Why are the four gate criteria non-compensable rather than averaged into the score?`,a:`Because each one guards a failure mode that no amount of strength elsewhere offsets: an untrusted test suite means no external truth for the loop (E4); unreadable CI signal means the agent cannot self-correct; missing dev/prod separation makes the blast radius unbounded (the Replit incident); secrets in the repo leak through every agent context. A high average with one of these missing is exactly the false-confidence case the assessment exists to catch.`}]},
+
+{id:"pb-bootstrap",code:"PB2",title:"Bootstrap: build the verification base (runbook in preparation)",
+know:[`Will cover, in order: characterization tests on the first module (B2), a minimal CI loop the agent can read, the mutation-score baseline and the ~70% working heuristic (B3), and read-only comprehension before any writes (B1, B4).`,
+`The safe ordering exists because of the bootstrap paradox: the agent needs a verification loop that legacy code does not have, and the agent is also the cheapest tool to build it — unanchored, this closes into the bug-as-spec loop (B1).`],
+concepts:["characterization tests","mutation baseline","safe ordering"],
+open:[`Which module of the client codebase is the first characterization target — and does the heatmap (B5) pick it, or does risk?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: B1 bootstrap paradox, B2 characterization, B3 mutation gate (open those deep dives)"}]},
+
+{id:"pb-harness",code:"PB3",title:"Harness: stand up the engineering harness (runbook in preparation)",
+know:[`Will cover: the CLAUDE.md/AGENTS.md skeleton extracted-not-decreed (B1, E9), hooks and permissions with the advisory-vs-deterministic split (E5), the verification gate in CI (E4), and information architecture for the agent (I1–I5).`,
+`Its templates are the harness starter kit: where the theory is deterministic, the copy-paste block IS the runnable artifact — hook scripts, permission baselines, CI gate configs (the E5 litmus: what must never happen ships as enforcement, not advice).`,
+`Ordering constraint: the harness is built on top of the PB2 verification base — write autonomy without external truth is the anti-pattern the whole framework exists to prevent.`],
+concepts:["CLAUDE.md skeleton","advisory vs deterministic","hooks","write permissions"],
+open:[`Which harness rules graduate from prose to enforced hooks in week one at a typical client?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: E1–E5, E9 harness tuning, I2 write permissions (open those deep dives)"}]},
+
+{id:"pb-handoff",code:"PB4",title:"Handoff: run the contract end-to-end (runbook in preparation)",
+know:[`Will cover: writing the first handoff contract (H1 anatomy, T0–T2 sizing), EARS/Gherkin acceptance criteria as the agent's reward signal (H2), traceability IDs (H3), and the return channel with its anti-patterns (H4).`,
+`The exit test: one real feature delivered by an agent against the contract, with the review running against passing acceptance tests.`],
+concepts:["handoff contract","EARS/Gherkin","return channel"],
+open:[`What is the smallest real client feature suitable for the first contract-driven delivery?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: H1–H4 (open those deep dives)"}]},
+
+{id:"pb-pilot",code:"PB5",title:"Pilot: measure, gate, decide (runbook in preparation)",
+know:[`Will cover: the DORA baseline + METR-style pilot design from E7 (objective time, pre-registered success, perception-gap capture), the F0–F3 gate table with back-triggers, and STOP criteria (B6). The baseline itself is captured earlier, in PB1 — PB5 compares against it.`,
+`Self-reported speed is disqualified as evidence by design: METR measured devs 19% slower while believing they were ~20% faster.`],
+concepts:["DORA baseline","pre-registered success","STOP criteria","F0–F3 gates"],
+open:[`Which DORA keys can this client actually compute from day 0, and what replaces the ones they cannot?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: E7 metrics & anti-patterns, B6 roadmap F0–F3 (open those deep dives)"}]}
 ]}
 ];
 
