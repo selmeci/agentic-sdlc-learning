@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PB1 Runbook — Assess: Client Maturity &amp; the F0 Entry Gate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+
+/* ===== M9 playbook runbooks (v1.48) ===== */
+.pbstep{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin:9px 0}
+.pbstep input.pbck{margin-top:4px;width:16px;height:16px;accent-color:var(--cobalt);flex:none;cursor:pointer}
+.pbtxt{flex:1;min-width:0}
+.pbwhat{font-family:var(--disp);font-weight:600;font-size:14.5px;cursor:pointer}
+.pbwhy{font-size:13.5px;color:var(--soft);margin:3px 0 0}
+.pbdone{font-family:var(--mono);font-size:11px;color:var(--pine);margin-top:5px}
+.pbtpl{position:relative;margin:12px 0}
+.pbtpl pre{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--idle-bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;overflow-x:auto;white-space:pre-wrap}
+.pbcopy{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:10.5px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;color:var(--soft)}
+.pbcopy:hover{border-color:var(--cobalt);color:var(--cobalt-deep)}
+.pbprog{font-family:var(--mono);font-size:11px;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.pbnote{font-family:var(--mono);font-size:11.5px;color:var(--soft)}
+.closingnote{font-family:var(--mono);font-size:11.5px;color:var(--soft);border-top:1px solid var(--line);padding-top:14px;margin-top:26px;line-height:1.7}
+svg .edPB1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB1a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">PB1 · RUNBOOK</span>
+    <h1>Assess: Client Maturity &amp; the F0 Entry Gate</h1>
+    <span class="bc">companion to module M9 · Playbook</span>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why this runbook exists</a>
+  <a href="#s1"><b>1</b> · How to run it</a>
+  <a href="#s2"><b>2</b> · Phase A — Verification base &amp; delivery baseline</a>
+  <a href="#s3"><b>3</b> · Phase B — Information architecture</a>
+  <a href="#s4"><b>4</b> · Phase C — Governance minimum</a>
+  <a href="#s5"><b>5</b> · Phase D — Team readiness</a>
+  <a href="#s6"><b>6</b> · Phase E — Evaluation &amp; the F0 gate</a>
+  <a href="#s7"><b>7</b> · Exit gate &amp; takeaways</a>
+</nav>
+
+<main>
+<h2 id="s0"><span class="n">0</span>Why this runbook exists</h2>
+<p class="lead">PB1 is the entry point of every engagement: you assess the surrounding system before building anything on it, because AI amplifies that system rather than fixing it. The evidence is independent and directional — DORA 2024 associates +25 percentage points of AI adoption with −7.2% delivery stability, and a METR randomised controlled trial found experienced developers were 19% slower while believing they were about 20% faster. PB1 exists to replace optimism with measured facts before the F0 gate.</p>
+<div class="callout amber"><div class="t">What this is not</div><p>This is not an audit produced for the client's benefit alone. The output decides <em>our</em> entry decision at the F0 gate — whether we proceed, what preconditions we attach, and where the first real risk lives.</p></div>
+<p>The theory behind the checklist lives in the workbook topics this runbook distils — especially <a href="#e7-deepdive">E7 Metrics &amp; anti-patterns</a> for the delivery baseline and the review-capacity argument, and <a href="#b1-deepdive">B1 Safe ordering</a> for why verification must come before delegation.</p>
+
+<h2 id="s1"><span class="n">1</span>How to run it</h2>
+<p>Run PB1 with one person, 2–4 focused days, read access to the repository and CI, plus one team interview. Every step below is written as ČO (the action), PREČO (the theory link), and DONE (the exit criterion). Check steps off as you go; the progress chip updates automatically.</p>
+<p><span class="pbprog" data-pbprog="pb-assess"></span></p>
+<p class="pbnote">Progress is saved locally in this workbook (same store as topic progress). The standalone copy of this runbook does not persist checkbox state.</p>
+<figure>
+<svg viewBox="0 0 900 150" role="img" aria-label="The five-runbook engagement journey, PB1 highlighted">
+  <defs><marker id="ahPB1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <text x="30" y="30" class="tg">THE ENGAGEMENT JOURNEY</text>
+  <rect x="24" y="48" width="150" height="52" rx="10" class="bxC"/><text x="40" y="70" class="tt">PB1 Assess</text><text x="40" y="88" class="ts">you are here</text>
+  <rect x="200" y="48" width="150" height="52" rx="10" class="bxG"/><text x="216" y="70" class="ti">PB2 Bootstrap</text><text x="216" y="88" class="ts">verification base</text>
+  <rect x="376" y="48" width="150" height="52" rx="10" class="bxG"/><text x="392" y="70" class="ti">PB3 Harness</text><text x="392" y="88" class="ts">CLAUDE.md · hooks · CI</text>
+  <rect x="552" y="48" width="150" height="52" rx="10" class="bxG"/><text x="568" y="70" class="ti">PB4 Handoff</text><text x="568" y="88" class="ts">contract · EARS</text>
+  <rect x="728" y="48" width="150" height="52" rx="10" class="bxG"/><text x="744" y="70" class="ti">PB5 Pilot</text><text x="744" y="88" class="ts">metrics · gates</text>
+  <line x1="174" y1="74" x2="200" y2="74" class="edPB1"/>
+  <line x1="350" y1="74" x2="376" y2="74" class="edPB1"/>
+  <line x1="526" y1="74" x2="552" y2="74" class="edPB1"/>
+  <line x1="702" y1="74" x2="728" y2="74" class="edPB1"/>
+  <text x="30" y="132" class="ts">Each runbook ends in an exit gate; PB1 ends in the F0 go/no-go (B6).</text>
+</svg>
+<figcaption>The journey the M9 module walks. PB1 produces the assessment report, the delivery baseline, and the F0 entry decision; PB2–PB5 build on its findings in order.</figcaption>
+</figure>
+
+<h2 id="s2"><span class="n">2</span>Phase A — Verification base &amp; delivery baseline</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s1" data-pb="pb-assess" data-step="pb1-s1">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s1">A1 · Baseline the test suite</label>
+    <p class="pbwhy">Run the full suite three times from a clean checkout. Record: one-command invocation, wall-clock runtime, pass rate, and the list of flaky tests. Why: the suite is the external truth the whole loop stands on — without a trusted, fast signal there is nothing for an agent to converge on (<a href="#e4-deepdive">E4 Verification-first</a>, <a href="#b1-deepdive">B1 Safe ordering</a>).</p>
+    <div class="pbdone">DONE = runtime, pass rate and flaky list recorded in report §2; the suite runs headless with a single documented command.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s2" data-pb="pb-assess" data-step="pb1-s2">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s2">A2 · Verify CI emits agent-readable signal</label>
+    <p class="pbwhy">Insert a deliberately broken test and let CI run. Confirm the failure is machine-readable: a non-zero exit code and a parseable log or status payload. Why: an agent that cannot read CI cannot self-correct; a red/green dot is not enough (<a href="#e4-deepdive">E4 Verification-first</a>, <a href="#e7-deepdive">E7 Metrics &amp; anti-patterns</a>).</p>
+    <div class="pbdone">DONE = broken-test experiment run; failure artifact linked in report §2.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s3" data-pb="pb-assess" data-step="pb1-s3">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s3">A3 · Capture the delivery baseline</label>
+    <p class="pbwhy">Compute the DORA four keys retroactively from git and CI history, add cost per merged PR, agree the before/after window with the client, and confirm access to git history, deploy logs, and the incident system. The baseline is captured now, at assess time — a pilot without it can be neither proven nor disproven (the METR perception gap), so it cannot wait for PB5 (<a href="#e7-deepdive">E7 day-0 DORA checklist</a>).</p>
+    <div class="pbdone">DONE = baseline numbers recorded in report §3; window + data access confirmed in writing.</div>
+  </div>
+</div>
+
+<h2 id="s3"><span class="n">3</span>Phase B — Information architecture</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s4" data-pb="pb-assess" data-step="pb1-s4">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s4">B1 · Inventory source-of-truth artifacts</label>
+    <p class="pbwhy">List architecture docs, ADRs, specs, READMEs, and runbooks; record owner, last-touched date, and whether a newcomer can retrieve each from the repo. Why: an agent cannot compensate for missing or buried truth; the loop will hallucinate consensus where none exists (<a href="#i1-deepdive">I1 Artifact taxonomy</a>, <a href="#i3-deepdive">I3 Consistency drift</a>).</p>
+    <div class="pbdone">DONE = artifact table in report §4 with gaps explicitly listed.</div>
+  </div>
+</div>
+
+<h2 id="s4"><span class="n">4</span>Phase C — Governance minimum</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s5" data-pb="pb-assess" data-step="pb1-s5">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s5">C1 · Verify dev/prod separation and run a secrets scan</label>
+    <p class="pbwhy">Prove production credentials are unreachable from the development environment, then run a secrets scan across the repo history. Why: environment separation and secrets hygiene are hard boundaries, not maturity shades — the Replit production-DB incident showed what happens when they fail. GitGuardian 2026 vendor telemetry reports AI-assisted commits leak secrets at 3.2% versus a 1.5% baseline; treat that as a vendor claim, not independent evidence (<a href="#e5-deepdive">E5 Governance</a>; see also M7).</p>
+    <div class="pbdone">DONE = scan report attached; prod credentials proven unreachable from the dev environment.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s6" data-pb="pb-assess" data-step="pb1-s6">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s6">C2 · Map write permissions</label>
+    <p class="pbwhy">Document branch protection, CODEOWNERS, who and what can merge, and where an agent's write access would stop today. Why: delegation without a permission boundary is just automation of mistakes; the write-permission matrix is the deterministic half of governance (<a href="#i2-deepdive">I2 Lifecycle &amp; write permissions</a>, <a href="#e5-deepdive">E5 Governance</a>).</p>
+    <div class="pbdone">DONE = draft write-permission matrix in report §5.</div>
+  </div>
+</div>
+
+<h2 id="s5"><span class="n">5</span>Phase D — Team readiness</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s7" data-pb="pb-assess" data-step="pb1-s7">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s7">D1 · Name the editor/curator and measure review capacity</label>
+    <p class="pbwhy">Identify who will curate agent config and review agent PRs, and secure a concrete weekly review budget in hours. Why: agent output scales faster than review; E7's review-bottleneck data shows +98% PR volume and +91% review time when assistive tools land without capacity planning (<a href="#p4-deepdive">P4 The PM role</a>, <a href="#h4-deepdive">H4 Return-channel anti-patterns</a>, <a href="#e7-deepdive">E7 Metrics &amp; anti-patterns</a>).</p>
+    <div class="pbdone">DONE = named owner(s) + weekly review budget recorded in report §6.</div>
+  </div>
+</div>
+
+<h2 id="s6"><span class="n">6</span>Phase E — Evaluation &amp; the F0 gate</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s8" data-pb="pb-assess" data-step="pb1-s8">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s8">E1 · Score the questionnaire and derive the L1–L5 recommendation</label>
+    <p class="pbwhy">Fill the 24-point questionnaire below, mark the four [GATE] items, and map the result to the recommendation table. Why: the score is a structured way to surface gaps, not a disguise for gut feel; the thresholds are our synthesis, calibrated against the theory in <a href="#e6-deepdive">E6 Autonomy levels</a>.</p>
+    <div class="pbdone">DONE = filled questionnaire archived with the engagement notes; recommended level written into report §7.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s9" data-pb="pb-assess" data-step="pb1-s9">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s9">E2 · Deliver the report and run the F0 go/no-go with STOP criteria</label>
+    <p class="pbwhy">Produce the assessment report from the template, convene the F0 gate, and record a go / no-go / go-with-preconditions decision together with the STOP criteria that would pull the cord. Why: the gate is the only thing that turns assessment into action; without a recorded decision and triggers, the report becomes shelfware (<a href="#b6-deepdive">B6 Roadmap F0–F3</a>).</p>
+    <div class="pbdone">DONE = decision (go / no-go / go-with-preconditions) recorded with date, criteria and signatories.</div>
+  </div>
+</div>
+
+<p>The questionnaire stays at 24 points. The delivery baseline captured in step A3 is measurement data, not a scored maturity dimension — scoring it would double-count evidence the gates already cover and would break the calibrated thresholds in the recommendation table.</p>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-quest">copy</button><pre id="pb1-tpl-quest">
+# Agentic-readiness assessment — questionnaire (v1)
+Client: ____________   Assessor: ____________   Date: ____________
+Score each 0 (absent) / 1 (partial) / 2 (solid). Gate criteria marked [GATE] are
+non-compensable: any [GATE] at 0 caps the recommendation at L1 regardless of total.
+
+## A — Verification base
+A1 [GATE] Trusted automated test suite exists and passes ........... 0 1 2
+A2 [GATE] Full suite runs headless in under ~15 min ................ 0 1 2
+A3 CI runs on every PR and blocks merge on red ..................... 0 1 2
+A4 [GATE] CI failure output is machine-readable (agent-consumable) . 0 1 2
+
+## B — Information architecture
+B1 Architecture/decision docs exist and are findable from the repo . 0 1 2
+B2 Docs freshness: last-touched within ~6 months for core docs ..... 0 1 2
+B3 A newcomer can locate the source of truth for a feature ......... 0 1 2
+
+## C — Governance minimum
+C1 [GATE] Dev/prod separated; prod creds unreachable from dev ...... 0 1 2
+C2 Secrets scan clean (or remediation plan agreed) ................. 0 1 2
+C3 Branch protection + review requirement on the default branch .... 0 1 2
+
+## D — Team readiness
+D1 A named owner will curate agent config &amp; review agent PRs ....... 0 1 2
+D2 Review capacity exists (agent PRs will not queue for days) ...... 0 1 2
+
+TOTAL ____ / 24        GATES PASSED ____ / 4
+</pre></div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-report">copy</button><pre id="pb1-tpl-report">
+# Agentic-readiness assessment — report
+Client / system: ____________     Date: ____________     Assessor: ____________
+
+## 1 Executive summary
+Recommendation: L__ entry, F0 scope: ____________. Go / No-go / Go with preconditions.
+
+## 2 Verification base (steps A1–A2)
+Suite runtime: ____  Pass rate: ____  Flaky tests: ____
+CI signal experiment result: ____________
+
+## 3 Delivery baseline (step A3)
+Deploy frequency: ____  Lead time: ____  Change-fail rate: ____  Recovery time: ____
+Cost per merged PR (tokens/seats): ____
+Before/after window agreed: ____________  Data access confirmed (git / CI / incidents): ____
+
+## 4 Information architecture (step B1)
+| Artifact | Owner | Last touched | Retrievable from repo? |
+|---|---|---|---|
+
+## 5 Governance minimum (steps C1–C2)
+Dev/prod separation: ____________   Secrets scan: ____________
+Write-permission matrix (draft): ____________
+
+## 6 Team readiness (step D1)
+Editor/curator: ____________   Review budget: ____ h/week
+
+## 7 Score &amp; recommendation (steps E1–E2)
+Total ____ / 24 · Gates ____ / 4 → recommended level L__ (rationale: ...)
+Preconditions before F1: ____________
+
+## 8 STOP criteria agreed for F0
+(from B6: e.g. stability drop beyond agreed threshold, secrets leak,
+unreviewed-merge incident — list the concrete triggers + who pulls the cord)
+</pre></div>
+
+<p>The mapping below is our synthesis, not an industry standard. It converts the questionnaire into an entry recommendation; the non-compensable gate criteria are what make it conservative.</p>
+<div class="figscroll"><table class="map"><tr><th>Score</th><th>Gates</th><th>Recommendation</th></tr>
+<tr><td>&lt; 10</td><td>any</td><td>L1 only; engagement starts by fixing the base (PB2 becomes the deliverable, not a prerequisite)</td></tr>
+<tr><td>10–16</td><td>4/4</td><td>L2 entry; F0 read-only archaeology can start (B4)</td></tr>
+<tr><td>≥ 17</td><td>4/4</td><td>L3 pilot candidate; proceed to PB2 with the F0→F1 exit criteria from B6</td></tr>
+<tr><td>any</td><td>&lt; 4/4</td><td>no L2+ autonomy until the failed gate is fixed — non-compensable</td></tr>
+</table></div>
+<p>STOP criteria for F0 are taken from <a href="#b6-deepdive">B6</a> and adapted to the client's context. Typical triggers include a delivery-stability drop beyond the agreed threshold, a secrets leak or production credential reachable from dev, and any unreviewed merge. Each trigger names who pulls the cord and how.</p>
+
+<h2 id="s7"><span class="n">7</span>Exit gate &amp; takeaways</h2>
+<div class="callout pine"><div class="t">Exit criteria</div><p>Report delivered; delivery baseline recorded (report §3 is the pilot's "before" snapshot — PB5 compares against it); go/no-go recorded; if GO → proceed to PB2 with the report's §2 numbers as the bootstrap baseline.</p></div>
+<div class="callout"><div class="t">Three sentences to remember PB1 by</div><p>Assess before build, because AI amplifies the system it lands on — good or bad. The delivery baseline and the four non-compensable gates are the guardrails that keep the assessment honest; a high average with one gate failed is exactly the false-confidence case PB1 exists to catch. The F0 decision is an action, not a report: go, no-go, or go-with-preconditions, each with a named owner and STOP criteria.</p></div>
+<p class="closingnote">This runbook is also available as a standalone file (PB1-assess-runbook.html). Its natural neighbours in the workbook are <a href="#e6-deepdive">E6 Autonomy levels</a>, <a href="#e7-deepdive">E7 Metrics &amp; anti-patterns</a>, <a href="#b1-deepdive">B1 Safe ordering</a>, and <a href="#b6-deepdive">B6 Roadmap F0–F3</a>. The scoring model and gate criteria are this workbook's synthesis; every point-in-time fact in the report should be marked for re-verification before the next gate.</p>
+</main>
+</div>
+
+<footer>
+  <b>PB1 Runbook — Assess: Client Maturity &amp; the F0 Entry Gate</b><br>
+  Companion to module M9 · Playbook in the Agentic SDLC learning workbook.
+</footer>
+
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+  /* runbook: live progress count (non-persistent) + copy buttons */
+  function upd2(){var t=document.querySelectorAll(".pbck").length,d=document.querySelectorAll(".pbck:checked").length;
+    document.querySelectorAll("[data-pbprog]").forEach(function(el){el.textContent=d+" / "+t+" steps done";});}
+  document.addEventListener("change",function(e){if(e.target.closest(".pbck"))upd2();});
+  upd2();
+  document.addEventListener("click",function(e){
+    var b2=e.target.closest(".pbcopy");if(!b2)return;
+    var pre=document.getElementById(b2.dataset.copy);if(!pre)return;
+    var txt=pre.textContent;
+    function ok(){b2.textContent="copied ✓";setTimeout(function(){b2.textContent="copy";},1400);}
+    function fb(){var ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok();}catch(err){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}
+  });
+})();
+</script>
+</body>
+</html>
