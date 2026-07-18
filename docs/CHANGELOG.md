@@ -3,6 +3,28 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.48 · 2026-07-18
+
+**SYNC — delta sync over the existing Yjs/HTTP layer.** Pushes and pulls now carry Yjs
+*diffs* against the server's last known state vector instead of the full encoded
+document on every change (previously a "section read" uploaded the whole state, and the
+payload grew monotonically with edit history).
+
+- The client persists `ssv` (the server's last known state vector) in
+  `agentic-study-sync-v1`; the push body is `Y.encodeStateAsUpdate(ydoc, ssv)` with the
+  current vector in an `X-State-Vector` header, and the Worker replies with only the
+  diff the client lacks. `ssv` advances only after a successful push and only to the
+  vector actually sent — pulls never advance it — so offline and mid-flight edits
+  always reach the server.
+- New pull endpoint `POST /r/:code/sync` (client state vector → missing diff);
+  `POST /r/:code` accepts the optional header and falls back to full-state replies
+  without it (older clients unaffected); `POST /new` + `GET /r/:code` unchanged.
+- Every 25th push (and any push while `ssv` is null) sends full state: the periodic
+  reconciliation that restores the self-healing property against the non-atomic KV
+  get→put race, which full-state pushes used to provide implicitly.
+- Server storage unchanged (one compacted snapshot per code in KV); Worker redeployed.
+  Spec: `docs/superpowers/specs/2026-07-18-delta-sync-design.md`.
+
 ## v1.47 · 2026-07-18
 
 **NEW DEEP DIVE D2 — Design tokens as the visual contract (DTCG).** Second M6 companion

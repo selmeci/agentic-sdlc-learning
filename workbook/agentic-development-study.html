@@ -2145,6 +2145,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.48</span><span class="vd">2026-07-18</span><p><strong>SYNC — delta sync: pushes and pulls now carry only the changes, not the whole document.</strong> Until now every sync push uploaded the full encoded study state — and since that encoding grows with edit history, even ticking one section as read sent everything. The workbook now keeps the server's last known <em>state vector</em> and sends only the <strong>Yjs diff</strong> the server is missing (tens of bytes for a small change); refreshes likewise fetch only the missing diff via a new <span class="mono">POST /r/:code/sync</span> endpoint. Every 25th push sends full state as a self-healing reconciliation. Fully backwards compatible: an already-linked device migrates silently on its next push, and older app versions keep working against the updated server. No content or topic-id changes.</p></div>
       <div class="vitem"><span class="vv">v1.47</span><span class="vd">2026-07-18</span><p>Added the D2 deep-dive companion (Design tokens as the visual contract, DTCG) — token anatomy and the tier model (community practice, not spec; credited to Curtis 2016 options/decisions), the 2025.10 release read precisely (Format + Color stable; theming/modes in the "do not implement" Resolver draft — the earlier "theming shipped" wording corrected in the topic and Report 5 notes), the mid-2026 pipeline (Style Dictionary v5 shipped with 2025.10 coverage converging, Terrazzo, Tokens Studio paid git sync, Figma Variables API Enterprise-gated + native DTCG export not GA, Penpot first open-source native-DTCG tool), code-first sync direction as governance (Sopelnik and Builder.io/Sewell verbatims; Adobe Spectrum designer-authored/code-stored), the agent contract (Pandya closed-set line, DESIGN.md with next-day cross-vendor uptake, the Stylelint/ESLint/drift enforcement stack), the evidence file with corrected dating (zeroheight 56→84 = 2024→2025 report n=294, 86% in 2026 n=147, the 40% pipeline gap, CHI 2026 registry-based 95.08%, and the honest null: no token-specific causal study) plus a do-not-cite list, and the six-step SCSS→DTCG migration (our synthesis). Fact pass: 4 research teammates + 3 adversarial spot-verifiers (13th session in a row with real catches: DESIGN.md tool roster = third-party commentary, mis-dated adoption stat, two paraphrases de-quoted, quote trims).</p></div>
       <div class="vitem"><span class="vv">v1.46</span><span class="vd">2026-07-18</span><p><strong>NEW DEEP DIVE B6 &mdash; Roadmap F0&ndash;F3, metrics and STOP criteria.</strong> Sixth M5 companion (B6-roadmap-f0-f3-deepdive.html + overlay) &mdash; module M5 complete. The roadmap as a permission ladder with measured gates (Report 4 synthesis, honestly analogue-checked: no published canonical equivalent as of July 2026 &mdash; nearest cousins stage oversight per task, not access over time), the gate table with deterministic checks and automatic demotion (borrowing GAIE&rsquo;s risk-routed tiers and the Digital Apprentice&rsquo;s dual-key promotion / asymmetric demotion), the metrics chapter with the self-report trap (METR) and the vendor-telemetry file (Faros 2026 &ldquo;Acceleration Whiplash&rdquo;: review time +441.5%, 31.3% more PRs merging without any review), secrets from day 0 on the 2026 evidence (GitGuardian: Claude Code-assisted commits at 3.2% vs 1.5% baseline &mdash; ~2&times;; MCP configs as a leak surface), STOP criteria anchored to safety standards (ISO 26262 / IEC 62304 / DO-178C traceability via vendor guidance, flagged), the day-1 recipe and the F0&ndash;F3 &times; R1/R2/R3/R6 master-plan table (our synthesis) answering the topic&rsquo;s open question. Key swarm corrections: DORA&rsquo;s deployment rework rate re-dated to its true 2024 introduction (fixed across E7, E8, H4, B1 in both copies), the MIT NANDA &ldquo;95%&rdquo; pinned to its real wording and methodology (300+ initiatives / 52 org interviews / 153 leaders &mdash; the circulating &ldquo;150/350&rdquo; is a misquote), DX dataset corrected to 425 organizations, unverifiable sub-figures dropped. New load-bearing sources: Microsoft&rsquo;s instrumented rollout study (arXiv:2607.01418, ~24% sustained PR-merge lift, peer-network diffusion), DX Q4 impact report (enablement evidence, onboarding 91&rarr;49 days), DORA AI Capabilities Model, Swarmia autonomy levels, KPMG stall mechanism, Sharma&rsquo;s D&sup3; weighed as the nearest published cousin. Topic brown-roadmap enriched (metrics, secrets pin, gates bullet, new check); GitGuardian src updated to the 2026 report.</p></div>
       <div class="vitem"><span class="vv">v1.45</span><span class="vd">2026-07-18</span><p><strong>NEW DEEP DIVE B5 &mdash; Strangler fig, the heatmap and picking the first battlefield.</strong> Fifth M5 companion (B5-strangler-heatmap-deepdive.html + overlay), built on an 8-agent fact-verification + discovery swarm. The rewrite question honestly framed (Spolsky, Brooks, the Basecamp counterexample that is really strangler economics), the strangler fig with its real origin story (Fowler 2004, Stevenson/XP-2004 credit), the plumbing toolbox (seams, ACL, branch by abstraction, expand/contract, dark launching, feature flags), the churn &times; complexity heatmap with caveats, a scored pilot-selection model with the exclusionary criticality gate (our synthesis, flagged), Hyrum's Law, god classes vs the context budget, the database (outbox/CDC, Stripe's four-phase playbook), and what agents reprice in 2026. Key swarm corrections: branch-by-abstraction attribution pinned (Curl coined, Hammant first detailed publicly 2007, Fowler popularized); Code Red printed as issues taking <strong>124% LONGER</strong> to resolve in the worst code-health band, not the marketing "faster" reframe; the hotspot-concentration folklore corrected ("4% of code, 70%+ of defects" is a single-system anecdote &mdash; the defensible form is Pareto-shaped, ~20% of modules carrying ~80% of defects); and no empirical rewrite failure rate exists (Standish CHAOS figures dismantled by Eveleens &amp; Verhoef 2010 &mdash; the case rests on case studies and expert judgment, printed as such). Topic <span class="mono">brown-strangler</span> src now opens the overlay first.</p></div>
@@ -5810,7 +5811,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   </div>
 </div>
 <footer>
-  <b>v1.47</b> · 2026-07-18 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.48</b> · 2026-07-18 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
@@ -6961,7 +6962,7 @@ src:[{t:"OWASP agentic top 10; published incident postmortems; large-company gov
 const KEY='agentic-study-v1';
 const SYNC_URL='https://agentic-study-sync.selmeci.workers.dev';
 const SYNCKEY='agentic-study-sync-v1';
-var sync={code:null,status:'off',lastSyncAt:null};
+var sync={code:null,status:'off',lastSyncAt:null,ssv:null,pushCount:0};
 var pushTimer=null;
 const STATUSES=['none','studying','done'];
 const LBL={none:'not started',studying:'studying',done:'mastered'};
@@ -7052,8 +7053,8 @@ async function saveNow(){
 }
 
 function setSyncStatus(st){sync.status=st;var el=document.getElementById('syncchip');if(!el)return;var map={off:'',syncing:'syncing…',ok:'synced · '+(sync.code||''),error:'sync error'};el.textContent=map[st]||'';el.className='syncchip'+(st==='error'?' err':'');}
-async function loadSyncMeta(){try{var r=await store.get(SYNCKEY);if(r&&r.value){var m=JSON.parse(r.value);sync.code=m.code||null;sync.lastSyncAt=m.lastSyncAt||null;}}catch(e){}}
-function saveSyncMeta(){try{return store.set(SYNCKEY,JSON.stringify({code:sync.code,lastSyncAt:sync.lastSyncAt}));}catch(e){return Promise.resolve(false);}}
+async function loadSyncMeta(){try{var r=await store.get(SYNCKEY);if(r&&r.value){var m=JSON.parse(r.value);sync.code=m.code||null;sync.lastSyncAt=m.lastSyncAt||null;sync.ssv=m.ssv||null;}}catch(e){}}
+function saveSyncMeta(){try{return store.set(SYNCKEY,JSON.stringify({code:sync.code,lastSyncAt:sync.lastSyncAt,ssv:sync.ssv}));}catch(e){return Promise.resolve(false);}}
 function schedulePush(){if(!sync.code||!ydoc)return;clearTimeout(pushTimer);pushTimer=setTimeout(syncPush,900);}
 function afterRemote(bytes){
   applyingRemote=true;
@@ -7070,22 +7071,25 @@ async function syncPush(){
   setSyncStatus('syncing');
   try{
     mirrorToDoc();persistDoc();
-    var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(sync.code),{method:'POST',body:window.Y.encodeStateAsUpdate(ydoc)});
+    sync.pushCount++;
+    var sentSV=b64(window.Y.encodeStateVector(ydoc)); /* captured pre-fetch: this is what ssv may advance to */
+    var body=(sync.pushCount%25===0||!sync.ssv)?window.Y.encodeStateAsUpdate(ydoc):window.Y.encodeStateAsUpdate(ydoc,unb64(sync.ssv));
+    var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(sync.code),{method:'POST',headers:{'X-State-Vector':sentSV},body:body});
     if(res.status===404){unlinkSync();setSave('err','sync link broken');return;}
     if(!res.ok)throw 0;
     afterRemote(new Uint8Array(await res.arrayBuffer()));
-    sync.lastSyncAt=Date.now();saveSyncMeta();setSyncStatus('ok');
+    sync.ssv=sentSV;sync.lastSyncAt=Date.now();saveSyncMeta();setSyncStatus('ok');
   }catch(e){setSyncStatus('error');}
 }
 async function syncPull(){
   if(!sync.code||!ydoc)return;
   setSyncStatus('syncing');
   try{
-    var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(sync.code));
+    var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(sync.code)+'/sync',{method:'POST',body:window.Y.encodeStateVector(ydoc)});
     if(res.status===404){unlinkSync();setSave('err','sync link broken');return;}
     if(!res.ok)throw 0;
     afterRemote(new Uint8Array(await res.arrayBuffer()));
-    sync.lastSyncAt=Date.now();saveSyncMeta();setSyncStatus('ok');
+    sync.lastSyncAt=Date.now();saveSyncMeta();setSyncStatus('ok'); /* ssv intentionally NOT advanced on pull */
   }catch(e){setSyncStatus('error');}
 }
 async function enableSync(){
@@ -7094,11 +7098,12 @@ async function enableSync(){
   setSyncStatus('syncing');
   try{
     mirrorToDoc();persistDoc();
+    var sentSV=b64(window.Y.encodeStateVector(ydoc)); /* /new stores exactly what we send → invariant holds */
     var res=await fetch(SYNC_URL+'/new',{method:'POST',body:window.Y.encodeStateAsUpdate(ydoc)});
     if(!res.ok)throw 0;
     var newcode=res.headers.get('X-Sync-Code');
     if(!newcode||!/^[a-z0-9]{4}$/.test(newcode))throw 0;
-    sync.code=newcode;sync.lastSyncAt=Date.now();await saveSyncMeta();
+    sync.code=newcode;sync.ssv=sentSV;sync.pushCount=0;sync.lastSyncAt=Date.now();await saveSyncMeta();
     afterRemote(new Uint8Array(await res.arrayBuffer()));setSyncStatus('ok');return sync.code;
   }catch(e){setSyncStatus('error');return null;}
 }
@@ -7112,11 +7117,11 @@ async function linkSync(code){
     var res=await fetch(SYNC_URL+'/r/'+encodeURIComponent(code));
     if(res.status===404)return{ok:false,err:'No data found for that code.'};
     if(!res.ok)throw 0;
-    sync.code=code;sync.lastSyncAt=Date.now();await saveSyncMeta();
+    sync.code=code;sync.ssv=null;sync.pushCount=0;sync.lastSyncAt=Date.now();await saveSyncMeta();
     afterRemote(new Uint8Array(await res.arrayBuffer()));setSyncStatus('ok');schedulePush();return{ok:true};
   }catch(e){setSyncStatus('error');return{ok:false,err:'Network error. Try again.'};}
 }
-function unlinkSync(){sync.code=null;sync.lastSyncAt=null;saveSyncMeta();setSyncStatus('off');}
+function unlinkSync(){sync.code=null;sync.lastSyncAt=null;sync.ssv=null;sync.pushCount=0;saveSyncMeta();setSyncStatus('off');}
 
 /* Export/import: storage is per-origin, so moving hosts (preview → GitHub Pages → local file)
    starts fresh. The JSON file is how progress + notes travel with the reader. Import merges. */
