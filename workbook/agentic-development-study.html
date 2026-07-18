@@ -339,6 +339,19 @@ footer li::before{content:"·";position:absolute;left:2px}
 .e1ov svg .edB5b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahB5b)}
 .e1ov svg .edD2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2a)}
 .e1ov svg .edD2b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2b)}
+/* ===== M9 playbook runbooks (v1.48) ===== */
+.pbstep{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin:9px 0}
+.pbstep input.pbck{margin-top:4px;width:16px;height:16px;accent-color:var(--cobalt);flex:none;cursor:pointer}
+.pbtxt{flex:1;min-width:0}
+.pbwhat{font-family:var(--disp);font-weight:600;font-size:14.5px;cursor:pointer}
+.pbwhy{font-size:13.5px;color:var(--soft);margin:3px 0 0}
+.pbdone{font-family:var(--mono);font-size:11px;color:var(--pine);margin-top:5px}
+.pbtpl{position:relative;margin:12px 0}
+.pbtpl pre{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--idle-bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;overflow-x:auto;white-space:pre-wrap}
+.pbcopy{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:10.5px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;color:var(--soft)}
+.pbcopy:hover{border-color:var(--cobalt);color:var(--cobalt-deep)}
+.pbprog{font-family:var(--mono);font-size:11px;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.pbnote{font-family:var(--mono);font-size:11.5px;color:var(--soft)}
 .e1ov table.map{border-collapse:collapse;width:100%;font-size:13px;margin:13px 0}
 .e1ov table.map th,.e1ov table.map td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
 .e1ov table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12px;font-weight:600}
@@ -7008,35 +7021,64 @@ var sync={code:null,status:'off',lastSyncAt:null};
 var pushTimer=null;
 const STATUSES=['none','studying','done'];
 const LBL={none:'not started',studying:'studying',done:'mastered'};
-let state={progress:{},notes:{},seen:{},highlights:[],updatedAt:null};
+let state={progress:{},notes:{},seen:{},highlights:[],pb:{},updatedAt:null};
 /* Sync layer (Yjs). Additive: the canonical local store is still the JSON `state`
    above via `store` (agentic-study-v1). The Y.Doc exists only when sync is used. */
 var ydoc=null, DOCKEY='agentic-study-ydoc-v1', applyingRemote=false;
 function yReady(){return typeof window.Y!=='undefined'&&!!window.Y;}
-function stateBlob(){return{progress:state.progress,notes:state.notes,seen:state.seen,highlights:state.highlights,updatedAt:state.updatedAt};}
-function refreshAll(){syncFromState();updateCounts();updateNotesCount();renderTopicHls();applyFilter();}
+function stateBlob(){return{progress:state.progress,notes:state.notes,seen:state.seen,highlights:state.highlights,pb:state.pb,updatedAt:state.updatedAt};}
+function refreshAll(){syncFromState();updateCounts();updateNotesCount();renderTopicHls();syncPb();applyFilter();}
+function syncPb(){
+  $$('.pbck').forEach(function(cb){cb.checked=(state.pb[cb.dataset.pb]||[]).indexOf(cb.dataset.step)!==-1;});
+  $$('[data-pbprog]').forEach(function(el){
+    var rb=el.dataset.pbprog,total=$$('.pbck[data-pb="'+rb+'"]').length,done=(state.pb[rb]||[]).length;
+    el.textContent=done+' / '+total+' steps done';
+  });
+}
+document.addEventListener('change',function(e){
+  var cb=e.target.closest('.pbck');if(!cb)return;
+  var arr=state.pb[cb.dataset.pb]||(state.pb[cb.dataset.pb]=[]);
+  var i=arr.indexOf(cb.dataset.step);
+  if(cb.checked&&i===-1)arr.push(cb.dataset.step);
+  if(!cb.checked&&i!==-1)arr.splice(i,1);
+  syncPb();scheduleSave();
+});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.pbcopy');if(!b)return;
+  var pre=document.getElementById(b.dataset.copy);if(!pre)return;
+  var txt=pre.textContent;
+  function ok(){b.textContent='copied ✓';setTimeout(function(){b.textContent='copy';},1400);}
+  function fb(){var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(err){}document.body.removeChild(ta);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}
+});
 function b64(u){var s='';for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s);}
 function unb64(str){var s=atob(str),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}
 function seenKeys(sn){var out=[];Object.keys(sn||{}).forEach(function(ov){(sn[ov]||[]).forEach(function(i){out.push(ov+':'+i);});});return out;}
 function mirrorToDoc(){
   if(!ydoc)return;
-  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights');
+  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights'),B=ydoc.getMap('pb');
   ydoc.transact(function(){
     Object.keys(state.progress).forEach(function(k){if(P.get(k)!==state.progress[k])P.set(k,state.progress[k]);});
     Object.keys(state.notes).forEach(function(k){if(N.get(k)!==state.notes[k])N.set(k,state.notes[k]);});
     seenKeys(state.seen).forEach(function(k){if(S.get(k)!==true)S.set(k,true);});
     var have={};(state.highlights||[]).forEach(function(h){if(h&&h.id){have[h.id]=1;if(JSON.stringify(H.get(h.id))!==JSON.stringify(h))H.set(h.id,h);}});
     Array.from(H.keys()).forEach(function(id){if(!have[id])H.delete(id);});
+    var pbHave={};
+    Object.keys(state.pb||{}).forEach(function(rb){(state.pb[rb]||[]).forEach(function(sid){var k=rb+':'+sid;pbHave[k]=1;if(B.get(k)!==true)B.set(k,true);});});
+    Array.from(B.keys()).forEach(function(k){if(!pbHave[k])B.delete(k);});
   });
 }
 function materializeFromDoc(){
   if(!ydoc)return;
-  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights');
+  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights'),B=ydoc.getMap('pb');
   state.progress=P.toJSON();state.notes=N.toJSON();
   var sn={};Array.from(S.keys()).forEach(function(k){var i=k.lastIndexOf(':'),ov=k.slice(0,i),n=parseInt(k.slice(i+1),10);if(!sn[ov])sn[ov]=[];sn[ov].push(n);});
   Object.keys(sn).forEach(function(ov){sn[ov].sort(function(a,b){return a-b;});});
   state.seen=sn;
   state.highlights=Array.from(H.values());
+  var pbm={};
+  Array.from(B.keys()).forEach(function(k){var i=k.indexOf(':'),rb=k.slice(0,i),sid=k.slice(i+1);if(!pbm[rb])pbm[rb]=[];pbm[rb].push(sid);});
+  state.pb=pbm;
 }
 function persistDoc(){if(!ydoc)return;try{store.set(DOCKEY,b64(window.Y.encodeStateAsUpdate(ydoc)));}catch(e){}}
 async function initYjsDoc(){
@@ -7075,7 +7117,7 @@ async function loadState(){
   storeOK=true;
   try{
     const r=await store.get(KEY);
-    if(r&&r.value){const p=JSON.parse(r.value);state.progress=p.progress||{};state.notes=p.notes||{};state.seen=p.seen||{};state.highlights=Array.isArray(p.highlights)?p.highlights:[];}
+    if(r&&r.value){const p=JSON.parse(r.value);state.progress=p.progress||{};state.notes=p.notes||{};state.seen=p.seen||{};state.highlights=Array.isArray(p.highlights)?p.highlights:[];state.pb=(p.pb&&typeof p.pb==='object')?p.pb:{};}
     setSave('ok','loaded · '+store.kind);
   }catch(e){setSave('ok','fresh state');}
 }
@@ -7181,6 +7223,7 @@ function importData(file){
       Object.assign(state.progress,p.progress||{});
       Object.assign(state.notes,p.notes||{});
       if(p.seen)Object.assign(state.seen,p.seen);
+      if(p.pb)Object.keys(p.pb).forEach(function(rb){var cur=state.pb[rb]||(state.pb[rb]=[]);(p.pb[rb]||[]).forEach(function(sid){if(cur.indexOf(sid)===-1)cur.push(sid);});});
       if(Array.isArray(p.highlights)){var have={};state.highlights.forEach(function(h){have[h.id]=1;});p.highlights.forEach(function(h){if(h&&h.id&&!have[h.id]){state.highlights.push(h);have[h.id]=1;}});}
       syncFromState();updateCounts();updateNotesCount();renderTopicHls();applyFilter();scheduleSave();
       setSave('ok','imported');
@@ -8163,6 +8206,7 @@ function applyHighlights(ov){
   updateCounts();
   await loadState();
   syncFromState();
+  syncPb();
   updateCounts();
   applyFilter();
   loadSyncMeta().then(function(){
