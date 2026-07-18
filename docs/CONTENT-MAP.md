@@ -1,7 +1,7 @@
 # Content map
 
 The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.48):
-9 modules, 60 topics, 6 research reports, 2 inline map sections, 35 deep-dive companions.
+9 modules, 60 topics, 6 research reports, 2 inline map sections, 37 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.

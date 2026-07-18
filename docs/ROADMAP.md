@@ -251,6 +251,25 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
     KPMG stall mechanism, safety-standards traceability anchor (ISO 26262/IEC 62304/DO-178C).
     Gate table + back-triggers + F0–F3 × R1/R2/R3/R6 master-plan table = our synthesis.
 
+### M9 — Playbook module (the practice layer)
+Decided 2026-07-18 (spec: docs/superpowers/specs/2026-07-18-playbook-module-design.md):
+the theory→practice layer lives inside the workbook as runbooks ordered by the
+engagement journey; the harness starter-kit templates and hands-on labs derive from
+these runbooks later — no separate repo.
+- ~~Module skeleton (pb- topics, store-backed checklists) + **PB1 Assess** runbook~~ — **done (v1.48)**.
+- Next, one per version: **PB2 Bootstrap** (B1–B3 distilled) → **PB3 Harness** (E1–E5, I2 —
+  templates ship as runnable configs: hook scripts, permission baselines, CI gates, per the
+  E5 litmus) → **PB4 Handoff** (H1–H4) → **PB5 Pilot** (E7, B6 — converges with T2's pilot
+  playbook; compares against the delivery baseline captured in PB1).
+- Backlog (deliberately deferred):
+  - **Field-report loop** — a completed client runbook feeds an anonymized results entry
+    back into the relevant deep dive; the corpus is currently 100% externally cited, and
+    pilot outcomes are the first first-party evidence. The persisted checklist data in
+    `store` is the hook for it.
+  - **Team-level tracking** — `store` is per-browser/per-device; aggregating progress
+    across a Sudo team at a client would need shared state. Deferred: adding it would
+    reopen the rejected "engagement mode" app-creep.
+
 ### 4. Trajectory research (M8, the backlog) — turn T-topics into real modules
 These are the client-facing deliverables; each needs a research pass before a deep dive.
 - **T2 Measurement & pilot design** — highest priority: the DORA + METR method from E7 becomes

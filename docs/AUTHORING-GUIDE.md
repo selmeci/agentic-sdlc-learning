@@ -90,3 +90,24 @@ Precedent: E4 (added mutation §5), E7 (DORA/METR §1 then how-to §2–§3), E8
 - Bash `{a,b,c}` brace expansion may be unavailable — list paths explicitly.
 - Unique marker id + edge class per SVG; never reuse across the document.
 - Never rename a topic `id`.
+
+## Runbook companions (M9 playbook topics)
+
+Runbooks are deep dives with a fixed practice shape — same two-copies recipe as above
+(token `pb1` → `#pb1-deepdive`, `pb1ov`, `data-pb1close`, marker `ahPB1a`, edge `edPB1`),
+plus:
+- Shape: `§0 why → §1 how to run it (progress chip + persistence note) → phase sections
+  with steps → evaluation §  with templates → exit gate & takeaways`.
+- Each step: `.pbstep` block with `input.pbck` carrying `data-pb="<topic id>"` and a
+  **frozen** `data-step="pbN-sM"` id (progress keys — same never-rename rule as topic ids;
+  the validator enforces uniqueness), a `.pbwhat` label, `.pbwhy` with overlay links to the
+  theory, and a `.pbdone` criterion.
+- Templates: `.pbtpl` wrapper + `.pbcopy` button with `data-copy` pointing at the `<pre>` id.
+  Where the underlying theory is deterministic, the template is the **real runnable
+  artifact** — hook scripts, permission baselines, CI gate configs (the E5 litmus: what
+  must never happen ships as enforcement, not advice). This applies above all to PB3
+  Harness, whose templates are the client-facing starter kit.
+- Persistence: workbook only — `state.pb` via the single store; the standalone copy ships
+  the non-persistent script (live count + copy) and the `.pbnote` disclaimer.
+- The `.pb*` CSS block lives in the workbook `<style>` and is copied into each standalone
+  runbook head.
