@@ -80,8 +80,18 @@ Opt-in sync (v1.40) lets progress/notes travel between devices via a 4-character
   choke-point (guarded by a re-entrancy flag).
 - **Local keys.** `agentic-study-v1` (canonical JSON, unchanged); `agentic-study-ydoc-v1`
   (base64 of the encoded Y.Doc, the sync vehicle, written only when syncing);
-  `agentic-study-sync-v1` (`{code, lastSyncAt}` — device linkage, never uploaded). All go
+  `agentic-study-sync-v1` (`{code, lastSyncAt, ssv}` — device linkage plus the server's
+  last known state vector, never uploaded). All go
   through the same `store` backend.
+- **Delta wire format (v1.48).** Sync payloads are Yjs *diffs*, not full states: the
+  client pushes `Y.encodeStateAsUpdate(ydoc, ssv)` with the current state vector in an
+  `X-State-Vector` header, and the Worker replies with only the diff the client lacks.
+  Pulls (`POST /r/:code/sync`) send the client's vector and return the missing diff.
+  `ssv` advances only after a successful push, only to the vector actually sent; every
+  25th push sends full state as reconciliation (the KV get→put race is non-atomic, and
+  full-state pushes are what make a lost race self-healing). Header-less pushes get
+  full-state replies, so older clients keep working; `POST /new` and `GET /r/:code`
+  stay full-state (fresh devices need everything).
 - **Backend** lives in `sync-worker/` (Hono + KV Cloudflare Worker, deployed to
   `agentic-study-sync.selmeci.workers.dev`). KV stores the encoded Y.Doc per code; the Worker
   merges pushes server-side with `Y.applyUpdate` (`POST /new`, `GET`/`POST /r/:code`, binary

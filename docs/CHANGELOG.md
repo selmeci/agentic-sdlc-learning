@@ -7,6 +7,26 @@ in-app version-history modal (top-bar button). Dates are when the work was done 
 
 **NEW MODULE M9 — Playbook: from theory to practice. First runbook PB1 Assess.** The practice layer lands inside the workbook: five `pb-` topics ordered by the engagement journey (Assess → Bootstrap → Harness → Handoff → Pilot), built for the internal team to carry the methodology to a brownfield client. PB1 ships complete — a runbook companion in both copies (`PB1-assess-runbook.html` + overlay) with nine checklist steps across five phases (verification base & delivery baseline, information architecture, governance minimum, team readiness, evaluation), each step carrying the action, the theory link that justifies it, and a DONE criterion; plus two copy-paste templates (readiness questionnaire with four non-compensable [GATE] criteria, assessment-report skeleton with a delivery-baseline section), the score→L1–L5 recommendation table and the F0 go/no-go with STOP criteria (the scoring model is our synthesis, flagged). The delivery baseline (DORA keys + cost per merged PR) is captured at assess time — a pilot without it can be neither proven nor disproven. NEW interaction layer: runbook checkboxes persist through the existing store (`agentic-study-v1`, new `pb` field, mirrored into cross-device sync), with a per-runbook progress chip and copy buttons; the standalone copy is deliberately non-persistent. PB2–PB5 are visible as in-preparation topics (one runbook per future version; PB3's templates will be the harness starter kit — runnable hook/permission/CI configs, not prose). Validator extended: `pb-` prefix recognised, checklist step ids checked for uniqueness (they are frozen progress keys, like topic ids).
 
+**SYNC — delta sync over the existing Yjs/HTTP layer.** Pushes and pulls now carry Yjs
+*diffs* against the server's last known state vector instead of the full encoded
+document on every change (previously a "section read" uploaded the whole state, and the
+payload grew monotonically with edit history).
+
+- The client persists `ssv` (the server's last known state vector) in
+  `agentic-study-sync-v1`; the push body is `Y.encodeStateAsUpdate(ydoc, ssv)` with the
+  current vector in an `X-State-Vector` header, and the Worker replies with only the
+  diff the client lacks. `ssv` advances only after a successful push and only to the
+  vector actually sent — pulls never advance it — so offline and mid-flight edits
+  always reach the server.
+- New pull endpoint `POST /r/:code/sync` (client state vector → missing diff);
+  `POST /r/:code` accepts the optional header and falls back to full-state replies
+  without it (older clients unaffected); `POST /new` + `GET /r/:code` unchanged.
+- Every 25th push (and any push while `ssv` is null) sends full state: the periodic
+  reconciliation that restores the self-healing property against the non-atomic KV
+  get→put race, which full-state pushes used to provide implicitly.
+- Server storage unchanged (one compacted snapshot per code in KV); Worker redeployed.
+  Spec: `docs/superpowers/specs/2026-07-18-delta-sync-design.md`.
+
 ## v1.47 · 2026-07-18
 
 **NEW DEEP DIVE D2 — Design tokens as the visual contract (DTCG).** Second M6 companion

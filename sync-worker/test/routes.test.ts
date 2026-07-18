@@ -72,3 +72,123 @@ describe("routes", () => {
     expect(res.headers.get("access-control-allow-origin")).toBe("*");
   });
 });
+
+function b64(u: Uint8Array): string {
+  let s = "";
+  for (let i = 0; i < u.length; i++) s += String.fromCharCode(u[i]);
+  return btoa(s);
+}
+function diffOmits(reply: Uint8Array, known: Uint8Array): boolean {
+  const replyClients = new Set(Y.decodeStateVector(Y.encodeStateVectorFromUpdate(reply)).keys());
+  for (const id of Y.decodeStateVector(Y.encodeStateVectorFromUpdate(known)).keys()) {
+    if (replyClients.has(id)) return false;
+  }
+  return true;
+}
+
+describe("delta wire format", () => {
+  it("push with X-State-Vector replies only the missing diff", async () => {
+    const env = makeEnv();
+    const updA = update((d) => d.getMap("progress").set("a", "studying"));
+    const created = await app.request("/new", { method: "POST", body: updA }, env);
+    const code = created.headers.get("X-Sync-Code")!;
+    // another device pushes b
+    await app.request("/r/" + code, { method: "POST", body: update((d) => d.getMap("progress").set("b", "done")) }, env);
+    // our device knows only a; it pushes with its state vector
+    const client = new Y.Doc();
+    Y.applyUpdate(client, updA);
+    const res = await app.request("/r/" + code, {
+      method: "POST",
+      headers: { "X-State-Vector": b64(Y.encodeStateVector(client)) },
+      body: new Uint8Array(0),
+    }, env);
+    expect(res.status).toBe(200);
+    const reply = new Uint8Array(await res.arrayBuffer());
+    expect(diffOmits(reply, updA)).toBe(true);
+    Y.applyUpdate(client, reply);
+    expect(client.getMap("progress").toJSON()).toEqual({ a: "studying", b: "done" });
+  });
+
+  it("push without the header keeps returning full state (old clients)", async () => {
+    const env = makeEnv();
+    const updA = update((d) => d.getMap("progress").set("a", "studying"));
+    const created = await app.request("/new", { method: "POST", body: updA }, env);
+    const code = created.headers.get("X-Sync-Code")!;
+    await app.request("/r/" + code, { method: "POST", body: update((d) => d.getMap("progress").set("b", "done")) }, env);
+    const res = await app.request("/r/" + code, { method: "POST", body: new Uint8Array(0) }, env);
+    const client = new Y.Doc();
+    Y.applyUpdate(client, new Uint8Array(await res.arrayBuffer()));
+    expect(client.getMap("progress").toJSON()).toEqual({ a: "studying", b: "done" });
+  });
+
+  it("push with a garbage header falls back to full state", async () => {
+    const env = makeEnv();
+    const created = await app.request("/new", { method: "POST", body: update((d) => d.getMap("progress").set("a", "done")) }, env);
+    const code = created.headers.get("X-Sync-Code")!;
+    for (const bad of ["!!!not-base64!!!", b64(new Uint8Array([1, 2, 3]))]) {
+      const res = await app.request("/r/" + code, {
+        method: "POST",
+        headers: { "X-State-Vector": bad },
+        body: new Uint8Array(0),
+      }, env);
+      expect(res.status).toBe(200);
+      expect(progressOf(await res.arrayBuffer())).toEqual({ a: "done" });
+    }
+  });
+
+  it("stores the full merged state when a pusher sends X-State-Vector", async () => {
+    const env = makeEnv();
+    const updA = update((d) => d.getMap("progress").set("a", "studying"));
+    const created = await app.request("/new", { method: "POST", body: updA }, env);
+    const code = created.headers.get("X-Sync-Code")!;
+    // another device that already knows A pushes update B with its state vector
+    const pusher = new Y.Doc();
+    Y.applyUpdate(pusher, updA);
+    const updB = update((d) => d.getMap("progress").set("b", "done"));
+    const pushRes = await app.request("/r/" + code, {
+      method: "POST",
+      headers: { "X-State-Vector": b64(Y.encodeStateVector(pusher)) },
+      body: updB,
+    }, env);
+    expect(pushRes.status).toBe(200);
+    // a fresh device pulls with an empty state vector and must receive the full merged state
+    const res = await app.request("/r/" + code + "/sync", { method: "POST", body: new Uint8Array(0) }, env);
+    expect(res.status).toBe(200);
+    expect(progressOf(await res.arrayBuffer())).toEqual({ a: "studying", b: "done" });
+  });
+
+  it("POST /r/:code/sync returns the diff the requester is missing", async () => {
+    const env = makeEnv();
+    const updA = update((d) => d.getMap("progress").set("a", "studying"));
+    const created = await app.request("/new", { method: "POST", body: updA }, env);
+    const code = created.headers.get("X-Sync-Code")!;
+    await app.request("/r/" + code, { method: "POST", body: update((d) => d.getMap("progress").set("b", "done")) }, env);
+    const client = new Y.Doc();
+    Y.applyUpdate(client, updA);
+    const res = await app.request("/r/" + code + "/sync", { method: "POST", body: Y.encodeStateVector(client) }, env);
+    expect(res.status).toBe(200);
+    const reply = new Uint8Array(await res.arrayBuffer());
+    expect(diffOmits(reply, updA)).toBe(true);
+    Y.applyUpdate(client, reply);
+    expect(client.getMap("progress").toJSON()).toEqual({ a: "studying", b: "done" });
+  });
+
+  it("POST /r/:code/sync 404s for an unknown code", async () => {
+    const env = makeEnv();
+    const res = await app.request("/r/zzzz/sync", { method: "POST", body: new Uint8Array(0) }, env);
+    expect(res.status).toBe(404);
+  });
+
+  it("preflight allows the X-State-Vector header", async () => {
+    const env = makeEnv();
+    const res = await app.request("/r/ab12", {
+      method: "OPTIONS",
+      headers: {
+        Origin: "https://example.com",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "x-state-vector",
+      },
+    }, env);
+    expect(res.headers.get("access-control-allow-headers") || "").toContain("X-State-Vector");
+  });
+});

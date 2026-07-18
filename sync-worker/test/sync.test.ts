@@ -44,3 +44,38 @@ describe("mergeUpdate", () => {
     expect(progressOf(mergeUpdate(new Uint8Array(0), a))).toEqual({ "eng-1": "studying" });
   });
 });
+
+describe("mergeUpdate with replySV", () => {
+  it("returns only the diff the requester is missing", () => {
+    const a = update((d) => d.getMap("progress").set("a", "studying"));
+    const b = update((d) => d.getMap("progress").set("b", "done"));
+    const requester = new Y.Doc();
+    Y.applyUpdate(requester, a);
+    const stored = mergeUpdate(mergeUpdate(null, a), b);
+    const full = mergeUpdate(stored, new Uint8Array(0));
+    const diff = mergeUpdate(stored, new Uint8Array(0), Y.encodeStateVector(requester));
+    expect(diff.byteLength).toBeLessThan(full.byteLength);
+    // the diff carries only structs the requester lacked (b's client, not a's)
+    const diffClients = new Set(Y.decodeStateVector(Y.encodeStateVectorFromUpdate(diff)).keys());
+    for (const id of Y.decodeStateVector(Y.encodeStateVectorFromUpdate(a)).keys()) {
+      expect(diffClients.has(id)).toBe(false);
+    }
+    Y.applyUpdate(requester, diff);
+    expect(requester.getMap("progress").toJSON()).toEqual({ a: "studying", b: "done" });
+  });
+
+  it("returns a valid empty diff when the requester is converged", () => {
+    const a = update((d) => d.getMap("progress").set("a", "done"));
+    const requester = new Y.Doc();
+    Y.applyUpdate(requester, a);
+    const diff = mergeUpdate(a, new Uint8Array(0), Y.encodeStateVector(requester));
+    Y.applyUpdate(requester, diff); // must not throw
+    expect(requester.getMap("progress").toJSON()).toEqual({ a: "done" });
+  });
+
+  it("treats an empty replySV as absent (full re-encode)", () => {
+    const a = update((d) => d.getMap("progress").set("a", "done"));
+    expect(mergeUpdate(a, new Uint8Array(0), new Uint8Array(0)))
+      .toEqual(mergeUpdate(a, new Uint8Array(0)));
+  });
+});
