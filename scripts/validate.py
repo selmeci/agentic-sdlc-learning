@@ -12,6 +12,7 @@ Checks:
     - every <svg> is well-formed XML
     - every #<token>-deepdive anchor appears exactly twice (Go-deeper link + JS handler)
     - the topic count is reported (expected 52 unless topics were intentionally added)
+    - playbook checklist step ids (data-step) are unique (frozen progress keys)
   deep-dives/*.html
     - HTML balances, every <svg> well-formed, TOC #sN anchors all resolve to an id
   all files
@@ -117,7 +118,7 @@ def check_workbook():
              else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected {exp} total, 1 handler)")
 
     # topic count
-    ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec)-[a-z0-9-]*)"', s)
+    ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb)-[a-z0-9-]*)"', s)
     dups = {i for i in ids if ids.count(i) > 1}
     note(len(set(ids)) == len(ids), f"topic ids unique ({len(ids)} topics)"
          if not dups else f"DUPLICATE topic ids: {dups}")
@@ -128,12 +129,19 @@ def check_workbook():
     cmap = os.path.join(ROOT, "docs", "CONTENT-MAP.md")
     if os.path.exists(cmap):
         doc = open(cmap, encoding="utf-8").read()
-        doc_ids = set(re.findall(r"`((?:eng|prod|hand|ia|brown|traj|des|sec)-[a-z0-9-]+)`", doc))
+        doc_ids = set(re.findall(r"`((?:eng|prod|hand|ia|brown|traj|des|sec|pb)-[a-z0-9-]+)`", doc))
         wb_ids = set(ids)
         extra, missing = sorted(doc_ids - wb_ids), sorted(wb_ids - doc_ids)
         note(not extra and not missing, "CONTENT-MAP.md topic ids match the workbook"
              if not extra and not missing
              else f"CONTENT-MAP.md id drift: not-in-workbook={extra}, undocumented={missing}")
+
+    # playbook checklist step ids are frozen progress keys - duplicates would
+    # silently merge two steps' saved state
+    steps = re.findall(r'data-step="([\w-]+)"', s)
+    dup_steps = sorted({x for x in steps if steps.count(x) > 1})
+    note(not dup_steps, f"playbook step ids unique ({len(steps)} step(s))"
+         if not dup_steps else f"DUPLICATE playbook step ids: {dup_steps}")
 
 def check_deepdives():
     print("deep-dives/")
