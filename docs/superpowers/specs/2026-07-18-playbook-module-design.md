@@ -37,6 +37,9 @@ New topic ID prefix **`pb-`** — stable forever, same golden rule as all other 
 | ID | Topic | First release (v1.47) |
 |---|---|---|
 | `pb-assess` | PB1 Assess — client maturity, entry gate to F0 | **full runbook + overlay** |
+
+*(Release number note: written as v1.47 below at spec time; the parallel session shipped
+D2 as v1.47 the same day, so this increment releases as **v1.48**.)*
 | `pb-bootstrap` | PB2 Bootstrap — verification base (B1–B3) | visible, "in preparation" |
 | `pb-harness` | PB3 Harness — CLAUDE.md, hooks, CI (E1–E5) | visible, "in preparation" |
 | `pb-handoff` | PB4 Handoff — contract, EARS/Gherkin (H1–H4) | visible, "in preparation" |
