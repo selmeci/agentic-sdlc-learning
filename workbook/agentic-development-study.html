@@ -5830,12 +5830,12 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
       <button class="x" type="button" data-pb1close>✕ close</button></div>
     <div class="body">
 <h2><span class="n">0</span>Why this runbook exists</h2>
-<p class="lead">PB1 is the entry point of every engagement: you assess the surrounding system before building anything on it, because AI amplifies that system rather than fixing it. The evidence is independent and directional — DORA 2024 associates +25 percentage points of AI adoption with −7.2% delivery stability, and a METR randomised controlled trial found experienced developers were 19% slower while believing they were about 20% faster. PB1 exists to replace optimism with measured facts before the F0 gate.</p>
+<p class="lead">PB1 is the entry point of every engagement: you assess the surrounding system before building anything on it, because AI amplifies that system rather than fixing it. The evidence is independent and directional — DORA 2024 associates a 25% increase in AI adoption with −7.2% delivery stability, and a METR randomised controlled trial found experienced developers were 19% slower while believing they were about 20% faster. PB1 exists to replace optimism with measured facts before the F0 gate.</p>
 <div class="callout amber"><div class="t">What this is not</div><p>This is not an audit produced for the client's benefit alone. The output decides <em>our</em> entry decision at the F0 gate — whether we proceed, what preconditions we attach, and where the first real risk lives.</p></div>
 <p>The theory behind the checklist lives in the workbook topics this runbook distils — especially <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a> for the delivery baseline and the review-capacity argument, and <a href="&#35;b1-deepdive">B1 Safe ordering</a> for why verification must come before delegation.</p>
 
 <h2><span class="n">1</span>How to run it</h2>
-<p>Run PB1 with one person, 2–4 focused days, read access to the repository and CI, plus one team interview. Every step below is written as ČO (the action), PREČO (the theory link), and DONE (the exit criterion). Check steps off as you go; the progress chip updates automatically.</p>
+<p>Run PB1 with one person, 2–4 focused days, read access to the repository, CI, deploy logs and the incident system, one team interview, and a client sponsor empowered to sign the F0 decision. Every step below is written as ČO (the action), PREČO (the theory link), and DONE (the exit criterion). Check steps off as you go; the progress chip updates automatically.</p>
 <p><span class="pbprog" data-pbprog="pb-assess"></span></p>
 <p class="pbnote">Progress is saved locally in this workbook (same store as topic progress). The standalone copy of this runbook does not persist checkbox state.</p>
 <figure>
@@ -5862,8 +5862,8 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   <input type="checkbox" class="pbck" id="pb1-s1" data-pb="pb-assess" data-step="pb1-s1">
   <div class="pbtxt">
     <label class="pbwhat" for="pb1-s1">A1 · Baseline the test suite</label>
-    <p class="pbwhy">Run the full suite three times from a clean checkout. Record: one-command invocation, wall-clock runtime, pass rate, and the list of flaky tests. Why: the suite is the external truth the whole loop stands on — without a trusted, fast signal there is nothing for an agent to converge on (<a href="&#35;e4-deepdive">E4 Verification-first</a>, <a href="&#35;b1-deepdive">B1 Safe ordering</a>).</p>
-    <div class="pbdone">DONE = runtime, pass rate and flaky list recorded in report §2; the suite runs headless with a single documented command.</div>
+    <p class="pbwhy">Run the full suite three times from a clean checkout. Record: one-command invocation, wall-clock runtime, pass rate, whether it finishes under ~15 min, and the list of flaky tests. Why: the suite is the external truth the whole loop stands on — without a trusted, fast signal there is nothing for an agent to converge on (<a href="&#35;e4-deepdive">E4 Verification-first</a>, <a href="&#35;b1-deepdive">B1 Safe ordering</a>).</p>
+    <div class="pbdone">DONE = runtime, pass rate, under-15-min status and flaky list recorded in report §2; headless one-command status recorded as a fact (feeds questionnaire A2).</div>
   </div>
 </div>
 
@@ -5872,7 +5872,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   <div class="pbtxt">
     <label class="pbwhat" for="pb1-s2">A2 · Verify CI emits agent-readable signal</label>
     <p class="pbwhy">Insert a deliberately broken test and let CI run. Confirm the failure is machine-readable: a non-zero exit code and a parseable log or status payload. Why: an agent that cannot read CI cannot self-correct; a red/green dot is not enough (<a href="&#35;e4-deepdive">E4 Verification-first</a>, <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a>).</p>
-    <div class="pbdone">DONE = broken-test experiment run; failure artifact linked in report §2.</div>
+    <div class="pbdone">DONE = broken-test experiment run; failure artifact linked in report §2; whether the red build blocks merge recorded (feeds questionnaire A3).</div>
   </div>
 </div>
 
@@ -5880,7 +5880,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   <input type="checkbox" class="pbck" id="pb1-s3" data-pb="pb-assess" data-step="pb1-s3">
   <div class="pbtxt">
     <label class="pbwhat" for="pb1-s3">A3 · Capture the delivery baseline</label>
-    <p class="pbwhy">Compute the DORA four keys retroactively from git and CI history, add cost per merged PR, agree the before/after window with the client, and confirm access to git history, deploy logs, and the incident system. The baseline is captured now, at assess time — a pilot without it can be neither proven nor disproven (the METR perception gap), so it cannot wait for PB5 (<a href="&#35;e7-deepdive">E7 day-0 DORA checklist</a>).</p>
+    <p class="pbwhy">Compute the DORA four keys plus rework rate retroactively from git and CI history, add cost per merged PR (review hours, CI minutes, seat licences — the token column is added by PB5), agree the before/after window with the client, and confirm access to git history, deploy logs, and the incident system. The baseline is captured now, at assess time — a pilot without it can be neither proven nor disproven (the METR perception gap), so it cannot wait for PB5 (<a href="&#35;e7-deepdive">E7 day-0 DORA checklist</a>).</p>
     <div class="pbdone">DONE = baseline numbers recorded in report §3; window + data access confirmed in writing.</div>
   </div>
 </div>
@@ -5902,8 +5902,8 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   <input type="checkbox" class="pbck" id="pb1-s5" data-pb="pb-assess" data-step="pb1-s5">
   <div class="pbtxt">
     <label class="pbwhat" for="pb1-s5">C1 · Verify dev/prod separation and run a secrets scan</label>
-    <p class="pbwhy">Prove production credentials are unreachable from the development environment, then run a secrets scan across the repo history. Why: environment separation and secrets hygiene are hard boundaries, not maturity shades — the Replit production-DB incident showed what happens when they fail. GitGuardian 2026 vendor telemetry reports AI-assisted commits leak secrets at 3.2% versus a 1.5% baseline; treat that as a vendor claim, not independent evidence (<a href="&#35;e5-deepdive">E5 Governance</a>; see also M7).</p>
-    <div class="pbdone">DONE = scan report attached; prod credentials proven unreachable from the dev environment.</div>
+    <p class="pbwhy">Prove production credentials are unreachable from the development environment, then run a secrets scan across the repo history. Why: environment separation and secrets hygiene are hard boundaries, not maturity shades — the Replit production-DB incident (July 2025) showed what happens when they fail. GitGuardian 2026 vendor telemetry reports AI-assisted commits leak secrets at 3.2% versus a 1.5% baseline; treat that as a vendor claim, not independent evidence (<a href="&#35;e5-deepdive">E5 Governance</a>, <a href="&#35;b6-deepdive">B6 Roadmap F0–F3</a>; see also module M7 Security).</p>
+    <div class="pbdone">DONE = reachability tested and result recorded; scan report attached; if prod credentials are reachable → questionnaire C1 scored 0 and logged as an F0 precondition.</div>
   </div>
 </div>
 
@@ -5911,10 +5911,22 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   <input type="checkbox" class="pbck" id="pb1-s6" data-pb="pb-assess" data-step="pb1-s6">
   <div class="pbtxt">
     <label class="pbwhat" for="pb1-s6">C2 · Map write permissions</label>
-    <p class="pbwhy">Document branch protection, CODEOWNERS, who and what can merge, and where an agent's write access would stop today. Why: delegation without a permission boundary is just automation of mistakes; the write-permission matrix is the deterministic half of governance (<a href="&#35;i2-deepdive">I2 Lifecycle &amp; write permissions</a>, <a href="&#35;e5-deepdive">E5 Governance</a>).</p>
-    <div class="pbdone">DONE = draft write-permission matrix in report §5.</div>
+    <p class="pbwhy">Document branch protection, CODEOWNERS, who and what can merge, and where an agent's write access would stop today. Why: delegation without a permission boundary is just automation of mistakes; the write-permission matrix is the deterministic half of governance and the RBAC/least-privilege check (<a href="&#35;i2-deepdive">I2 Lifecycle &amp; write permissions</a>, <a href="&#35;e5-deepdive">E5 Governance</a>).</p>
+    <div class="pbdone">DONE = draft write-permission matrix in report §5 (skeleton below).</div>
   </div>
 </div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-matrix">copy</button><pre id="pb1-tpl-matrix">
+# Write-permission matrix — draft
+Who / what        | Push to default | Merge PR | Release | Prod access
+------------------|-----------------|----------|---------|------------
+Human developer   |                 |          |         |
+CI bot            |                 |          |         |
+Agent (today)     |                 |          |         |
+Agent (proposed)  |                 |          |         |
+
+Rules: default branch protected? ____  CODEOWNERS enforced? ____  Review required? ____
+</pre></div>
 
 <h2><span class="n">5</span>Phase D — Team readiness</h2>
 
@@ -5922,17 +5934,26 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
   <input type="checkbox" class="pbck" id="pb1-s7" data-pb="pb-assess" data-step="pb1-s7">
   <div class="pbtxt">
     <label class="pbwhat" for="pb1-s7">D1 · Name the editor/curator and measure review capacity</label>
-    <p class="pbwhy">Identify who will curate agent config and review agent PRs, and secure a concrete weekly review budget in hours. Why: agent output scales faster than review; E7's review-bottleneck data shows +98% PR volume and +91% review time when assistive tools land without capacity planning (<a href="&#35;p4-deepdive">P4 The PM role</a>, <a href="&#35;h4-deepdive">H4 Return-channel anti-patterns</a>, <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a>).</p>
-    <div class="pbdone">DONE = named owner(s) + weekly review budget recorded in report §6.</div>
+    <p class="pbwhy">Identify who will curate agent config and review agent PRs, and secure a concrete weekly review budget in hours. Why: agent output scales faster than review; Faros AI vendor telemetry shows +98% PR volume and +91% review time when assistive tools land without capacity planning (<a href="&#35;p4-deepdive">P4 The PM role</a>, <a href="&#35;h4-deepdive">H4 Feedback-loop anti-patterns</a>, <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a>).</p>
+    <div class="pbdone">DONE = named owner(s) + weekly review budget recorded in report §6, or absence recorded as questionnaire D2 = 0.</div>
   </div>
 </div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-interview">copy</button><pre id="pb1-tpl-interview">
+# Team interview — guide
+Current PR wait time (hours/days): ____
+Who reviews today & spare hours/week: ____
+Who would own agent config &amp; review agent PRs: ____
+Where do docs for a given feature actually live: ____
+A recent incident story (what happened, how it was found): ____
+</pre></div>
 
 <h2><span class="n">6</span>Phase E — Evaluation &amp; the F0 gate</h2>
 
 <div class="pbstep">
   <input type="checkbox" class="pbck" id="pb1-s8" data-pb="pb-assess" data-step="pb1-s8">
   <div class="pbtxt">
-    <label class="pbwhat" for="pb1-s8">E1 · Score the questionnaire and derive the L1–L5 recommendation</label>
+    <label class="pbwhat" for="pb1-s8">E1 · Score the questionnaire and derive the L1–L3 entry recommendation</label>
     <p class="pbwhy">Fill the 24-point questionnaire below, mark the four [GATE] items, and map the result to the recommendation table. Why: the score is a structured way to surface gaps, not a disguise for gut feel; the thresholds are our synthesis, calibrated against the theory in <a href="&#35;e6-deepdive">E6 Autonomy levels</a>.</p>
     <div class="pbdone">DONE = filled questionnaire archived with the engagement notes; recommended level written into report §7.</div>
   </div>
@@ -5952,8 +5973,10 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
 <div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-quest">copy</button><pre id="pb1-tpl-quest">
 # Agentic-readiness assessment — questionnaire (v1)
 Client: ____________   Assessor: ____________   Date: ____________
-Score each 0 (absent) / 1 (partial) / 2 (solid). Gate criteria marked [GATE] are
-non-compensable: any [GATE] at 0 caps the recommendation at L1 regardless of total.
+Score each 0 (absent) / 1 (partial) / 2 (solid). Score 2 only for what is in place today;
+agreed or planned remediation = 1. Gate criteria marked [GATE] are non-compensable:
+any [GATE] at 0 caps the recommendation at L1 regardless of total. A gate counts as
+passed only at 2; a gate at 1 passes but must appear as a precondition in report §7.
 
 ## A — Verification base
 A1 [GATE] Trusted automated test suite exists and passes ........... 0 1 2
@@ -5986,12 +6009,13 @@ Client / system: ____________     Date: ____________     Assessor: ____________
 Recommendation: L__ entry, F0 scope: ____________. Go / No-go / Go with preconditions.
 
 ## 2 Verification base (steps A1–A2)
-Suite runtime: ____  Pass rate: ____  Flaky tests: ____
+Suite command: ____  Runtime: ____  Pass rate: ____  Flaky tests: ____
+Under 15 min: ____  Headless one-command: ____  Merge blocked on red: ____
 CI signal experiment result: ____________
 
 ## 3 Delivery baseline (step A3)
-Deploy frequency: ____  Lead time: ____  Change-fail rate: ____  Recovery time: ____
-Cost per merged PR (tokens/seats): ____
+Deploy frequency: ____  Lead time: ____  Change-fail rate: ____  Recovery time: ____  Rework rate: ____
+Cost per merged PR (review hours / CI minutes / seats): ____
 Before/after window agreed: ____________  Data access confirmed (git / CI / incidents): ____
 
 ## 4 Information architecture (step B1)
@@ -6007,6 +6031,7 @@ Editor/curator: ____________   Review budget: ____ h/week
 
 ## 7 Score &amp; recommendation (steps E1–E2)
 Total ____ / 24 · Gates ____ / 4 → recommended level L__ (rationale: ...)
+Decision signatories: ____________
 Preconditions before F1: ____________
 
 ## 8 STOP criteria agreed for F0
@@ -6017,15 +6042,17 @@ unreviewed-merge incident — list the concrete triggers + who pulls the cord)
 <p>The mapping below is our synthesis, not an industry standard. It converts the questionnaire into an entry recommendation; the non-compensable gate criteria are what make it conservative.</p>
 <div class="figscroll"><table class="map"><tr><th>Score</th><th>Gates</th><th>Recommendation</th></tr>
 <tr><td>&lt; 10</td><td>any</td><td>L1 only; engagement starts by fixing the base (PB2 becomes the deliverable, not a prerequisite)</td></tr>
-<tr><td>10–16</td><td>4/4</td><td>L2 entry; F0 read-only archaeology can start (B4)</td></tr>
+<tr><td>10–16</td><td>4/4</td><td>L2 entry; F0 read-only archaeology can start (<a href="&#35;b4-deepdive">B4</a>)</td></tr>
 <tr><td>≥ 17</td><td>4/4</td><td>L3 pilot candidate; proceed to PB2 with the F0→F1 exit criteria from B6</td></tr>
 <tr><td>any</td><td>&lt; 4/4</td><td>no L2+ autonomy until the failed gate is fixed — non-compensable</td></tr>
 </table></div>
+<p>The table tops out at L3 deliberately — L4 is a per-slice decision for narrow deterministic tasks and L5 is not achieved (E6); a high score buys a pilot, not a higher ceiling.</p>
 <p>STOP criteria for F0 are taken from <a href="&#35;b6-deepdive">B6</a> and adapted to the client's context. Typical triggers include a delivery-stability drop beyond the agreed threshold, a secrets leak or production credential reachable from dev, and any unreviewed merge. Each trigger names who pulls the cord and how.</p>
 
 <h2><span class="n">7</span>Exit gate &amp; takeaways</h2>
 <div class="callout pine"><div class="t">Exit criteria</div><p>Report delivered; delivery baseline recorded (report §3 is the pilot's "before" snapshot — PB5 compares against it); go/no-go recorded; if GO → proceed to PB2 with the report's §2 numbers as the bootstrap baseline.</p></div>
 <div class="callout"><div class="t">Three sentences to remember PB1 by</div><p>Assess before build, because AI amplifies the system it lands on — good or bad. The delivery baseline and the four non-compensable gates are the guardrails that keep the assessment honest; a high average with one gate failed is exactly the false-confidence case PB1 exists to catch. The F0 decision is an action, not a report: go, no-go, or go-with-preconditions, each with a named owner and STOP criteria.</p></div>
+<p>Sources and caveats for the empirical claims: DORA 2024/2025 reports (dora.dev) — note the 2025 update partially reverses the throughput finding while instability stays elevated; METR RCT (arXiv:2507.09089) and the 2026 follow-up (metr.org) — the follow-up weakens the slowdown estimate but the perception-gap lesson stands; GitGuardian State of Secrets Sprawl 2026 — vendor telemetry, not independent evidence; Replit incident — July 2025.</p>
 <p class="closingnote">This runbook is also available as a standalone file (PB1-assess-runbook.html). Its natural neighbours in the workbook are <a href="&#35;e6-deepdive">E6 Autonomy levels</a>, <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a>, <a href="&#35;b1-deepdive">B1 Safe ordering</a>, and <a href="&#35;b6-deepdive">B6 Roadmap F0–F3</a>. The scoring model and gate criteria are this workbook's synthesis; every point-in-time fact in the report should be marked for re-verification before the next gate.</p>
     </div>
   </div>
