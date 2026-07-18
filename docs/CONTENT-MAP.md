@@ -1,7 +1,7 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.48):
-9 modules, 60 topics, 6 research reports, 2 inline map sections, 37 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.51):
+9 modules, 60 topics, 6 research reports, 2 inline map sections, 38 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -76,7 +76,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 |---|---|---|
 | D1 Design system as the third handoff artifact | `des-artifact` | ✅ embedded + standalone |
 | D2 Design tokens as the visual contract (DTCG) | `des-tokens` | |
-| D3 How agents consume design context | `des-consumption` | |
+| D3 How agents consume design context | `des-consumption` | ✅ embedded + standalone |
 | D4 Governance & SSOT in the design world | `des-governance` | |
 | D5 The design harness: verification loops & guardrails | `des-harness` | |
 | D6 D1–D5 scale & the designer as curator | `des-scale` | |
@@ -124,7 +124,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (35)
+## Deep-dive companions (38)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
@@ -139,8 +139,8 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `I5-progressive-disclosure` · `I6-retrieval` · `I7-linking-product-engineering` ·
 `B1-bootstrap-paradox` · `B2-characterization-golden-master` · `B3-mutation-testing-gate` ·
 `B4-agent-archaeology` · `B5-strangler-heatmap` · `B6-roadmap-f0-f3` ·
-`D2-design-tokens-dtcg` · `PB1-assess-runbook`
+`D2-design-tokens-dtcg` · `D3-how-agents-consume-design-context` · `PB1-assess-runbook`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
-`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive` (each appears
+`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#d3-deepdive` (each appears
 exactly twice: the "Go deeper" link + the JS open handler).

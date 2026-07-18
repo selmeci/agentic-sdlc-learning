@@ -3,6 +3,26 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.51 · 2026-07-18
+
+**NEW DEEP DIVE D3 — How agents consume design context.** Third M6 companion
+(`deep-dives/D3-how-agents-consume-design-context-deepdive.html` + in-workbook overlay).
+The four channels that carry design context into the context window, in ascending
+fidelity: the screenshot ceiling measured (Design2Code, NAACL 2025 — 49% interchangeable
+/ 64% preferred for GPT-4V with self-revision, caveats attached), Figma MCP post-GA
+(read GA since Oct 2025; seat gating, the 351,378-token context bill, scoped-fetch
+mitigations), Code Connect as the identity layer that kills hallucinated components
+(template files recommended, `figma.connect()` legacy; Org/Enterprise gating; partial
+coverage degrading silently), and Storybook MCP with the self-healing
+consume–generate–verify loop (10.3+, React-only docs in Preview; the 12.8% / 2.76× /
+−27% figures labeled vendor claims — and 12.8% is improved code usage, never acceptance
+rate). The FigmaBench metadata trap (Dec 2025 preprint) bounds the structured-is-better
+claim; the vibe-tool defaults (v0 Design Systems 2.0, Lovable design-system.json, Bolt
+in-tool Storybook — all paid-tier gated); the §7 channel ladder (repo always, metadata
+scoped, identity where it pays, verification in the loop, screenshots as supplement)
+with its security surface (CVE-2025-53967, hidden-layer injection); and the evidence
+file with its do-not-cite list. Topic `des-consumption` src now opens the overlay first.
+
 ## v1.50 · 2026-07-18
 
 **NEW RUNBOOK PB2 — Bootstrap: build the verification base.** Second M9 runbook, in both copies (`PB2-bootstrap-runbook.html` + overlay): twelve checklist steps across four phases (read-only module comprehension, characterization safety net, mutation audit, minimal CI & the F0→F2 exit gate), distilling B1 safe ordering, B2 characterization/golden master and B3 mutation gate into executable practice. Handles both PB1 exit postures — GO (≥17, 4/4 gates: bootstrap the pilot from PB1's shortlist with the report §2 numbers as baseline) and score <10 (PB2 *is* the engagement deliverable). Six copy templates: the "document, don't fix" generation prompt with the SUSPECTED-BUG convention, the TestGen-LLM three-gate CI filter, a shared ADR skeleton (kept pins per Hyrum's Law + the mutation-gate decision), read-only enforcement (CODEOWNERS + harness deny rule — enforcement, not a prompt request), a diff-scoped Mode 1 mutation job, and the module bootstrap report. Evidence framing kept honest throughout: the ~70% mutation threshold is our working heuristic recorded in an ADR, never an industry standard; the toolbox table is explicitly point-in-time (mid-2026, re-verify before a client meeting); wrong-orderings (WO1–WO4) and never-do gate failure modes embedded as callouts. Exit: GO opens PB3 write scope for the module; NO-GO keeps it at F1 with mutation survivors as the agent's next task list.

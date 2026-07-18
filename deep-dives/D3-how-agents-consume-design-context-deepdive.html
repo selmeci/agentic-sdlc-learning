@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D3 Deep Dive — How Agents Consume Design Context</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edD3a{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD3a)}
+svg .edD3b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD3b)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">D3 · DEEP DIVE</span>
+    <h1>How Agents Consume Design Context</h1>
+    <span class="bc">companion to module M6 · Design harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · The screenshot ceiling</a>
+  <a href="#s2"><b>2</b> · The Figma MCP server</a>
+  <a href="#s3"><b>3</b> · Code Connect</a>
+  <a href="#s4"><b>4</b> · Storybook MCP</a>
+  <a href="#s5"><b>5</b> · The metadata trap</a>
+  <a href="#s6"><b>6</b> · The vibe-tool default</a>
+  <a href="#s7"><b>7</b> · Choosing channels</a>
+  <a href="#s8"><b>8</b> · Evidence &amp; do-not-cite</a>
+  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M6</p>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">D1 argued that the design system is the third handoff artifact; D2 made its most machine-checkable layer — tokens — into a literal contract. Both quietly assumed the agent can actually <em>read</em> the artifact. This chapter is about that assumption: <strong>the channel through which design context reaches the model's context window bounds the quality of what comes back</strong>, and the bound is usually tighter than the model's own capability. A frontier model fed a flattened screenshot will re-implement your button from pixels; a weaker model fed the button's name, import path and props will reuse it. That asymmetry is why "consumption" deserves its own chapter: it is where E2's context engineering meets the design layer, and it decides whether the token contract of D2 is enforced by the generator itself or left for the D5 gate to clean up after.</p>
+      <p>Four channels exist in mid-2026 practice, in ascending order of what they carry: the <strong>screenshot</strong> (pixels, nothing else), <strong>tool metadata over MCP</strong> (names, variables, generated code), the <strong>identity mapping</strong> (Code Connect: this Figma component <em>is</em> that code component), and the <strong>repository itself</strong> — component source, token JSON, DESIGN.md — which the agent reads like any other code. The chapter walks each channel with its evidence, then turns to two findings the swarm of hype tends to omit: structured context is not free (the context bill is real and measurable) and it is not automatically better (naively consumed metadata actively degrades output). Every tool fact is point-in-time, July 2026; this is the fastest-moving surface in module M6.</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>what the screenshot ceiling actually is, measured (§1)</li><li>the Figma MCP server as it really stands post-GA — tools, seats, and its context bill (§2)</li><li>Code Connect as the anti-hallucination mechanism, with its gating and limits (§3)</li><li>Storybook MCP and the self-healing loop — plus the honest label on its benchmark numbers (§4)</li><li>the metadata trap: why more structured context can make output worse (§5)</li><li>what v0, Lovable and Bolt do with your design system by default (§6)</li><li>a channel ladder, the security surface, and the pipeline practitioners converge on (§7)</li><li>the evidence file with its do-not-cite list (§8)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>D1 — the third-artifact thesis these channels serve</li><li>D2 — the token contract that is channel #4's core payload</li><li>D4 — why the repo is the SSOT the safest channels read from</li><li>D5 — the verification loop that catches what consumption missed</li><li>D7 — the brownfield rollout and the MCP injection surface, in full</li><li>E2 — context engineering and rot: §5 is its design-layer case study</li><li>S4 — MCP as the richest attack surface; §7 applies it to design tools</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>The screenshot ceiling</h2>
+      <p>The default channel is still the screenshot: paste a PNG, get markup. What pixels cannot carry is everything that makes production UI production UI — the <em>names</em> of things (is this <span class="mono">Button</span> or <span class="mono">ActionButton</span>?), token references instead of raw values (<span class="mono">color.action.primary</span>, not <span class="mono">#2A4AD0</span>), props and their types, component states and variants, and the boundary between what exists in the system and what must be built new. An agent working from pixels faces a perverse choice on every element: reuse a component it cannot see, or hallucinate one that looks right. It usually hallucinates — and the output <em>looks</em> correct while being structurally wrong: hard-coded values, duplicated components, no tokens. This is the failure mode the whole design-harness module exists to prevent, and no amount of visual fidelity in the input fixes it, because the missing information was never visual.</p>
+      <p>The ceiling has a number, and the number deserves precise citation because it circulates in mangled form. <strong>Design2Code</strong> (Si, Zhang et al., Stanford SALT with Georgia Tech, Microsoft and Google DeepMind; arXiv:2403.03163, published at NAACL 2025) curated 484 real webpages from the C4 validation set — filtered from 127.9k down to 14k algorithmically, then hand-curated, with all images replaced by placeholders — and asked human annotators whether AI-generated reconstructions from screenshots were "similar enough in appearance and content to be deployed interchangeably" with the original. For <strong>GPT-4V with self-revision prompting</strong>, 49% were judged interchangeable; in a separate blind pairwise comparison, annotators actually <em>preferred</em> the AI output to the original 64% of the time. Note the attribution: those headline numbers are GPT-4V's — GPT-4o only entered the paper in v2 and tops the model ranking, not the famous human-eval figures. The automatic metrics locate the weakness precisely: models lag most on <strong>visual-element recall</strong> (Block-Match — missing or hallucinated blocks) and <strong>layout position</strong>, far more than on text or color.</p>
+      <p>Three caveats keep the number honest, and they all point the same direction. First, the benchmark is <em>static by construction</em>: one self-contained HTML file, no JavaScript, no responsive behavior, no states — the authors themselves name dynamic pages as future work, and the follow-ups exist precisely to fill that (Interaction2Code, arXiv:2411.03292, 127 pages and 374 interactions in its final version, finds form/select interactions usable over 80% of the time but iframe/progress under 60%). Second, the input is a flattened screenshot of a <em>stranger's</em> page — the benchmark never tests the thing a design-system engagement cares about: reusing <em>your</em> components, honoring <em>your</em> tokens. Third, the 2024-era models it measured are two generations old, and the paper's harder split — Design2Code-HARD, 80 GitHub Pages cases added in the same paper's v2, where models fail to generate 30–40% of content — shows the ceiling drops fast as pages get real. Read 49% as "coin-flip interchangeability on simple static pages with nothing to reuse" — the floor from which structured channels improve, not a verdict on current models.</p>
+      <figure>
+      <svg viewBox="0 0 1000 430" role="img" aria-label="Four channels carry design context into the agent's context window: screenshot, Figma MCP metadata, Code Connect identity mapping, and the repository itself — annotated with what each channel carries and what it cannot">
+        <defs><marker id="ahD3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">FOUR CHANNELS INTO THE CONTEXT WINDOW · ASCENDING FIDELITY · POINT-IN-TIME JUL 2026</text>
+        <rect x="30" y="56" width="220" height="70" rx="10" class="bxK"/>
+        <text x="48" y="80" class="tt">1 · Screenshot</text>
+        <text x="48" y="98" class="ts">pixels only — no names, tokens,</text>
+        <text x="48" y="112" class="ts">props or states</text>
+        <rect x="30" y="140" width="220" height="70" rx="10" class="bx"/>
+        <text x="48" y="164" class="tt">2 · Figma MCP metadata</text>
+        <text x="48" y="182" class="ts">variables, components, generated</text>
+        <text x="48" y="196" class="ts">code, text, layer names</text>
+        <rect x="30" y="224" width="220" height="70" rx="10" class="bxC"/>
+        <text x="48" y="248" class="tt">3 · Code Connect map</text>
+        <text x="48" y="266" class="ts">identity: this component IS</text>
+        <text x="48" y="280" class="ts">that code — import path + props</text>
+        <rect x="30" y="308" width="220" height="70" rx="10" class="bxG"/>
+        <text x="48" y="332" class="tt">4 · Repository itself</text>
+        <text x="48" y="350" class="ts">component source, tokens.json,</text>
+        <text x="48" y="364" class="ts">DESIGN.md — read as code (D2/D4)</text>
+        <rect x="620" y="150" width="180" height="110" rx="12" class="bxC"/>
+        <text x="640" y="182" class="tt">Context window</text>
+        <text x="640" y="200" class="ts">the scarce resource (E2)</text>
+        <text x="640" y="216" class="ts">every channel bills it (§5)</text>
+        <rect x="850" y="150" width="130" height="110" rx="12" class="bxA"/>
+        <text x="866" y="182" class="tt">Generated UI</text>
+        <text x="866" y="200" class="ts">bounded by the</text>
+        <text x="866" y="214" class="ts">weakest channel</text>
+        <path class="edD3a" d="M254 91 L 610 175" />
+        <path class="edD3a" d="M254 175 L 606 190" />
+        <path class="edD3a" d="M254 259 L 610 220" />
+        <path class="edD3a" d="M254 343 L 610 240" />
+        <path class="edD3a" d="M804 205 L 846 205" />
+        <text x="430" y="120" class="ts" text-anchor="middle">what pixels can't say → hallucinate or re-implement (§1)</text>
+        <text x="430" y="300" class="ts" text-anchor="middle">what identity says → reuse, don't invent (§3)</text>
+        <text x="30" y="412" class="tg">CHANNELS COMPOSE — THE PRACTITIONER DEFAULT IS METADATA-FIRST, SCREENSHOT-SECOND, REPO ALWAYS (§7)</text>
+      </svg>
+      <figcaption>The consumption ladder. Each rung adds the information the rung below cannot express; the cost of the upper rungs is paid in context-window budget (§5) and, for Code Connect, in plan tier and maintenance (§3). Channels compose rather than compete — Figma's own guidance and OpenAI's curated Figma skill both prescribe metadata first, screenshot as visual supplement, small selections only.</figcaption>
+      </figure>
+
+      <h2 id="s2"><span class="n">2</span>The Figma MCP server — metadata as a first-class channel</h2>
+      <p>The structural change of the last year is that design metadata stopped requiring screenshots-plus-API-glue and became a native agent channel. Figma's MCP server — launched as the <em>Dev Mode MCP server</em> beta on 4 June 2025, renamed, and <strong>generally available since Schema, 28 October 2025</strong> — exposes the design file as tools rather than pixels. The read core: <span class="mono">get_design_context</span> (generated code for a selection; default output is a React + Tailwind "pseudo-representation", configurable by prompt), <span class="mono">get_variable_defs</span> (design variables and styles, including the code syntax authors attach to each variable — the D2 contract arriving through the tool), <span class="mono">get_code_connect_map</span> (§3), <span class="mono">get_metadata</span> (an XML tree of the selection's structure) and <span class="mono">get_screenshot</span> (explicitly the <em>supplement</em>, not the payload). Text, SVG, images, layer names and annotations all flow into the context — remember that sentence in §7, because everything that flows in is an injection surface. Tooling moved fast after GA: a remote server at <span class="mono">mcp.figma.com</span> (no desktop app required, the preferred path since September 2025), Make-file code resources, and — still beta, remote-only, usage-priced-to-come — <em>write</em> tools that let an agent modify the canvas, turning a read channel into a two-way trust boundary.</p>
+      <p>Access is a commercial decision, and it shapes engagements. Starter-plan and View/Collab seats are throttled to <strong>six tool calls per month</strong> — a demo, not a workflow; Dev or Full seats get Tier-1 REST-API rate limits. Code Connect (§3) is gated harder: Organization or Enterprise plan with a paid seat. And the client list is curated — only clients in Figma's MCP Catalog can connect to the remote server (Claude Code, Cursor, VS Code, Codex, Gemini CLI among them; a June 2026 regression in the remote server's tool schemas broke OpenAI-compatible validators outright — point-in-time, but a useful reminder that this plumbing is young).</p>
+      <p>The constraint nobody puts in the keynote is the <strong>context bill</strong>. Figma's own troubleshooting docs show a real error: a single <span class="mono">get_design_context</span> call on a large frame returned <strong>351,378 tokens</strong> against Claude Code's default 25,000-token MCP output cap — fourteen times the limit. The documented failure modes are exactly what E2 predicts: agents told to "build this page" enter retry loops re-fetching a payload that can never fit (observed in the wild on the community Framelink server), and tool definitions plus server instructions tax the window before the first user message (a user-measured ~24k tokens in one Claude Code report). The official mitigations read like a context-engineering checklist: select small frames or individual components, never whole pages; on overflow, fetch <span class="mono">get_metadata</span> first and re-fetch only the nodes you need; keep the screenshot as supplement. The community server ecosystem (Framelink's Figma-Context-MCP, which predates the official one) exists largely to slim this payload — its June 2026 "payload diet" releases remove duplicated auto-generated layer titles. §5 shows what happens when you skip the diet and feed the metadata raw.</p>
+
+      <h2 id="s3"><span class="n">3</span>Code Connect — the identity layer that kills hallucinated components</h2>
+      <p>Metadata tells the agent what something looks like; it does not tell the agent what something <em>is</em>. That is the gap Code Connect fills: a published mapping from a Figma component to your actual code component. Once mappings exist, Dev Mode and the MCP server stop emitting autogenerated approximations and return production truth — per selected instance, <span class="mono">get_code_connect_map</span> hands the agent the <span class="mono">componentName</span>, the <span class="mono">source</span> (file path or URL in your repo), a props-resolved example <span class="mono">snippet</span> and its <span class="mono">snippetImports</span>. This kills the two worst consumption failure modes named in §1: the agent cannot hallucinate a component it has been handed by name, and it cannot re-implement a component whose import statement sits in its context. Figma's own framing stays at "boost output quality by reusing your actual components" — the anti-hallucination claim is ours and the community's, and while the <em>mechanism</em> is verifiable, any <em>quantified</em> benefit is vendor claim or worse (§8).</p>
+      <p>The mechanics changed in 2026 and older write-ups are stale. The <span class="mono">figma.connect()</span> parser API — one call per component, per framework — is now the <em>legacy</em> path; the recommended form is <strong>template files</strong> (<span class="mono">.figma.ts</span>), framework-agnostic TypeScript that declares exactly how the snippet should render, published with the <span class="mono">@figma/code-connect</span> CLI (v1.4.9, July 2026) from a <span class="mono">figma.config.json</span> in the repo root. Mapping source lives in your repo next to the components; the published mapping data lives server-side at Figma, keyed to node IDs. First-class integrations cover React (+ Native), HTML/Web Components, SwiftUI and Jetpack Compose; Angular and Vue ride the HTML integration with auto-detection — second-class in the MCP path, with documented cases of the server returning generic React/Tailwind despite published Angular mappings. A Code Connect UI inside Figma (GA at Schema 2025) adds one-to-many mappings — one design component to React, SwiftUI and Compose implementations at once — and Figma now ships an official agent skill that bootstraps template files from a Figma URL, so the agent can write its own identity layer.</p>
+      <p>Three limits decide whether Code Connect is viable on an engagement, and none is technical in the interesting sense. First, <strong>gating</strong>: Organization or Enterprise plan plus a paid Full/Dev seat — the strongest anti-hallucination tool in the stack is unavailable to a startup on Professional. Second, <strong>partial coverage degrades silently</strong>: nested instances render only if the nested component is <em>also</em> connected, and everything else — text, layers, unconnected instances — is omitted from the snippet, so a half-mapped system produces confident, incomplete output. Third, <strong>maintenance is real</strong>: snippets are treated as strings, not executed, so drift between the mapping and the component is invisible until an agent emits stale props; Figma's own docs implicitly concede the per-component authoring cost by recommending scripted generation for icon sets. Budget Code Connect as a maintained artifact (I1 durable, PR-gated) — the moment it rots, channel 3 is worse than channel 2, because the lies arrive with import paths attached.</p>
+
+      <h2 id="s4"><span class="n">4</span>Storybook MCP — from consumption to a self-healing loop</h2>
+      <p>Storybook's entry flips the direction of the channel. The Figma server answers "what should this look like?"; Storybook MCP — the official <span class="mono">@storybook/addon-mcp</span>, experimental since August 2025 and launched as the headline feature of <strong>Storybook 10.3 (April 2026)</strong>, still in Preview at 10.5.2 — also answers "did I build it right?". Its seven tools form three toolsets: <strong>docs</strong> (a Component Manifest backs <span class="mono">list-all-documentation</span> and <span class="mono">get-documentation</span>, which returns the props/TypeScript contract plus the first three stories as usage snippets), <strong>dev</strong> (changed-stories lookup, story-authoring instructions, live story preview embedded in supporting clients) and <strong>test</strong> (<span class="mono">run-story-tests</span> — Vitest-powered component tests plus accessibility violations when addon-a11y is configured, results returned structured). The gating fact for non-React clients: the docs toolset depends on the Component Manifest, which is <strong>React-only</strong> in Preview; dev and test are less framework-bound, but the headline capability is a React capability.</p>
+      <p>The combination is what Storybook calls <strong>self-healing testing</strong>, and it is the design layer's cleanest instance of the E4 loop: the agent reads the manifest (consumption), generates the component, runs story tests (verification), gets structured failures — a missing <span class="mono">htmlFor</span>/<span class="mono">id</span> pair flagged by a11y rules, say — fixes its own code and re-runs to green, escalating only when judgment is needed. An independent walkthrough (LogRocket, July 2026) watched exactly this happen: generated login form, 3 of 5 story tests failing on accessibility, agent fixed the shared input component, 5 of 5 passed. Notice what the loop consumes: not pictures of the design system but its <em>executable contract</em> — props as types, usage as stories, correctness as tests. That is channel 4 (the repo) with a concierge.</p>
+      <figure>
+      <svg viewBox="0 0 1000 340" role="img" aria-label="The self-healing loop: agent reads the component manifest, generates the component, runs story tests, and on failure fixes its own output and re-runs until green, escalating to the human gate only on judgment calls">
+        <defs><marker id="ahD3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">SELF-HEALING LOOP · STORYBOOK MCP (10.3+, REACT, PREVIEW) · THE E4 PATTERN ON THE DESIGN LAYER</text>
+        <rect x="40" y="70" width="190" height="84" rx="12" class="bxC"/>
+        <text x="58" y="98" class="tt">1 · Consume</text>
+        <text x="58" y="116" class="ts">get-documentation →</text>
+        <text x="58" y="130" class="ts">props contract + 3 stories</text>
+        <rect x="290" y="70" width="190" height="84" rx="12" class="bx"/>
+        <text x="308" y="98" class="tt">2 · Generate</text>
+        <text x="308" y="116" class="ts">component using the real</text>
+        <text x="308" y="130" class="ts">API, not a hallucinated one</text>
+        <rect x="540" y="70" width="190" height="84" rx="12" class="bxA"/>
+        <text x="558" y="98" class="tt">3 · Verify</text>
+        <text x="558" y="116" class="ts">run-story-tests →</text>
+        <text x="558" y="130" class="ts">Vitest + a11y, structured</text>
+        <rect x="790" y="70" width="180" height="84" rx="12" class="bxG"/>
+        <text x="808" y="98" class="tt">4 · Pass → PR</text>
+        <text x="808" y="116" class="ts">designer gate (D5/L3)</text>
+        <text x="808" y="130" class="ts">judgment stays human</text>
+        <path class="edD3b" d="M234 112 L 286 112" />
+        <path class="edD3b" d="M484 112 L 536 112" />
+        <path class="edD3b" d="M734 112 L 786 112" />
+        <path class="edD3b" d="M635 158 L 635 210 L 385 210 L 385 158" />
+        <text x="510" y="228" class="ts" text-anchor="middle">fail → agent fixes its own output → re-run</text>
+        <rect x="540" y="252" width="430" height="60" rx="10" class="bxK"/>
+        <text x="558" y="274" class="tt">Escalation path</text>
+        <text x="558" y="294" class="ts">judgment needed (taste, ambiguity, repeated failure) → alert the developer — don't loop forever</text>
+      </svg>
+      <figcaption>The loop that makes consumption verifiable. Conformance — props, tests, a11y — is checked deterministically before any human sees the PR; the designer's gate (D5) reviews what the loop cannot. The escalation band is not decoration: an agent that retries taste-level failures burns the context budget of §5 and the reviewer's patience.</figcaption>
+      </figure>
+      <p>The numbers attached to this need their honest label, because they circulate stripped of it. Storybook's launch blog carries a benchmark chart — "generating UI with the Reshaped component library, with and without Storybook MCP" — showing <strong>12.8% improved code usage</strong> (a quality metric, i.e. correct reuse of design-system components — <em>not</em> an acceptance rate, the label it is usually retold with), <strong>2.76× faster</strong> generation and <strong>27% fewer tokens</strong>. All three are <strong>vendor claims</strong>: self-published, no methodology paper, no disclosed sample sizes or models, measuring only the docs toolset, and unreplicated by any third party as of July 2026. The direction is plausible and independently observed qualitatively; the decimals are marketing until reproduced. §8 lists exactly what may and may not be said with them.</p>
+
+      <h2 id="s5"><span class="n">5</span>The metadata trap — more context is not better context</h2>
+      <p>The naive reading of §1–§4 is a ladder you simply climb: screenshots bad, structured metadata good, give the agent everything. The best counter-evidence arrived in December 2025 with <strong>FigmaBench</strong>, the first benchmark pairing real Figma structured JSON with screenshots (1,234 curated samples; metrics for visual consistency, structural layout, textual/stylistic fidelity with a hallucination penalty, and responsive quality). Its headline finding is a <strong>fidelity–responsiveness paradox</strong> with a named cause — the <strong>metadata trap</strong>: models shortcut layout reasoning by transcribing absolute coordinates straight from the metadata, producing rigid, non-responsive code that scores well on visual fidelity and fails as engineering. More structured context made the output <em>worse</em> on the dimension that matters in production. The trap is E2 in miniature: a context window full of seductive, copyable numbers crowds out the reasoning the task actually required.</p>
+      <p>The mitigation is not less structure but <em>curated</em> structure — and the ecosystem has converged on what curation means. FigmaBench's own pipeline strips base64 assets to external files, prunes invisible layers and empty containers, and normalizes coordinates — because raw design JSON "causes context length explosion" (their words, and §2's 351k-token error is the industry version of the sentence). Framelink's entire existence is payload reduction. Figma's official choreography — <span class="mono">get_metadata</span> for the map, then scoped <span class="mono">get_design_context</span> per node, screenshot as supplement — is curation as a fetch policy. The generalizable rule for engagements: <strong>the agent should consume design context the way it consumes code — lazily, scoped, on demand</strong>, never as a bulk dump. Tokens and component contracts (channels 3–4) are inherently curated: small, named, and bounded. Raw canvas JSON is the opposite. Budget design context like any other context: every node you fetch is paid for twice, once in tokens and once in the rot risk of what it displaces (E2).</p>
+
+      <h2 id="s6"><span class="n">6</span>The vibe-tool default — whose design system is it anyway?</h2>
+      <p>The consumption question has a second front: the greenfield generators. Their default is a design system — just not <em>yours</em>. <strong>v0</strong> states it verbatim in its docs: new chats start with a Next.js app using shadcn/ui and Tailwind; v0 "is specifically trained on the default implementations of the shadcn/ui components and may struggle with any customizations." <strong>Lovable</strong> scaffolds Vite/React/Tailwind; <strong>Bolt</strong> has no single fixed stack but in practice lands on Vite + React + Tailwind per prompt. Unconstrained, all three generate competent generic UI that ignores your tokens, your components and your conventions — the §1 failure mode wearing a nicer demo. The strategically interesting fact of 2025→2026 is that <em>all three vendors shipped gated "teach it your system" features</em>, which is the market conceding the chapter's thesis: consumption of the client's real design context is the difference between a toy and a tool.</p>
+      <div class="comp"><div class="chead"><span class="cid">V0</span><h3>Design Systems 2.0</h3><span class="role">skill-based import</span></div>
+      <p>The 2025 mechanism — self-host a shadcn-compatible registry, point v0 at it — is now labeled legacy. The current path imports your system from sources (a DS repo, a consumer app, Figma frames, Storybook links, npm packages incl. private), builds a starter app you review, and saves it as a team- or personal-scoped <strong>skill</strong> backed by a <span class="mono">v0.json</span>; team owners on paid plans can pin a team default applied to new chats. The model still leans shadcn-shaped — closest fit when your system already is.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">LOVABLE</span><h3>design-system.json</h3><span class="role">the enterprise constraint</span></div>
+      <p>The closest thing to an enterprise contract in the category, with a correction to how it is usually described: <span class="mono">design-system.json</span> is not a file you hand-author at repo root — it is a <em>generated</em> schema (tokens, component catalog with variants/props/examples, stack constraints) produced on each release of a dedicated design-system project, read on every generation in connected projects, with <strong>adherence checks</strong> that scan each generation for raw color literals, one-off values and local re-implementations, and retry. Enterprise plans only, React only, one system per project.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">BOLT</span><h3>Design systems (Mar 2026)</h3><span class="role">Storybook-flavored</span></div>
+      <p>The newest entrant: paid Teams upload sources (repo, published Storybook, npm, docs site — GitHub/npm give the best results; docs alone yield "a theme rather than a true design system"), Bolt generates a browsable Storybook <em>inside</em> the tool as the reference, plus free-text agent instructions ("exclude deprecated components"). Attaching a system to an existing project deliberately does not rewrite code — you prompt the update yourself.</p></div>
+      <p>Two patterns matter beyond the vendor detail. First, the convergence: everyone is rebuilding the same architecture — a machine-readable package of tokens + components + constraints, injected at generation time, checked afterward. That is D1's third artifact wearing vendor packaging, and it validates the D1–D2 investment: a client with DTCG tokens in git and a documented component catalog can feed <em>any</em> of these tools; a client without one is locked to whatever the tool's default decided. Second, the gate: every one of these features sits behind a paid tier (Lovable's behind Enterprise). Budget lines, not prompts, now decide whether the generator respects your system — worth saying plainly in a proposal.</p>
+
+      <h2 id="s7"><span class="n">7</span>Choosing channels — the ladder, the security surface, the pipeline</h2>
+      <p>The channels compose, and the composition an engagement should default to looks like this: <strong>repo always</strong> (tokens + component source + DESIGN.md are the cheapest, most verifiable context and cost no plan tier), <strong>metadata scoped</strong> (Figma MCP per component, never per page), <strong>identity where it pays</strong> (Code Connect on the core component set if the plan allows), <strong>verification in the loop</strong> (Storybook MCP or equivalent tests so consumption errors are caught deterministically), and <strong>screenshots as supplement</strong> — visual reference, never the source of truth. The table ranks what each channel carries against what it costs; the security note follows, because every one of these channels is also an attack surface (S4).</p>
+      <table class="map">
+      <tr><th>Channel</th><th>Carries</th><th>Cannot carry</th><th>Cost &amp; gate</th><th>Verifiability</th></tr>
+      <tr><td><b>Screenshot</b></td><td>Layout, look, approx. values</td><td>Names, tokens, props, states</td><td>Free; ~1–2k tokens/image</td><td>None — output only <i>looks</i> right</td></tr>
+      <tr><td><b>Figma MCP metadata</b></td><td>Variables, structure, text, generated code</td><td>Your code's identity; large frames (§2)</td><td>Dev/Full seat (6 calls/mo otherwise); heavy context bill</td><td>Indirect — still generated approximation</td></tr>
+      <tr><td><b>Code Connect</b></td><td>Identity: name, import path, props snippet</td><td>Unconnected nested instances; drifted mappings</td><td>Org/Enterprise + seat; maintenance burden</td><td>High — real repo paths, PR-gated source</td></tr>
+      <tr><td><b>Storybook MCP</b></td><td>Props contract, usage stories, test results</td><td>Non-React docs (Preview); visual intent</td><td>Free, local; Storybook 10.3+</td><td>Deterministic — tests + a11y in-loop</td></tr>
+      <tr><td><b>Repo (tokens, source, DESIGN.md)</b></td><td>The actual contract (D2), conventions</td><td>Visual intent — what it should <i>look</i> like</td><td>Free; needs D2/D4 groundwork</td><td>Highest — it <i>is</i> the code (D4 SSOT)</td></tr>
+      </table>
+      <p>The security reading is short and serious. Everything a design channel feeds the agent is <em>untrusted content</em> in the lethal-trifecta sense (S2): layer names, text and annotations enter the context unsanitized, and a malicious collaborator can hide payloads in invisible layers — 0% opacity text, off-canvas nodes, 1px fonts (filed against the Framelink server, March 2026; the official server feeds the same content classes and has published no sanitization story — its mitigation posture is access control, reviewing third-party clients before they may connect). The surface is not hypothetical: <strong>CVE-2025-53967</strong>, a command injection in the community <span class="mono">figma-developer-mcp</span> server, is explicitly exploitable <em>via indirect prompt injection</em> driving the MCP client — design content to remote code execution under the server process. Add the bridge-architecture attacks (local WebSocket bridges that let any local process impersonate the design tool — the pattern Penpot's official beta MCP and several community servers share) and the write-to-canvas beta (§2), and the posture writes itself: least privilege on tokens and scopes, read-only by default, human gate on writes, and treat canvas text like issue-tracker text. No confirmed real-world breach via a design-tool MCP is public as of July 2026 — demonstrated surface, not observed incident; word it exactly that way.</p>
+      <p>Practitioner consensus, where it exists, matches the ladder: metadata-first-screenshot-second (Figma's own guidance and OpenAI's curated Figma skill); component-library-first — map the system once, then let the channel resolve instances to real components, expecting <strong>40–60% code reuse on complex screens, not 100%</strong> (the rest is genuinely new composition, and pretending otherwise sets clients up for disappointment); and tokens-first SSOT (D2) so every channel downstream reads the same named decisions. The open-source flank is worth one line: Penpot ships an official MCP server (beta, browser-tab-bound) — the only non-Figma design tool with a first-party channel, and the only one whose SSOT you can self-host.</p>
+
+      <h2 id="s8"><span class="n">8</span>Evidence &amp; do-not-cite</h2>
+      <p>The design-conversation is drowning in vendor numbers, so the file needs explicit shelves. <strong>Usable with attribution:</strong> Design2Code's 49% interchangeable / 64% preferred (GPT-4V, self-revision, static placeholdered pages, 2024-era — say all of it); Design2Code-HARD's 30–40% missing content on hard pages; Interaction2Code's &gt;80%/&lt;60% split by interaction type; FigmaBench's metadata trap (a December 2025 preprint — peer review pending, directionally strong); Figma's own 351,378-token error as the context-bill illustration; CVE-2025-53967 for the injection surface. <strong>Vendor claims, label every time:</strong> Storybook's 12.8% / 2.76× / −27% (self-published chart, docs toolset only, unreplicated — and it is "improved code usage", never "acceptance rate"); Figma's token-efficiency and faster-build claims (internal evals, alpha customers); anything any vibe tool says about respecting your system. <strong>Do not cite at all:</strong> "structured context always beats screenshots" (FigmaBench falsified the naive form); "Code Connect prevents hallucination" as a measured claim (the mechanism is demonstrable, no quantified study exists); "Figma MCP is beta" (read is GA since Oct 2025 — only write-to-canvas remains beta); "DTCG is the wire format of design MCP traffic" (it is not — servers emit tool-specific JSON); and any sentence about these tools without a month attached — this chapter's tool facts have a shelf life measured in weeks.</p>
+
+      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (first client conversations)</div><ul><li>Which channel does the agent actually use today — screenshots in a chat, or something structured? The answer predicts output quality better than the model choice.</li><li>Figma plan tier and seats: Code Connect is Org/Enterprise-gated, and anything below a Dev seat gets six MCP calls a month — this alone can veto the §7 pipeline.</li><li>Is there a Storybook (or equivalent) with real stories? Without it, the self-healing loop has nothing to run.</li><li>React or not? Storybook MCP's docs toolset is React-only in Preview; Code Connect's non-React path is second-class — a Vue/Angular client gets a thinner chapter.</li><li>Who can write to the design file? Hidden-layer injection needs only edit access on a shared file.</li></ul></div>
+      <div class="box"><div class="lab">Commit (the defaults we bring)</div><ul><li>Repo always, metadata scoped, identity where it pays, verification in the loop, screenshots as supplement — in that order of priority.</li><li>Curation over volume: no bulk canvas dumps; scoped fetches; small frames; the metadata trap cited whenever someone proposes "just give it the whole file".</li><li>Evidence honesty: Storybook's figures as labeled vendor claims, Design2Code with its caveats attached, no sentence about these tools without a date.</li><li>Security by default: read-only channels, least-privilege scopes, human gate on any write-to-canvas path (D7 carries the full treatment).</li><li>Vibe tools only under constraint: no unconstrained v0/Lovable/Bolt output into a client codebase, ever.</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember D3 by</div><p>The channel bounds the output: a screenshot carries pixels and invites hallucinated components, while structured channels — Figma MCP metadata, Code Connect's identity mapping, Storybook's executable contract, and the repository itself — carry the names, tokens and props that let an agent reuse instead of invent, with Code Connect as the single strongest anti-hallucination mechanism and the strictest paywall. Structured context is neither free nor automatically better: a single design-context call can bill fourteen times the default token cap, and FigmaBench's metadata trap shows raw structure degrading engineering quality — so consume design context lazily, scoped and curated, exactly like code. The verified numbers are modest and specific (49% interchangeability at the screenshot ceiling, a self-healing test loop that demonstrably works, one CVE on the community server); everything louder — the 2.76× speedups, the "prevents hallucination" slogans — is vendor claim until replicated, and the whole chapter is point-in-time for July 2026.</p></div>
+
+      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Figma — Guide to the Figma MCP server · developers.figma.com MCP docs</div><div class="mt">help.figma.com · developers.figma.com/docs/figma-mcp-server · GA Oct 2025</div><p>The primary source: tool reference (get_design_context, get_variable_defs, get_code_connect_map), remote vs desktop server, seat gating, and the refreshingly honest known-issues pages — including the 351k-token error and "avoid large frames".</p></div>
+      <div class="item"><div class="rt">Figma Code Connect — docs hub &amp; GitHub</div><div class="mt">figma.com/code-connect-docs · github.com/figma/code-connect · CLI v1.4.9, Jul 2026</div><p>Template files (.figma.ts) as the recommended path, figma.connect() as legacy, framework matrix (React/HTML/SwiftUI/Compose; Angular &amp; Vue via HTML), plan gating verbatim.</p></div>
+      <div class="item"><div class="rt">Storybook — MCP for React blog &amp; the API docs</div><div class="mt">storybook.js.org/blog/storybook-mcp-for-react · /docs/ai/mcp · 10.3, Apr 2026, Preview</div><p>The self-healing loop in the vendor's own words, the seven tools across docs/dev/test toolsets, and the benchmark chart whose 12.8% is "improved code usage" — read the image caption before repeating any number.</p></div>
+      <div class="item"><div class="rt">Si, Zhang et al. — Design2Code (arXiv:2403.03163, NAACL 2025)</div><div class="mt">aclanthology.org/2025.naacl-long.199 · salt-nlp.github.io/Design2Code</div><p>The screenshot ceiling, measured: 484 C4-curated pages, 49% interchangeable / 64% preferred for GPT-4V with self-revision, Block-Match and Position as the weakest metrics, and the HARD split (v2) where 30–40% of content never appears.</p></div>
+      <div class="item"><div class="rt">FigmaBench (Dec 2025 preprint)</div><div class="mt">openreview.net · peer review pending as of Jul 2026</div><p>The metadata trap: models transcribe absolute coordinates from structured JSON into rigid, non-responsive code — the fidelity–responsiveness paradox that falsifies "more context is better" and motivates curation.</p></div>
+      <div class="item"><div class="rt">Interaction2Code (arXiv:2411.03292) · Sketch2Code (arXiv:2410.16232) · DCGen (arXiv:2406.16386)</div><div class="mt">ASE 2025 · NAACL 2025 · TOSEM 2025</div><p>The follow-up frontier beyond static screenshots: interactions (127 pages / 374 interactions), sketch input with an agent that must ask questions, and divide-and-conquer generation. Where the benchmark world is heading.</p></div>
+      <div class="item"><div class="rt">GHSA-gxw4-4fc5-9gr5 (CVE-2025-53967) · Figma-Context-MCP issue #303</div><div class="mt">github.com/advisories · github.com/GLips/Figma-Context-MCP · 2025–26</div><p>The security file: command injection in the community server exploitable via indirect prompt injection, and the hidden-layer payload report. Demonstrated surface, no public breach — keep the wording.</p></div>
+      <div class="item"><div class="rt">v0 Design Systems 2.0 · Lovable design-system.json · Bolt design systems</div><div class="mt">v0.app/docs/design-systems-2 · docs.lovable.dev/features/design-systems · support.bolt.new · 2026</div><p>The vendor constraint mechanisms, all paid-tier gated: skill-based import, release-generated contract with adherence checks, and in-tool Storybook generation. Re-verify monthly.</p></div>
+      <div class="item"><div class="rt">Penpot MCP · OpenAI's curated Figma skill</div><div class="mt">github.com/penpot/penpot-mcp (beta) · github.com/openai/skills</div><p>The open-source channel and the fetch choreography in executable form: metadata first, scoped re-fetch, screenshot as supplement — the §7 default as a runnable skill file.</p></div>
+      <div class="item"><div class="rt">Report 5 — the design-harness research notes (this workbook)</div><div class="mt">module M6 research notes · section 2</div><p>The synthesis this deep dive expands — with corrections applied: Figma MCP read is GA (not beta), the Storybook figures are "improved code usage" (not acceptance), and the metadata trap now bounds the structured-is-better claim.</p></div>
+      </div>
+
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (D3-how-agents-consume-design-context-deepdive.html). Its natural neighbours in the workbook are D1 (the third-artifact thesis these channels serve), D2 (the token contract carried by the cheapest channel), D4 (why the repo is the SSOT), D5 (the verification loop that catches what consumption missed), D7 (the injection surface and brownfield rollout in full), E2 (context rot — §5 is its design-layer case study) and S4 (MCP as attack surface). The four-channel ladder, the composition default and the assess/commit lists are this workbook's synthesis; the D1–D5 scale they serve remains our original framing, not an industry standard. Every tool fact — GA status, seat gating, CLI versions, framework support, vendor features — is point-in-time (July 2026) and marked for re-verification before any client meeting.</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>
