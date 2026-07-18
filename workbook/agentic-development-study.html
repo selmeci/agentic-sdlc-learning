@@ -340,6 +340,7 @@ footer li::before{content:"·";position:absolute;left:2px}
 .e1ov svg .edD2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2a)}
 .e1ov svg .edD2b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2b)}
 .e1ov svg .edPB1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB1a)}
+.e1ov svg .edPB2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB2a)}
 /* ===== M9 playbook runbooks (v1.49) ===== */
 .pbstep{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin:9px 0}
 .pbstep input.pbck{margin-top:4px;width:16px;height:16px;accent-color:var(--cobalt);flex:none;cursor:pointer}
@@ -2159,6 +2160,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.50</span><span class="vd">2026-07-18</span><p><strong>NEW RUNBOOK PB2 — Bootstrap: build the verification base.</strong> Second M9 runbook, in both copies (PB2-bootstrap-runbook.html + overlay): twelve checklist steps across four phases (read-only module comprehension, characterization safety net, mutation audit, minimal CI &amp; the F0→F2 exit gate), distilling B1 safe ordering, B2 characterization/golden master and B3 mutation gate into executable practice. Handles both PB1 exit postures — GO (≥17, 4/4 gates: bootstrap the pilot from PB1's shortlist with the report §2 numbers as baseline) and score &lt;10 (PB2 <em>is</em> the engagement deliverable). Six copy templates: the "document, don't fix" generation prompt with the SUSPECTED-BUG convention, the TestGen-LLM three-gate CI filter, a shared ADR skeleton (kept pins per Hyrum's Law + the mutation-gate decision), read-only enforcement (CODEOWNERS + harness deny rule — enforcement, not a prompt request), a diff-scoped Mode 1 mutation job, and the module bootstrap report. Evidence framing kept honest throughout: the ~70% mutation threshold is our working heuristic recorded in an ADR, never an industry standard; the toolbox table is explicitly point-in-time (mid-2026, re-verify before a client meeting); wrong-orderings (WO1–WO4) and never-do gate failure modes embedded as callouts. Exit: GO opens PB3 write scope for the module; NO-GO keeps it at F1 with mutation survivors as the agent's next task list.</p></div>
       <div class="vitem"><span class="vv">v1.49</span><span class="vd">2026-07-18</span><p><strong>NEW MODULE M9 — Playbook: from theory to practice. First runbook PB1 Assess.</strong> The practice layer lands inside the workbook: five <span class="mono">pb-</span> topics ordered by the engagement journey (Assess → Bootstrap → Harness → Handoff → Pilot), built for the internal team to carry the methodology to a brownfield client. PB1 ships complete — a runbook companion in both copies (PB1-assess-runbook.html + overlay) with nine checklist steps across five phases (verification base &amp; delivery baseline, information architecture, governance minimum, team readiness, evaluation), each step carrying the action, the theory link that justifies it, and a DONE criterion; plus two copy-paste templates (readiness questionnaire with four non-compensable [GATE] criteria, assessment-report skeleton with a delivery-baseline section), the score→L1–L5 recommendation table and the F0 go/no-go with STOP criteria (the scoring model is our synthesis, flagged). The delivery baseline (DORA keys + cost per merged PR) is captured at assess time — a pilot without it can be neither proven nor disproven. NEW interaction layer: runbook checkboxes persist through the existing store (<span class="mono">agentic-study-v1</span>, new <span class="mono">pb</span> field, mirrored into cross-device sync), with a per-runbook progress chip and copy buttons; the standalone copy is deliberately non-persistent. PB2–PB5 are visible as in-preparation topics (one runbook per future version; PB3's templates will be the harness starter kit — runnable hook/permission/CI configs, not prose). Validator extended: <span class="mono">pb-</span> prefix recognised, checklist step ids checked for uniqueness (they are frozen progress keys, like topic ids).</p></div>
       <div class="vitem"><span class="vv">v1.48</span><span class="vd">2026-07-18</span><p><strong>SYNC — delta sync: pushes and pulls now carry only the changes, not the whole document.</strong> Until now every sync push uploaded the full encoded study state — and since that encoding grows with edit history, even ticking one section as read sent everything. The workbook now keeps the server's last known <em>state vector</em> and sends only the <strong>Yjs diff</strong> the server is missing (tens of bytes for a small change); refreshes likewise fetch only the missing diff via a new <span class="mono">POST /r/:code/sync</span> endpoint. Every 25th push sends full state as a self-healing reconciliation. Fully backwards compatible: an already-linked device migrates silently on its next push, and older app versions keep working against the updated server. No content or topic-id changes.</p></div>
       <div class="vitem"><span class="vv">v1.47</span><span class="vd">2026-07-18</span><p>Added the D2 deep-dive companion (Design tokens as the visual contract, DTCG) — token anatomy and the tier model (community practice, not spec; credited to Curtis 2016 options/decisions), the 2025.10 release read precisely (Format + Color stable; theming/modes in the "do not implement" Resolver draft — the earlier "theming shipped" wording corrected in the topic and Report 5 notes), the mid-2026 pipeline (Style Dictionary v5 shipped with 2025.10 coverage converging, Terrazzo, Tokens Studio paid git sync, Figma Variables API Enterprise-gated + native DTCG export not GA, Penpot first open-source native-DTCG tool), code-first sync direction as governance (Sopelnik and Builder.io/Sewell verbatims; Adobe Spectrum designer-authored/code-stored), the agent contract (Pandya closed-set line, DESIGN.md with next-day cross-vendor uptake, the Stylelint/ESLint/drift enforcement stack), the evidence file with corrected dating (zeroheight 56→84 = 2024→2025 report n=294, 86% in 2026 n=147, the 40% pipeline gap, CHI 2026 registry-based 95.08%, and the honest null: no token-specific causal study) plus a do-not-cite list, and the six-step SCSS→DTCG migration (our synthesis). Fact pass: 4 research teammates + 3 adversarial spot-verifiers (13th session in a row with real catches: DESIGN.md tool roster = third-party commentary, mis-dated adoption stat, two paraphrases de-quoted, quote trims).</p></div>
@@ -6059,8 +6061,351 @@ unreviewed-merge incident — list the concrete triggers + who pulls the cord)
   </div>
 </div>
 
+<div class="e1ov" id="pb2ov" role="dialog" aria-modal="true" aria-label="PB2 runbook">
+  <div class="panel">
+    <div class="bar"><span class="tag">PB2 · RUNBOOK</span><h3>Bootstrap: Build the Verification Base</h3>
+      <button class="x" type="button" data-pb2close>✕ close</button></div>
+    <div class="body">
+<h2><span class="n">0</span>Why this runbook exists</h2>
+<p class="lead">PB2 solves the bootstrap paradox. An agent working on legacy code needs a verification loop — tests, CI, machine-readable red/green — that legacy code by definition does not have; and the agent itself is the cheapest tool for building that loop. Left unanchored, the circle closes into bug-as-spec: the generator reads the faulty code, reproduces the fault in its own assertions, and the net certifies the bug as intended behavior. That failure mode is measured, not hypothetical — fault detection drops from roughly 25% to roughly 14% when the LLM sees the faulty implementation before writing tests (Konstantinou, Tambon &amp; Papadakis, 2026). PB2 is the forced ordering that keeps the circle open (<a href="&#35;b1-deepdive">B1 Safe ordering</a>).</p>
+<p>There are two ways in. <strong>Posture 1 — PB1 said GO</strong> (score ≥ 17, 4/4 gates): bootstrap the pilot module chosen from PB1's shortlist, with the PB1 report's §2 numbers — suite runtime, pass rate, flaky list — as the bootstrap baseline. <strong>Posture 2 — PB1 scored below 10</strong>: the client enters at L1 only and PB2 <em>is</em> the engagement deliverable — building the verification base is the work, not a prerequisite for it. Either way PB2 produces the same artifact: one characterized pilot module with a mutation-audited safety net and a CI loop the agent can read — the evidence that carries the module from F0 to the F2 boundary.</p>
+<div class="callout amber"><div class="t">What this is not</div><p>A characterization net never "finds bugs" — it is passing-by-construction, because the current code is the oracle (<a href="&#35;b2-deepdive">B2</a>). Do not sell it or judge it as a bug-finder; its job is to make every future change <em>visible</em>. Bugs discovered along the way exit through the SUSPECTED-BUG door in Phase B, never through a quiet fix.</p></div>
+<p>The theory this runbook distils lives in three deep dives: <a href="&#35;b1-deepdive">B1 The bootstrap paradox</a> for the ordering, <a href="&#35;b2-deepdive">B2 Characterization &amp; golden master</a> for the net, and <a href="&#35;b3-deepdive">B3 The mutation-testing gate</a> for how the net is graded.</p>
+
+<h2><span class="n">1</span>How to run it</h2>
+<p>Run PB2 with one person plus the agent, scoped to a single pilot module, agent write access limited to test and CI files, and the PB1 report at hand. The steps are sequential <strong>by design</strong> — each is a precondition of the next, and you never verify a step with a later step; that is the whole point of <a href="&#35;b1-deepdive">B1</a>'s ordering. Size each step at two days or less: if a step will not fit, the module is too big — shrink the target, not the step. As in PB1, every step is written as ČO (the action), PREČO (the theory link), and DONE (the exit criterion).</p>
+<p><span class="pbprog" data-pbprog="pb-bootstrap"></span></p>
+<p class="pbnote">Progress is saved locally in this workbook (same store as topic progress). The standalone copy of this runbook does not persist checkbox state.</p>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="B1's five-step dependency chain mapped onto PB2's phases A to D">
+  <defs><marker id="ahPB2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <text x="30" y="28" class="tg">B1 SAFE ORDERING — EACH STEP IS A PRECONDITION OF THE NEXT</text>
+  <rect x="24" y="44" width="150" height="52" rx="10" class="bxC"/><text x="38" y="66" class="ti">Read-only</text><text x="38" y="82" class="ts">comprehension (F0)</text>
+  <rect x="200" y="44" width="150" height="52" rx="10" class="bxC"/><text x="214" y="66" class="ti">Characterization</text><text x="214" y="82" class="ts">golden-master net</text>
+  <rect x="376" y="44" width="150" height="52" rx="10" class="bxC"/><text x="390" y="66" class="ti">Minimal CI</text><text x="390" y="82" class="ts">agent-readable</text>
+  <rect x="552" y="44" width="150" height="52" rx="10" class="bxG"/><text x="566" y="66" class="ti">AGENTS.md</text><text x="566" y="82" class="ts">extracted, not decreed</text>
+  <rect x="728" y="44" width="150" height="52" rx="10" class="bxG"/><text x="742" y="66" class="ti">Scoped writes</text><text x="742" y="82" class="ts">F2, pilot module</text>
+  <line x1="174" y1="70" x2="200" y2="70" class="edPB2"/>
+  <line x1="350" y1="70" x2="376" y2="70" class="edPB2"/>
+  <line x1="526" y1="70" x2="552" y2="70" class="edPB2"/>
+  <line x1="702" y1="70" x2="728" y2="70" class="edPB2"/>
+  <text x="30" y="136" class="tg">PB2 — THIS RUNBOOK</text>
+  <rect x="24" y="150" width="150" height="52" rx="10" class="bxA"/><text x="38" y="172" class="ti">Phase A</text><text x="38" y="188" class="ts">module archaeology</text>
+  <rect x="200" y="150" width="150" height="52" rx="10" class="bxA"/><text x="214" y="172" class="ti">Phases B + C</text><text x="214" y="188" class="ts">net + mutation audit</text>
+  <rect x="376" y="150" width="150" height="52" rx="10" class="bxA"/><text x="390" y="172" class="ti">Phase D</text><text x="390" y="188" class="ts">CI proof · exit gate</text>
+  <rect x="552" y="150" width="326" height="52" rx="10" class="bxG"/><text x="566" y="172" class="ti">PB3 Harness (next runbook)</text><text x="566" y="188" class="ts">AGENTS.md · hooks · write scope</text>
+  <line x1="145" y1="150" x2="145" y2="96" class="edPB2 edD"/>
+  <line x1="275" y1="150" x2="275" y2="96" class="edPB2 edD"/>
+  <line x1="451" y1="150" x2="451" y2="96" class="edPB2 edD"/>
+  <line x1="627" y1="150" x2="627" y2="96" class="edPB2 edD"/>
+  <line x1="803" y1="150" x2="803" y2="96" class="edPB2 edD"/>
+  <text x="30" y="236" class="ts">Never verify a step with a later step: the net is audited before the gate trusts it; writes open only on evidence (B1).</text>
+</svg>
+<figcaption>B1's dependency chain (top) and where PB2's phases land on it (bottom). PB2 ends at the F0→F2 gate; AGENTS.md and scoped writes are PB3's territory, opened only if the gate says GO.</figcaption>
+</figure>
+
+<h2><span class="n">2</span>Phase A — Read-only comprehension of the pilot module</h2>
+<p>PB1 shortlisted pilot candidates at codebase level; Phase A commits to one of them and builds module-level comprehension against it. This is the F0 stage of B1's chain scoped down to one module: zero write risk, and the output is the comprehension layer every later phase reads from (<a href="&#35;b4-deepdive">B4 Agent archaeology</a>).</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s1" data-pb="pb-bootstrap" data-step="pb2-s1">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s1">A1 · Commit to one pilot module from PB1's shortlist</label>
+    <p class="pbwhy">Pick the single module PB2 will bootstrap and write down why: seams the tests can attach to, low external risk, a reachable owner, a size that fits the two-day step budget. Why: the heatmap logic picks low-risk, high-learning targets — a wrong first module burns trust a right one would have earned (<a href="&#35;b5-deepdive">B5 Strangler heatmap</a>, <a href="&#35;b1-deepdive">B1 Safe ordering</a>).</p>
+    <div class="pbdone">DONE = one named module plus a written rationale (seams, size, risk, owner) in report §1.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s2" data-pb="pb-bootstrap" data-step="pb2-s2">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s2">A2 · Run read-only archaeology on the module</label>
+    <p class="pbwhy">Let the agent map the module read-only: entry points, public surface, side effects, existing tests and their status, the current coverage number if one exists. Every claim is confidence-labeled and a module owner spot-checks a sample — extraction, not decree (<a href="&#35;b4-deepdive">B4 Agent archaeology</a>, <a href="&#35;b1-deepdive">B1</a>). This note is what Phase B's generation prompt scopes itself to.</p>
+    <div class="pbdone">DONE = architecture note exists, claims confidence-labeled, owner spot-check recorded; before-numbers copied into report §2.</div>
+  </div>
+</div>
+
+<div class="callout amber"><div class="t">The four wrong orderings (B1) — check you are not in one</div><p><strong>WO1 write-first pilot:</strong> skipping the chain entirely; detected by change-failure rate and rework climbing on agent-touched modules. <strong>WO2 coverage-not-quality tests:</strong> "run the generator until coverage is green" — corrupts the net; detected by mutation score (Phase C), never by coverage. <strong>WO3 AGENTS.md by decree:</strong> writing the context file from aspiration before the evidence exists — agent-written context files measurably hurt (−2% success, +23% cost in the ETH Zurich study); extraction comes in PB3, after this runbook. <strong>WO4 Phase 0 forever:</strong> read-only comprehension that never exits; detected by the calendar — if A2's criteria have been met for weeks and no characterization target is picked, you are stalling, not derisking.</p></div>
+
+<h2><span class="n">3</span>Phase B — The characterization safety net</h2>
+<p>Phase B is B2's six-step workflow compressed to four steps: generate under a constraint, filter deterministically, review by sampling, commit read-only (the fifth step, the mutation gate, is Phase C). Two techniques cover almost every module: <strong>characterization tests</strong> (Feathers 2004 — call the code, observe the actual result, assert that result; per-behavior granularity, reads as documentation) and <strong>approval / golden-master tests</strong> (Falco — capture entire outputs to files, approve once, diff forever; needs scrubbers for timestamps and GUIDs, and works with zero understanding of internals, which is why it is the natural first agent-write task on brownfield). Approval, golden master, snapshot, characterization: one mechanism, four emphases — if the client's frontend already uses Jest or Vitest snapshots, reuse that vocabulary (<a href="&#35;b2-deepdive">B2 Characterization &amp; golden master</a>).</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s3" data-pb="pb-bootstrap" data-step="pb2-s3">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s3">B1 · Generate the net under "document, don't fix"</label>
+    <p class="pbwhy">Run the agent's generation pass with the prompt constraint below: pin what the code does today, never what it should do; mark anything suspicious <span class="mono">SUSPECTED-BUG</span> with one sentence why; never silently fix. Why: the generator is never asked to adjudicate correctness — pinning warts is deliberate (Hyrum's Law: with enough users, every observable behavior of the system will be depended on by somebody), and letting the generator "correct" what it reads closes the bug-as-spec loop §0 warned about (<a href="&#35;b2-deepdive">B2</a>).</p>
+    <div class="pbdone">DONE = candidate test set generated; zero silent fixes on inspection; every SUSPECTED-BUG marker carries a one-sentence rationale.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb2-tpl-prompt">copy</button><pre id="pb2-tpl-prompt">
+# Characterization generation prompt — skeleton (adapt per module)
+Role: you are generating CHARACTERIZATION tests for &lt;module&gt;.
+Rules — document, don't fix:
+1. Pin what the code DOES today. Never assert what it should do.
+2. Never modify production code. Never "correct" an odd result.
+3. If a pinned behavior looks wrong, keep the pin AND mark it:
+   // SUSPECTED-BUG: &lt;one sentence — why this looks wrong&gt;
+   One sentence, always; no fix, no workaround, no TODO.
+4. Nondeterminism (time, GUIDs, ordering): scrub before pinning
+   ([date], [guid-1], sort before compare) — never pin raw values.
+5. One behavior per test; name each test after the behavior it pins.
+Scope: &lt;entry points / public surface from the Phase A note&gt;
+Out of scope: &lt;anything outside the module boundary&gt;
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s4" data-pb="pb-bootstrap" data-step="pb2-s4">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s4">B2 · Run the deterministic filter in CI</label>
+    <p class="pbwhy">Wire the three TestGen-LLM gates before any human reads a candidate: it must build, it must pass N repeated runs (N=5 screens flakiness), and it must raise coverage over the baseline; failures are discarded unread. Why: review capacity is the scarcest resource in the engagement — the filter spends compute to protect it. Meta's industrial deployment (TestGen-LLM, FSE 2024) reports 75% of candidates built, 57% passed reliably and 25% raised coverage on its Reels/Stories evaluation, and 73% of surfaced recommendations accepted for production across the broader test-a-thons — the filter is what made the human side of that loop bearable (<a href="&#35;b2-deepdive">B2</a>).</p>
+    <div class="pbdone">DONE = filter runs in CI; only surviving candidates reach review; discard counts logged in report §3.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb2-tpl-filter">copy</button><pre id="pb2-tpl-filter">
+# Candidate-test filter — CI skeleton (GitHub Actions flavour; adapt to your CI)
+# The three TestGen-LLM gates: builds, passes N repeats, adds coverage.
+name: characterization-filter
+on: pull_request            # candidate tests arrive as agent PRs
+jobs:
+  gate1-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: &lt;build command&gt;                 # gate 1: must build
+  gate2-stability:
+    needs: gate1-build
+    runs-on: ubuntu-latest
+    strategy: { matrix: { run: [1, 2, 3, 4, 5] } }   # gate 2: N=5 repeats
+    steps:
+      - uses: actions/checkout@v4
+      - run: &lt;test command, candidate tests only&gt;    # any red run = discard
+  gate3-coverage-delta:
+    needs: gate2-stability
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: &lt;coverage command&gt;
+      - run: &lt;compare against baseline; fail unless delta &gt; 0&gt;   # gate 3
+# Discarded candidates are logged, never reviewed — the filter protects
+# human review capacity; judging test QUALITY is Phase C's job.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s5" data-pb="pb-bootstrap" data-step="pb2-s5">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s5">B3 · Sampled review and the two-door SUSPECTED-BUG triage</label>
+    <p class="pbwhy">Humans review 100% of SUSPECTED-BUG items and a ~20% sample of the rest — for <em>sense</em> (are these the behaviors worth pinning), never for "is the pinned value correct": the code is the oracle, so that question is circular. Every SUSPECTED-BUG exits through one of two doors: load-bearing behavior (Hyrum's Law) → keep the pin, write an ADR (skeleton in §6); real bug → separate ticket, fixed <em>after</em> the net exists, the fix then flips the pin on purpose. The third door — fixing quietly during characterization — is forbidden. Scope pins narrowly ("pin the chart, not the dashboard") and record keep-or-discard per pin: approve-all fatigue turns pins into inventory, not insurance (<a href="&#35;b2-deepdive">B2</a>).</p>
+    <div class="pbdone">DONE = zero untriaged SUSPECTED-BUG markers; each one → ADR or ticket, listed in report §3.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s6" data-pb="pb-bootstrap" data-step="pb2-s6">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s6">B4 · Commit the net; make it read-only for the agent</label>
+    <p class="pbwhy">Commit the approved tests, then enforce read-only in the harness — deny-rules, CODEOWNERS, protected paths (snippet below) — never just a request in the prompt. Why: agents demonstrably edit failing tests to reach green — in ImpossibleBench's adversarial setting GPT-5 cheats 54.0% of the time when tests conflict with the spec, and hiding the tests drops cheating to near zero. Visibility of the oracle is the attack surface, so the defence must be structural (<a href="&#35;b2-deepdive">B2</a>, <a href="&#35;i2-deepdive">I2 Lifecycle &amp; write permissions</a>).</p>
+    <div class="pbdone">DONE = a deliberate agent attempt to edit a pinned test is blocked by the harness; verified once, logged in report §6.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb2-tpl-readonly">copy</button><pre id="pb2-tpl-readonly">
+# Read-only enforcement for approved characterization tests — two layers
+# Layer 1: repository — CODEOWNERS (any change requires named review)
+/tests/characterization/  @module-owner @qa-lead
+
+# Layer 2: agent harness — deny rule (enforcement, not a prompt request)
+# Claude Code settings.json shown; most harnesses have an equivalent:
+{
+  "permissions": {
+    "deny": [
+      "Edit(tests/characterization/**)",
+      "Write(tests/characterization/**)"
+    ]
+  }
+}
+# Verify once: ask the agent to modify a pinned test; the attempt must be
+# blocked by the harness and visible in the session log.
+</pre></div>
+
+<h2><span class="n">4</span>Phase C — Mutation-testing the net</h2>
+<p>Coverage cannot grade the net you just built. Suites with 100% line coverage and a 4% mutation score exist (MUTGEN, arXiv:2506.02954); the best frontier model measured on real-world test generation hit 35.2% coverage but only 18.8% mutation score (TestGenEval); and the ICSE 2014 study of 31,000 suites concluded that coverage "should not be used as a quality target because it is not a good indicator of test suite effectiveness" (Inozemtseva &amp; Holmes) — the sentence to quote when a coverage KPI is proposed. Mutation testing is the exam: inject small faults, count how many the net kills. Its validity is empirical, not folklore — mutant detection predicts real-fault detection for 73% of 357 real faults, independently of coverage (Just et al., FSE 2014) (<a href="&#35;b3-deepdive">B3 The mutation-testing gate</a>).</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s7" data-pb="pb-bootstrap" data-step="pb2-s7">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s7">C1 · Run extreme mutation first</label>
+    <p class="pbwhy">Before any full run, do the cheapest audit: extreme mutation (Descartes-style) — one mutant per method, the whole method body removed. It surfaces pseudo-tested methods (covered, verified by nothing) immediately. Why: pseudo-tested code was found in every one of the 21 mature Java projects studied — this is the fastest possible demonstration that "covered" lies, at a cost of one mutant per method, cheap enough for the whole module on day one (<a href="&#35;b3-deepdive">B3</a>).</p>
+    <div class="pbdone">DONE = pseudo-tested inventory produced, reviewed with the module owner, recorded in report §4.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s8" data-pb="pb-bootstrap" data-step="pb2-s8">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s8">C2 · De-flake before trusting any score</label>
+    <p class="pbwhy">Quarantine or fix flaky tests at module scope before the gate run. Why: mutation scores vary about ±4 percentage points run-to-run on flaky suites — a ~70% verdict can flip on noise alone. Generated tests flake at 0.29–0.71% versus a 0.07% human baseline, and 63% of those flakes share one root cause: asserting on unordered collections (ICSE SEIP 2026, whose advice is verbatim to fix flaky tests before applying LLM generation). Then demand N consecutive fully green runs (<a href="&#35;b3-deepdive">B3</a>, <a href="&#35;b2-deepdive">B2</a> — the flaky-pins trap).</p>
+    <div class="pbdone">DONE = quarantine list recorded in report §5; N consecutive green runs on the module, zero flakes.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s9" data-pb="pb-bootstrap" data-step="pb2-s9">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s9">C3 · Run the module gate on held-out mutants</label>
+    <p class="pbwhy">One full mutation run on the pilot module only — never the codebase — using fresh, held-out mutants the generator has never seen: the practice sheet is not the exam, and the visible-versus-held-out gap is measured, growing with codebase size. One tool, one config, equivalent-mutant filtering on: TCE mechanically removes 7.4% / 5.7% of C/Java mutants, and it matters because ~45% of undetected mutants were equivalent in one study, at ~15 minutes each to adjudicate by hand. Score = killed / non-equivalent mutants. The bar: <strong>~70% is our working heuristic (Report 4), not an industry standard</strong> — record bar, tool, config and mutant source in the ADR (§6) (<a href="&#35;b3-deepdive">B3</a>).</p>
+    <div class="pbdone">DONE = score recorded in report §4 with the gate ADR; at or above the bar → input to the D2 gate; below → survivors exported as the agent's next task list.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s10" data-pb="pb-bootstrap" data-step="pb2-s10">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s10">C4 · Leave diff-scoped mutation on as a standing advisory</label>
+    <p class="pbwhy">After the gate, keep Mode 1 running forever: diff-scoped mutation on changed, covered lines only, at most one mutant per line — Google's design, validated on ~70,000 diffs and 1.1M mutants, with arid-node suppression lifting the usefulness of surfaced mutants from ~20% to 80%. Survivors become review comments and agent tasks; the job never blocks a merge. Why: feeding live survivors back to the generator is the strongest measured lever in this runbook — a mutation score stalled at 53% for four iterations jumped to 89.5% once survivors entered the prompt (MUTGEN) (<a href="&#35;b3-deepdive">B3</a>).</p>
+    <div class="pbdone">DONE = diff-scoped job running in CI, non-blocking; survivors visible in review as tasks.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb2-tpl-diffmut">copy</button><pre id="pb2-tpl-diffmut">
+# Diff-scoped mutation — standing advisory job (Mode 1; generic YAML, adapt)
+name: mutation-diff
+on: pull_request
+jobs:
+  mutate-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }         # need the merge base for the diff
+      - run: &lt;diff-scoped mutation command&gt;
+      # Per-ecosystem one-liners (versions = mid-2026, re-verify):
+      # JVM:   mvn org.pitest:pitest-maven:scmMutationCoverage
+      # JS/TS: npx stryker run --incremental
+      # Rust:  git diff origin/main.. &gt; git.diff &amp;&amp; cargo mutants --in-diff git.diff
+      - run: &lt;post survivors as PR review comments / agent tasks&gt;
+# Advisory by design: this job NEVER blocks the merge. Filter the survivor
+# stream (TCE / arid-node-style suppression) so reviewers see a credible
+# list, not equivalent-mutant noise.
+</pre></div>
+
+<div class="callout amber"><div class="t">What never to do with the gate (B3)</div><p>No org-wide big-bang mutation CI — Google itself calls a codebase-wide score "infeasably expensive"; start at module scope, expand by the heatmap. No mutation in the agent's inner loop — it belongs at review and phase boundaries. No gating before the flake quarantine — ±4pp noise flips verdicts. No comparing scores across tools — operators differ; compare only within one tool and config. No score-as-KPI dashboard — Goodhart applies; it is a threshold at a boundary, not a graph to optimize. No chasing 100% — the last decile is mostly equivalent-mutant adjudication. And keep the survivor stream credible: unfiltered equivalent-mutant noise trains reviewers to bulk-dismiss (C3/C4's suppression and TCE).</p></div>
+
+<h2><span class="n">5</span>Phase D — Minimal CI &amp; the F0→F2 gate</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s11" data-pb="pb-bootstrap" data-step="pb2-s11">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s11">D1 · Prove the CI loop end-to-end with a broken commit</label>
+    <p class="pbwhy">Confirm (or add) the minimal CI loop on the pilot module — build, lint, characterization suite — then prove it the way PB1's step A2 did at codebase level: insert a deliberately broken commit and watch it go red end-to-end, with a machine-readable failure the agent can consume. Why: CI is the precondition both AGENTS.md and scoped writes stand on in B1's chain, and the red/green signal is what the agent converges against (<a href="&#35;b1-deepdive">B1</a>, <a href="&#35;e4-deepdive">E4 Verification-first</a>). Keep it fast — as practitioner reasoning, not a cited statistic: an agent iterates many times per session, so CI wall-clock multiplies into every loop; no independent study pins a number on this, and the "&lt;10-minute feedback" figures circulating in vendor blogs are not attributable to DORA.</p>
+    <div class="pbdone">DONE = broken commit demonstrably red end-to-end; failure artifact machine-readable; linked in report §7.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb2-s12" data-pb="pb-bootstrap" data-step="pb2-s12">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb2-s12">D2 · Run the F0→F2 exit gate and write the bootstrap report</label>
+    <p class="pbwhy">Convene the gate: walk the exit-criteria table in §7, fill the module bootstrap report (§6), and record go / no-go with date, criteria and signatories, with STOP criteria armed for the coming write phase. Why: you advance on evidence, never on calendar pressure or felt progress — the METR RCT found experienced developers 19% <em>slower</em> with AI while forecasting 24% faster and still believing 20% faster afterwards, which is exactly why every criterion in this gate is deterministic and none is self-report (<a href="&#35;b1-deepdive">B1</a>, <a href="&#35;b6-deepdive">B6 Gates &amp; STOP criteria</a>).</p>
+    <div class="pbdone">DONE = report delivered; go / no-go recorded with date, criteria and signatories.</div>
+  </div>
+</div>
+
+<h2><span class="n">6</span>Toolbox &amp; templates</h2>
+<p>The tool facts below were verified mid-2026 and move fast — <strong>re-verify versions, flags and licensing before a client meeting</strong>. Two facts hold across every row and matter more than any version number: no tool ships a mandatory score gate by default (PIT's <span class="mono">mutationThreshold</span> defaults to 0; StrykerJS ships with its break threshold off) — the gate is always our configuration decision; and scores are never comparable across tools.</p>
+<div class="figscroll"><table class="map">
+<tr><th>Ecosystem</th><th>Mutation (mid-2026)</th><th>Diff / incremental</th><th>Approval / snapshot</th></tr>
+<tr><td>JVM</td><td>PIT 1.19.1; Descartes extension for extreme mutation; Arcmutate (commercial) for PR scope</td><td><span class="mono">withHistory</span>; <span class="mono">scmMutationCoverage</span> goal</td><td>ApprovalTests Java (active)</td></tr>
+<tr><td>JS/TS</td><td>StrykerJS 9.6.1</td><td>incremental mode (<span class="mono">--incremental</span>)</td><td>Jest / Vitest snapshots</td></tr>
+<tr><td>.NET</td><td>Stryker.NET 4.16.0</td><td>incremental mode</td><td>ApprovalTests.Net unmaintained per its own maintainers → Verify 31.x (commercial licensing fee from Aug 2026)</td></tr>
+<tr><td>Python</td><td>mutmut · cosmic-ray</td><td>no confirmed diff mode — verify</td><td>ApprovalTests Python (active) · syrupy</td></tr>
+<tr><td>Go</td><td>gremlins (pre-1.0); original go-mutesting inactive since late 2025 — an active community fork adds MSI gates &amp; baselines</td><td>—</td><td>golden files (stdlib pattern)</td></tr>
+<tr><td>Rust</td><td>cargo-mutants (Thoughtworks Radar listed)</td><td><span class="mono">--in-diff</span></td><td>insta</td></tr>
+<tr><td>PHP</td><td>Infection 0.34.0 (PHP 8.3+)</td><td>diff-mode flag unconfirmed — verify before citing</td><td>—</td></tr>
+</table></div>
+<p>Two skeletons below are judgment aids; the deterministic artifacts (filter, read-only rules, diff-scoped job) shipped inline at their steps — the E5 litmus: what must never happen ships as enforcement, not advice.</p>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb2-tpl-adr">copy</button><pre id="pb2-tpl-adr">
+# ADR — characterization &amp; mutation-gate decisions (one file per decision)
+ADR-___: &lt;title&gt;        Date: ____   Module: ____   Author: ____
+
+## Type A — load-bearing pin kept on purpose (Hyrum's Law)
+Pinned behavior: ____________
+Why it looks wrong: ____________ (copy the SUSPECTED-BUG sentence)
+Who / what depends on it today: ____________
+Decision: KEEP the pin.   Revisit trigger: ____________
+
+## Type B — the mutation-gate decision (one per module)
+Tool + version + config: ____________ (one tool, one config —
+scores never compare across tools)
+Threshold: ~70% non-equivalent kills is OUR working heuristic (Report 4),
+not an industry standard. Bar chosen here: ____ %
+Held-out mutant source (never shown to the generator): ____________
+TCE / equivalent-mutant filtering on: ____   Flakes quarantined first: ____
+Result: score ____ %  → GO / NO-GO for F2 on this module
+Survivors (if NO-GO) attached as the agent's next task list: ____________
+</pre></div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb2-tpl-report">copy</button><pre id="pb2-tpl-report">
+# Module bootstrap report — PB2 exit artifact
+Module: ____________   Client / system: ____________
+Date: ____________     Author: ____________
+
+## 1 Module &amp; rationale (step A1)
+Why this module (seams / size / risk / owner): ____________
+
+## 2 Before-numbers (step A2; from PB1 report §2)
+Suite runtime: ____  Pass rate: ____  Coverage (if measured): ____
+Flaky tests: ____   Archaeology note: ____________ (owner spot-check: ____)
+
+## 3 Characterization inventory (steps B1–B3)
+Tests added: ____  Pins: ____  Candidates discarded by filter: ____
+SUSPECTED-BUG raised: ____ → kept pins with ADR: ____  Bug tickets: ____
+Untriaged remaining: 0 (hard requirement)
+
+## 4 Mutation results (steps C1, C3)
+Extreme mutation — pseudo-tested methods found: ____
+Tool + config: ____________   Held-out score: ____ % (bar: see gate ADR)
+Survivors: ____ → task list: ____________
+
+## 5 Flake record (step C2)
+Quarantined: ____  Root causes: ____________  Consecutive green runs: N = ____
+
+## 6 Read-only enforcement (step B4)
+Mechanism (CODEOWNERS / harness deny / protected path): ____________
+Edit attempt verified blocked on: ____ (session log: ____________)
+
+## 7 CI loop (step D1)
+Pipeline: ____________   Broken-commit smoke test red end-to-end: ____ (link)
+
+## 8 Go / no-go (step D2)
+Net catches change: ____   Faults ≥ bar: ____   Warts adjudicated: ____
+Stable &amp; owned: ____
+Decision: GO (PB3 opens this module's write scope) / NO-GO (module stays F1)
+Signatories: ____________   Date: ____________   STOP criteria armed: ____
+</pre></div>
+
+<h2><span class="n">7</span>Exit gate &amp; takeaways</h2>
+<p>The module counts as bootstrapped when every row below passes its deterministic check — the criteria come straight from B1 §6 and B2 §6, and none of them is a self-report.</p>
+<div class="figscroll"><table class="map">
+<tr><th>Exit criterion</th><th>Deterministic check</th></tr>
+<tr><td>Net catches change</td><td>inject a behavior change by hand; at least one test goes red</td></tr>
+<tr><td>Net catches faults</td><td>mutation score at or above the ADR-recorded bar (~70% working heuristic) on held-out, non-equivalent mutants</td></tr>
+<tr><td>Warts adjudicated</td><td>zero untriaged SUSPECTED-BUG markers; each one → ADR or ticket</td></tr>
+<tr><td>Net stable &amp; owned</td><td>N consecutive green runs; agent read-only on tests verified once; keep-or-discard recorded per pin</td></tr>
+<tr><td>Gate recorded</td><td>go / no-go with date, criteria and signatories in the bootstrap report</td></tr>
+</table></div>
+<div class="callout pine"><div class="t">Exit routing</div><p>If GO → proceed to <strong>PB3 Harness</strong> for this module's write scope: the F2 boundary opens exactly as wide as the net that guards it. If NO-GO → the survivors are the agent's next task list and the module stays at F1 — a working state with a scoped backlog, not a failure; rerun the gate when the list is burned down.</p></div>
+<div class="callout"><div class="t">Three sentences to remember PB2 by</div><p>Legacy code cannot verify the agent, and the agent is the cheapest way to build the verification — the forced ordering (read, pin, audit, prove CI) is what keeps that circle from closing into bug-as-spec. The net is graded by mutation score on held-out mutants, never by coverage — and ~70% is our recorded decision in an ADR, not an industry standard. The agent never adjudicates correctness and never touches an approved test: SUSPECTED-BUG routes judgment to humans, and read-only lives in the harness, not in the prompt.</p></div>
+<p>Sources and caveats for the empirical claims. Strong independent evidence: Just et al. FSE 2014 (73% coupling on 357 real faults), Inozemtseva &amp; Holmes ICSE 2014 (31,000 suites), the Google mutation trilogy (~70,000 diffs, 1.1M mutants; diff-scoped, no absolute codebase score), MUTGEN arXiv:2506.02954 (the 100%-coverage/4%-score suite; the 53%→89.5% survivor-feedback gain), TestGenEval (35.2% coverage / 18.8% mutation), the bug-as-spec measurement (Konstantinou, Tambon &amp; Papadakis 2026), the flakiness study (ICSE SEIP 2026), ImpossibleBench, the METR RCT (arXiv:2507.09089), DORA 2024's −7.2% delivery stability (the 2025 report flips the throughput sign positive while instability persists), and the replication finding that test code injects future defects at a rate comparable to production code (arXiv:2603.15935). Industrial self-report: Meta TestGen-LLM (FSE 2024). Practitioner synthesis: Feathers 2004 and his October 2024 talk connecting the technique to AI agents, Hyrum's Law (Winters), the CI-speed argument in D1, and this runbook's own compressions — the six-step workflow, the two-mode gate and the ~70% bar are Report 4 synthesis, recorded per client in an ADR. All tool facts are point-in-time, mid-2026.</p>
+<p class="closingnote">This runbook is also available as a standalone file (PB2-bootstrap-runbook.html). Its natural neighbours in the workbook are <a href="&#35;b1-deepdive">B1 The bootstrap paradox</a>, <a href="&#35;b2-deepdive">B2 Characterization &amp; golden master</a>, <a href="&#35;b3-deepdive">B3 The mutation-testing gate</a>, and <a href="&#35;b6-deepdive">B6 Roadmap F0–F3</a>. The workflow compression, the two-mode gate and the ~70% threshold are this workbook's synthesis; every tool fact above should be re-verified before the next client meeting.</p>
+    </div>
+  </div>
+</div>
+
 <footer>
-  <b>v1.49</b> · 2026-07-18 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.50</b> · 2026-07-18 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
@@ -7219,12 +7564,12 @@ open:[`Which client signals that the questionnaire cannot capture (politics, inc
 src:[{t:"↳ PB1 Runbook — open here (assessment checklist, delivery-baseline capture, questionnaire & report templates, the F0 go/no-go)",u:"#pb1-deepdive"},{t:"E6 autonomy levels, B1 safe ordering, B6 gates & STOP criteria, E7 metrics — the theory this runbook distils (open those topics' deep dives)"}],
 checks:[{q:`Why are the four gate criteria non-compensable rather than averaged into the score?`,a:`Because each one guards a failure mode that no amount of strength elsewhere offsets: an untrusted test suite means no external truth for the loop (E4); unreadable CI signal means the agent cannot self-correct; missing dev/prod separation makes the blast radius unbounded (the Replit incident); secrets in the repo leak through every agent context. A high average with one of these missing is exactly the false-confidence case the assessment exists to catch.`}]},
 
-{id:"pb-bootstrap",code:"PB2",title:"Bootstrap: build the verification base (runbook in preparation)",
+{id:"pb-bootstrap",code:"PB2",title:"Bootstrap: build the verification base",
 know:[`Will cover, in order: characterization tests on the first module (B2), a minimal CI loop the agent can read, the mutation-score baseline and the ~70% working heuristic (B3), and read-only comprehension before any writes (B1, B4).`,
 `The safe ordering exists because of the bootstrap paradox: the agent needs a verification loop that legacy code does not have, and the agent is also the cheapest tool to build it — unanchored, this closes into the bug-as-spec loop (B1).`],
 concepts:["characterization tests","mutation baseline","safe ordering"],
 open:[`Which module of the client codebase is the first characterization target — and does the heatmap (B5) pick it, or does risk?`],
-src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: B1 bootstrap paradox, B2 characterization, B3 mutation gate (open those deep dives)"}]},
+src:[{t:"↳ PB2 Runbook — open here (module comprehension, characterization net, mutation gate, CI smoke test, bootstrap-report template)",u:"#pb2-deepdive"},{t:"Theory: B1 bootstrap paradox, B2 characterization, B3 mutation gate (open those deep dives)"}]},
 
 {id:"pb-harness",code:"PB3",title:"Harness: stand up the engineering harness (runbook in preparation)",
 know:[`Will cover: the CLAUDE.md/AGENTS.md skeleton extracted-not-decreed (B1, E9), hooks and permissions with the advisory-vs-deterministic split (E5), the verification gate in CI (E4), and information architecture for the agent (I1–I5).`,
@@ -7664,6 +8009,15 @@ function renderSyncModal(){
       +'<div class="syncrow"><input id="synccodein" type="text" maxlength="4" placeholder="abcd" autocomplete="off"><button type="button" id="synclink">Link this device</button></div>'
       +'<p id="syncmsg"></p>';
   }
+}
+var pb2ov=document.getElementById('pb2ov');
+if(pb2ov){
+  document.addEventListener('click',function(e){
+    var open=e.target.closest('a[href="#pb2-deepdive"]');
+    if(open){e.preventDefault();pb2ov.classList.add('show');document.body.style.overflow='hidden';pb2ov.querySelector('.panel').scrollTop=0;return;}
+    if(e.target.closest('[data-pb2close]')||e.target===pb2ov){pb2ov.classList.remove('show');document.body.style.overflow='';}
+  },true);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pb2ov.classList.contains('show')){pb2ov.classList.remove('show');document.body.style.overflow='';}});
 }
 var syncov=document.getElementById('syncov');
 if(syncov){

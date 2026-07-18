@@ -257,7 +257,8 @@ the theory→practice layer lives inside the workbook as runbooks ordered by the
 engagement journey; the harness starter-kit templates and hands-on labs derive from
 these runbooks later — no separate repo.
 - ~~Module skeleton (pb- topics, store-backed checklists) + **PB1 Assess** runbook~~ — **done (v1.48)**.
-- Next, one per version: **PB2 Bootstrap** (B1–B3 distilled) → **PB3 Harness** (E1–E5, I2 —
+- ~~**PB2 Bootstrap** (B1–B3 distilled)~~ — **done (v1.50)**.
+- Next, one per version: **PB3 Harness** (E1–E5, I2 —
   templates ship as runnable configs: hook scripts, permission baselines, CI gates, per the
   E5 litmus) → **PB4 Handoff** (H1–H4) → **PB5 Pilot** (E7, B6 — converges with T2's pilot
   playbook; compares against the delivery baseline captured in PB1).
