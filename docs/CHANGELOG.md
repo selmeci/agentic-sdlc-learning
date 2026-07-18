@@ -3,9 +3,11 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
-## v1.48 · 2026-07-18
+## v1.49 · 2026-07-18
 
 **NEW MODULE M9 — Playbook: from theory to practice. First runbook PB1 Assess.** The practice layer lands inside the workbook: five `pb-` topics ordered by the engagement journey (Assess → Bootstrap → Harness → Handoff → Pilot), built for the internal team to carry the methodology to a brownfield client. PB1 ships complete — a runbook companion in both copies (`PB1-assess-runbook.html` + overlay) with nine checklist steps across five phases (verification base & delivery baseline, information architecture, governance minimum, team readiness, evaluation), each step carrying the action, the theory link that justifies it, and a DONE criterion; plus two copy-paste templates (readiness questionnaire with four non-compensable [GATE] criteria, assessment-report skeleton with a delivery-baseline section), the score→L1–L5 recommendation table and the F0 go/no-go with STOP criteria (the scoring model is our synthesis, flagged). The delivery baseline (DORA keys + cost per merged PR) is captured at assess time — a pilot without it can be neither proven nor disproven. NEW interaction layer: runbook checkboxes persist through the existing store (`agentic-study-v1`, new `pb` field, mirrored into cross-device sync), with a per-runbook progress chip and copy buttons; the standalone copy is deliberately non-persistent. PB2–PB5 are visible as in-preparation topics (one runbook per future version; PB3's templates will be the harness starter kit — runnable hook/permission/CI configs, not prose). Validator extended: `pb-` prefix recognised, checklist step ids checked for uniqueness (they are frozen progress keys, like topic ids).
+
+## v1.48 · 2026-07-18
 
 **SYNC — delta sync over the existing Yjs/HTTP layer.** Pushes and pulls now carry Yjs
 *diffs* against the server's last known state vector instead of the full encoded
