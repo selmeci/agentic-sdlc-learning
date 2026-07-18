@@ -339,6 +339,20 @@ footer li::before{content:"·";position:absolute;left:2px}
 .e1ov svg .edB5b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahB5b)}
 .e1ov svg .edD2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2a)}
 .e1ov svg .edD2b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2b)}
+.e1ov svg .edPB1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB1a)}
+/* ===== M9 playbook runbooks (v1.48) ===== */
+.pbstep{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin:9px 0}
+.pbstep input.pbck{margin-top:4px;width:16px;height:16px;accent-color:var(--cobalt);flex:none;cursor:pointer}
+.pbtxt{flex:1;min-width:0}
+.pbwhat{font-family:var(--disp);font-weight:600;font-size:14.5px;cursor:pointer}
+.pbwhy{font-size:13.5px;color:var(--soft);margin:3px 0 0}
+.pbdone{font-family:var(--mono);font-size:11px;color:var(--pine);margin-top:5px}
+.pbtpl{position:relative;margin:12px 0}
+.pbtpl pre{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--idle-bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;overflow-x:auto;white-space:pre-wrap}
+.pbcopy{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:10.5px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;color:var(--soft)}
+.pbcopy:hover{border-color:var(--cobalt);color:var(--cobalt-deep)}
+.pbprog{font-family:var(--mono);font-size:11px;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.pbnote{font-family:var(--mono);font-size:11.5px;color:var(--soft)}
 .e1ov table.map{border-collapse:collapse;width:100%;font-size:13px;margin:13px 0}
 .e1ov table.map th,.e1ov table.map td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
 .e1ov table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12px;font-weight:600}
@@ -2145,6 +2159,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.48</span><span class="vd">2026-07-18</span><p><strong>NEW MODULE M9 — Playbook: from theory to practice. First runbook PB1 Assess.</strong> The practice layer lands inside the workbook: five <span class="mono">pb-</span> topics ordered by the engagement journey (Assess → Bootstrap → Harness → Handoff → Pilot), built for the internal team to carry the methodology to a brownfield client. PB1 ships complete — a runbook companion in both copies (PB1-assess-runbook.html + overlay) with nine checklist steps across five phases (verification base &amp; delivery baseline, information architecture, governance minimum, team readiness, evaluation), each step carrying the action, the theory link that justifies it, and a DONE criterion; plus two copy-paste templates (readiness questionnaire with four non-compensable [GATE] criteria, assessment-report skeleton with a delivery-baseline section), the score→L1–L5 recommendation table and the F0 go/no-go with STOP criteria (the scoring model is our synthesis, flagged). The delivery baseline (DORA keys + cost per merged PR) is captured at assess time — a pilot without it can be neither proven nor disproven. NEW interaction layer: runbook checkboxes persist through the existing store (<span class="mono">agentic-study-v1</span>, new <span class="mono">pb</span> field, mirrored into cross-device sync), with a per-runbook progress chip and copy buttons; the standalone copy is deliberately non-persistent. PB2–PB5 are visible as in-preparation topics (one runbook per future version; PB3's templates will be the harness starter kit — runnable hook/permission/CI configs, not prose). Validator extended: <span class="mono">pb-</span> prefix recognised, checklist step ids checked for uniqueness (they are frozen progress keys, like topic ids).</p></div>
       <div class="vitem"><span class="vv">v1.48</span><span class="vd">2026-07-18</span><p><strong>SYNC — delta sync: pushes and pulls now carry only the changes, not the whole document.</strong> Until now every sync push uploaded the full encoded study state — and since that encoding grows with edit history, even ticking one section as read sent everything. The workbook now keeps the server's last known <em>state vector</em> and sends only the <strong>Yjs diff</strong> the server is missing (tens of bytes for a small change); refreshes likewise fetch only the missing diff via a new <span class="mono">POST /r/:code/sync</span> endpoint. Every 25th push sends full state as a self-healing reconciliation. Fully backwards compatible: an already-linked device migrates silently on its next push, and older app versions keep working against the updated server. No content or topic-id changes.</p></div>
       <div class="vitem"><span class="vv">v1.47</span><span class="vd">2026-07-18</span><p>Added the D2 deep-dive companion (Design tokens as the visual contract, DTCG) — token anatomy and the tier model (community practice, not spec; credited to Curtis 2016 options/decisions), the 2025.10 release read precisely (Format + Color stable; theming/modes in the "do not implement" Resolver draft — the earlier "theming shipped" wording corrected in the topic and Report 5 notes), the mid-2026 pipeline (Style Dictionary v5 shipped with 2025.10 coverage converging, Terrazzo, Tokens Studio paid git sync, Figma Variables API Enterprise-gated + native DTCG export not GA, Penpot first open-source native-DTCG tool), code-first sync direction as governance (Sopelnik and Builder.io/Sewell verbatims; Adobe Spectrum designer-authored/code-stored), the agent contract (Pandya closed-set line, DESIGN.md with next-day cross-vendor uptake, the Stylelint/ESLint/drift enforcement stack), the evidence file with corrected dating (zeroheight 56→84 = 2024→2025 report n=294, 86% in 2026 n=147, the 40% pipeline gap, CHI 2026 registry-based 95.08%, and the honest null: no token-specific causal study) plus a do-not-cite list, and the six-step SCSS→DTCG migration (our synthesis). Fact pass: 4 research teammates + 3 adversarial spot-verifiers (13th session in a row with real catches: DESIGN.md tool roster = third-party commentary, mis-dated adoption stat, two paraphrases de-quoted, quote trims).</p></div>
       <div class="vitem"><span class="vv">v1.46</span><span class="vd">2026-07-18</span><p><strong>NEW DEEP DIVE B6 &mdash; Roadmap F0&ndash;F3, metrics and STOP criteria.</strong> Sixth M5 companion (B6-roadmap-f0-f3-deepdive.html + overlay) &mdash; module M5 complete. The roadmap as a permission ladder with measured gates (Report 4 synthesis, honestly analogue-checked: no published canonical equivalent as of July 2026 &mdash; nearest cousins stage oversight per task, not access over time), the gate table with deterministic checks and automatic demotion (borrowing GAIE&rsquo;s risk-routed tiers and the Digital Apprentice&rsquo;s dual-key promotion / asymmetric demotion), the metrics chapter with the self-report trap (METR) and the vendor-telemetry file (Faros 2026 &ldquo;Acceleration Whiplash&rdquo;: review time +441.5%, 31.3% more PRs merging without any review), secrets from day 0 on the 2026 evidence (GitGuardian: Claude Code-assisted commits at 3.2% vs 1.5% baseline &mdash; ~2&times;; MCP configs as a leak surface), STOP criteria anchored to safety standards (ISO 26262 / IEC 62304 / DO-178C traceability via vendor guidance, flagged), the day-1 recipe and the F0&ndash;F3 &times; R1/R2/R3/R6 master-plan table (our synthesis) answering the topic&rsquo;s open question. Key swarm corrections: DORA&rsquo;s deployment rework rate re-dated to its true 2024 introduction (fixed across E7, E8, H4, B1 in both copies), the MIT NANDA &ldquo;95%&rdquo; pinned to its real wording and methodology (300+ initiatives / 52 org interviews / 153 leaders &mdash; the circulating &ldquo;150/350&rdquo; is a misquote), DX dataset corrected to 425 organizations, unverifiable sub-figures dropped. New load-bearing sources: Microsoft&rsquo;s instrumented rollout study (arXiv:2607.01418, ~24% sustained PR-merge lift, peer-network diffusion), DX Q4 impact report (enablement evidence, onboarding 91&rarr;49 days), DORA AI Capabilities Model, Swarmia autonomy levels, KPMG stall mechanism, Sharma&rsquo;s D&sup3; weighed as the nearest published cousin. Topic brown-roadmap enriched (metrics, secrets pin, gates bullet, new check); GitGuardian src updated to the 2026 report.</p></div>
@@ -5810,6 +5825,240 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     </div>
   </div>
 </div>
+<div class="e1ov" id="pb1ov" role="dialog" aria-modal="true" aria-label="PB1 runbook">
+  <div class="panel">
+    <div class="bar"><span class="tag">PB1 · RUNBOOK</span><h3>Assess: Client Maturity &amp; the F0 Entry Gate</h3>
+      <button class="x" type="button" data-pb1close>✕ close</button></div>
+    <div class="body">
+<h2><span class="n">0</span>Why this runbook exists</h2>
+<p class="lead">PB1 is the entry point of every engagement: you assess the surrounding system before building anything on it, because AI amplifies that system rather than fixing it. The evidence is independent and directional — DORA 2024 associates a 25% increase in AI adoption with −7.2% delivery stability, and a METR randomised controlled trial found experienced developers were 19% slower while believing they were about 20% faster. PB1 exists to replace optimism with measured facts before the F0 gate.</p>
+<div class="callout amber"><div class="t">What this is not</div><p>This is not an audit produced for the client's benefit alone. The output decides <em>our</em> entry decision at the F0 gate — whether we proceed, what preconditions we attach, and where the first real risk lives.</p></div>
+<p>The theory behind the checklist lives in the workbook topics this runbook distils — especially <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a> for the delivery baseline and the review-capacity argument, and <a href="&#35;b1-deepdive">B1 Safe ordering</a> for why verification must come before delegation.</p>
+
+<h2><span class="n">1</span>How to run it</h2>
+<p>Run PB1 with one person, 2–4 focused days, read access to the repository, CI, deploy logs and the incident system, one team interview, and a client sponsor empowered to sign the F0 decision. Every step below is written as ČO (the action), PREČO (the theory link), and DONE (the exit criterion). Check steps off as you go; the progress chip updates automatically.</p>
+<p><span class="pbprog" data-pbprog="pb-assess"></span></p>
+<p class="pbnote">Progress is saved locally in this workbook (same store as topic progress). The standalone copy of this runbook does not persist checkbox state.</p>
+<figure>
+<svg viewBox="0 0 900 150" role="img" aria-label="The five-runbook engagement journey, PB1 highlighted">
+  <defs><marker id="ahPB1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <text x="30" y="30" class="tg">THE ENGAGEMENT JOURNEY</text>
+  <rect x="24" y="48" width="150" height="52" rx="10" class="bxC"/><text x="40" y="70" class="tt">PB1 Assess</text><text x="40" y="88" class="ts">you are here</text>
+  <rect x="200" y="48" width="150" height="52" rx="10" class="bxG"/><text x="216" y="70" class="ti">PB2 Bootstrap</text><text x="216" y="88" class="ts">verification base</text>
+  <rect x="376" y="48" width="150" height="52" rx="10" class="bxG"/><text x="392" y="70" class="ti">PB3 Harness</text><text x="392" y="88" class="ts">CLAUDE.md · hooks · CI</text>
+  <rect x="552" y="48" width="150" height="52" rx="10" class="bxG"/><text x="568" y="70" class="ti">PB4 Handoff</text><text x="568" y="88" class="ts">contract · EARS</text>
+  <rect x="728" y="48" width="150" height="52" rx="10" class="bxG"/><text x="744" y="70" class="ti">PB5 Pilot</text><text x="744" y="88" class="ts">metrics · gates</text>
+  <line x1="174" y1="74" x2="200" y2="74" class="edPB1"/>
+  <line x1="350" y1="74" x2="376" y2="74" class="edPB1"/>
+  <line x1="526" y1="74" x2="552" y2="74" class="edPB1"/>
+  <line x1="702" y1="74" x2="728" y2="74" class="edPB1"/>
+  <text x="30" y="132" class="ts">Each runbook ends in an exit gate; PB1 ends in the F0 go/no-go (B6).</text>
+</svg>
+<figcaption>The journey the M9 module walks. PB1 produces the assessment report, the delivery baseline, and the F0 entry decision; PB2–PB5 build on its findings in order.</figcaption>
+</figure>
+
+<h2><span class="n">2</span>Phase A — Verification base &amp; delivery baseline</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s1" data-pb="pb-assess" data-step="pb1-s1">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s1">A1 · Baseline the test suite</label>
+    <p class="pbwhy">Run the full suite three times from a clean checkout. Record: one-command invocation, wall-clock runtime, pass rate, whether it finishes under ~15 min, and the list of flaky tests. Why: the suite is the external truth the whole loop stands on — without a trusted, fast signal there is nothing for an agent to converge on (<a href="&#35;e4-deepdive">E4 Verification-first</a>, <a href="&#35;b1-deepdive">B1 Safe ordering</a>).</p>
+    <div class="pbdone">DONE = runtime, pass rate, under-15-min status and flaky list recorded in report §2; headless one-command status recorded as a fact (feeds questionnaire A2).</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s2" data-pb="pb-assess" data-step="pb1-s2">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s2">A2 · Verify CI emits agent-readable signal</label>
+    <p class="pbwhy">Insert a deliberately broken test and let CI run. Confirm the failure is machine-readable: a non-zero exit code and a parseable log or status payload. Why: an agent that cannot read CI cannot self-correct; a red/green dot is not enough (<a href="&#35;e4-deepdive">E4 Verification-first</a>, <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a>).</p>
+    <div class="pbdone">DONE = broken-test experiment run; failure artifact linked in report §2; whether the red build blocks merge recorded (feeds questionnaire A3).</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s3" data-pb="pb-assess" data-step="pb1-s3">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s3">A3 · Capture the delivery baseline</label>
+    <p class="pbwhy">Compute the DORA four keys plus rework rate retroactively from git and CI history, add cost per merged PR (review hours, CI minutes, seat licences — the token column is added by PB5), agree the before/after window with the client, and confirm access to git history, deploy logs, and the incident system. The baseline is captured now, at assess time — a pilot without it can be neither proven nor disproven (the METR perception gap), so it cannot wait for PB5 (<a href="&#35;e7-deepdive">E7 day-0 DORA checklist</a>).</p>
+    <div class="pbdone">DONE = baseline numbers recorded in report §3; window + data access confirmed in writing.</div>
+  </div>
+</div>
+
+<h2><span class="n">3</span>Phase B — Information architecture</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s4" data-pb="pb-assess" data-step="pb1-s4">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s4">B1 · Inventory source-of-truth artifacts</label>
+    <p class="pbwhy">List architecture docs, ADRs, specs, READMEs, and runbooks; record owner, last-touched date, and whether a newcomer can retrieve each from the repo. Why: an agent cannot compensate for missing or buried truth; the loop will hallucinate consensus where none exists (<a href="&#35;i1-deepdive">I1 Artifact taxonomy</a>, <a href="&#35;i3-deepdive">I3 Consistency drift</a>).</p>
+    <div class="pbdone">DONE = artifact table in report §4 with gaps explicitly listed.</div>
+  </div>
+</div>
+
+<h2><span class="n">4</span>Phase C — Governance minimum</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s5" data-pb="pb-assess" data-step="pb1-s5">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s5">C1 · Verify dev/prod separation and run a secrets scan</label>
+    <p class="pbwhy">Prove production credentials are unreachable from the development environment, then run a secrets scan across the repo history. Why: environment separation and secrets hygiene are hard boundaries, not maturity shades — the Replit production-DB incident (July 2025) showed what happens when they fail. GitGuardian 2026 vendor telemetry reports AI-assisted commits leak secrets at 3.2% versus a 1.5% baseline; treat that as a vendor claim, not independent evidence (<a href="&#35;e5-deepdive">E5 Governance</a>, <a href="&#35;b6-deepdive">B6 Roadmap F0–F3</a>; see also module M7 Security).</p>
+    <div class="pbdone">DONE = reachability tested and result recorded; scan report attached; if prod credentials are reachable → questionnaire C1 scored 0 and logged as an F0 precondition.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s6" data-pb="pb-assess" data-step="pb1-s6">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s6">C2 · Map write permissions</label>
+    <p class="pbwhy">Document branch protection, CODEOWNERS, who and what can merge, and where an agent's write access would stop today. Why: delegation without a permission boundary is just automation of mistakes; the write-permission matrix is the deterministic half of governance and the RBAC/least-privilege check (<a href="&#35;i2-deepdive">I2 Lifecycle &amp; write permissions</a>, <a href="&#35;e5-deepdive">E5 Governance</a>).</p>
+    <div class="pbdone">DONE = draft write-permission matrix in report §5 (skeleton below).</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-matrix">copy</button><pre id="pb1-tpl-matrix">
+# Write-permission matrix — draft
+Who / what        | Push to default | Merge PR | Release | Prod access
+------------------|-----------------|----------|---------|------------
+Human developer   |                 |          |         |
+CI bot            |                 |          |         |
+Agent (today)     |                 |          |         |
+Agent (proposed)  |                 |          |         |
+
+Rules: default branch protected? ____  CODEOWNERS enforced? ____  Review required? ____
+</pre></div>
+
+<h2><span class="n">5</span>Phase D — Team readiness</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s7" data-pb="pb-assess" data-step="pb1-s7">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s7">D1 · Name the editor/curator and measure review capacity</label>
+    <p class="pbwhy">Identify who will curate agent config and review agent PRs, and secure a concrete weekly review budget in hours. Why: agent output scales faster than review; Faros AI vendor telemetry shows +98% PR volume and +91% review time when assistive tools land without capacity planning (<a href="&#35;p4-deepdive">P4 The PM role</a>, <a href="&#35;h4-deepdive">H4 Feedback-loop anti-patterns</a>, <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a>).</p>
+    <div class="pbdone">DONE = named owner(s) + weekly review budget recorded in report §6, or absence recorded as questionnaire D2 = 0.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-interview">copy</button><pre id="pb1-tpl-interview">
+# Team interview — guide
+Current PR wait time (hours/days): ____
+Who reviews today & spare hours/week: ____
+Who would own agent config &amp; review agent PRs: ____
+Where do docs for a given feature actually live: ____
+A recent incident story (what happened, how it was found): ____
+</pre></div>
+
+<h2><span class="n">6</span>Phase E — Evaluation &amp; the F0 gate</h2>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s8" data-pb="pb-assess" data-step="pb1-s8">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s8">E1 · Score the questionnaire and derive the L1–L3 entry recommendation</label>
+    <p class="pbwhy">Fill the 24-point questionnaire below, mark the four [GATE] items, and map the result to the recommendation table. Why: the score is a structured way to surface gaps, not a disguise for gut feel; the thresholds are our synthesis, calibrated against the theory in <a href="&#35;e6-deepdive">E6 Autonomy levels</a>.</p>
+    <div class="pbdone">DONE = filled questionnaire archived with the engagement notes; recommended level written into report §7.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb1-s9" data-pb="pb-assess" data-step="pb1-s9">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb1-s9">E2 · Deliver the report and run the F0 go/no-go with STOP criteria</label>
+    <p class="pbwhy">Produce the assessment report from the template, convene the F0 gate, and record a go / no-go / go-with-preconditions decision together with the STOP criteria that would pull the cord. Why: the gate is the only thing that turns assessment into action; without a recorded decision and triggers, the report becomes shelfware (<a href="&#35;b6-deepdive">B6 Roadmap F0–F3</a>).</p>
+    <div class="pbdone">DONE = decision (go / no-go / go-with-preconditions) recorded with date, criteria and signatories.</div>
+  </div>
+</div>
+
+<p>The questionnaire stays at 24 points. The delivery baseline captured in step A3 is measurement data, not a scored maturity dimension — scoring it would double-count evidence the gates already cover and would break the calibrated thresholds in the recommendation table.</p>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-quest">copy</button><pre id="pb1-tpl-quest">
+# Agentic-readiness assessment — questionnaire (v1)
+Client: ____________   Assessor: ____________   Date: ____________
+Score each 0 (absent) / 1 (partial) / 2 (solid). Score 2 only for what is in place today;
+agreed or planned remediation = 1. Gate criteria marked [GATE] are non-compensable:
+any [GATE] at 0 caps the recommendation at L1 regardless of total. A gate counts as
+passed only at 2; a gate at 1 passes but must appear as a precondition in report §7.
+
+## A — Verification base
+A1 [GATE] Trusted automated test suite exists and passes ........... 0 1 2
+A2 [GATE] Full suite runs headless in under ~15 min ................ 0 1 2
+A3 CI runs on every PR and blocks merge on red ..................... 0 1 2
+A4 [GATE] CI failure output is machine-readable (agent-consumable) . 0 1 2
+
+## B — Information architecture
+B1 Architecture/decision docs exist and are findable from the repo . 0 1 2
+B2 Docs freshness: last-touched within ~6 months for core docs ..... 0 1 2
+B3 A newcomer can locate the source of truth for a feature ......... 0 1 2
+
+## C — Governance minimum
+C1 [GATE] Dev/prod separated; prod creds unreachable from dev ...... 0 1 2
+C2 Secrets scan clean (or remediation plan agreed) ................. 0 1 2
+C3 Branch protection + review requirement on the default branch .... 0 1 2
+
+## D — Team readiness
+D1 A named owner will curate agent config &amp; review agent PRs ....... 0 1 2
+D2 Review capacity exists (agent PRs will not queue for days) ...... 0 1 2
+
+TOTAL ____ / 24        GATES PASSED ____ / 4
+</pre></div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-report">copy</button><pre id="pb1-tpl-report">
+# Agentic-readiness assessment — report
+Client / system: ____________     Date: ____________     Assessor: ____________
+
+## 1 Executive summary
+Recommendation: L__ entry, F0 scope: ____________. Go / No-go / Go with preconditions.
+
+## 2 Verification base (steps A1–A2)
+Suite command: ____  Runtime: ____  Pass rate: ____  Flaky tests: ____
+Under 15 min: ____  Headless one-command: ____  Merge blocked on red: ____
+CI signal experiment result: ____________
+
+## 3 Delivery baseline (step A3)
+Deploy frequency: ____  Lead time: ____  Change-fail rate: ____  Recovery time: ____  Rework rate: ____
+Cost per merged PR (review hours / CI minutes / seats): ____
+Before/after window agreed: ____________  Data access confirmed (git / CI / incidents): ____
+
+## 4 Information architecture (step B1)
+| Artifact | Owner | Last touched | Retrievable from repo? |
+|---|---|---|---|
+
+## 5 Governance minimum (steps C1–C2)
+Dev/prod separation: ____________   Secrets scan: ____________
+Write-permission matrix (draft): ____________
+
+## 6 Team readiness (step D1)
+Editor/curator: ____________   Review budget: ____ h/week
+
+## 7 Score &amp; recommendation (steps E1–E2)
+Total ____ / 24 · Gates ____ / 4 → recommended level L__ (rationale: ...)
+Decision signatories: ____________
+Preconditions before F1: ____________
+
+## 8 STOP criteria agreed for F0
+(from B6: e.g. stability drop beyond agreed threshold, secrets leak,
+unreviewed-merge incident — list the concrete triggers + who pulls the cord)
+</pre></div>
+
+<p>The mapping below is our synthesis, not an industry standard. It converts the questionnaire into an entry recommendation; the non-compensable gate criteria are what make it conservative.</p>
+<div class="figscroll"><table class="map"><tr><th>Score</th><th>Gates</th><th>Recommendation</th></tr>
+<tr><td>&lt; 10</td><td>any</td><td>L1 only; engagement starts by fixing the base (PB2 becomes the deliverable, not a prerequisite)</td></tr>
+<tr><td>10–16</td><td>4/4</td><td>L2 entry; F0 read-only archaeology can start (<a href="&#35;b4-deepdive">B4</a>)</td></tr>
+<tr><td>≥ 17</td><td>4/4</td><td>L3 pilot candidate; proceed to PB2 with the F0→F1 exit criteria from B6</td></tr>
+<tr><td>any</td><td>&lt; 4/4</td><td>no L2+ autonomy until the failed gate is fixed — non-compensable</td></tr>
+</table></div>
+<p>The table tops out at L3 deliberately — L4 is a per-slice decision for narrow deterministic tasks and L5 is not achieved (E6); a high score buys a pilot, not a higher ceiling.</p>
+<p>STOP criteria for F0 are taken from <a href="&#35;b6-deepdive">B6</a> and adapted to the client's context. Typical triggers include a delivery-stability drop beyond the agreed threshold, a secrets leak or production credential reachable from dev, and any unreviewed merge. Each trigger names who pulls the cord and how.</p>
+
+<h2><span class="n">7</span>Exit gate &amp; takeaways</h2>
+<div class="callout pine"><div class="t">Exit criteria</div><p>Report delivered; delivery baseline recorded (report §3 is the pilot's "before" snapshot — PB5 compares against it); go/no-go recorded; if GO → proceed to PB2 with the report's §2 numbers as the bootstrap baseline.</p></div>
+<div class="callout"><div class="t">Three sentences to remember PB1 by</div><p>Assess before build, because AI amplifies the system it lands on — good or bad. The delivery baseline and the four non-compensable gates are the guardrails that keep the assessment honest; a high average with one gate failed is exactly the false-confidence case PB1 exists to catch. The F0 decision is an action, not a report: go, no-go, or go-with-preconditions, each with a named owner and STOP criteria.</p></div>
+<p>Sources and caveats for the empirical claims: DORA 2024/2025 reports (dora.dev) — note the 2025 update partially reverses the throughput finding while instability stays elevated; METR RCT (arXiv:2507.09089) and the 2026 follow-up (metr.org) — the follow-up weakens the slowdown estimate but the perception-gap lesson stands; GitGuardian State of Secrets Sprawl 2026 — vendor telemetry, not independent evidence; Replit incident — July 2025.</p>
+<p class="closingnote">This runbook is also available as a standalone file (PB1-assess-runbook.html). Its natural neighbours in the workbook are <a href="&#35;e6-deepdive">E6 Autonomy levels</a>, <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a>, <a href="&#35;b1-deepdive">B1 Safe ordering</a>, and <a href="&#35;b6-deepdive">B6 Roadmap F0–F3</a>. The scoring model and gate criteria are this workbook's synthesis; every point-in-time fact in the report should be marked for re-verification before the next gate.</p>
+    </div>
+  </div>
+</div>
+
 <footer>
   <b>v1.48</b> · 2026-07-18 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
@@ -6955,6 +7204,49 @@ rq:[`Who approves a team's move to a higher autonomy level (L↑ / P↑), and on
 `What is the accountability chain for an agent-written production bug — prompt author, reviewer, harness owner?`,
 `Which audit requirements follow from T4, and how do we cover them technically (logs, provenance)?`],
 src:[{t:"OWASP agentic top 10; published incident postmortems; large-company governance patterns"}]}
+]},
+
+{id:"m9pb",code:"M9",name:"Playbook — from theory to practice",base:"runbook layer distilled from M1–M7 (no new research)",
+desc:"The practice layer: five runbooks ordered by the engagement journey at a brownfield client — assess, bootstrap the verification base, stand up the harness, run the handoff, measure the pilot. Each runbook is a checklist with templates whose every step links back to the theory topic that justifies it. Built for the internal team; progress is saved in this workbook.",
+topics:[
+{id:"pb-assess",code:"PB1",title:"Assess: client maturity & the F0 entry gate",
+know:[`The runbook: baseline the verification loop (test suite, CI signal) and capture the delivery baseline up front (DORA keys + cost per merged PR — a pilot without a baseline can be neither proven nor disproven), inventory source-of-truth artifacts, check the governance minimum (env separation, secrets, write permissions), name the review owner — then score it into an L1–L5 recommendation and a go/no-go at the F0 gate.`,
+`Why assess before build: DORA 2024 associates +25% AI adoption with −7.2% delivery stability — AI amplifies the surrounding system, so the surrounding system is measured first (E7, B1).`,
+`The scoring model and the non-compensable gate criteria are our synthesis (Report 4 + E6/B6 material), not an industry standard.`,
+`Output artifacts: a filled questionnaire, a delivery-baseline snapshot, an assessment report from the template, and a recorded F0 go/no-go decision with STOP criteria attached.`],
+concepts:["maturity assessment","delivery baseline","entry gate","non-compensable criteria","autonomy recommendation","assessment report"],
+open:[`Which client signals that the questionnaire cannot capture (politics, incentive structure) should still veto a go decision?`],
+src:[{t:"↳ PB1 Runbook — open here (assessment checklist, delivery-baseline capture, questionnaire & report templates, the F0 go/no-go)",u:"#pb1-deepdive"},{t:"E6 autonomy levels, B1 safe ordering, B6 gates & STOP criteria, E7 metrics — the theory this runbook distils (open those topics' deep dives)"}],
+checks:[{q:`Why are the four gate criteria non-compensable rather than averaged into the score?`,a:`Because each one guards a failure mode that no amount of strength elsewhere offsets: an untrusted test suite means no external truth for the loop (E4); unreadable CI signal means the agent cannot self-correct; missing dev/prod separation makes the blast radius unbounded (the Replit incident); secrets in the repo leak through every agent context. A high average with one of these missing is exactly the false-confidence case the assessment exists to catch.`}]},
+
+{id:"pb-bootstrap",code:"PB2",title:"Bootstrap: build the verification base (runbook in preparation)",
+know:[`Will cover, in order: characterization tests on the first module (B2), a minimal CI loop the agent can read, the mutation-score baseline and the ~70% working heuristic (B3), and read-only comprehension before any writes (B1, B4).`,
+`The safe ordering exists because of the bootstrap paradox: the agent needs a verification loop that legacy code does not have, and the agent is also the cheapest tool to build it — unanchored, this closes into the bug-as-spec loop (B1).`],
+concepts:["characterization tests","mutation baseline","safe ordering"],
+open:[`Which module of the client codebase is the first characterization target — and does the heatmap (B5) pick it, or does risk?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: B1 bootstrap paradox, B2 characterization, B3 mutation gate (open those deep dives)"}]},
+
+{id:"pb-harness",code:"PB3",title:"Harness: stand up the engineering harness (runbook in preparation)",
+know:[`Will cover: the CLAUDE.md/AGENTS.md skeleton extracted-not-decreed (B1, E9), hooks and permissions with the advisory-vs-deterministic split (E5), the verification gate in CI (E4), and information architecture for the agent (I1–I5).`,
+`Its templates are the harness starter kit: where the theory is deterministic, the copy-paste block IS the runnable artifact — hook scripts, permission baselines, CI gate configs (the E5 litmus: what must never happen ships as enforcement, not advice).`,
+`Ordering constraint: the harness is built on top of the PB2 verification base — write autonomy without external truth is the anti-pattern the whole framework exists to prevent.`],
+concepts:["CLAUDE.md skeleton","advisory vs deterministic","hooks","write permissions"],
+open:[`Which harness rules graduate from prose to enforced hooks in week one at a typical client?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: E1–E5, E9 harness tuning, I2 write permissions (open those deep dives)"}]},
+
+{id:"pb-handoff",code:"PB4",title:"Handoff: run the contract end-to-end (runbook in preparation)",
+know:[`Will cover: writing the first handoff contract (H1 anatomy, T0–T2 sizing), EARS/Gherkin acceptance criteria as the agent's reward signal (H2), traceability IDs (H3), and the return channel with its anti-patterns (H4).`,
+`The exit test: one real feature delivered by an agent against the contract, with the review running against passing acceptance tests.`],
+concepts:["handoff contract","EARS/Gherkin","return channel"],
+open:[`What is the smallest real client feature suitable for the first contract-driven delivery?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: H1–H4 (open those deep dives)"}]},
+
+{id:"pb-pilot",code:"PB5",title:"Pilot: measure, gate, decide (runbook in preparation)",
+know:[`Will cover: the DORA baseline + METR-style pilot design from E7 (objective time, pre-registered success, perception-gap capture), the F0–F3 gate table with back-triggers, and STOP criteria (B6). The baseline itself is captured earlier, in PB1 — PB5 compares against it.`,
+`Self-reported speed is disqualified as evidence by design: METR measured devs 19% slower while believing they were ~20% faster.`],
+concepts:["DORA baseline","pre-registered success","STOP criteria","F0–F3 gates"],
+open:[`Which DORA keys can this client actually compute from day 0, and what replaces the ones they cannot?`],
+src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: E7 metrics & anti-patterns, B6 roadmap F0–F3 (open those deep dives)"}]}
 ]}
 ];
 
@@ -6966,35 +7258,64 @@ var sync={code:null,status:'off',lastSyncAt:null,ssv:null,pushCount:0};
 var pushTimer=null;
 const STATUSES=['none','studying','done'];
 const LBL={none:'not started',studying:'studying',done:'mastered'};
-let state={progress:{},notes:{},seen:{},highlights:[],updatedAt:null};
+let state={progress:{},notes:{},seen:{},highlights:[],pb:{},updatedAt:null};
 /* Sync layer (Yjs). Additive: the canonical local store is still the JSON `state`
    above via `store` (agentic-study-v1). The Y.Doc exists only when sync is used. */
 var ydoc=null, DOCKEY='agentic-study-ydoc-v1', applyingRemote=false;
 function yReady(){return typeof window.Y!=='undefined'&&!!window.Y;}
-function stateBlob(){return{progress:state.progress,notes:state.notes,seen:state.seen,highlights:state.highlights,updatedAt:state.updatedAt};}
-function refreshAll(){syncFromState();updateCounts();updateNotesCount();renderTopicHls();applyFilter();}
+function stateBlob(){return{progress:state.progress,notes:state.notes,seen:state.seen,highlights:state.highlights,pb:state.pb,updatedAt:state.updatedAt};}
+function refreshAll(){syncFromState();updateCounts();updateNotesCount();renderTopicHls();syncPb();applyFilter();}
+function syncPb(){
+  $$('.pbck').forEach(function(cb){cb.checked=(state.pb[cb.dataset.pb]||[]).indexOf(cb.dataset.step)!==-1;});
+  $$('[data-pbprog]').forEach(function(el){
+    var rb=el.dataset.pbprog,total=$$('.pbck[data-pb="'+rb+'"]').length,done=(state.pb[rb]||[]).length;
+    el.textContent=done+' / '+total+' steps done';
+  });
+}
+document.addEventListener('change',function(e){
+  var cb=e.target.closest('.pbck');if(!cb)return;
+  var arr=state.pb[cb.dataset.pb]||(state.pb[cb.dataset.pb]=[]);
+  var i=arr.indexOf(cb.dataset.step);
+  if(cb.checked&&i===-1)arr.push(cb.dataset.step);
+  if(!cb.checked&&i!==-1)arr.splice(i,1);
+  syncPb();scheduleSave();
+});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.pbcopy');if(!b)return;
+  var pre=document.getElementById(b.dataset.copy);if(!pre)return;
+  var txt=pre.textContent;
+  function ok(){b.textContent='copied ✓';setTimeout(function(){b.textContent='copy';},1400);}
+  function fb(){var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(err){}document.body.removeChild(ta);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}
+});
 function b64(u){var s='';for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s);}
 function unb64(str){var s=atob(str),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}
 function seenKeys(sn){var out=[];Object.keys(sn||{}).forEach(function(ov){(sn[ov]||[]).forEach(function(i){out.push(ov+':'+i);});});return out;}
 function mirrorToDoc(){
   if(!ydoc)return;
-  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights');
+  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights'),B=ydoc.getMap('pb');
   ydoc.transact(function(){
     Object.keys(state.progress).forEach(function(k){if(P.get(k)!==state.progress[k])P.set(k,state.progress[k]);});
     Object.keys(state.notes).forEach(function(k){if(N.get(k)!==state.notes[k])N.set(k,state.notes[k]);});
     seenKeys(state.seen).forEach(function(k){if(S.get(k)!==true)S.set(k,true);});
     var have={};(state.highlights||[]).forEach(function(h){if(h&&h.id){have[h.id]=1;if(JSON.stringify(H.get(h.id))!==JSON.stringify(h))H.set(h.id,h);}});
     Array.from(H.keys()).forEach(function(id){if(!have[id])H.delete(id);});
+    var pbHave={};
+    Object.keys(state.pb||{}).forEach(function(rb){(state.pb[rb]||[]).forEach(function(sid){var k=rb+':'+sid;pbHave[k]=1;if(B.get(k)!==true)B.set(k,true);});});
+    Array.from(B.keys()).forEach(function(k){if(!pbHave[k])B.delete(k);});
   });
 }
 function materializeFromDoc(){
   if(!ydoc)return;
-  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights');
+  var P=ydoc.getMap('progress'),N=ydoc.getMap('notes'),S=ydoc.getMap('seen'),H=ydoc.getMap('highlights'),B=ydoc.getMap('pb');
   state.progress=P.toJSON();state.notes=N.toJSON();
   var sn={};Array.from(S.keys()).forEach(function(k){var i=k.lastIndexOf(':'),ov=k.slice(0,i),n=parseInt(k.slice(i+1),10);if(!sn[ov])sn[ov]=[];sn[ov].push(n);});
   Object.keys(sn).forEach(function(ov){sn[ov].sort(function(a,b){return a-b;});});
   state.seen=sn;
   state.highlights=Array.from(H.values());
+  var pbm={};
+  Array.from(B.keys()).forEach(function(k){var i=k.indexOf(':'),rb=k.slice(0,i),sid=k.slice(i+1);if(!pbm[rb])pbm[rb]=[];pbm[rb].push(sid);});
+  state.pb=pbm;
 }
 function persistDoc(){if(!ydoc)return;try{store.set(DOCKEY,b64(window.Y.encodeStateAsUpdate(ydoc)));}catch(e){}}
 async function initYjsDoc(){
@@ -7033,7 +7354,7 @@ async function loadState(){
   storeOK=true;
   try{
     const r=await store.get(KEY);
-    if(r&&r.value){const p=JSON.parse(r.value);state.progress=p.progress||{};state.notes=p.notes||{};state.seen=p.seen||{};state.highlights=Array.isArray(p.highlights)?p.highlights:[];}
+    if(r&&r.value){const p=JSON.parse(r.value);state.progress=p.progress||{};state.notes=p.notes||{};state.seen=p.seen||{};state.highlights=Array.isArray(p.highlights)?p.highlights:[];state.pb=(p.pb&&typeof p.pb==='object')?p.pb:{};}
     setSave('ok','loaded · '+store.kind);
   }catch(e){setSave('ok','fresh state');}
 }
@@ -7143,6 +7464,7 @@ function importData(file){
       Object.assign(state.progress,p.progress||{});
       Object.assign(state.notes,p.notes||{});
       if(p.seen)Object.assign(state.seen,p.seen);
+      if(p.pb)Object.keys(p.pb).forEach(function(rb){var merged=Array.from(new Set((state.pb[rb]||[]).concat(p.pb[rb]||[]).map(function(s){return (s||'').trim();}).filter(Boolean)));if(merged.length)state.pb[rb]=merged;});
       if(Array.isArray(p.highlights)){var have={};state.highlights.forEach(function(h){have[h.id]=1;});p.highlights.forEach(function(h){if(h&&h.id&&!have[h.id]){state.highlights.push(h);have[h.id]=1;}});}
       syncFromState();updateCounts();updateNotesCount();renderTopicHls();applyFilter();scheduleSave();
       setSave('ok','imported');
@@ -7364,6 +7686,15 @@ if(verov){
     if(e.target.closest('[data-verclose]')||e.target===verov){verov.classList.remove('show');document.body.style.overflow='';}
   },true);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&verov.classList.contains('show')){verov.classList.remove('show');document.body.style.overflow='';}});
+}
+var pb1ov=document.getElementById('pb1ov');
+if(pb1ov){
+  document.addEventListener('click',function(e){
+    var open=e.target.closest('a[href="#pb1-deepdive"]');
+    if(open){e.preventDefault();pb1ov.classList.add('show');document.body.style.overflow='hidden';pb1ov.querySelector('.panel').scrollTop=0;return;}
+    if(e.target.closest('[data-pb1close]')||e.target===pb1ov){pb1ov.classList.remove('show');document.body.style.overflow='';}
+  },true);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pb1ov.classList.contains('show')){pb1ov.classList.remove('show');document.body.style.overflow='';}});
 }
 var d2ov=document.getElementById('d2ov');
 if(d2ov){
@@ -8125,6 +8456,7 @@ function applyHighlights(ov){
   updateCounts();
   await loadState();
   syncFromState();
+  syncPb();
   updateCounts();
   applyFilter();
   loadSyncMeta().then(function(){

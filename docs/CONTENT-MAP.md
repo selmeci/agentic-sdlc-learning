@@ -1,7 +1,7 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.38):
-8 modules, 55 topics, 6 research reports, 2 inline map sections, 35 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.48):
+9 modules, 60 topics, 6 research reports, 2 inline map sections, 37 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -14,7 +14,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
   V2 DDD context map, V3 operating loop with gates, V4 lethal trifecta & defense-in-depth,
   V5 per-component threat map.
 
-## Modules & topics (55)
+## Modules & topics (60)
 
 ### M1 · Engineering harness (id `m1`) — Report 1; 6 research-note sections
 | Topic | id | Deep dive |
@@ -105,6 +105,15 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | T6 Vendor strategy & lock-in | `traj-vendor` |
 | T7 Organizational governance | `traj-governance` |
 
+### M9 · Playbook — from theory to practice (id `m9pb`) — runbook layer, no research notes
+| Topic | id | Deep dive |
+|---|---|---|
+| PB1 Assess: client maturity & the F0 entry gate | `pb-assess` | PB1-assess-runbook.html + overlay |
+| PB2 Bootstrap: build the verification base | `pb-bootstrap` | in preparation |
+| PB3 Harness: stand up the engineering harness | `pb-harness` | in preparation |
+| PB4 Handoff: run the contract end-to-end | `pb-handoff` | in preparation |
+| PB5 Pilot: measure, gate, decide | `pb-pilot` | in preparation |
+
 ## The six research reports (embedded, rendered from Markdown)
 
 1. **Report 1** — Engineering harness: `Agent = Model + Harness`; the 7 components; L1–L5.
@@ -129,7 +138,8 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `I1-artifact-taxonomy` · `I2-lifecycle-write-permissions` · `I3-consistency-drift` · `I4-memory-systems` ·
 `I5-progressive-disclosure` · `I6-retrieval` · `I7-linking-product-engineering` ·
 `B1-bootstrap-paradox` · `B2-characterization-golden-master` · `B3-mutation-testing-gate` ·
-`B4-agent-archaeology` · `B5-strangler-heatmap` · `B6-roadmap-f0-f3`
+`B4-agent-archaeology` · `B5-strangler-heatmap` · `B6-roadmap-f0-f3` ·
+`D2-design-tokens-dtcg` · `PB1-assess-runbook`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
 `#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive` (each appears
