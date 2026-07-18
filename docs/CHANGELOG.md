@@ -3,6 +3,61 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.47 · 2026-07-18
+
+**NEW DEEP DIVE D2 — Design tokens as the visual contract (DTCG).** Second M6 companion
+(`deep-dives/D2-design-tokens-dtcg-deepdive.html` + in-workbook overlay). Built on a
+four-teammate fact/discovery pass + a three-agent adversarial spot-verify round (13th session
+in a row it caught real errors).
+
+- Token anatomy ($-prefixed properties, groups, curly-brace aliases, `.tokens`/`.tokens.json`,
+  `application/design-tokens+json`) and the **tier model credited precisely**: community
+  practice, NOT DTCG normative text — Curtis 2016 options/decisions as the two-tier root;
+  zeroheight 2026 distribution (only ~10% single-layer, full three tiers in just over half).
+- The 2025.10 release **read precisely**: stable = Format + Color modules only; theming/modes
+  live in the separate Resolver Module — an explicit "do not implement" draft; the W3C
+  announcement itself headlines theming (marketing vs normative callout). Status verbatim
+  pinned ("not a W3C Standard nor is it on the W3C Standards Track"; CG Candidate
+  Recommendation under the Final Specification Agreement). **The workbook's earlier "theming
+  shipped in 2025.10" wording corrected** in the D2 topic bullets and Report 5 notes.
+- History corrections: term coined by **Jina Anne** at Salesforce ~2014 (the circulating
+  "Jon Levine co-coined" is unverified — dropped); DTCG founded 2019 (Anne + Deloumeau-Prigent);
+  June 2026 chair transition (Anne & Head → chairs emerita).
+- The mid-2026 pipeline, point-in-time: **Style Dictionary v5 shipped** (v5.5.0 Jun 2026;
+  full 2025.10 coverage converging, issue #1590 — corrects Report 5's "v5 in progress");
+  Terrazzo (= Cobalt UI renamed); Tokens Studio git sync = paid tier; Figma Variables API
+  Enterprise-gated + native DTCG export announced but not GA (reported ~Nov 2026); Penpot =
+  first **open-source** design tool with native DTCG tokens.
+- Sync direction as THE governance question: code-first default (Sopelnik verbatim "design
+  tokens are code, not design files", Feb 2026; Builder.io/Sewell "Code is the source of truth
+  (not Figma)", Sep 2025), with **Adobe Spectrum** as the designer-authored/code-stored
+  counterexample-shaped confirmation (Braithwaite, Knapsack, May 2025); model table (our
+  synthesis).
+- The agent contract (§5): Pandya's "closed set of values instead of fabricating new ones";
+  supply channels (repo JSON, Figma MCP `get_variable_defs` beta with default-mode limitation,
+  design-system.json/shadcn registries) and **DESIGN.md** (Google Labs, Apr 21 2026, alpha,
+  DTCG + Tailwind exporters, lint CLI with agent-actionable JSON; next-day Anthropic-ecosystem
+  uptake request; the circulating tool roster = third-party commentary, not spec text);
+  enforcement stack (Stylelint color-no-hex / allowed-list / declaration-strict-value, ESLint
+  no-restricted-imports, Dembrandt drift gate with exit codes).
+- Evidence file with **corrected dating**: zeroheight 56→84% = the 2025 report (n=294, fielded
+  late 2024), NOT "2026 vs a year earlier"; 2026 report = 86% (n=147) with the ~40% pipeline
+  gap; CHI 2026 EA (Cha/Jo/Shin/Seo) registry-based 95.08% compliance (extended abstract,
+  pilot n=9 — direction, not decimals); the honest null: **no rigorous token-specific causal
+  study exists** (July 2026); design-token vs LLM-token naming-collision warning.
+- **Do-not-cite list**: Atlassian "67%"/"58→89", Primer "WCAG 71→96", "31–47% time saved",
+  Spotify rebrand folklore — all third-hand/unpinnable; Netguru Silk (2–3 days, 2024) as the
+  only pinned rebrand number, flagged vendor self-report.
+- Six-step brownfield migration (inventory → characterize → consolidate → bridge → ratchet →
+  generate) with exit conditions — our synthesis; Project Wallace usage-count illustration
+  reframed as illustration (the "47 colors" example is a gloss, not a published stat).
+- Spot-verify catches this round: DESIGN.md vendor list third-party; "5.2k stars at 72h"
+  unsourced (1.6k at +2 days per the primary issue); D'Amato article undated + Salesforce
+  "solid web standard" line de-quoted to paraphrase; Builder.io "governance loop" quote
+  corrected to its real two-sentence wording; Braithwaite quote trimmed to fetched text.
+- Topic D2 enriched: two "careful" flags in the know bullets, Resolver-draft + DESIGN.md
+  concepts, a new dark-mode-via-DTCG check question.
+
 ## v1.46 · 2026-07-18
 
 **NEW DEEP DIVE B6 — Roadmap F0–F3, metrics and STOP criteria.** Sixth M5 companion

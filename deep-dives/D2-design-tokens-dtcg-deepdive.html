@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2 Deep Dive — Design Tokens as the Visual Contract (DTCG)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edD2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2a)}
+svg .edD2b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2b)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">D2 · DEEP DIVE</span>
+    <h1>Design Tokens as the Visual Contract (DTCG)</h1>
+    <span class="bc">companion to module M6 · Design harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · Token anatomy &amp; tiers</a>
+  <a href="#s2"><b>2</b> · The spec, precisely</a>
+  <a href="#s3"><b>3</b> · The pipeline</a>
+  <a href="#s4"><b>4</b> · Sync = governance</a>
+  <a href="#s5"><b>5</b> · The agent contract</a>
+  <a href="#s6"><b>6</b> · Evidence &amp; do-not-cite</a>
+  <a href="#s7"><b>7</b> · Brownfield migration</a>
+  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M6</p>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">D1 argued that agent handoff needs a third artifact — the design system as machine-readable infrastructure — and was honest that most of that artifact is only partially checkable. This chapter zooms into the one layer where the checkability is total: <strong>design tokens</strong>. A token is a named design decision serialized as data — <span class="mono">color.action.primary</span> instead of <span class="mono">#2A4AD0</span> — and that single move changes its nature: a hex value in a stylesheet is an anonymous fact, while a token reference is a <em>citable commitment</em> that a linter can verify, a build can resolve, and an agent can be held to. That makes tokens the visual layer's closest counterpart to EARS/Gherkin acceptance criteria (H2): a constrained, named vocabulary that turns "follow the brand" from advisory prose into a deterministic pass/fail gate (E5). The W3C Design Tokens Community Group gave this contract a vendor-neutral serialization — the DTCG format, first stable version October 2025 — and an ecosystem of translators, sync bridges and lint rules grew around it. This chapter covers the contract itself: what a token is (§1), what the spec actually stabilized and what it only promises (§2), the pipeline that moves tokens from design tool to production (§3), the sync-direction decision that quietly determines governance (§4), how the contract binds agents specifically (§5), what the evidence says (§6), and how a brownfield client's pile of ad-hoc SCSS variables becomes a token contract without a big-bang rewrite (§7).</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>token anatomy and the tier model — and why the semantic tier is the contract (§1)</li><li>the DTCG spec with its honest status: what 2025.10 stabilized, what the Resolver draft defers (§2)</li><li>the pipeline, tool by tool, point-in-time for mid-2026 (§3)</li><li>code-first vs design-first as a governance decision, not a tooling preference (§4)</li><li>the enforcement stack and the agent-specific reading channels, incl. DESIGN.md (§5)</li><li>the evidence file with its do-not-cite list (§6)</li><li>a six-step SCSS-to-DTCG migration, flagged as our synthesis (§7)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>D1 — the third-artifact thesis this chapter instantiates at its most machine-readable</li><li>D3 — how agents consume the wider design context beyond tokens</li><li>D4/I1/I2 — SSOT, durable-vs-derived, and write permissions as governance</li><li>D5 — the verification loop these tokens feed (visual regression, axe, lint)</li><li>H2 — EARS/Gherkin: the analogy this chapter borrows and bounds</li><li>B2/B5 — characterization and strangler fig: §7 is their design-layer twin</li><li>E5 — advisory vs deterministic, the distinction §5 runs on</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>Anatomy of a token — and the tier that carries the contract</h2>
+      <p>In the DTCG format a token is a JSON object whose reserved properties carry a <span class="mono">$</span> prefix: <span class="mono">$value</span> (required), <span class="mono">$type</span> (color, dimension, fontWeight, duration…), optional <span class="mono">$description</span>. The dollar sign is deliberate namespace hygiene — the spec reserves it for its own properties, present and future, and forbids token or group names from starting with it, so user vocabulary and spec vocabulary can never collide. Tokens nest inside <strong>groups</strong> ("a set of tokens belonging to a specific category"), and one token can reference another by <strong>alias</strong>: a <span class="mono">$value</span> of <span class="mono">"{color.blue.600}"</span> resolves to the target token's <span class="mono">$value</span>. Files carry the recommended extensions <span class="mono">.tokens</span> or <span class="mono">.tokens.json</span> and the media type <span class="mono">application/design-tokens+json</span>. That is nearly the whole format — and the smallness is the point: it is a data interchange for named design decisions, not a styling language.</p>
+      <p>The structure teams build <em>with</em> aliases is not in the spec, and it matters more than the spec. Community practice organizes tokens into tiers: <strong>primitives</strong> (raw values with no meaning attached — <span class="mono">color.blue.600</span>), <strong>semantic tokens</strong> (intent — <span class="mono">color.action.primary</span>, aliased to a primitive), and optionally <strong>component tokens</strong> (<span class="mono">button.primary.background</span>, aliased to a semantic). The lineage is worth crediting precisely: Nathan Curtis's 2016 "Tokens in Design Systems" drew the original two-tier line between <em>options</em> (the values you could use) and <em>decisions</em> (the values you did choose, with context attached); the three-tier form is a later community elaboration, standard in Tokens Studio's docs and most 2026 practice — but it is convention, not DTCG normative text. Attribute it accordingly. In zeroheight's 2026 survey data the convention is visibly mainstream: only around one team in ten still runs a single flat layer, and just over half run the full three tiers.</p>
+      <figure>
+      <svg viewBox="0 0 1000 360" role="img" aria-label="Three-tier design token architecture: primitive, semantic and component tokens with alias references">
+        <defs><marker id="ahD2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">TOKEN TIERS · ALIASES POINT LEFT · THE SEMANTIC TIER IS THE CONTRACT · TIERS = COMMUNITY PRACTICE, NOT SPEC</text>
+        <rect x="30" y="48" width="280" height="250" rx="12" class="bxG"/>
+        <text x="52" y="76" class="tt">1 · Primitive</text>
+        <text x="52" y="94" class="ts">raw values · never cited directly</text>
+        <rect x="52" y="108" width="236" height="34" rx="6" class="bx"/>
+        <text x="66" y="123" class="ti">color.blue.600</text><text x="66" y="136" class="ts">$value: "#2A4AD0" · $type: color</text>
+        <rect x="52" y="150" width="236" height="34" rx="6" class="bx"/>
+        <text x="66" y="165" class="ti">color.gray.900</text><text x="66" y="178" class="ts">$value: "#1A2430"</text>
+        <rect x="52" y="192" width="236" height="34" rx="6" class="bx"/>
+        <text x="66" y="207" class="ti">dimension.200</text><text x="66" y="220" class="ts">$value: "16px" · $type: dimension</text>
+        <rect x="52" y="234" width="236" height="34" rx="6" class="bx"/>
+        <text x="66" y="249" class="ti">font.weight.semibold</text><text x="66" y="262" class="ts">$type: fontWeight</text>
+        <rect x="360" y="48" width="280" height="250" rx="12" class="bxC"/>
+        <text x="382" y="76" class="tt">2 · Semantic</text>
+        <text x="382" y="94" class="ts">intent · the tier agents cite</text>
+        <rect x="382" y="108" width="236" height="34" rx="6" class="bx"/>
+        <text x="396" y="123" class="ti">color.action.primary</text><text x="396" y="136" class="ts">$value: "{color.blue.600}"</text>
+        <rect x="382" y="150" width="236" height="34" rx="6" class="bx"/>
+        <text x="396" y="165" class="ti">color.text.default</text><text x="396" y="178" class="ts">$value: "{color.gray.900}"</text>
+        <rect x="382" y="192" width="236" height="34" rx="6" class="bx"/>
+        <text x="396" y="207" class="ti">space.inset.md</text><text x="396" y="220" class="ts">$value: "{dimension.200}"</text>
+        <rect x="382" y="234" width="236" height="34" rx="6" class="bx"/>
+        <text x="396" y="249" class="ti">font.weight.emphasis</text><text x="396" y="262" class="ts">$value: "{font.weight.semibold}"</text>
+        <rect x="690" y="48" width="280" height="250" rx="12" class="bxK"/>
+        <text x="712" y="76" class="tt">3 · Component (optional)</text>
+        <text x="712" y="94" class="ts">scoped · optional · only where needed</text>
+        <rect x="712" y="108" width="236" height="34" rx="6" class="bx"/>
+        <text x="726" y="123" class="ti">button.primary.background</text><text x="726" y="136" class="ts">$value: "{color.action.primary}"</text>
+        <rect x="712" y="150" width="236" height="34" rx="6" class="bx"/>
+        <text x="726" y="165" class="ti">button.label.weight</text><text x="726" y="178" class="ts">$value: "{font.weight.emphasis}"</text>
+        <rect x="712" y="192" width="236" height="34" rx="6" class="bx"/>
+        <text x="726" y="207" class="ti">card.padding</text><text x="726" y="220" class="ts">$value: "{space.inset.md}"</text>
+        <path class="edD2" d="M378 125 C 350 125, 335 125, 314 125" />
+        <path class="edD2" d="M378 167 C 350 167, 335 167, 314 167" />
+        <path class="edD2" d="M708 125 C 680 125, 665 125, 644 125" />
+        <rect x="30" y="312" width="940" height="34" rx="8" class="bxA"/>
+        <text x="52" y="333" class="ti">Rebrand = edit tier 1 only · theme = re-resolve tier 2 · the lint gate cites tier-2 names · the agent reads tiers 2–3, never raw hex</text>
+      </svg>
+      <figcaption>The tier model, standard practice by 2026 but community convention rather than DTCG normative text (the spec supplies only groups and aliases). Aliases point left — every semantic token is a named decision about a primitive; usage flows right. The semantic tier is where the contract lives: primitives change on rebrand, component tokens are optional sugar, but "cite <span class="mono">color.action.primary</span>, never a hex" is the rule a linter can enforce and an agent can follow.</figcaption>
+      </figure>
+      <p>Why does the middle tier carry the contract? Because it is the only tier whose names encode <em>intent</em>, and intent is what survives change. A rebrand edits primitives and touches nothing else; a dark theme re-resolves the semantic tier against a different primitive set; a component redesign moves component tokens. Code and agents that cite semantic names are insulated from all three. This is also the reason the naming discipline matters more than the JSON syntax: Curtis's companion piece "Naming Tokens in Design Systems" (2020) decomposes names into ordered levels — namespace, category, concept, property, variant, scale — and that grammar, not the file format, is what makes ten thousand tokens navigable by a human or retrievable by an agent.</p>
+
+      <h2 id="s2"><span class="n">2</span>The spec — what 2025.10 stabilized, and what it only promises</h2>
+      <p>The vocabulary is a decade older than the standard. Jina Anne coined "design tokens" at Salesforce around 2014, where the Lightning Design System distributed brand decisions across platforms through the open-source tool Theo; Curtis's 2016 article gave the idea its conceptual frame; and in 2019 Anne and Kaelig Deloumeau-Prigent founded the W3C <strong>Design Tokens Community Group</strong> to standardize the serialization. The group took six years to ship — a running joke in the community until it stopped being one: on <strong>28 October 2025</strong> the DTCG announced the first stable version, <strong>2025.10</strong>, developed by (verbatim) "more than 20 editors and authors" with a roster spanning 24 named organizations — Adobe, Amazon, Google, Microsoft, Meta, Figma, Sketch, Salesforce, Shopify, Tokens Studio, Penpot, Supernova, zeroheight and others (the 24 is our count of the announcement's list, not a figure the group published). One governance note for anyone tracking the group itself: in June 2026 Anne and Val Head stepped back to chairs emerita, leaving Deloumeau-Prigent as chair.</p>
+      <p>Precision about what "stable" covers, because the announcement itself blurs it. The 2025.10 release comprises <strong>two</strong> stable modules: the <strong>Format Module</strong> (tokens, groups, types, aliases — everything in §1) and the <strong>Color Module</strong> (modern color spaces: Display P3, Oklch, CSS Color 4 alignment). Both self-describe as "considered stable." <strong>Theming, modes and multi-brand are not in either.</strong> They live in a third document, the <strong>Resolver Module</strong> — sets of base tokens plus modifiers for contexts like light/dark, composed via <span class="mono">.resolver.json</span> files — and that document is a draft carrying an unusually blunt warning: "Do not attempt to implement this version of the specification. Do not reference this version as authoritative in any way." Yet the W3C announcement headlines "theming and multi-brand support" as a 2025.10 capability. Both statements come from the same organization; only one is normative.</p>
+      <div class="callout amber"><div class="t">Read the status line, not the press release</div><p>The DTCG's own announcement markets theming as shipped while the module that specifies it says "do not implement." This is the E5 lesson in standards form: the press release is advisory, the status-of-this-document section is deterministic. The same discipline applies one level up — the spec itself, verbatim, "is not a W3C Standard nor is it on the W3C Standards Track"; it is a Community Group <em>Candidate Recommendation</em> published under the W3C Community Final Specification Agreement. That is a real, useful thing — a patent-licensed, multi-vendor stable format — but a client slide that says "the W3C standard for design tokens" is overclaiming, and a theming architecture built on the Resolver draft is building on text its own authors disown. As of July 2026 there is no 2026.x release; 2025.10 remains current and the Resolver Module remains the active frontier.</p></div>
+      <p>The spec also has a citable dissenter, and the disagreement is instructive rather than dismissable. Donnie D'Amato — design-systems practitioner and author of the "Avoiding tokens" essay — argues the group is "scope-creeping into territories that will make it difficult for it to ever be finished" and worries that tool-oriented formats invite "vendor lock-in where you might only be able to edit design tokens from tools"; his deeper point is that the nested-JSON format optimizes for machine parsing over human authorship, and that CSS custom properties already provide a web-native token medium. For this workbook's purposes the criticism sharpens rather than undermines the thesis: we want tokens <em>precisely because</em> they are machine-first — the agent and the linter are the new readers — but D'Amato is the reminder that the format is contested, that Figma conspicuously chose "variables" over "tokens" as its product vocabulary, and that betting a client's architecture on any single serialization deserves the same point-in-time humility as every tool fact in this module.</p>
+
+      <h2 id="s3"><span class="n">3</span>The pipeline — from decision to production, tool by tool</h2>
+      <p>A token file does nothing by itself; the contract is only as real as the pipeline that resolves it into every surface the product ships. The reference shape, mid-2026: decisions serialized as DTCG JSON in git; a <strong>translator</strong> resolves aliases and emits platform outputs (CSS custom properties, SCSS, JS/TS, iOS, Android) as a CI build step; design tools consume or contribute through a <strong>sync bridge</strong>. Every tool fact below is point-in-time — this is the fastest-moving layer of module M6, and each item should be re-verified before a client meeting.</p>
+      <div class="comp"><div class="chead"><span class="cid">TRANSLATOR</span><h3>Style Dictionary</h3><span class="role">the default</span></div>
+      <p>Created at Amazon by Danny Banks; since a 2023 handover co-maintained with Tokens Studio, with Joren Broekema as core maintainer (the canonical repo now lives at <span class="mono">style-dictionary/style-dictionary</span>). v4 (April 2024) brought first-class DTCG-format support. <strong>v5 is released and stable</strong> — v5.5.0 shipped June 2026 — but full compliance with the 2025.10 spec is still an open workstream (tracked in issue #1590: color, border and shadow types done; gradients and durations in progress; the Resolver draft deliberately not implemented). The one-line status a client should hear: the tool is production-grade, the spec coverage is converging, and nobody serious implements the theming draft yet.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">TRANSLATOR</span><h3>Terrazzo</h3><span class="role">the alternative</span></div>
+      <p>Cobalt UI 2.0, renamed. DTCG-native from the start rather than retrofitted, MIT-licensed, with a CLI that emits CSS, Sass, JS/TS, JSON and Tailwind presets and a plugin API pitched as cleaner than Style Dictionary's. Worth shortlisting for greenfield token builds; references to "Cobalt UI" in older material are this project.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">BRIDGE</span><h3>Tokens Studio</h3><span class="role">Figma ↔ git</span></div>
+      <p>The de-facto bridge: a Figma plugin (now also a standalone platform) that stores tokens as JSON and syncs them to GitHub/GitLab, including via GitHub Actions — the mechanism that makes "Figma proposes, git disposes" practical. Note the commercial reality: git sync at team grade (branching, multi-file) sits in the paid tier (≈39€/month per editor at mid-2026 pricing — point-in-time), and teammates without a licence read tokens but cannot write. Budget it as infrastructure, not as a free plugin.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">DESIGN TOOLS</span><h3>Figma variables · Penpot</h3><span class="role">the endpoints</span></div>
+      <p>Figma's variables are the design-side representation, but two constraints define mid-2026 practice: the Variables REST API "requires an Enterprise plan" (verbatim from Figma's docs), and native export is not DTCG-clean — alias resolution generally needs a custom parser, and both the REST path and the MCP tools return only default mode values. Figma has announced native DTCG-conformant import/export, reported for late 2026 — not GA as of this writing, so any "Figma can/cannot export DTCG" sentence needs a date on it. Penpot, by contrast, shipped native DTCG tokens in 2025 in collaboration with Tokens Studio — the first <em>open-source</em> design tool to do so, and the existence proof that the format works as a native design-tool primitive rather than a plugin afterthought.</p></div>
+      <figure>
+      <svg viewBox="0 0 1000 400" role="img" aria-label="Design token pipeline from Figma and git through a translator to platform outputs, with the sync-direction decision and the CI gate">
+        <defs><marker id="ahD2b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">THE TOKEN PIPELINE · CODE-FIRST DEFAULT · DERIVED OUTPUTS REGENERATE, NEVER HAND-EDITED</text>
+        <rect x="30" y="60" width="210" height="84" rx="12" class="bxG"/>
+        <text x="52" y="88" class="tt">Figma variables</text>
+        <text x="52" y="106" class="ts">design-side view &amp; ideation</text>
+        <text x="52" y="122" class="ts">consumer under code-first</text>
+        <rect x="340" y="48" width="250" height="108" rx="12" class="bxC"/>
+        <text x="360" y="76" class="tt">tokens.json (DTCG) in git</text>
+        <text x="360" y="94" class="ts">durable · SSOT · PR + human gate (I2)</text>
+        <text x="360" y="110" class="ts">$value · $type · aliases · groups</text>
+        <text x="360" y="126" class="ts">reviewed like any other code</text>
+        <rect x="660" y="60" width="180" height="84" rx="12" class="bx"/>
+        <text x="680" y="88" class="tt">Translator</text>
+        <text x="680" y="106" class="ts">Style Dictionary / Terrazzo</text>
+        <text x="680" y="122" class="ts">CI build step · derived</text>
+        <rect x="880" y="44" width="100" height="28" rx="6" class="bxK"/><text x="892" y="62" class="ts">CSS vars</text>
+        <rect x="880" y="80" width="100" height="28" rx="6" class="bxK"/><text x="892" y="98" class="ts">SCSS · JS/TS</text>
+        <rect x="880" y="116" width="100" height="28" rx="6" class="bxK"/><text x="892" y="134" class="ts">iOS · Android</text>
+        <path class="edD2b" d="M594 102 L 656 102" />
+        <path class="edD2b" d="M844 102 L 876 58" />
+        <path class="edD2b" d="M844 102 L 876 94" />
+        <path class="edD2b" d="M844 102 L 876 130" />
+        <path class="edD2b" d="M336 84 L 246 84" />
+        <path class="edD2b" d="M246 120 L 336 120" style="stroke-dasharray:5 4"/>
+        <text x="291" y="74" class="ts" text-anchor="middle">import</text>
+        <text x="291" y="136" class="ts" text-anchor="middle">Tokens Studio</text>
+        <text x="291" y="148" class="ts" text-anchor="middle">bridge (PR)</text>
+        <text x="30" y="196" class="tg">THE SYNC-DIRECTION DECISION (§4)</text>
+        <rect x="30" y="208" width="300" height="76" rx="10" class="bxK"/>
+        <text x="50" y="232" class="tt">Code-first (default)</text>
+        <text x="50" y="250" class="ts">git is master · Figma imports as consumer</text>
+        <text x="50" y="266" class="ts">CI validation · tool independence</text>
+        <rect x="350" y="208" width="300" height="76" rx="10" class="bxA"/>
+        <text x="370" y="232" class="tt">Design-first</text>
+        <text x="370" y="250" class="ts">Figma is master · export to code</text>
+        <text x="370" y="266" class="ts">overrides &amp; detaches → drift</text>
+        <rect x="670" y="208" width="300" height="76" rx="10" class="bxG"/>
+        <text x="690" y="232" class="tt">Bidirectional</text>
+        <text x="690" y="250" class="ts">both sides edit · most machinery</text>
+        <text x="690" y="266" class="ts">most drift-prone · earn it first</text>
+        <rect x="30" y="312" width="940" height="60" rx="10" class="bxC"/>
+        <text x="52" y="336" class="tt">The deterministic gate (D5 · E5)</text>
+        <text x="52" y="356" class="ts">Stylelint color-no-hex + allowed-lists · declaration-strict-value · no-restricted-imports · drift check · CI blocks merge · agent iterates before review</text>
+      </svg>
+      <figcaption>The reference pipeline. The git JSON is the durable artifact (I1) behind a PR gate (I2); every emitted format is derived and regenerates; the design tool is a consumer under code-first, a contributor via a PR-shaped bridge otherwise. The bottom band is where the contract becomes enforceable — without the gate, tokens are documentation. One sobering adoption number: in zeroheight's 2026 survey only about 40% of teams report having any token pipeline at all — the majority still sync by hand.</figcaption>
+      </figure>
+
+      <h2 id="s4"><span class="n">4</span>Sync direction is the governance question</h2>
+      <p>Teams argue about translators and bridges; the decision that actually shapes behavior is <strong>which copy is allowed to win</strong>. Three models exist. <strong>Design-first</strong> treats Figma as master and exports toward code — the default posture of design teams, and the drift machine: overrides and detached styles accumulate in the canvas with no gate, exports lag, and the "source of truth" quietly becomes "whatever the last export said." <strong>Bidirectional</strong> sync promises both sides an editable copy and costs the most machinery while producing the most conflicts — a team must earn it with mature review discipline on both sides, and few have. <strong>Code-first</strong> — tokens as versioned DTCG JSON in the repo, Figma importing as a consumer — is the recommended default of this workbook and of a converging practitioner line: Artur Sopelnik's February 2026 essay states it as a mental shift, verbatim — "design tokens are code, not design files" — and draws the consequence that "Figma should not be the source of truth for design tokens. Instead, it should be a consumer." Builder.io's governance essay (Steve Sewell, September 2025) makes the same call from the vendor side under the title "Code is the source of truth (not Figma)" — "Figma is, at best, a set of suggestions"; "All that matters is what makes it into code."</p>
+      <p>The reasons are the unglamorous ones that decide governance questions everywhere in this workbook. A git-resident token file gets CI validation (schema, alias resolution, lint), a reviewable diff, a PR gate with a named approver, and tool independence — the DTCG file outlives any particular design tool's export format. In I1's taxonomy: the JSON is <strong>durable</strong>, every generated output is <strong>derived</strong>, and canvas experiments are <strong>disposable</strong>; in I2's terms, the write-permission matrix has one master cell and it sits in the repo. And code-first does not demote designers to consumers of engineering — the strongest counterexample-shaped confirmation is Adobe Spectrum, whose token data is a public git repository explicitly described as the canonical dataset, while (per Adobe's Garth Braithwaite, verbatim) "we have some authoring experience that we allow the designers to author these design tokens in figma, and we use some plugins and some custom workflows to then bring that into our public GitHub repository". Designer-first authoring, code-resident truth: the author experience and the system of record are separate decisions, and only the second one is the contract.</p>
+      <table class="map"><tr><th>model</th><th>master copy</th><th>what enforces it</th><th>characteristic failure</th></tr>
+      <tr><td>code-first</td><td>DTCG JSON in git</td><td>PR gate + CI schema/lint + regenerated outputs</td><td>design tool lags until the import runs — visible, boring, recoverable</td></tr>
+      <tr><td>design-first</td><td>Figma library</td><td>convention and export discipline (advisory only)</td><td>silent drift via overrides/detaches; exports become archaeology</td></tr>
+      <tr><td>bidirectional</td><td>contested</td><td>merge tooling on both sides</td><td>conflicting edits, last-write-wins, provenance lost</td></tr></table>
+      <p>For the agentic thesis the choice is even less symmetric than for humans: an agent can read, diff, validate and cite a JSON file in its own repository natively, while a design canvas is reachable only through rate-limited, plan-gated APIs that flatten modes and aliases (§3). Putting the master where the agent's hands already are is not a style preference; it is what makes §5 possible at all.</p>
+
+      <h2 id="s5"><span class="n">5</span>The contract agents can be held to</h2>
+      <p>Why do tokens matter <em>more</em> in agentic development than they did before it? Because generation without constraint samples the training-data mean — D1's slop evidence — and a token vocabulary is the cheapest effective constraint: it replaces an open universe of values with a closed, named set. Practitioner Hardik Pandya's July 2026 write-up states the mechanism in one line: the token layer gives the model "a closed set of values instead of fabricating new ones." The agent does not need taste to pick <span class="mono">color.action.primary</span>; it needs the vocabulary in context and a gate that rejects everything outside it. That splits the work into the two halves this module keeps insisting on: <strong>supply</strong> (make the vocabulary readable) and <strong>enforcement</strong> (make violations fail deterministically).</p>
+      <p><strong>Supply — how the vocabulary reaches the agent.</strong> The baseline channel is the one §4 already built: the DTCG JSON and its generated outputs live in the repo the agent works in, referenced from the project's context file ("use tokens from <span class="mono">tokens/</span>; never hardcode a color") — advisory, but cheap and always present. Above that, mid-2026 practice offers three sharper channels, all point-in-time. Figma's Dev Mode MCP server exposes <span class="mono">get_variable_defs</span>, returning the variables and styles used in a selection so generated code can reference the real token names — launched in beta, and it currently returns only default mode values. Vibe-tool constraint files — Lovable's <span class="mono">design-system.json</span> (D3) and the theming registries of the shadcn ecosystem — are the same idea in tool-specific dress. And in April 2026 Google Labs open-sourced <strong>DESIGN.md</strong>, the most direct instantiation of this chapter's thesis to date: a repo-root file combining machine-readable design tokens in YAML front matter with human-readable design rationale in markdown prose, a lint CLI that validates structure and checks WCAG contrast and emits agent-actionable structured JSON, and exporters to Tailwind config and W3C DTCG. It is deliberately tool-agnostic — the spec addresses "coding agents" generically, and the vendor lists in circulating write-ups are third-party commentary, not spec text — and uptake requests appeared in other vendors' ecosystems within a day of release. Its spec is honestly versioned <span class="mono">alpha</span>, which earns it the same flag as the Resolver draft: watch it, pilot it, do not architect on it yet.</p>
+      <div class="callout"><div class="t">DESIGN.md, read through this workbook's lenses</div><p>What makes DESIGN.md interesting is not novelty — it is convergence. It is tokens-as-code (§4) with the durable/derived split intact (the DTCG and Tailwind exports are derived); it is progressive disclosure (I5) — front-matter data for machines, prose rationale for the humans and the judgment calls; and it ships with its own deterministic gate (the lint CLI) rather than trusting the prose — E5 applied by a vendor who never read Report 1. A Google-shipped spec being requested in Anthropic's skills ecosystem within a day is also the clearest signal yet that the "agent-readable design contract" is becoming a layer every vendor expects to exist. Point-in-time, alpha, re-verify — but this is the direction of travel.</p></div>
+      <p><strong>Enforcement — the deterministic half.</strong> The advisory instruction "use tokens" becomes law through a short, boring stack, every piece of which predates agents: Stylelint's built-in <span class="mono">color-no-hex</span> (disallow hex colors outright) and <span class="mono">declaration-property-value-allowed-list</span> (allow-list <span class="mono">var(--…)</span> patterns per property); the purpose-built <span class="mono">stylelint-declaration-strict-value</span> plugin (rule id <span class="mono">scale-unlimited/declaration-strict-value</span>), which forces a variable, function or keyword for named properties — the single most token-shaped lint rule in the ecosystem; ESLint's <span class="mono">no-restricted-imports</span> with a message pointing at the design-system component, keeping agents off raw UI libraries; and a drift check comparing extracted reality against the committed baseline — the young open-source CLI Dembrandt is built exactly for this, failing CI on drift with a machine-readable JSON report and honest exit codes. CI blocks the merge; the agent iterates against the failure output before a human ever reviews (E4's loop, D5's gate). One security note that costs a sentence and buys a habit: token files, DESIGN.md and their kin are <em>agent-read context</em>, so they inherit the M7 rule — provenance and review before an agent consumes them; there is no known token-file injection incident as of July 2026, and the write-gate from I2 is precisely what keeps it that way.</p>
+      <p>And the boundary, restated once because every chapter in this module must: the gate verifies <strong>conformance</strong> — the value came from the vocabulary, the import came from the system, the contrast clears the threshold — never <strong>quality</strong>. Whether <span class="mono">color.action.primary</span> was the right token for this button in this flow is D1's judgment question, and it stays behind the designer's gate (D5, D6). Tokens are the Gherkin of the visual layer precisely this far and no further.</p>
+
+      <h2 id="s6"><span class="n">6</span>What the evidence shows — and the do-not-cite list</h2>
+      <p>The honest evidence file for tokens is thinner than the confidence of the ecosystem suggests, and the gap itself is worth showing a client. What holds up: <strong>adoption is real and steep.</strong> zeroheight's Design Systems Report 2025 (n=294 practitioners, surveyed late 2024) reports, verbatim, "Design tokens have gone from 56% in 2024 to 84% this year, which shows that design tokens are at a point of mass adoption in design systems"; the 2026 edition (n=147 — note the smaller sample) has tokens in 86% of systems — "almost ubiquitous", said jointly of tokens and documentation. Cite the jump with the 2025 report's dates, not as a 2026 number — and carry the same report's cold shower alongside it: only about 40% of teams report any token <em>pipeline</em>, so for the majority the contract exists but the plumbing of §3 does not.</p>
+      <p><strong>On agents specifically, the rigorous evidence sits one level up from tokens.</strong> A CHI 2026 extended abstract ("Design System-Compliant User Interface Generation with LLM Agents") compares strategies for feeding a design system to an agent and finds registry-based supply — the agent assembles pre-built, system-compliant components rather than generating free-form — reached the highest design-system compliance, 95.08%, with a small pilot (n=9) reporting the work felt easier. Read it for the direction, not the decimals: it is an extended abstract with a tiny pilot, its metric is compliance rather than general code quality, and it constrains at the component level, not the token level. The sharper honest statement: <strong>as of July 2026 no rigorous study isolates design tokens as the causal variable in agent output quality.</strong> The mechanism argument of §5 stands on the D1 slop evidence plus the general constraint literature, and this workbook says so rather than borrowing decimals from adjacent studies. One practical trap for anyone searching this literature: "token" in the LLM papers means context tokens — the arXiv results for "design tokens + LLM" are dominated by token-economics work that has nothing to do with design, and at least one plausible-looking citation in circulation is exactly this collision.</p>
+      <div class="callout amber"><div class="t">The do-not-cite list for this topic</div><p>Circulating numbers we could not pin to a primary source, mostly traceable to third-hand agency aggregations: Atlassian's "67% reduction in duplicate UI code" and "consistency 58→89"; GitHub Primer's "WCAG compliance 71→96%"; "31–47% development time saved with tokens"; and the Spotify rebrand folklore ("months before tokens, minutes after") — repeated everywhere, sourced nowhere we could find. If a deck needs a rebrand number, the best available is vendor self-report with the flag showing: Netguru's Silk case study claims its 2024 rebrand's core redesigns completed in two days, the full process in about three working days, and estimates it would have taken an additional four days without the system — their own design system, their own estimate, tokens not isolated as the variable. Weak, and honestly labelled beats strong and unpinned.</p></div>
+
+      <h2 id="s7"><span class="n">7</span>Brownfield: from ad-hoc SCSS to a token contract without a big-bang</h2>
+      <p>The client in this engagement does not have a token file; they have nine years of SCSS variables, four near-identical grays and a <span class="mono">$blue-new-final-2</span>. The move to DTCG is a strangler-fig migration (B5) with a characterization step (B2), and it never requires freezing feature work. Six steps, each with an exit condition — the sequence is this workbook's synthesis, assembled from the named tools and the module's own gates:</p>
+      <table class="map"><tr><th>step</th><th>what happens</th><th>exit condition</th></tr>
+      <tr><td>1 · inventory</td><td>extract the de-facto tokens from shipped CSS — Project Wallace's CSS Design Tokens Analyzer emits a spec-compliant token set <em>with per-value usage counts</em> (you might find 47 colors with 80% of usage in six of them — the counts are the consolidation map); CSS Stats and Superposition triangulate</td><td>de-facto token report reviewed with the designer</td></tr>
+      <tr><td>2 · characterize</td><td>golden-master the current UI: visual-regression snapshots of key screens as the baseline (B2's move, D5's tooling) — the migration must change <em>nothing</em> visually until a human chooses to</td><td>baseline green in CI</td></tr>
+      <tr><td>3 · consolidate</td><td>designer collapses the inventory into primitives + a semantic tier (§1), naming per Curtis's grammar; every collapse (four grays → one) is a reviewed, intentional diff against step 2's baseline</td><td>tokens.json in git, PR-gated (I2)</td></tr>
+      <tr><td>4 · bridge</td><td>translator emits CSS custom properties; legacy SCSS variables are re-pointed at them (<span class="mono">$brand-blue: var(--color-action-primary)</span>) so every existing stylesheet compiles unchanged — the CMS Design System's Sass-to-CSS guide documents this incremental path, and Halodoc's engineering blog shows the same JSON→SCSS bridge in production</td><td>old code compiles against new tokens; baseline still green</td></tr>
+      <tr><td>5 · ratchet</td><td>turn on the §5 lint stack one property category at a time — colors first, then spacing, then type — new violations fail CI while the legacy count only goes down (the same one-way ratchet as B2's coverage exit criteria)</td><td>zero hardcoded values in the gated categories</td></tr>
+      <tr><td>6 · open the gate</td><td>only now do agents generate UI against the vocabulary, and Figma imports the tokens as a consumer (Tokens Studio bridge) — supply and enforcement both exist, so D2-level generation (D6 scale) is safe to pilot</td><td>agent PRs passing the token gate unassisted</td></tr></table>
+      <p>The order is the load-bearing part, and it is B1's dependency-chain argument in the design layer: enforcement before generation, characterization before change. A team that starts by letting an agent "clean up the styles" runs the bootstrap paradox again — changes with no baseline to verify against; a team that starts by writing the perfect token taxonomy in a workshop ships a document, not a contract. Start from shipped CSS (what is), collapse toward intent (what should be), keep the golden master green throughout, and let the ratchet — not a mandate — retire the legacy values.</p>
+
+      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (first client conversations)</div><ul><li>Where do design decisions live today — SCSS variables, a Figma library, someone's memory? Run the Wallace inventory before proposing anything.</li><li>Which sync direction is implicitly in force, and who currently wins a conflict between Figma and code?</li><li>Does any CI gate reference design at all? If not, §5's lint stack is the cheapest first win in the whole design module.</li><li>Figma plan tier — the Variables API is Enterprise-gated, which changes the available bridges.</li></ul></div>
+      <div class="box"><div class="lab">Commit (the defaults we bring)</div><ul><li>Code-first: DTCG JSON in git as the single master, PR + human gate, everything else derived.</li><li>Stable-spec only: Format + Color modules; treat the Resolver draft and DESIGN.md as watch-list, not foundation.</li><li>Enforcement before generation: the §7 ratchet, colors first; agents pilot only after the gate holds.</li><li>Evidence honesty: the 56→84 jump with its real dates, the 40% pipeline gap, the do-not-cite list — and the admission that token-specific causal evidence does not yet exist.</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember D2 by</div><p>A design token turns a design decision into a named, machine-checkable commitment, and the DTCG's 2025.10 release gave that commitment a stable, vendor-neutral serialization — Format and Color modules only, with theming still an explicitly do-not-implement draft and the whole thing a Community Group report, not a W3C standard. Put the tokens in git as the master copy and they become the one layer of the design system an agent can be held to deterministically: a closed vocabulary supplied through context and MCP, enforced by a lint-and-drift gate that CI runs before any human reviews — conformance always, judgment never. Adoption is genuinely mainstream (56%→84% across zeroheight's 2024→2025 surveys, ~86% in 2026) but the plumbing is not (~40% have pipelines), which is exactly the gap a brownfield engagement fills with the six-step inventory→characterize→consolidate→bridge→ratchet→generate migration — enforcement before generation, always.</p></div>
+
+      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">DTCG — Design Tokens Format Module &amp; Color Module 2025.10</div><div class="mt">designtokens.org/tr/2025.10/format · /color · announcement w3.org/community/design-tokens · 28 Oct 2025</div><p>The stable spec itself: $value/$type/$description, groups, aliases, color spaces — and the status section ("not a W3C Standard nor on the W3C Standards Track") worth quoting precisely.</p></div>
+      <div class="item"><div class="rt">DTCG — Resolver Module (draft)</div><div class="mt">designtokens.org/tr/drafts/resolver · draft as of Jul 2026</div><p>Where theming/modes actually live: sets + modifiers + .resolver.json — behind a verbatim "do not implement" warning. The gap between this and the announcement's theming headline is §2's lesson.</p></div>
+      <div class="item"><div class="rt">Style Dictionary — DTCG docs &amp; the 2025.10 tracking issue</div><div class="mt">styledictionary.com/info/dtcg · github.com/style-dictionary/style-dictionary issue #1590 · v5.5.0 Jun 2026</div><p>The default translator: v4 brought first-class DTCG, v5 is stable, full 2025.10 coverage converging type-by-type. Amazon origin, Tokens Studio co-maintenance.</p></div>
+      <div class="item"><div class="rt">Artur Sopelnik — Figma Is Not the Source of Truth for Design Tokens</div><div class="mt">artursopelnik.de · 22 Feb 2026 · practitioner</div><p>The code-first argument in its cleanest form: "design tokens are code, not design files"; Figma as consumer. Pair with Builder.io's "Code is the source of truth (not Figma)".</p></div>
+      <div class="item"><div class="rt">Nathan Curtis — Tokens in Design Systems · Naming Tokens in Design Systems</div><div class="mt">medium.com/eightshapes-llc · 2016 · 2020</div><p>The conceptual root (options vs decisions — the two-tier ancestor of today's three tiers) and the naming grammar (namespace/category/concept/property/variant/scale) that makes a token set navigable.</p></div>
+      <div class="item"><div class="rt">zeroheight — Design Systems Report 2025 &amp; 2026</div><div class="mt">zeroheight.com · n=294 (fielded late 2024) · n=147 (2026)</div><p>The adoption evidence: 56%→84% verbatim, ~86% in 2026, the ~40% pipeline gap, tier-structure distribution. Small samples, self-selected practitioners — cite with n and dates attached.</p></div>
+      <div class="item"><div class="rt">CHI 2026 EA — Design System-Compliant UI Generation with LLM Agents</div><div class="mt">Cha, Jo, Shin &amp; Seo · DOI 10.1145/3772363.3798616 · extended abstract, pilot n=9</div><p>Registry-based supply hits 95.08% design-system compliance — the best rigorous signal that structured constraint beats prose instruction, one level above tokens. Direction, not decimals.</p></div>
+      <div class="item"><div class="rt">Google Labs — DESIGN.md</div><div class="mt">github.com/google-labs-code/design.md · Apr 2026 · spec version alpha</div><p>The agent-native design contract: DTCG-exportable tokens in front matter, prose rationale, a lint CLI emitting agent-actionable JSON. Cross-vendor uptake within days; alpha-flagged like the Resolver draft.</p></div>
+      <div class="item"><div class="rt">Donnie D'Amato — Avoiding tokens</div><div class="mt">blog.damato.design · practitioner dissent</div><p>The citable counter-voice: DTCG scope creep, tool lock-in worry, CSS-native alternative. Read to keep the module's enthusiasm honest.</p></div>
+      <div class="item"><div class="rt">Adobe Spectrum design data · Garth Braithwaite (Knapsack interview)</div><div class="mt">github.com/adobe/spectrum-design-data · knapsack.cloud · May 2025</div><p>Enterprise-scale code-first in the wild: designers author in Figma, the public git repo holds the canonical dataset, JSON Schema is the handoff format.</p></div>
+      <div class="item"><div class="rt">Project Wallace — CSS Design Tokens Analyzer · Dembrandt</div><div class="mt">projectwallace.com/design-tokens · github.com/dembrandt/dembrandt · young tooling, point-in-time</div><p>The brownfield pair: extract de-facto tokens with usage counts from shipped CSS; fail CI on drift against the committed baseline with machine-readable reports.</p></div>
+      <div class="item"><div class="rt">Report 5 — the design-harness research notes (this workbook)</div><div class="mt">module M6 research notes · section 1</div><p>The synthesis this deep dive expands — with this chapter's corrections applied: theming is Resolver-draft territory, Style Dictionary v5 is shipped, and the adoption stat now carries its true dates.</p></div>
+      </div>
+
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (D2-design-tokens-dtcg-deepdive.html). Its natural neighbours in the workbook are D1 (the third-artifact thesis tokens make machine-checkable), D3 (the consumption channels), D4/I1/I2 (SSOT, durable-vs-derived and write permissions), D5 (the verification loop the token gate feeds), H2 (the EARS/Gherkin analogy and its limits), and B2/B5 (characterization and strangler fig, reused in §7). The tier reading of the contract, the sync-direction table and the six-step migration are this workbook's synthesis; the D1–D5 scale it serves remains our original framing, not an industry standard. Every tool fact — spec module status, Style Dictionary coverage, Figma plan gating, Tokens Studio pricing, DESIGN.md's alpha — is point-in-time (mid-2026) and marked for re-verification before any client meeting.</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>

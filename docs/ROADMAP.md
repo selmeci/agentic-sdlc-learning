@@ -8,8 +8,8 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 - **Workbook**: 8 modules, 55 topics, 6 research reports, SDLC + Domain map sections. (v1.33 —
   M1 grew to E1–E11 in the July 2026 source-evaluation round: E9 harness tuning, E10 background
   agents, E11 formal methods, each with a deep-dive companion.)
-- **Deep-dive companions (35)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
-  **D1** (first of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B6** (all of M5).
+- **Deep-dive companions (36)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
+  **D1–D2** (M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B6** (all of M5).
 - Cross-cutting **M7 Security** module + two security domain-map views.
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
@@ -29,7 +29,20 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
 - ~~**D1** `des-artifact` — the design system as the third handoff artifact~~ — **done (v1.15)**,
   with a fact re-verification pass (Frost quotes, Krebs audit, Storybook figures unsourced →
   reframed) and new sources (Indeed/Wolosin benchmark, Meta Astryx, arXiv:2603.13036).
-- Next: **D2** (tokens/DTCG) or **D5** (the harness) — the two most concrete.
+- ~~**D2** `des-tokens` — design tokens as the visual contract (DTCG)~~ — **done (v1.47)**,
+  with a four-teammate fact/discovery pass + a three-agent adversarial spot-verify round
+  (13th session in a row it caught real errors: theming is NOT in stable 2025.10 — it lives in
+  the "do not implement" Resolver Module draft, and the W3C announcement's theming headline is
+  marketing overreach; the 56→84% adoption stat re-dated to zeroheight's 2025 report n=294
+  (86% n=147 in 2026); Style Dictionary v5 shipped, not "in progress"; "Jon Levine co-coined"
+  unverified → credit Jina Anne alone; DESIGN.md's circulating vendor roster = third-party
+  commentary; two paraphrases de-quoted). Load-bearing new sources: DESIGN.md (Google Labs,
+  Apr 2026, alpha) + Anthropic-ecosystem uptake issue, CHI 2026 EA registry-based 95.08%
+  (plus the honest null: no token-specific causal study), D'Amato dissent, Dembrandt drift
+  gate, Adobe Spectrum/Braithwaite designer-authored/code-stored, Sopelnik + Builder.io/Sewell
+  verbatims, Penpot first open-source native-DTCG tool. The tier reading, sync-direction table
+  and six-step SCSS→DTCG migration flagged as our synthesis.
+- Next: **D5** (the design harness — the remaining most-concrete one), then D3/D4/D6/D7.
 
 ### 3. M3 / M4 / M5 topic deep dives
 - **M3 Handoff contract** (H1–H4): the contract anatomy + EARS/Gherkin — directly reusable as
