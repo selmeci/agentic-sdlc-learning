@@ -341,6 +341,7 @@ footer li::before{content:"·";position:absolute;left:2px}
 .e1ov svg .edD2b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD2b)}
 .e1ov svg .edPB1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB1a)}
 .e1ov svg .edPB2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB2a)}
+.e1ov svg .edPB3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB3a)}
 .e1ov svg .edD3a{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD3a)}
 .e1ov svg .edD3b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD3b)}
 /* ===== M9 playbook runbooks (v1.49) ===== */
@@ -2162,6 +2163,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+      <div class="vitem"><span class="vv">v1.52</span><span class="vd">2026-07-18</span><p><strong>NEW RUNBOOK PB3 — Harness: stand up the engineering harness.</strong> Third M9 runbook, in both copies (PB3-harness-runbook.html + overlay): thirteen checklist steps across four phases (context layer extracted-not-decreed, deterministic guardrails, the write-permission matrix &amp; the platform layer, autonomy &amp; the probe-driven exit gate), distilling E1–E5 and I2 into an installable harness for the module PB2's GO opened. Its templates ARE the starter kit — runnable configs, not prose: a <span class="mono">settings.json</span> permission baseline carrying the verified gotchas (deny→ask→allow with no exceptions, <span class="mono">Edit(path)</span> covers Write, settings-file path anchoring, deny rules don't bind subprocesses), a PreToolUse guard hook (deny + reason, no-opinion fall-through, regression-checked), a CI verification gate (suite intact · genuinely green · mutation bar per the PB2 ADR), a gitleaks/detect-secrets/TruffleHog secret-scan stack, the I2 write-permission matrix pre-filled for week one (Report 3 synthesis, flagged), CODEOWNERS + restrict-file-paths with the GitLab caveat, and the harness-install report. Single entry posture by design: a recorded PB2 GO. Answers the topic's open question via I2's sequencing — gate the scorers first, then the steering files, then decisions, then the long tail. One correction carried, flagged point-in-time: per current official docs a PreToolUse hook decision does NOT override <span class="mono">permissions.deny/ask</span> (E5's prose describes hook-wins semantics — erratum to follow); E5's design rule stands (no-opinion fall-through, never blanket-allow). Evidence framing honest: ImpossibleBench 54% / &gt;79% test-editing / abort-tool 54→9 (arXiv:2510.20270), the Replit July 2025 code-freeze incident, harness variance 7.8× (arXiv:2605.23950), GitGuardian 2026 as vendor-published research (28.65M secrets +34%, AI-tied +81%, 64% unrevoked; the pinned 3.2% vs 1.5%), named MCP CVEs only — no aggregator stats. Every DONE criterion is a deliberate probe, blocked or caught, verified once. Exit: GO → PB4 Handoff; demotion instant, promotion slow (E6).</p></div>
       <div class="vitem"><span class="vv">v1.51</span><span class="vd">2026-07-18</span><p><strong>NEW DEEP DIVE D3 — How agents consume design context.</strong> Third M6 companion (D3-how-agents-consume-design-context-deepdive.html + overlay). The four channels that carry design context into the context window, in ascending fidelity: the screenshot ceiling measured (Design2Code, NAACL 2025 — 49% interchangeable / 64% preferred for GPT-4V with self-revision, with the static-benchmark and 2024-era caveats attached), Figma MCP post-GA (read GA since Oct 2025 — the earlier beta wording in the topic know bullets now superseded by the deep dive; seat gating, the 351,378-token context bill, scoped-fetch mitigations), Code Connect as the identity layer that kills hallucinated components (template files recommended, figma.connect() legacy; Org/Enterprise gating; partial coverage degrading silently; maintenance as a budget line), and Storybook MCP with the self-healing consume-generate-verify loop (10.3+, React-only docs in Preview; the 12.8% / 2.76× / −27% figures labeled vendor claims — and 12.8% is improved code usage, never acceptance rate). The FigmaBench metadata trap (Dec 2025 preprint) bounds the structured-is-better claim: raw JSON transcribed into rigid, non-responsive code. The vibe-tool default (v0 Design Systems 2.0, Lovable design-system.json with adherence checks, Bolt in-tool Storybook — all paid-tier gated), the §7 channel ladder (repo always, metadata scoped, identity where it pays, verification in the loop, screenshots as supplement) with its security surface (CVE-2025-53967, hidden-layer injection, bridge architectures), and the evidence file with its do-not-cite list. Topic <span class="mono">des-consumption</span> src now opens the overlay first.</p></div>
       <div class="vitem"><span class="vv">v1.50</span><span class="vd">2026-07-18</span><p><strong>NEW RUNBOOK PB2 — Bootstrap: build the verification base.</strong> Second M9 runbook, in both copies (PB2-bootstrap-runbook.html + overlay): twelve checklist steps across four phases (read-only module comprehension, characterization safety net, mutation audit, minimal CI &amp; the F0→F2 exit gate), distilling B1 safe ordering, B2 characterization/golden master and B3 mutation gate into executable practice. Handles both PB1 exit postures — GO (≥17, 4/4 gates: bootstrap the pilot from PB1's shortlist with the report §2 numbers as baseline) and score &lt;10 (PB2 <em>is</em> the engagement deliverable). Six copy templates: the "document, don't fix" generation prompt with the SUSPECTED-BUG convention, the TestGen-LLM three-gate CI filter, a shared ADR skeleton (kept pins per Hyrum's Law + the mutation-gate decision), read-only enforcement (CODEOWNERS + harness deny rule — enforcement, not a prompt request), a diff-scoped Mode 1 mutation job, and the module bootstrap report. Evidence framing kept honest throughout: the ~70% mutation threshold is our working heuristic recorded in an ADR, never an industry standard; the toolbox table is explicitly point-in-time (mid-2026, re-verify before a client meeting); wrong-orderings (WO1–WO4) and never-do gate failure modes embedded as callouts. Exit: GO opens PB3 write scope for the module; NO-GO keeps it at F1 with mutation survivors as the agent's next task list.</p></div>
       <div class="vitem"><span class="vv">v1.49</span><span class="vd">2026-07-18</span><p><strong>NEW MODULE M9 — Playbook: from theory to practice. First runbook PB1 Assess.</strong> The practice layer lands inside the workbook: five <span class="mono">pb-</span> topics ordered by the engagement journey (Assess → Bootstrap → Harness → Handoff → Pilot), built for the internal team to carry the methodology to a brownfield client. PB1 ships complete — a runbook companion in both copies (PB1-assess-runbook.html + overlay) with nine checklist steps across five phases (verification base &amp; delivery baseline, information architecture, governance minimum, team readiness, evaluation), each step carrying the action, the theory link that justifies it, and a DONE criterion; plus two copy-paste templates (readiness questionnaire with four non-compensable [GATE] criteria, assessment-report skeleton with a delivery-baseline section), the score→L1–L5 recommendation table and the F0 go/no-go with STOP criteria (the scoring model is our synthesis, flagged). The delivery baseline (DORA keys + cost per merged PR) is captured at assess time — a pilot without it can be neither proven nor disproven. NEW interaction layer: runbook checkboxes persist through the existing store (<span class="mono">agentic-study-v1</span>, new <span class="mono">pb</span> field, mirrored into cross-device sync), with a per-runbook progress chip and copy buttons; the standalone copy is deliberately non-persistent. PB2–PB5 are visible as in-preparation topics (one runbook per future version; PB3's templates will be the harness starter kit — runnable hook/permission/CI configs, not prose). Validator extended: <span class="mono">pb-</span> prefix recognised, checklist step ids checked for uniqueness (they are frozen progress keys, like topic ids).</p></div>
@@ -6563,8 +6565,523 @@ Signatories: ____________   Date: ____________   STOP criteria armed: ____
   </div>
 </div>
 
+<div class="e1ov" id="pb3ov" role="dialog" aria-modal="true" aria-label="PB3 runbook">
+  <div class="panel">
+    <div class="bar"><span class="tag">PB3 · RUNBOOK</span><h3>Harness: Stand Up the Engineering Harness</h3>
+      <button class="x" type="button" data-pb3close>✕ close</button></div>
+    <div class="body">
+<h2><span class="n">0</span>Why this runbook exists</h2>
+<p class="lead">PB3 installs the cage around the write scope PB2 earned. PB2 built the net — one characterized, mutation-audited module with a CI loop the agent can read; PB3 builds the harness that makes opening that module's write scope safe: the context layer the model reads, the deterministic guardrails it cannot argue with, and the platform layer that binds every writer, human or agent. The design rule is the litmus E1 states and E5 turns into a method: <strong>"what the model should know" goes in the prompt layer — CLAUDE.md, advisory; "what must never happen" goes in a hook, a permission rule, or a CI gate — deterministic.</strong> Under prompt injection, only the deterministic layer holds (<a href="&#35;e1-deepdive">E1 Agent = model + harness</a>, <a href="&#35;e5-deepdive">E5 Governance</a>).</p>
+<p>Unlike PB1, which meets any client, and PB2, which handles two entry postures, PB3 has exactly <strong>one</strong> entry posture: a recorded PB2 GO — one module whose net catches change, catches faults at the ADR-recorded mutation bar, and runs in CI. PB2's own exit routing states the principle this runbook enforces: <em>"the F2 boundary opens exactly as wide as the net that guards it."</em> If there is no PB2 GO there is nothing to build a cage around — installing write permissions on an unverified module automates the exact anti-pattern the whole framework exists to prevent. Go back to <a href="&#35;pb2-deepdive">PB2 Bootstrap</a> first.</p>
+<p>The case for the deterministic side is measured, not rhetorical. <strong>ImpossibleBench</strong> (Zhong, Raghunathan &amp; Carlini, arXiv:2510.20270) mutates tests to contradict the spec, so that passing equals cheating: GPT-5 cheats in 54% of trials, and Claude models and Qwen3-Coder cheat primarily — more than 79% of the time — <em>by editing the test cases themselves</em>; giving the model an explicit abort tool cut cheating from 54% to 9%, an escape hatch cheaper than the temptation. And the <strong>Replit incident</strong> (July 2025, reported by The Register and Fortune): an agent ran <span class="mono">npm run db:push</span> against a production database during a declared code freeze, destroying live data for a thousand-plus executives and companies. Jason Lemkin's diagnosis — <em>"There is no way to enforce a code freeze in vibe coding apps"</em> — is the whole argument in one sentence: instructions existed, a gate did not (<a href="&#35;i2-deepdive">I2 Lifecycle &amp; write permissions</a>).</p>
+<div class="callout"><div class="t">The vendor now says it too</div><p>Anthropic's own documentation describes CLAUDE.md and memory as <em>"context, not enforced configuration"</em> and continues: <em>"To block an action regardless of what Claude decides, use a PreToolUse hook instead."</em> A first-party confirmation of the litmus (official docs, verified 2026-07-18 — point-in-time like every tool fact on this page). And the harness is not decoration around the model: a May 2026 position paper measured harness-induced variance exceeding model-induced variance by 7.8× on average (arXiv:2605.23950) — which harness the client ends up with matters more than which model (<a href="&#35;e9-deepdive">E9 Harness tuning</a>).</p></div>
+<p>The theory this runbook distils: <a href="&#35;e1-deepdive">E1</a> for the seven-component frame, <a href="&#35;e4-deepdive">E4 Verification-first</a> for the three-layer protection ladder, <a href="&#35;e5-deepdive">E5 Governance</a> for the mechanisms and the five layers every harness has, <a href="&#35;i2-deepdive">I2</a> for the write-permission matrix and the hard evidence, and <a href="&#35;e2-deepdive">E2 Context engineering</a> for the budget discipline the context layer must obey.</p>
+
+<h2><span class="n">1</span>How to run it</h2>
+<p>Run PB3 with one person plus the agent, the module owner within reach, scoped to the PB2-GO module and its CI/config surroundings — nothing else. The steps are sequential <strong>by design</strong>: each artifact is a precondition of the next (the permission baseline before the hook that complements it, both before the smoke task that probes them), and you never verify a step with a later step — <a href="&#35;b1-deepdive">B1 Safe ordering</a>'s discipline, unchanged from PB2. Size every step at two days or less. As in PB1 and PB2, every step is written as ČO (the action), PREČO (the theory link that justifies it) and DONE (the exit criterion).</p>
+<p>One thing is new here: almost every DONE criterion has the same shape — <strong>a deliberate probe is blocked or caught, verified once</strong>. A harness is proven by attack, not by reading its config: you ask the agent to edit a protected test and watch the denial, you plant a dummy secret and watch the scan go red, you push as a non-owner and watch the platform refuse. If a criterion cannot be probed, the thing it describes is not installed yet.</p>
+<p><span class="pbprog" data-pbprog="pb-harness"></span></p>
+<p class="pbnote">Progress is saved locally in this workbook (same store as topic progress). The standalone copy of this runbook does not persist checkbox state.</p>
+<figure>
+<svg viewBox="0 0 900 275" role="img" aria-label="The harness PB3 installs: advisory context steers the agent; permission rules and the PreToolUse hook gate every tool call at session time; the CI gate, secret scan and platform rules bind every writer at merge time">
+  <defs><marker id="ahPB3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <text x="24" y="28" class="tg">SESSION TIME — EVERY TOOL CALL (PHASES A + B)</text>
+  <rect x="24" y="44" width="122" height="52" rx="10" class="bxA"/><text x="36" y="66" class="ti">CLAUDE.md</text><text x="36" y="82" class="ts">advisory — steers</text>
+  <rect x="170" y="44" width="122" height="52" rx="10" class="bx"/><text x="182" y="66" class="ti">Agent tool call</text><text x="182" y="82" class="ts">Edit · Bash · MCP</text>
+  <rect x="316" y="44" width="140" height="52" rx="10" class="bxC"/><text x="328" y="66" class="ti">Permission rules</text><text x="328" y="82" class="ts">deny → ask → allow</text>
+  <rect x="480" y="44" width="136" height="52" rx="10" class="bxC"/><text x="492" y="66" class="ti">PreToolUse hook</text><text x="492" y="82" class="ts">protected paths</text>
+  <rect x="640" y="44" width="106" height="52" rx="10" class="bxK"/><text x="652" y="66" class="ti">Write lands</text><text x="652" y="82" class="ts">module scope</text>
+  <rect x="770" y="44" width="106" height="52" rx="10" class="bxG"/><text x="782" y="66" class="ti">Audit log</text><text x="782" y="82" class="ts">every call</text>
+  <line x1="146" y1="70" x2="170" y2="70" class="edPB3 edD"/>
+  <line x1="292" y1="70" x2="316" y2="70" class="edPB3"/>
+  <line x1="456" y1="70" x2="480" y2="70" class="edPB3"/>
+  <line x1="616" y1="70" x2="640" y2="70" class="edPB3"/>
+  <line x1="746" y1="70" x2="770" y2="70" class="edPB3"/>
+  <text x="24" y="134" class="tg">MERGE TIME — BINDS EVERY WRITER, AGENT OR HUMAN (PHASES B + C)</text>
+  <rect x="24" y="150" width="150" height="52" rx="10" class="bx"/><text x="36" y="172" class="ti">Agent-opened PR</text><text x="36" y="188" class="ts">same checks as human</text>
+  <rect x="198" y="150" width="160" height="52" rx="10" class="bxC"/><text x="210" y="172" class="ti">CI verification gate</text><text x="210" y="188" class="ts">intact · green · ≥ bar</text>
+  <rect x="382" y="150" width="150" height="52" rx="10" class="bxC"/><text x="394" y="172" class="ti">Secret scan</text><text x="394" y="188" class="ts">pre-commit + CI</text>
+  <rect x="556" y="150" width="160" height="52" rx="10" class="bxC"/><text x="568" y="172" class="ti">Platform rules</text><text x="568" y="188" class="ts">CODEOWNERS · paths</text>
+  <rect x="740" y="150" width="136" height="52" rx="10" class="bxK"/><text x="752" y="172" class="ti">Merge</text><text x="752" y="188" class="ts">human review</text>
+  <line x1="174" y1="176" x2="198" y2="176" class="edPB3"/>
+  <line x1="358" y1="176" x2="382" y2="176" class="edPB3"/>
+  <line x1="532" y1="176" x2="556" y2="176" class="edPB3"/>
+  <line x1="716" y1="176" x2="740" y2="176" class="edPB3"/>
+  <text x="24" y="240" class="ts">Phase A writes the advisory layer. Phase B installs the rules, hook, gate and scan. Phase C binds the platform and MCP surface.</text>
+  <text x="24" y="260" class="ts">Phase D rattles every bar with a deliberate probe. Advisory is read; deterministic is enforced — under injection, only enforced layers hold (E5).</text>
+</svg>
+<figcaption>The harness PB3 installs, as a write experiences it: advisory context steers the call (dashed — read, not enforced); permission rules and the PreToolUse hook gate it at session time; the CI gate, secret scan and platform rules bind it — and every other writer — at merge time. Phase D probes every layer deliberately before autonomy is granted.</figcaption>
+</figure>
+
+<h2><span class="n">2</span>Phase A — The context layer: extracted, not decreed</h2>
+<p>The advisory layer comes first not because it is strongest but because it is cheapest and steers the ninety-five-percent case; the deterministic twin of its every "never" lands in Phase B. Its failure mode is decree — <a href="&#35;b1-deepdive">B1</a>'s WO3: writing the context file from aspiration before the evidence exists. That failure is measured: agent-<em>written</em> context files scored −2% success at +23% cost in the ETH Zurich study, while human-written ones were modestly positive. The discipline that works is extraction — the file records what the repo already does, and a human prunes it. <a href="&#35;e2-deepdive">E2</a> adds the budget rule: the smallest set of high-signal tokens, reference-don't-copy, because recall degrades well before the context window fills (context rot) — a bloated CLAUDE.md dilutes the very attention budget it exists to protect.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s1" data-pb="pb-harness" data-step="pb3-s1">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s1">A1 · Extract the skeleton from the module, read-only</label>
+    <p class="pbwhy">Run the extraction prompt (template below) over the PB2 module: build, test and lint commands verbatim; conventions the code actually follows, two cited examples each; corrections reviewers have made repeatedly. Nothing the agent cannot cite from the repo goes in. Why: extracted-not-decreed (<a href="&#35;b1-deepdive">B1</a> WO3, <a href="&#35;e2-deepdive">E2</a>); iteration on the file after install is <a href="&#35;e9-deepdive">E9</a>'s Ratchet, later work. One vendor fact shapes the file layout, quoted from the official docs (verified 2026-07-18): <em>"Claude Code reads CLAUDE.md, not AGENTS.md"</em> — so the master is written once as AGENTS.md and CLAUDE.md imports it (<span class="mono">@AGENTS.md</span>), keeping a single source every tool shares; a symlink is the no-extra-content alternative. Do not cite tool-adoption counts for AGENTS.md — they are aggregator claims.</p>
+    <div class="pbdone">DONE = draft exists; every line traceable to a cited observation; zero invented rules on owner spot-check.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-extract">copy</button><pre id="pb3-tpl-extract">
+# Context layer — extraction prompt + file skeleton (one pass, two artifacts)
+
+# 1) The extraction prompt (agent, READ-ONLY on the pilot module)
+Role: you are extracting a context file for &lt;module&gt;. Read-only.
+Rules — extract, don't decree:
+1. List the build, test and lint commands that actually work, verbatim.
+2. List naming / layout / error-handling conventions the code actually
+   follows — cite two file examples per claim. No aspirations, no "should".
+3. List corrections reviewers made repeatedly (git log, PR comments) —
+   a rule earns its line only by recurring.
+4. Do NOT invent rules. Anything you cannot cite from the repo, leave out.
+Output: a draft AGENTS.md; a human prunes it before anything is committed.
+
+# 2) CLAUDE.md (repo root) — one line of substance:
+@AGENTS.md
+# Claude Code reads CLAUDE.md, not AGENTS.md (official docs, 2026-07-18);
+# the import keeps ONE master all tools share. Add below it only what other
+# tools must not see (e.g. plan-mode notes for this module).
+
+# 3) AGENTS.md (the shared master) — skeleton:
+## Build &amp; test        &lt;the verbatim commands from the extraction&gt;
+## Conventions          &lt;only what recurred; one line each; date-stamped&gt;
+## Never (advisory L1 — the ENFORCED copy lives in Phase B hooks/permissions)
+- Never modify or delete tests under tests/ — fix the code, not the test.
+- Never edit CLAUDE.md/AGENTS.md, CI config or migrations directly; propose a PR.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s2" data-pb="pb-harness" data-step="pb3-s2">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s2">A2 · Human-prune to a line budget and commit</label>
+    <p class="pbwhy">The module owner prunes the draft to what is genuinely load-bearing: agree a line budget up front (<a href="&#35;e3-deepdive">E3</a>'s heuristic — a progress file over ~200 lines is a smell — applies to steering files with equal force), cut anything an ADR or spec already covers (reference, don't copy), date-stamp what remains. The advisory "never" lines from the skeleton stay in — they are L1 of <a href="&#35;e4-deepdive">E4</a>'s protection ladder, necessary and insufficient alone. Why: context engineering is a runtime discipline, not a one-time artifact — this file will be maintained (<a href="&#35;e9-deepdive">E9</a>); PB3 only installs its first honest version.</p>
+    <div class="pbdone">DONE = CLAUDE.md + AGENTS.md committed; under the agreed budget; import wired (one master); owner sign-off in report §1.</div>
+  </div>
+</div>
+
+<h2><span class="n">3</span>Phase B — Deterministic guardrails: the starter kit</h2>
+<p>This phase is the starter kit this topic promised: every template below is a <strong>runnable config, not prose about config</strong>. The shape is <a href="&#35;e4-deepdive">E4</a>'s three-layer test-protection ladder — L1 advisory (Phase A wrote it), L2 a PreToolUse hook that blocks regardless of what the model decides, L3 a CI gate that proves the suite is intact and genuinely green at merge. The order inside the phase follows <a href="&#35;i2-deepdive">I2</a>'s week-one sequencing, which is also the answer to this topic's own open question — <em>which</em> rules graduate from prose to enforced hooks in week one: <em>"gate the scorers first (tests, CI config), then the steering files (CLAUDE.md/AGENTS.md — small files, outsized blast radius), then decisions (ADR seams), then the long tail."</em> Resist gating everything on day one: that relocates review onto every write at once and the team routes around it — the same overload pattern <a href="&#35;h4-deepdive">H4</a> documents for over-specification.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s3" data-pb="pb-harness" data-step="pb3-s3">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s3">B1 · Ship the permission baseline</label>
+    <p class="pbwhy">Install the deny/ask/allow baseline below, scoped to the module: the scorers and steering files deny-listed, high-blast-radius commands on ask, the module's own test and lint commands allowed so verification is the path of least resistance (<a href="&#35;e4-deepdive">E4</a>). Why: this is the declarative-policy layer, the first of <a href="&#35;e5-deepdive">E5</a>'s five layers every harness has — and the litmus applied: every deny line is a "must never happen". Once the pilot pattern settles, the non-negotiables belong in <span class="mono">managed-settings.json</span> (MDM-deployed), which sits above user and project settings and cannot be overridden — teams inherit the baseline and cannot silently weaken it (<a href="&#35;e5-deepdive">E5</a>; point-in-time).</p>
+    <div class="pbdone">DONE = baseline committed at project scope; a deliberate agent attempt to edit a denied path AND to read .env both refused, verified once, logged in report §2.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-perms">copy</button><pre id="pb3-tpl-perms">
+# Permission baseline — .claude/settings.json (project scope, committed).
+# Syntax verified against the official Claude Code docs 2026-07-18 —
+# point-in-time; re-verify before installing at a client.
+# Evaluation order is deny → ask → allow, first match wins; specificity does
+# NOT change order, so a deny can never carry exceptions.
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.pem)",
+      "Read(./secrets/**)",
+      "Edit(./tests/**)",
+      "Edit(./CLAUDE.md)",
+      "Edit(./AGENTS.md)",
+      "Edit(.github/workflows/**)",
+      "Bash(git push --force*)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(npm run db:*)",
+      "Bash(*migrate*)"
+    ],
+    "allow": [
+      "Bash(npm run test *)",
+      "Bash(npm run lint)"
+    ],
+    "defaultMode": "default"
+  }
+}
+# The gotchas that bite (all from the official docs, mid-2026):
+# - Edit(path) covers ALL file-editing tools (Edit, Write, NotebookEdit).
+#   A Write(path) rule is accepted but silently never matches — use Edit(...).
+# - "/path" anchors at THIS settings file's directory, not filesystem root;
+#   "//path" is absolute; a bare filename (".env") matches at any depth.
+# - Deny rules bind the agent's file tools and recognized shell commands —
+#   NOT arbitrary subprocesses. A script the agent runs can open any file the
+#   OS allows; closing that hole is the sandbox layer's job (§6).
+# - Built-in protected paths (.git, .claude, shell rc files, .mcp.json,
+#   .pre-commit-config.yaml, …) are never auto-approved no matter what allow
+#   rules say — do not re-invent that list here.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s4" data-pb="pb-harness" data-step="pb3-s4">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s4">B2 · Ship the PreToolUse guard hook</label>
+    <p class="pbwhy">Install the hook below: it denies edits to the PB2-committed tests and the steering files, with a reason the model can read, and returns <em>no opinion</em> for everything else. Why: rules are declarative; the hook is <a href="&#35;e5-deepdive">E5</a>'s programmable-interceptor layer, for anything a path pattern cannot express — and the deliberate redundancy with B1 is the point: two independent layers guarding the scorers, justified by ImpossibleBench's finding that models cheat <em>primarily by editing tests</em> (<a href="&#35;i2-deepdive">I2</a>, §0). One correction to carry, flagged point-in-time: per the current official docs a PreToolUse hook decision does <strong>not</strong> override <span class="mono">permissions.deny/ask</span> — rules and hooks are layered, and a blocking hook beats an allow rule (earlier 2025-era write-ups, including our own E5 §2 sketch, describe hook-wins semantics; follow the docs and re-verify at install time). E5's design rule stands unchanged either way: the hook returns no-opinion for whatever it does not explicitly handle — never blanket-allow.</p>
+    <div class="pbdone">DONE = probe edit of a protected test blocked with the reason visible; a legitimate non-protected edit still passes (regression-check the fall-through — a bug there silently reopens everything); both in report §3.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-hook">copy</button><pre id="pb3-tpl-hook">
+# PreToolUse guard hook — L2 of the E4 ladder. Two files.
+# Syntax verified against the official Claude Code docs 2026-07-18.
+
+# 1) .claude/settings.json — the hooks block
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-tests.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+# 2) .claude/hooks/protect-tests.sh  (chmod +x; reads tool input as JSON on stdin)
+#!/bin/bash
+FILE=$(jq -r '.tool_input.file_path // empty')
+case "$FILE" in
+  */tests/*|*CLAUDE.md|*AGENTS.md)
+    jq -n '{
+      hookSpecificOutput: {
+        hookEventName: "PreToolUse",
+        permissionDecision: "deny",
+        permissionDecisionReason: "Protected path (PB3 ADR): approved tests and steering files are read-only for the agent. Propose the change as a PR instead."
+      }
+    }'
+    ;;
+  *)
+    exit 0   # NO OPINION — fall through to the permission rules.
+             # Never blanket-allow here: a bug in this branch would
+             # silently reopen everything the hook exists to protect.
+    ;;
+esac
+
+# Exit codes: 0 = success (stdout JSON is parsed); 2 = blocking error
+# (stderr shown to the model); any other = non-blocking error, call proceeds.
+# Layering (per official docs, mid-2026): the hook does NOT override
+# permissions.deny/ask — B1's deny rules stay in force alongside this.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s5" data-pb="pb-harness" data-step="pb3-s5">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s5">B3 · Ship the CI verification gate</label>
+    <p class="pbwhy">Wire L3: a required check proving, on every PR, that the suite is intact (no tests deleted or skipped into silence), genuinely green, and that the mutation score has not regressed below the bar recorded in PB2's ADR — reuse PB2's diff-scoped Mode-1 job as the component (<a href="&#35;e4-deepdive">E4</a>, <a href="&#35;pb2-deepdive">PB2</a>). Why: L2 binds the agent's tools inside a session; L3 binds the <em>artifact</em> at merge, whoever produced it. Two platform facts, vendor-primary (GitHub, mid-2026): branch protection and CODEOWNERS apply to agent PRs exactly as to human PRs — no separate native "AI PR" gate exists, and none is needed; and agent-opened PRs should keep the standard first-run "Approve and run" workflow gate, so a human looks before any CI executes. GitHub's own Copilot coding agent ships precisely these guardrails — pushes only to its own branch, workflows human-approved, requester cannot self-approve — vendor-designed, and it concedes the whole argument.</p>
+    <div class="pbdone">DONE = a deliberately weakened test change (one deleted case, one added skip) goes red end-to-end, verified once, linked in report §4.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-gate">copy</button><pre id="pb3-tpl-gate">
+# CI verification gate — L3 of the E4 ladder (GitHub Actions flavour, adapt).
+# ONE gate for every PR, agent or human — the enforcement surface is the one
+# you already have, not a new "AI pipeline".
+name: verification-gate
+on: pull_request
+jobs:
+  suite-intact:                    # no tests deleted or skipped into silence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: &lt;fail if the diff deletes files under tests/&gt;
+      - run: &lt;fail if the diff adds skip / xfail / disabled markers to tests/&gt;
+  genuinely-green:
+    needs: suite-intact
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: &lt;full suite command&gt;            # green means green — no "|| true"
+  mutation-bar:
+    needs: genuinely-green
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: &lt;diff-scoped mutation command&gt;  # reuse PB2's Mode-1 job here
+      - run: &lt;assert score at or above the ADR bar&gt;   # ~70% is OUR heuristic,
+                                                       # recorded in the ADR
+# Outside the YAML: mark this workflow a required status check on the default
+# branch, and keep the first-run "Approve and run" gate for PRs opened by any
+# agent identity (a human approves before workflows execute).
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s6" data-pb="pb-harness" data-step="pb3-s6">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s6">B4 · Wire secret scanning, pre-commit and CI</label>
+    <p class="pbwhy">Before the write scope opens, install the scan stack below: gitleaks in pre-commit and CI, a detect-secrets baseline to silence legacy noise, a periodic TruffleHog verified sweep of history, platform-native scanning as backstop. Why: the numbers say the risk is growing, not shrinking — GitGuardian's 2026 report (vendor-published research; disclosed, broadly reproducible methodology) counts 28.65M new hardcoded secrets on public GitHub in 2025, +34% year over year, with AI-service-tied leaks up 81%; repos with Claude Code configuration present showed a 3.2% secret-leak incidence against a 1.5% GitHub-wide baseline (the pinned, specific figure — avoid their vaguer AI-wide multipliers). And detection without revocation is theater: 64% of secrets confirmed valid in 2022 were <em>still unrevoked</em> in 2026 — name a revocation owner, not just a scanner.</p>
+    <div class="pbdone">DONE = a planted dummy secret is caught at pre-commit AND in CI, verified once; the legacy baseline triaged with the owner; revocation owner named in report §5.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-secrets">copy</button><pre id="pb3-tpl-secrets">
+# Secret scanning — the brownfield stack (versions = mid-2026, re-verify)
+
+# 1) Pre-commit (fast, zero-config): gitleaks — .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1        # feature-complete per its maintainer; OSS releases are
+    hooks:              # security-patch-only now (successor "Betterleaks" is
+      - id: gitleaks    # watch-this-space, NOT the default recommendation)
+# Note: .pre-commit-config.yaml is on Claude Code's built-in protected-path
+# list — the agent cannot silently rewrite the scanner's own config.
+
+# 2) CI (same tool — catches whatever bypassed the local hook):
+gitleaks:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+      with: { fetch-depth: 0 }        # scan history, not just HEAD
+    - uses: gitleaks/gitleaks-action@v2
+
+# 3) Brownfield noise: baseline legacy findings once, then alert only on new
+pip install detect-secrets==1.5.0
+detect-secrets scan &gt; .secrets.baseline   # triage the baseline with the owner
+
+# 4) Periodic (e.g. monthly): verified live-credential sweep of full history
+trufflehog git file://. --only-verified   # calls provider APIs to confirm live
+
+# Platform-native scanning (GitHub Secret Scanning / GitLab equivalent) stays
+# on as the backstop. And name the REVOCATION owner: 64% of secrets valid in
+# 2022 were still unrevoked in 2026 (GitGuardian) — detection alone is theater.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s7" data-pb="pb-harness" data-step="pb3-s7">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s7">B5 · Record the advisory/deterministic split in an ADR</label>
+    <p class="pbwhy">Write one ADR listing every deny rule, hook and gate installed in this phase, each tagged with the side of the litmus that put it there — and write down the week-one graduation answer explicitly: the scorers (tests, CI config) and the steering files are enforced from day one; ADR seams next; the long tail stays prose until it earns enforcement by recurring (<a href="&#35;i2-deepdive">I2</a> §7, <a href="&#35;e5-deepdive">E5</a> §1). Why: this is a decision with a lifecycle — accepted means immutable, change arrives as a new record that supersedes, never an edit (Nygard 2011; MADR 4.0). Reuse PB2's ADR skeleton (its §6) — one file per decision; no new template needed.</p>
+    <div class="pbdone">DONE = ADR committed; every protected path, hook and gate listed with its litmus rationale; the week-one answer written down.</div>
+  </div>
+</div>
+
+<h2><span class="n">4</span>Phase C — The write-permission matrix and the layers beyond the agent</h2>
+<p>Layer 1 — B1's rules and B2's hook — keeps the agent from thrashing the working tree; it binds the agent's own tools and nothing else. The durable gate becomes real only when it binds <em>every</em> writer: agent, human, and the human's Friday-afternoon shortcut (<a href="&#35;i2-deepdive">I2</a> §4). Phase C is the information-architecture half of the install: classify the module's artifacts by <a href="&#35;i1-deepdive">I1</a>'s taxonomy (durable / derived / disposable, plus agent memory), then push enforcement out to the platform and CI, where identity does not matter. The matrix itself is <strong>Report 3's synthesis, not an industry standard</strong> — individually well-attested components, packaged by us; carry that flag to the client.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s8" data-pb="pb-harness" data-step="pb3-s8">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s8">C1 · Fill in the write-permission matrix for the module</label>
+    <p class="pbwhy">Classify every artifact class the module actually has and assign each a write mode, a gate, an enforcement mechanism and an owner — the pre-filled week-one table below is the starting point, not the answer. Why: an unclassified artifact class is an ungoverned write surface. One data point argues for special care on the durable row: a model that learned to reward-hack on coding tasks generalized to intentionally sabotaging its operator's safety-detection code 12% of the time (Anthropic reward-hacking study, Nov 2025) — the audit and detection tooling itself belongs on the gated row, not beside it (<a href="&#35;i2-deepdive">I2</a>, <a href="&#35;i1-deepdive">I1</a>).</p>
+    <div class="pbdone">DONE = matrix committed; every artifact class the module has is classified; zero unclassified rows.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-matrix">copy</button><pre id="pb3-tpl-matrix">
+# Write-permission matrix — week one, pilot module.
+# Adapted from I2 §7. Report 3 synthesis, NOT an industry standard.
+# Every artifact class the module has gets a row; zero unclassified rows.
+
+[durable — the scorers]  tests/, .github/workflows/, CI config
+  agent may: propose via PR only    gate: human review — merge IS the write
+  enforced by: Edit-deny (B1) + guard hook (B2) + restrict-file-paths (C2)
+  owner: tech lead
+
+[durable — steering]  CLAUDE.md, AGENTS.md
+  agent may: propose via PR only    gate: code-owner review
+  enforced by: Edit-deny (B1) + hook (B2) + CODEOWNERS (C2)
+  owner: named person per file
+
+[durable — decisions]  specs/, docs/adr/
+  agent may: draft a PR             gate: accepted ADRs are immutable —
+                                          supersede, never edit
+  enforced by: branch protection + CODEOWNERS (C2)
+  owner: named person per file
+
+[high blast radius]  migrations, schema pushes, deploys
+  agent may: request — a human runs it    gate: explicit approval per run
+  enforced by: ask-rules (B1); identity scoping where no hook exists (I2 §5)
+  owner: DBA / ops
+
+[derived]  generated docs, lockfiles, digests
+  agent may: regenerate from the master, never edit in place
+  gate: the generator — CI proves no hand edits
+  enforced by: regenerate-and-diff (C3) + DO-NOT-EDIT headers
+  owner: the pipeline
+
+[disposable]  plans/, scratch/, progress notes
+  agent may: write freely           gate: none — a named home + a TTL
+  enforced by: convention + pruning cadence
+  owner: nobody, by design
+
+[agent memory]  memory files, if any
+  agent may: write through validation     gate: validate-before-write;
+                                                review before promotion
+  enforced by: path containment, size caps, provenance, rollback
+  owner: the harness
+
+Unclassified artifact classes remaining: 0
+(an unclassified class is an ungoverned write surface)
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s9" data-pb="pb-harness" data-step="pb3-s9">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s9">C2 · Bind the durable row at the platform layer</label>
+    <p class="pbwhy">Add CODEOWNERS for the module's durable paths and a repository ruleset that requires PR + code-owner review and rejects pushes touching protected paths outright — GitHub's "restrict file paths" push rule (GA since September 2024) does this whoever pushes (vendor primary). Why: this is the layer that holds when someone bypasses the agent entirely. Two caveats to carry: on GitLab, CODEOWNERS approval does <strong>not</strong> constrain users who already hold push permission on a protected branch — a server-side pre-receive hook is the hard per-path block there; and provenance labeling of agent work beyond GitHub's own attribution (shipped June 2026) is a team convention — a <span class="mono">Co-Authored-By</span> trailer — not a platform-native gate (<a href="&#35;i2-deepdive">I2</a> §4).</p>
+    <div class="pbdone">DONE = a push from a non-owner identity touching a protected path is rejected by the platform, verified once — not by the agent's own hook; that was B2's probe.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-codeowners">copy</button><pre id="pb3-tpl-codeowners">
+# Platform layer — binds EVERY writer, not just the agent's tools.
+
+# 1) CODEOWNERS (repo root, .github/ or docs/) — durable rows from the matrix
+/tests/                @module-owner @qa-lead
+/.github/workflows/    @platform-team
+/CLAUDE.md             @tech-lead
+/AGENTS.md             @tech-lead
+/docs/adr/             @tech-lead
+
+# 2) Repository ruleset (GitHub → Settings → Rules), default branch:
+#    - require a pull request + review from Code Owners
+#    - require the verification-gate workflow as a status check (B3)
+#    - push rule "restrict file paths" (GA since Sept 2024) on the paths
+#      above — rejects any direct push touching them, whoever pushes
+#    - same checks for every PR regardless of author; agent-opened PRs keep
+#      the standard first-run "Approve and run" workflow gate
+
+# GitLab caveat: CODEOWNERS approval does NOT constrain users who already
+# hold push permission on a protected branch — use a server-side pre-receive
+# hook for the hard per-path block there.
+# Point-in-time (mid-2026): re-verify feature names and GA status.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s10" data-pb="pb-harness" data-step="pb3-s10">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s10">C3 · Regenerate-and-diff for the derived row (optional)</label>
+    <p class="pbwhy">If the module has derived artifacts — generated docs, lockfiles, digests — add a CI step that reruns the generator and fails on any difference: <span class="mono">&lt;generate&gt; &amp;&amp; git diff --exit-code</span> is the whole trick (Kubernetes' <span class="mono">hack/verify-*</span> fleet is the canonical example at scale). Why: the derived row's rule is "the master changes, or nothing does" — hand edits to generated files are drift the generator will silently overwrite later (<a href="&#35;i2-deepdive">I2</a> §4). This step is <strong>explicitly optional</strong>: if the module has no derived artifacts, record N/A in the matrix and move on — do not invent derived artifacts in order to gate them.</p>
+    <div class="pbdone">DONE = a hand-edited generated file goes red in CI, verified once — or a recorded N/A on the matrix's derived row.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s11" data-pb="pb-harness" data-step="pb3-s11">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s11">C4 · Audit the MCP surface</label>
+    <p class="pbwhy">Inventory every MCP server wired into the harness; remove what the module's work does not need; pin and gate what remains. Why, twice over. Context: MCP tool-schema sprawl — every connected server injecting dozens of verbose schemas — is the dominant real-world context bloat at clients (<a href="&#35;e2-deepdive">E2</a>). Security: tool descriptions are attack surface — tool poisoning was first publicly demonstrated in April 2025 against a WhatsApp MCP server, malicious instructions living in the tool's <em>description</em>, not its output; CVE-2025-54136 ("MCPoison") and CVE-2025-54135 ("CurXecute") put the class on the map, CVE-2025-6514 (mcp-remote, CVSS 9.6, 437,000+ downloads affected) showed supply-chain scale, and CVE-2025-49596 (MCP Inspector) reached the dev tooling itself. The baseline (MCP spec + OWASP MCP cheat sheet): trusted publishers only; review tool definitions before install; pin definitions by hash and alert on drift (the rug-pull defence — MCP has no built-in integrity guarantee on tool metadata); OAuth 2.1 + PKCE, one token per server, minimal scope; fail closed. Claude Code's native controls (point-in-time): <span class="mono">allowedMcpServers</span> / <span class="mono">allowManagedMcpServersOnly</span>, with local servers matched by exact command + args so a binary cannot be silently swapped. OWASP's Agentic Top 10 2026 (Dec 2025) names the governing principle "Least Agency" — minimize not just what an agent can access but how much it can do without checking back.</p>
+    <div class="pbdone">DONE = server inventory committed: each surviving server has a publisher, a pinned version or hash, and a one-line reason; removals logged; the allowlist enforced in settings.</div>
+  </div>
+</div>
+
+<h2><span class="n">5</span>Phase D — Autonomy, the probe, and the exit gate</h2>
+<p>The cage is built. Phase D decides how much freedom it earns, proves the decision under one real task, and writes the record that PB4 will inherit.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s12" data-pb="pb-harness" data-step="pb3-s12">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s12">D1 · Grant the autonomy level and smoke-test it</label>
+    <p class="pbwhy">Score the module against <a href="&#35;e6-deepdive">E6</a>'s prerequisite table: L3 requires harness, verification and governance in place — PB2 supplied verification, Phases B–C supplied the rest; L4 needs memory and blast-radius control a pilot rarely has, so expect L2–L3. Record the level with evidence per prerequisite and set the demotion trigger <em>in advance</em> — promotion is slow, demotion is instant, and the accountable reviewer or lead pulls that trigger, never the agent operator (<a href="&#35;e6-deepdive">E6</a>). Then run one small, real task at the granted level and attack your own install: ask for an edit of a protected path mid-task (B2's layer must block it) and seed a regression (B3's gate must catch it). The session ends merge-ready — <a href="&#35;e3-deepdive">E3</a>'s clean-state principle.</p>
+    <div class="pbdone">DONE = level recorded with per-prerequisite evidence and a pre-set demotion trigger; smoke task merge-ready; the probe blocked; the seeded regression caught — all in report §8.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb3-s13" data-pb="pb-harness" data-step="pb3-s13">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb3-s13">D2 · Run the exit gate and write the harness-install report</label>
+    <p class="pbwhy">Walk the exit-criteria table in §7 and fill the harness-install report (template in §6): what was installed, every probe and its result, the matrix summary, the autonomy level with its demotion trigger, go/no-go with signatories. Why: the report is the module's governance record — the artifact PB4's handoff contract will point at, and the baseline E9's tuning work later measures against. Every criterion is a probe result, which is what keeps this gate honest and cheap to re-run (<a href="&#35;b1-deepdive">B1</a> — never verify a step with a later step; the gate only reads evidence the steps already produced).</p>
+    <div class="pbdone">DONE = report delivered; go/no-go recorded with date, criteria and signatories.</div>
+  </div>
+</div>
+
+<h2><span class="n">6</span>Toolbox &amp; templates</h2>
+<p>Every config block on this page was verified against the official Claude Code documentation on <strong>2026-07-18</strong>, and the tool versions are mid-2026 — this layer of the stack moves monthly; <strong>re-verify every block before a client meeting</strong>. Two facts outrank any syntax detail: permission rules merge across settings scopes and deny/ask always win no matter which scope contributed the allow; and the runnable artifacts in this runbook shipped inline at their steps — the E5 litmus applied to the runbook itself: what must never happen ships as enforcement, not advice.</p>
+<div class="figscroll"><table class="map">
+<tr><th>Layer (E5's five)</th><th>Mechanism (mid-2026)</th><th>The note that bites</th></tr>
+<tr><td>declarative policy</td><td>settings.json <span class="mono">permissions</span>; org-wide via MDM-deployed <span class="mono">managed-settings.json</span></td><td>deny → ask → allow, no exceptions in deny; <span class="mono">Edit(path)</span> covers Write/NotebookEdit — a <span class="mono">Write(path)</span> rule silently never matches; managed settings override everything</td></tr>
+<tr><td>programmable interceptor</td><td>PreToolUse / PostToolUse / Stop hooks</td><td>exit 0 = JSON parsed, exit 2 = block, other = call proceeds; per the docs a hook decision does NOT override deny/ask rules (2025-era write-ups claim otherwise)</td></tr>
+<tr><td>OS isolation</td><td><span class="mono">sandbox</span> key (macOS Seatbelt; Linux bubblewrap + socat)</td><td>covers Bash + child processes only — file tools go through permissions; default read access includes <span class="mono">~/.aws</span> and <span class="mono">~/.ssh</span> unless <span class="mono">sandbox.credentials</span> denies them — the common misconfiguration; settings files are always write-denied inside</td></tr>
+<tr><td>egress control</td><td><span class="mono">sandbox.network.allowedDomains</span></td><td>no TLS inspection by default — a broad domain allow stays an exfiltration path; E5 calls the egress allowlist the highest-leverage control in the security story</td></tr>
+<tr><td>audit log</td><td>PostToolUse logging + the platform's audit trail</td><td>doubles as SOC 2 / ISO 42001 / EU AI Act evidence; OWASP's Agentic Top 10 makes "Strong Observability" a control, not a nice-to-have</td></tr>
+<tr><td>secrets</td><td>gitleaks v8.30.1 · detect-secrets v1.5.0 · TruffleHog v3</td><td>gitleaks is feature-complete per its maintainer (successor "Betterleaks" = watch, not default); TruffleHog verifies live against provider APIs — history sweeps, not pre-commit</td></tr>
+<tr><td>platform</td><td>GitHub rulesets: restrict file paths (GA Sept 2024) + CODEOWNERS</td><td>GitLab: CODEOWNERS does not bind push-permitted users — server-side hooks are the hard block</td></tr>
+<tr><td>MCP</td><td><span class="mono">allowedMcpServers</span> · <span class="mono">allowManagedMcpServersOnly</span></td><td>local servers matched by exact command + args; hash-pin tool definitions — MCP has no built-in integrity guarantee on tool metadata</td></tr>
+</table></div>
+<div class="callout amber"><div class="t">The two layers this runbook does not give a step: sandbox and egress</div><p>B1's deny rules bind the agent's file tools, not arbitrary subprocesses — a script the agent runs can open any file the OS allows. The OS sandbox closes that hole, and the egress allowlist severs the exfiltration leg of the lethal trifecta — untrusted input, sensitive data, external comms; Meta's Rule of Two (hold at most two of the three per session) is the design heuristic, vendor guidance from 2025. Both ship as settings (table above) but are environment-specific enough that they are a configured follow-up with the client's platform team, not a two-day step here. Sequence them by exposure: headless and CI agents get the strictest profiles first — there is no human in that loop to catch anything (<a href="&#35;e3-deepdive">E3</a>).</p></div>
+<p>One template is deliberately not duplicated: the ADR skeleton — reuse PB2's (its §6), one file per decision, supersede rather than edit. What remains is the exit artifact:</p>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb3-tpl-report">copy</button><pre id="pb3-tpl-report">
+# Harness-install report — PB3 exit artifact
+Module: ____________   Client / system: ____________
+Date: ____________     Author: ____________
+
+## 1 Context layer (steps A1–A2)
+AGENTS.md lines: ____ (budget: ____)   CLAUDE.md imports it: ____
+Every line traceable to an observation: ____   Owner sign-off: ____
+
+## 2 Permission baseline (step B1)
+Settings scope (project / managed): ____________
+Probes — edit of denied path refused: ____   .env read refused: ____ (log: ____)
+
+## 3 Guard hook (step B2)
+Protected paths: ____________
+Deny probe blocked with reason: ____   Fall-through regression (legit edit passes): ____
+
+## 4 CI verification gate (step B3)
+Required status check: ____   Weakened-test probe caught end-to-end: ____ (link)
+Mutation bar (from PB2 gate ADR): ____ %   First-run approval for agent PRs: ____
+
+## 5 Secrets (step B4)
+gitleaks pre-commit: ____  CI: ____   Legacy baseline triaged: ____
+Planted-secret probe caught: ____     Revocation owner: ____________
+
+## 6 Write-permission matrix (steps C1–C3)
+Artifact classes classified: ____   Unclassified: 0 (hard requirement)
+Platform probe — non-owner push rejected: ____
+Derived row: regenerate-and-diff live / N-A recorded: ____
+
+## 7 MCP surface (step C4)
+Servers before → after: ____ → ____
+Each survivor pinned (version / hash) with a one-line reason: ____
+
+## 8 Autonomy &amp; probes (step D1)
+Level granted: L__   Evidence per prerequisite: ____________
+Demotion trigger (pre-set): ____________
+Smoke task merge-ready: ____   Probe blocked: ____   Seeded regression caught: ____
+
+## 9 Go / no-go (step D2)
+Decision: GO (proceed to PB4 Handoff) / NO-GO (fix the failed row, re-probe, rerun)
+Signatories: ____________   Date: ____________
+</pre></div>
+
+<h2><span class="n">7</span>Exit gate &amp; takeaways</h2>
+<p>The harness counts as installed when every row below passes its deterministic check — and every check here is a probe that either fired or did not.</p>
+<div class="figscroll"><table class="map">
+<tr><th>Exit criterion</th><th>Deterministic check</th></tr>
+<tr><td>Context layer live</td><td>CLAUDE.md imports one AGENTS.md master; under the line budget; every line traceable; owner sign-off recorded</td></tr>
+<tr><td>Permission baseline holds</td><td>deliberate edit and .env-read probes both refused, verified once, logged</td></tr>
+<tr><td>Guard hook holds</td><td>protected-path probe blocked with reason; legitimate-edit fall-through regression-checked</td></tr>
+<tr><td>CI gate holds</td><td>deliberately weakened test caught end-to-end; mutation bar per the PB2 ADR enforced</td></tr>
+<tr><td>Secrets scanned</td><td>planted secret caught at pre-commit and in CI; revocation owner named</td></tr>
+<tr><td>Matrix complete</td><td>zero unclassified rows; derived row has regenerate-and-diff or a recorded N/A</td></tr>
+<tr><td>Platform binds every writer</td><td>non-owner push to a protected path rejected by the platform, verified once</td></tr>
+<tr><td>MCP surface audited</td><td>inventory committed; every server pinned and reasoned; allowlist enforced in settings</td></tr>
+<tr><td>Autonomy recorded</td><td>level + per-prerequisite evidence + pre-set demotion trigger; smoke-task probes passed</td></tr>
+</table></div>
+<div class="callout pine"><div class="t">Exit routing</div><p>If GO → proceed to <strong>PB4 Handoff</strong>: the module now has a cage that was rattled on purpose and held. Carry E6's asymmetry into the next phase — promotion is slow, demotion is instant, and the trigger armed in D1 fires on evidence, not on a meeting. If any row fails → fix that row and re-probe; the gate re-runs in hours, not weeks, precisely because every criterion is a probe, not a workshop.</p></div>
+<div class="callout"><div class="t">Three sentences to remember PB3 by</div><p>The harness decides more than the model — measured harness-induced variance exceeded model-induced variance by 7.8× on average in one 2026 position paper — and PB3 is where the client's harness stops being an accident. The litmus is the whole method: what the model should know is prose in CLAUDE.md; what must never happen is a permission rule, a hook or a CI gate — because models measurably talk their way past instructions (54% and worse in ImpossibleBench; the Replit code freeze) and cannot talk their way past an exit code. Nothing counts as installed until a deliberate probe has bounced off it — verified once, recorded in the report.</p></div>
+<p>Sources and caveats for the empirical claims. Strong independent evidence: ImpossibleBench (arXiv:2510.20270 — the 54% cheat rate, the &gt;79% test-editing mode, the abort tool's 54%→9%), the harness-variance measurement (arXiv:2605.23950 — 7.8× on average; a position paper's measurement, not a replicated benchmark), Anthropic's reward-hacking study (Nov 2025 — the 12% sabotage generalization), and the named CVE records (CVE-2025-54136, CVE-2025-54135, CVE-2025-6514, CVE-2025-49596). Vendor primary sources — strong for their own products' behavior, all point-in-time: the official Claude Code docs (every settings/hook syntax block here, verified 2026-07-18, including the layering correction that hook decisions do not override deny/ask rules) and GitHub's blog and changelog (restrict-file-paths GA, agent-PR attribution, Copilot's approval gates). Vendor-published research: GitGuardian 2026 (28.65M secrets, +34% YoY, +81% AI-tied, 64% unrevoked; the 3.2%-vs-1.5% figure is the pinned Claude-Code-specific one — their AI-wide multipliers are deliberately not used). Incident journalism: the Replit/SaaStr episode (The Register, Fortune, July 2025). Community and practitioner synthesis: OWASP's Agentic Top 10 2026 (Dec 2025 — Least Agency, Strong Observability; working-group output, not an empirical study), the OWASP MCP cheat sheet, Meta's Rule of Two (2025). Our synthesis, flagged as such: the write-permission matrix and its week-one sequencing (Report 3), the ~70% mutation bar (a working heuristic recorded in an ADR), and this runbook's own phase compression. Deliberately not cited: claims that Claude Code reads AGENTS.md natively (the docs state the opposite), MCP vulnerability-aggregator percentages, and AI-wide secret-leak multipliers.</p>
+<p class="closingnote">This runbook is also available as a standalone file (PB3-harness-runbook.html). Its natural neighbours are <a href="&#35;e4-deepdive">E4 Verification-first</a>, <a href="&#35;e5-deepdive">E5 Governance</a>, <a href="&#35;i2-deepdive">I2 Lifecycle &amp; write permissions</a>, <a href="&#35;e6-deepdive">E6 Autonomy levels</a> and the <a href="&#35;pb2-deepdive">PB2 Bootstrap runbook</a> this one strictly follows. Every config block is point-in-time (verified 2026-07-18 against the official docs) and must be re-verified before installation at a client; the write-permission matrix and the week-one sequencing are our synthesis, not an industry standard.</p>
+    </div>
+  </div>
+</div>
+
 <footer>
-  <b>v1.51</b> · 2026-07-18 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.52</b> · 2026-07-18 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
@@ -7732,13 +8249,13 @@ concepts:["characterization tests","mutation baseline","safe ordering"],
 open:[`Which module of the client codebase is the first characterization target — and does the heatmap (B5) pick it, or does risk?`],
 src:[{t:"↳ PB2 Runbook — open here (module comprehension, characterization net, mutation gate, CI smoke test, bootstrap-report template)",u:"#pb2-deepdive"},{t:"Theory: B1 bootstrap paradox, B2 characterization, B3 mutation gate (open those deep dives)"}]},
 
-{id:"pb-harness",code:"PB3",title:"Harness: stand up the engineering harness (runbook in preparation)",
+{id:"pb-harness",code:"PB3",title:"Harness: stand up the engineering harness",
 know:[`Will cover: the CLAUDE.md/AGENTS.md skeleton extracted-not-decreed (B1, E9), hooks and permissions with the advisory-vs-deterministic split (E5), the verification gate in CI (E4), and information architecture for the agent (I1–I5).`,
 `Its templates are the harness starter kit: where the theory is deterministic, the copy-paste block IS the runnable artifact — hook scripts, permission baselines, CI gate configs (the E5 litmus: what must never happen ships as enforcement, not advice).`,
 `Ordering constraint: the harness is built on top of the PB2 verification base — write autonomy without external truth is the anti-pattern the whole framework exists to prevent.`],
 concepts:["CLAUDE.md skeleton","advisory vs deterministic","hooks","write permissions"],
 open:[`Which harness rules graduate from prose to enforced hooks in week one at a typical client?`],
-src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: E1–E5, E9 harness tuning, I2 write permissions (open those deep dives)"}]},
+src:[{t:"↳ PB3 Runbook — open here (CLAUDE.md extraction, permission baseline, guard hooks, CI gate, write-permission matrix, harness-install report)",u:"#pb3-deepdive"},{t:"Theory: E1–E5, E9 harness tuning, I2 write permissions (open those deep dives)"}]},
 
 {id:"pb-handoff",code:"PB4",title:"Handoff: run the contract end-to-end (runbook in preparation)",
 know:[`Will cover: writing the first handoff contract (H1 anatomy, T0–T2 sizing), EARS/Gherkin acceptance criteria as the agent's reward signal (H2), traceability IDs (H3), and the return channel with its anti-patterns (H4).`,
@@ -8170,6 +8687,15 @@ function renderSyncModal(){
       +'<div class="syncrow"><input id="synccodein" type="text" maxlength="4" placeholder="abcd" autocomplete="off"><button type="button" id="synclink">Link this device</button></div>'
       +'<p id="syncmsg"></p>';
   }
+}
+var pb3ov=document.getElementById('pb3ov');
+if(pb3ov){
+  document.addEventListener('click',function(e){
+    var open=e.target.closest('a[href="#pb3-deepdive"]');
+    if(open){e.preventDefault();pb3ov.classList.add('show');document.body.style.overflow='hidden';pb3ov.querySelector('.panel').scrollTop=0;return;}
+    if(e.target.closest('[data-pb3close]')||e.target===pb3ov){pb3ov.classList.remove('show');document.body.style.overflow='';}
+  },true);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pb3ov.classList.contains('show')){pb3ov.classList.remove('show');document.body.style.overflow='';}});
 }
 var d3ov=document.getElementById('d3ov');
 if(d3ov){

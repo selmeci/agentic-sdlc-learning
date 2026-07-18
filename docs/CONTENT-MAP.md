@@ -109,8 +109,8 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | Topic | id | Deep dive |
 |---|---|---|
 | PB1 Assess: client maturity & the F0 entry gate | `pb-assess` | PB1-assess-runbook.html + overlay |
-| PB2 Bootstrap: build the verification base | `pb-bootstrap` | in preparation |
-| PB3 Harness: stand up the engineering harness | `pb-harness` | in preparation |
+| PB2 Bootstrap: build the verification base | `pb-bootstrap` | PB2-bootstrap-runbook.html + overlay |
+| PB3 Harness: stand up the engineering harness | `pb-harness` | PB3-harness-runbook.html + overlay |
 | PB4 Handoff: run the contract end-to-end | `pb-handoff` | in preparation |
 | PB5 Pilot: measure, gate, decide | `pb-pilot` | in preparation |
 
@@ -124,7 +124,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (38)
+## Deep-dive companions (40)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
@@ -139,8 +139,9 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `I5-progressive-disclosure` · `I6-retrieval` · `I7-linking-product-engineering` ·
 `B1-bootstrap-paradox` · `B2-characterization-golden-master` · `B3-mutation-testing-gate` ·
 `B4-agent-archaeology` · `B5-strangler-heatmap` · `B6-roadmap-f0-f3` ·
-`D2-design-tokens-dtcg` · `D3-how-agents-consume-design-context` · `PB1-assess-runbook`
+`D2-design-tokens-dtcg` · `D3-how-agents-consume-design-context` · `PB1-assess-runbook` ·
+`PB2-bootstrap-runbook` · `PB3-harness-runbook`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
-`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#d3-deepdive` (each appears
+`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive` … `#d3-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#pb1-deepdive` … `#pb3-deepdive` (each appears
 exactly twice: the "Go deeper" link + the JS open handler).
