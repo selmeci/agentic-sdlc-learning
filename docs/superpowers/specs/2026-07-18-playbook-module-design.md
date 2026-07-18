@@ -1,7 +1,8 @@
 # M9 Playbook module — design spec
 
 **Date:** 2026-07-18
-**Status:** approved design, pre-implementation
+**Status:** approved design, pre-implementation (rev. 2: ideation-review amendments —
+executable templates, assess-time baseline, feedback-loop + team-tracking backlog)
 **Owner:** Roman (Sudolabs)
 
 ## Purpose
@@ -64,7 +65,12 @@ Each numbered step has four parts:
 - **PREČO / Why** — 2–3 sentences plus an overlay link to the theory topic holding the
   reasoning and evidence. The runbook never restates theory; it links it.
 - **ŠABLÓNA / Template** — a copy-paste block with a Copy button (questionnaire, report
-  skeleton, config snippet).
+  skeleton, config snippet). Where the underlying theory is deterministic, the template is
+  the **real runnable artifact, not prose about it** (E5 litmus: "what must never happen" is
+  deterministic — hook/permission, not advice): hook scripts, permission baselines, CI gate
+  configs, lint rules. This applies above all to **PB3 Harness, whose templates ARE the
+  harness starter kit installed at the client** — copy-paste is the delivery mechanism, but
+  the pasted content must be an enforceable config an agent cannot talk its way around.
 - **DONE** — a completion criterion, machine-verifiable where possible (E4 spirit).
 
 Steps carry stable IDs (`pb1-s1`, `pb1-s2`, …) because checklist progress is keyed on them —
@@ -90,12 +96,16 @@ A distillation, not new theory; every step links its source topic:
 
 1. **Verification base** — test-suite speed/trustworthiness, CI signal an agent can read
    (E4, B1).
-2. **Information architecture** — are source-of-truth artifacts retrievable? (I1, I3).
-3. **Governance minimum** — dev/prod separation, secrets hygiene, RBAC (E5, M7).
-4. **Team readiness** — who acts as editor/curator, review capacity (P4, H4).
-5. **Evaluation** — score → recommended autonomy level L1–L5 (E6) + entry gate to F0 with
+2. **Baseline capture** — git history, CI/CD deploy logs, incident data, cost-per-merged-PR
+   (E7 day-0 DORA checklist). Collected at assess time, before anything changes: a pilot
+   without a baseline can be neither proven nor disproven (METR perception gap), so it
+   cannot wait for PB5.
+3. **Information architecture** — are source-of-truth artifacts retrievable? (I1, I3).
+4. **Governance minimum** — dev/prod separation, secrets hygiene, RBAC (E5, M7).
+5. **Team readiness** — who acts as editor/curator, review capacity (P4, H4).
+6. **Evaluation** — score → recommended autonomy level L1–L5 (E6) + entry gate to F0 with
    STOP criteria (B6).
-6. **Assessment report template** for the client (copy block).
+7. **Assessment report template** for the client (copy block).
 
 ## Validation, versioning, documentation
 
@@ -105,7 +115,13 @@ A distillation, not new theory; every step links its source topic:
 - Version **v1.47**: prepend `.vitem` to `#verov`, update the footer current-version line,
   mirror to `docs/CHANGELOG.md`.
 - `docs/ROADMAP.md`: add an M9 section with the PB2–PB5 plan (one runbook per version);
-  note that the starter-kit templates and hands-on labs derive from these runbooks.
+  note that the starter-kit templates and hands-on labs derive from these runbooks. Include
+  two backlog notes: (1) a **field-report loop** — a completed client runbook feeds an
+  anonymized results entry back into the relevant deep dive (the corpus is currently 100%
+  externally cited; pilot outcomes are the first first-party evidence, and the persisted
+  checklist data in `store` is the hook for it); (2) **team-level tracking** — the `store`
+  backend is per-browser/per-device, so aggregating progress across a Sudo team at a client
+  would need shared state; deferred deliberately (see Out of scope).
 - `docs/AUTHORING-GUIDE.md`: add the runbook house style and the checklist/store recipe.
 
 ## Testing
@@ -118,6 +134,9 @@ A distillation, not new theory; every step links its source topic:
 
 - No new repository or build pipeline; single-file, zero-build stays.
 - No input fields, client-name capture, or generated status reports (rejected option 3).
+- No team-level/shared progress tracking across people (per-browser `store` stays the only
+  backend in this increment; aggregation is a roadmap backlog note, not a feature — adding
+  it would reopen the rejected "engagement mode" app-creep).
 - No practice sections inside the 35 existing deep dives (rejected option 2); theory files
   stay untouched in this increment. Backlinks from theory to practice ("in practice → PB_n",
   the hybrid option) are deferred and may be added later per-runbook if wanted.

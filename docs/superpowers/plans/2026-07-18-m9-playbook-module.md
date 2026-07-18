@@ -8,12 +8,15 @@
 
 **Tech Stack:** Hand-authored HTML/CSS/vanilla JS (no build), Python validator (`scripts/validate.py`), git.
 
-## Global Constraints (from the spec — read the spec first: `docs/superpowers/specs/2026-07-18-playbook-module-design.md`)
+## Global Constraints (from the spec — read the spec first: `docs/superpowers/specs/2026-07-18-playbook-module-design.md`, rev. 2)
 
 - **Content language is English** (the conversation with the user was Slovak; the artifact content is English, per CLAUDE.md).
-- Topic IDs (`pb-assess`, `pb-bootstrap`, `pb-harness`, `pb-handoff`, `pb-pilot`) and checklist step IDs (`pb1-s1` … `pb1-s8`) are **frozen forever** once released — progress is keyed on them.
+- Topic IDs (`pb-assess`, `pb-bootstrap`, `pb-harness`, `pb-handoff`, `pb-pilot`) and checklist step IDs (`pb1-s1` … `pb1-s9`) are **frozen forever** once released — progress is keyed on them.
 - All persistence goes through the single `store` backend (key `agentic-study-v1`). **No raw `localStorage`/`window.storage` calls anywhere.** The standalone file deliberately does NOT persist.
+- No team-level/shared progress tracking in this increment — per-browser `store` only (spec Out of scope; aggregation across a team is a ROADMAP backlog note, not a feature).
 - Cross-references open in-page overlays (`#e4-deepdive` …), never relative file links.
+- Template rule (spec rev. 2): where the underlying theory is deterministic, the template is the **real runnable artifact** (hook script, permission baseline, CI config), not prose about it — the E5 litmus. PB1's templates are documents (questionnaire, report), so the rule binds from PB3 Harness onward; the PB3 stub and the AUTHORING-GUIDE note must say so.
+- Baseline rule (spec rev. 2): the delivery baseline is captured at **assess time** (PB1), never deferred to PB5 — a pilot without a baseline can be neither proven nor disproven (METR perception gap).
 - `python3 scripts/validate.py` must pass after **every** task. Baseline before Task 1: all checks pass, 55 topics.
 - Version bump is **v1.48**, date **2026-07-18** (v1.47 = D2 deep dive, already shipped).
 - Known traps (CLAUDE.md): no apostrophes inside Python-generated strings when scripting file edits — use the Edit tool; no bash brace expansion; unique SVG marker id (`ahPB1a`) + edge class (`edPB1`).
@@ -106,11 +109,11 @@ Replace the trailing `]}\n];` so the M9 module is inserted after module `m6`:
 desc:"The practice layer: five runbooks ordered by the engagement journey at a brownfield client — assess, bootstrap the verification base, stand up the harness, run the handoff, measure the pilot. Each runbook is a checklist with templates whose every step links back to the theory topic that justifies it. Built for the internal team; progress is saved in this workbook.",
 topics:[
 {id:"pb-assess",code:"PB1",title:"Assess: client maturity & the F0 entry gate",
-know:[`The runbook: baseline the verification loop (test suite, CI signal), inventory source-of-truth artifacts, check the governance minimum (env separation, secrets, write permissions), name the review owner — then score it into an L1–L5 recommendation and a go/no-go at the F0 gate.`,
+know:[`The runbook: baseline the verification loop (test suite, CI signal) and capture the delivery baseline up front (DORA keys + cost per merged PR — a pilot without a baseline can be neither proven nor disproven), inventory source-of-truth artifacts, check the governance minimum (env separation, secrets, write permissions), name the review owner — then score it into an L1–L5 recommendation and a go/no-go at the F0 gate.`,
 `Why assess before build: DORA 2024 associates +25% AI adoption with −7.2% delivery stability — AI amplifies the surrounding system, so the surrounding system is measured first (E7, B1).`,
 `The scoring model and the non-compensable gate criteria are our synthesis (Report 4 + E6/B6 material), not an industry standard.`,
-`Output artifacts: a filled questionnaire, an assessment report from the template, and a recorded F0 go/no-go decision with STOP criteria attached.`],
-concepts:["maturity assessment","entry gate","non-compensable criteria","autonomy recommendation","assessment report"],
+`Output artifacts: a filled questionnaire, a delivery-baseline snapshot, an assessment report from the template, and a recorded F0 go/no-go decision with STOP criteria attached.`],
+concepts:["maturity assessment","delivery baseline","entry gate","non-compensable criteria","autonomy recommendation","assessment report"],
 open:[`Which client signals that the questionnaire cannot capture (politics, incentive structure) should still veto a go decision?`],
 src:[{t:"E6 autonomy levels, B1 safe ordering, B6 gates & STOP criteria, E7 metrics — the theory this runbook distils (open those topics' deep dives)"}],
 checks:[{q:`Why are the four gate criteria non-compensable rather than averaged into the score?`,a:`Because each one guards a failure mode that no amount of strength elsewhere offsets: an untrusted test suite means no external truth for the loop (E4); unreadable CI signal means the agent cannot self-correct; missing dev/prod separation makes the blast radius unbounded (the Replit incident); secrets in the repo leak through every agent context. A high average with one of these missing is exactly the false-confidence case the assessment exists to catch.`}]},
@@ -124,6 +127,7 @@ src:[{t:"Runbook companion in preparation — will open here as an overlay in a 
 
 {id:"pb-harness",code:"PB3",title:"Harness: stand up the engineering harness (runbook in preparation)",
 know:[`Will cover: the CLAUDE.md/AGENTS.md skeleton extracted-not-decreed (B1, E9), hooks and permissions with the advisory-vs-deterministic split (E5), the verification gate in CI (E4), and information architecture for the agent (I1–I5).`,
+`Its templates are the harness starter kit: where the theory is deterministic, the copy-paste block IS the runnable artifact — hook scripts, permission baselines, CI gate configs (the E5 litmus: what must never happen ships as enforcement, not advice).`,
 `Ordering constraint: the harness is built on top of the PB2 verification base — write autonomy without external truth is the anti-pattern the whole framework exists to prevent.`],
 concepts:["CLAUDE.md skeleton","advisory vs deterministic","hooks","write permissions"],
 open:[`Which harness rules graduate from prose to enforced hooks in week one at a typical client?`],
@@ -137,7 +141,7 @@ open:[`What is the smallest real client feature suitable for the first contract-
 src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: H1–H4 (open those deep dives)"}]},
 
 {id:"pb-pilot",code:"PB5",title:"Pilot: measure, gate, decide (runbook in preparation)",
-know:[`Will cover: the DORA baseline + METR-style pilot design from E7 (objective time, pre-registered success, perception-gap capture), the F0–F3 gate table with back-triggers, and STOP criteria (B6).`,
+know:[`Will cover: the DORA baseline + METR-style pilot design from E7 (objective time, pre-registered success, perception-gap capture), the F0–F3 gate table with back-triggers, and STOP criteria (B6). The baseline itself is captured earlier, in PB1 — PB5 compares against it.`,
 `Self-reported speed is disqualified as evidence by design: METR measured devs 19% slower while believing they were ~20% faster.`],
 concepts:["DORA baseline","pre-registered success","STOP criteria","F0–F3 gates"],
 open:[`Which DORA keys can this client actually compute from day 0, and what replaces the ones they cannot?`],
@@ -301,7 +305,7 @@ git commit -m "feat: pb checklist state in store + copy/checkbox handlers + runb
 
 **Interfaces:**
 - Produces: the shared body consumed verbatim by Task 5 (standalone) and Task 6 (overlay). Section `<h2>` elements carry **no** `id` attributes (Task 5 adds `id="sN"`; the overlay copy stays id-less — this matches how existing overlays avoid duplicate `s1` ids in the workbook). All checkboxes use the Task-3 contract: `class="pbck" data-pb="pb-assess" data-step="pb1-sN"`. If the scratchpad file is lost between sessions, regenerate the body by stripping the head/TOC/footer from the Task-5 standalone file.
-- Step IDs (frozen): `pb1-s1`…`pb1-s8`. Template pre IDs: `pb1-tpl-quest`, `pb1-tpl-report`.
+- Step IDs (frozen): `pb1-s1`…`pb1-s9`. Template pre IDs: `pb1-tpl-quest`, `pb1-tpl-report`.
 
 - [ ] **Step 1: Write the body skeleton with all fixed markup**
 
@@ -334,18 +338,18 @@ Then the journey SVG figure (complete, use as-is):
   <line x1="702" y1="74" x2="728" y2="74" class="edPB1"/>
   <text x="30" y="132" class="ts">Each runbook ends in an exit gate; PB1 ends in the F0 go/no-go (B6).</text>
 </svg>
-<figcaption>The journey the M9 module walks. PB1 produces the assessment report and the F0 entry decision; PB2–PB5 build on its findings in order.</figcaption>
+<figcaption>The journey the M9 module walks. PB1 produces the assessment report, the delivery baseline, and the F0 entry decision; PB2–PB5 build on its findings in order.</figcaption>
 </figure>
 ```
 
-**§2 Phase A — Verification base** (steps A1, A2)
+**§2 Phase A — Verification base & delivery baseline** (steps A1, A2, A3)
 **§3 Phase B — Information architecture** (step B1)
 **§4 Phase C — Governance minimum** (steps C1, C2)
 **§5 Phase D — Team readiness** (step D1)
 **§6 Phase E — Evaluation & the F0 gate** (steps E1, E2 + both templates + the recommendation table)
 **§7 Exit gate & takeaways** (`.callout pine` exit criteria, three-sentence `.callout`, closing `.closingnote`)
 
-Each step uses exactly this markup pattern (shown filled for A1; repeat for all eight with the content in Step 2):
+Each step uses exactly this markup pattern (shown filled for A1; repeat for all nine with the content in Step 2):
 
 ```html
 <div class="pbstep">
@@ -358,22 +362,23 @@ Each step uses exactly this markup pattern (shown filled for A1; repeat for all 
 </div>
 ```
 
-- [ ] **Step 2: Fill the eight steps with this content**
+- [ ] **Step 2: Fill the nine steps with this content**
 
 | Step | Label + action | PREČO links | DONE criterion |
 |---|---|---|---|
 | `pb1-s1` | A1 · Baseline the test suite (runtime, pass rate, flaky list; 3 clean runs) | `#e4-deepdive`, `#b1-deepdive` | numbers in report §2; one-command headless run documented |
-| `pb1-s2` | A2 · Verify CI emits agent-readable signal (a deliberately broken test produces a machine-readable failure: exit code + parseable log/status) | `#e4-deepdive`, `#e7-deepdive` | broken-test experiment run; failure artifact linked in report |
-| `pb1-s3` | B1 · Inventory source-of-truth artifacts (architecture docs, ADRs, specs, READMEs — owner + last-touched date + retrievability) | `#i1-deepdive`, `#i3-deepdive` | artifact table in report §3 with gaps explicitly listed |
-| `pb1-s4` | C1 · Verify dev/prod separation and run a secrets scan on the repo history | `#e5-deepdive` + M7 (cite the Replit production-DB incident and GitGuardian 2026: AI-assisted commits leak secrets at 3.2% vs 1.5% baseline) | scan report attached; prod credentials proven unreachable from the dev environment |
-| `pb1-s5` | C2 · Map write permissions (branch protection, CODEOWNERS, who/what can merge; where would an agent's write access stop today) | `#i2-deepdive`, `#e5-deepdive` | draft write-permission matrix in report §4 |
-| `pb1-s6` | D1 · Name the editor/curator and measure review capacity (who reviews agent PRs, hours/week; cite E7's review bottleneck: +98% PRs, +91% review time) | `#p4-deepdive`, `#h4-deepdive`, `#e7-deepdive` | named owner(s) + weekly review budget recorded in report §5 |
-| `pb1-s7` | E1 · Score the questionnaire and derive the L1–L5 recommendation | `#e6-deepdive` | filled questionnaire archived with the engagement notes; recommended level written into report §6 |
-| `pb1-s8` | E2 · Deliver the report and run the F0 go/no-go with STOP criteria | `#b6-deepdive` | decision (go / no-go / go-with-preconditions) recorded with date, criteria and signatories |
+| `pb1-s2` | A2 · Verify CI emits agent-readable signal (a deliberately broken test produces a machine-readable failure: exit code + parseable log/status) | `#e4-deepdive`, `#e7-deepdive` | broken-test experiment run; failure artifact linked in report §2 |
+| `pb1-s3` | A3 · Capture the delivery baseline (DORA four keys retroactively from git/CI history + cost per merged PR; agree the before/after window and confirm access to git history, deploy logs, and the incident system) | `#e7-deepdive` (the day-0 DORA checklist); note in the prose: the baseline is captured now, at assess time — a pilot without it can be neither proven nor disproven (METR perception gap), so it cannot wait for PB5 | baseline numbers recorded in report §3; window + data access confirmed in writing |
+| `pb1-s4` | B1 · Inventory source-of-truth artifacts (architecture docs, ADRs, specs, READMEs — owner + last-touched date + retrievability) | `#i1-deepdive`, `#i3-deepdive` | artifact table in report §4 with gaps explicitly listed |
+| `pb1-s5` | C1 · Verify dev/prod separation and run a secrets scan on the repo history | `#e5-deepdive` + M7 (cite the Replit production-DB incident and GitGuardian 2026: AI-assisted commits leak secrets at 3.2% vs 1.5% baseline) | scan report attached; prod credentials proven unreachable from the dev environment |
+| `pb1-s6` | C2 · Map write permissions (branch protection, CODEOWNERS, who/what can merge; where would an agent's write access stop today) | `#i2-deepdive`, `#e5-deepdive` | draft write-permission matrix in report §5 |
+| `pb1-s7` | D1 · Name the editor/curator and measure review capacity (who reviews agent PRs, hours/week; cite E7's review bottleneck: +98% PRs, +91% review time) | `#p4-deepdive`, `#h4-deepdive`, `#e7-deepdive` | named owner(s) + weekly review budget recorded in report §6 |
+| `pb1-s8` | E1 · Score the questionnaire and derive the L1–L5 recommendation | `#e6-deepdive` | filled questionnaire archived with the engagement notes; recommended level written into report §7 |
+| `pb1-s9` | E2 · Deliver the report and run the F0 go/no-go with STOP criteria | `#b6-deepdive` | decision (go / no-go / go-with-preconditions) recorded with date, criteria and signatories |
 
 - [ ] **Step 3: Add the two templates in §6**
 
-Template 1 — questionnaire (`.pbtpl` block; the copy button precedes the pre):
+Template 1 — questionnaire (`.pbtpl` block; the copy button precedes the pre). Unchanged at 24 points: the delivery baseline is measurement data captured by step A3, not a scored maturity dimension — scoring it would double-count evidence the gates already cover and would break the calibrated thresholds in the recommendation table.
 
 ```html
 <div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-quest">copy</button><pre id="pb1-tpl-quest">
@@ -406,7 +411,7 @@ TOTAL ____ / 24        GATES PASSED ____ / 4
 </pre></div>
 ```
 
-Template 2 — report skeleton (`pb1-tpl-report`, same wrapper pattern):
+Template 2 — report skeleton (`pb1-tpl-report`, same wrapper pattern) — includes the delivery-baseline section filled by step A3:
 
 ```html
 <div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-report">copy</button><pre id="pb1-tpl-report">
@@ -420,22 +425,27 @@ Recommendation: L__ entry, F0 scope: ____________. Go / No-go / Go with precondi
 Suite runtime: ____  Pass rate: ____  Flaky tests: ____
 CI signal experiment result: ____________
 
-## 3 Information architecture (step B1)
+## 3 Delivery baseline (step A3)
+Deploy frequency: ____  Lead time: ____  Change-fail rate: ____  Recovery time: ____
+Cost per merged PR (tokens/seats): ____
+Before/after window agreed: ____________  Data access confirmed (git / CI / incidents): ____
+
+## 4 Information architecture (step B1)
 | Artifact | Owner | Last touched | Retrievable from repo? |
 |---|---|---|---|
 
-## 4 Governance minimum (steps C1–C2)
+## 5 Governance minimum (steps C1–C2)
 Dev/prod separation: ____________   Secrets scan: ____________
 Write-permission matrix (draft): ____________
 
-## 5 Team readiness (step D1)
+## 6 Team readiness (step D1)
 Editor/curator: ____________   Review budget: ____ h/week
 
-## 6 Score & recommendation (steps E1–E2)
+## 7 Score & recommendation (steps E1–E2)
 Total ____ / 24 · Gates ____ / 4 → recommended level L__ (rationale: ...)
 Preconditions before F1: ____________
 
-## 7 STOP criteria agreed for F0
+## 8 STOP criteria agreed for F0
 (from B6: e.g. stability drop beyond agreed threshold, secrets leak,
 unreviewed-merge incident — list the concrete triggers + who pulls the cord)
 </pre></div>
@@ -452,14 +462,14 @@ Recommendation table (`table.map` inside `<div class="figscroll">`), flagged as 
 | ≥ 17 | 4/4 | L3 pilot candidate; proceed to PB2 with the F0→F1 exit criteria from B6 |
 | any | < 4/4 | no L2+ autonomy until the failed gate is fixed — non-compensable |
 
-§7 `.callout pine` exit criteria: report delivered; go/no-go recorded; if GO → PB2 with the report's §2 numbers as the bootstrap baseline. Three-sentence takeaway `.callout`. Closing note (`.closingnote`): standalone availability (PB1-assess-runbook.html), neighbours (E6, E7, B1, B6), the scoring model + gate criteria flagged as this workbook's synthesis, point-in-time facts marked for re-verification.
+§7 `.callout pine` exit criteria: report delivered; delivery baseline recorded (report §3 is the pilot's "before" snapshot — PB5 compares against it); go/no-go recorded; if GO → PB2 with the report's §2 numbers as the bootstrap baseline. Three-sentence takeaway `.callout`. Closing note (`.closingnote`): standalone availability (PB1-assess-runbook.html), neighbours (E6, E7, B1, B6), the scoring model + gate criteria flagged as this workbook's synthesis, point-in-time facts marked for re-verification.
 
 House style: dense English prose; every claim that has a number keeps the number; separate strong evidence (DORA, METR — independent) from vendor claims (GitGuardian — vendor telemetry, flag it) from our synthesis (the scoring model, the gate list).
 
 - [ ] **Step 5: Sanity-check the body fragment**
 
 Run: `python3 -c "import re;s=open('/tmp/claude-1000/-home-roan-WebstormProjects-agentic-sdlc-learning/65e0df03-9153-47e6-b224-70b53af01fae/scratchpad/pb1body.html').read();steps=re.findall(r'data-step=\"([\w-]+)\"',s);print(len(steps),sorted(steps))"`
-Expected: `8` steps, `pb1-s1`…`pb1-s8`, no duplicates. (No commit — scratchpad file.)
+Expected: `9` steps, `pb1-s1`…`pb1-s9`, no duplicates. (No commit — scratchpad file.)
 
 ---
 
@@ -587,13 +597,13 @@ if(pb1ov){
 In the `pb-assess` topic's `src` array, prepend before the existing theory entry:
 
 ```js
-{t:"↳ PB1 Runbook — open here (assessment checklist, questionnaire & report templates, the F0 go/no-go)",u:"#pb1-deepdive"},
+{t:"↳ PB1 Runbook — open here (assessment checklist, delivery-baseline capture, questionnaire & report templates, the F0 go/no-go)",u:"#pb1-deepdive"},
 ```
 
 - [ ] **Step 5: Run the validator**
 
 Run: `python3 scripts/validate.py`
-Expected: all pass; `#pb1-deepdive wired x2 (+1 handler)`; `playbook step ids unique (8 step(s))`; topic count 60.
+Expected: all pass; `#pb1-deepdive wired x2 (+1 handler)`; `playbook step ids unique (9 step(s))`; topic count 60.
 
 - [ ] **Step 6: Commit**
 
@@ -615,7 +625,7 @@ git commit -m "feat: PB1 Assess runbook - workbook overlay, handler, topic link"
 In the workbook, after `<p class="kicker">Every released version of this workbook</p>` and before the v1.47 `.vitem`, insert:
 
 ```html
-      <div class="vitem"><span class="vv">v1.48</span><span class="vd">2026-07-18</span><p><strong>NEW MODULE M9 — Playbook: from theory to practice. First runbook PB1 Assess.</strong> The practice layer lands inside the workbook: five <span class="mono">pb-</span> topics ordered by the engagement journey (Assess → Bootstrap → Harness → Handoff → Pilot), built for the internal team to carry the methodology to a brownfield client. PB1 ships complete — a runbook companion in both copies (PB1-assess-runbook.html + overlay) with eight checklist steps across five phases (verification base, information architecture, governance minimum, team readiness, evaluation), each step carrying the action, the theory link that justifies it, and a DONE criterion; plus two copy-paste templates (readiness questionnaire with four non-compensable [GATE] criteria, assessment-report skeleton), the score→L1–L5 recommendation table and the F0 go/no-go with STOP criteria (the scoring model is our synthesis, flagged). NEW interaction layer: runbook checkboxes persist through the existing store (<span class="mono">agentic-study-v1</span>, new <span class="mono">pb</span> field, mirrored into cross-device sync), with a per-runbook progress chip and copy buttons; the standalone copy is deliberately non-persistent. PB2–PB5 are visible as in-preparation topics (one runbook per future version). Validator extended: <span class="mono">pb-</span> prefix recognised, checklist step ids checked for uniqueness (they are frozen progress keys, like topic ids).</p></div>
+      <div class="vitem"><span class="vv">v1.48</span><span class="vd">2026-07-18</span><p><strong>NEW MODULE M9 — Playbook: from theory to practice. First runbook PB1 Assess.</strong> The practice layer lands inside the workbook: five <span class="mono">pb-</span> topics ordered by the engagement journey (Assess → Bootstrap → Harness → Handoff → Pilot), built for the internal team to carry the methodology to a brownfield client. PB1 ships complete — a runbook companion in both copies (PB1-assess-runbook.html + overlay) with nine checklist steps across five phases (verification base &amp; delivery baseline, information architecture, governance minimum, team readiness, evaluation), each step carrying the action, the theory link that justifies it, and a DONE criterion; plus two copy-paste templates (readiness questionnaire with four non-compensable [GATE] criteria, assessment-report skeleton with a delivery-baseline section), the score→L1–L5 recommendation table and the F0 go/no-go with STOP criteria (the scoring model is our synthesis, flagged). The delivery baseline (DORA keys + cost per merged PR) is captured at assess time — a pilot without it can be neither proven nor disproven. NEW interaction layer: runbook checkboxes persist through the existing store (<span class="mono">agentic-study-v1</span>, new <span class="mono">pb</span> field, mirrored into cross-device sync), with a per-runbook progress chip and copy buttons; the standalone copy is deliberately non-persistent. PB2–PB5 are visible as in-preparation topics (one runbook per future version; PB3's templates will be the harness starter kit — runnable hook/permission/CI configs, not prose). Validator extended: <span class="mono">pb-</span> prefix recognised, checklist step ids checked for uniqueness (they are frozen progress keys, like topic ids).</p></div>
 ```
 
 - [ ] **Step 2: Footer + docs mirrors**
@@ -632,8 +642,18 @@ the theory→practice layer lives inside the workbook as runbooks ordered by the
 engagement journey; the harness starter-kit templates and hands-on labs derive from
 these runbooks later — no separate repo.
 - ~~Module skeleton (pb- topics, store-backed checklists) + **PB1 Assess** runbook~~ — **done (v1.48)**.
-- Next, one per version: **PB2 Bootstrap** (B1–B3 distilled) → **PB3 Harness** (E1–E5, I2)
-  → **PB4 Handoff** (H1–H4) → **PB5 Pilot** (E7, B6 — converges with T2's pilot playbook).
+- Next, one per version: **PB2 Bootstrap** (B1–B3 distilled) → **PB3 Harness** (E1–E5, I2 —
+  templates ship as runnable configs: hook scripts, permission baselines, CI gates, per the
+  E5 litmus) → **PB4 Handoff** (H1–H4) → **PB5 Pilot** (E7, B6 — converges with T2's pilot
+  playbook; compares against the delivery baseline captured in PB1).
+- Backlog (deliberately deferred):
+  - **Field-report loop** — a completed client runbook feeds an anonymized results entry
+    back into the relevant deep dive; the corpus is currently 100% externally cited, and
+    pilot outcomes are the first first-party evidence. The persisted checklist data in
+    `store` is the hook for it.
+  - **Team-level tracking** — `store` is per-browser/per-device; aggregating progress
+    across a Sudo team at a client would need shared state. Deferred: adding it would
+    reopen the rejected "engagement mode" app-creep.
 ```
 
 5. `docs/AUTHORING-GUIDE.md`: append a section:
@@ -651,6 +671,10 @@ plus:
   the validator enforces uniqueness), a `.pbwhat` label, `.pbwhy` with overlay links to the
   theory, and a `.pbdone` criterion.
 - Templates: `.pbtpl` wrapper + `.pbcopy` button with `data-copy` pointing at the `<pre>` id.
+  Where the underlying theory is deterministic, the template is the **real runnable
+  artifact** — hook scripts, permission baselines, CI gate configs (the E5 litmus: what
+  must never happen ships as enforcement, not advice). This applies above all to PB3
+  Harness, whose templates are the client-facing starter kit.
 - Persistence: workbook only — `state.pb` via the single store; the standalone copy ships
   the non-persistent script (live count + copy) and the `.pbnote` disclaimer.
 - The `.pb*` CSS block lives in the workbook `<style>` and is copied into each standalone
@@ -666,7 +690,7 @@ Expected: all pass.
 
 Open `workbook/agentic-development-study.html` in a browser (or drive it with the chrome-devtools/playwright MCP tools):
 1. M9 appears in the sidebar nav and renders 5 topics; PB1 shows the "Open panel" runbook card.
-2. Open the PB1 overlay → check two steps → close → reload the page → reopen: both stay checked and the chip reads `2 / 8 steps done`; the save indicator flashed `saving… → saved`.
+2. Open the PB1 overlay → check two steps → close → reload the page → reopen: both stay checked and the chip reads `2 / 9 steps done`; the save indicator flashed `saving… → saved`.
 3. Click a `copy` button → button flips to `copied ✓` and the clipboard holds the template.
 4. Uncheck a step → reload → it stays unchecked (removal persists).
 5. Export data (sidebar Data → export) → the JSON contains `"pb":{"pb-assess":[…]}`.
