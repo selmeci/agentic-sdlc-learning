@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D6 Deep Dive — The D1–D5 Design Scale &amp; the Designer as Curator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edP5{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahP5a)}
+svg .edD6{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD6a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">D6 · DEEP DIVE</span>
+    <h1>The D1–D5 Design Scale &amp; the Designer as Curator</h1>
+    <span class="bc">companion to module M6 · Design harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why a design scale</a>
+  <a href="#s1"><b>1</b> · The five levels</a>
+  <a href="#s2"><b>2</b> · Conformance vs quality</a>
+  <a href="#s3"><b>3</b> · Evidence by level</a>
+  <a href="#s4"><b>4</b> · Why D5 is the anti-pattern</a>
+  <a href="#s5"><b>5</b> · The designer as curator</a>
+  <a href="#s6"><b>6</b> · Choosing the level</a>
+  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s8"><b>8</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M6</p>
+      <h2 id="s0"><span class="n">0</span>Why the design layer needs its own scale</h2>
+      <p class="lead">Module M6 ends where the engineering and product modules ended: with the question of how much of the work can be delegated, and who checks what is left. Engineering answered with E6's L1–L5, each rung earned by the deterministic verification standing behind it (E4). Product answered with P1–P5, capped early because its only verifier is human judgment. The design layer can copy neither answer, because it alone sits in between: the design harness (D5 topic) gives it real deterministic gates — lint, axe-core, visual regression, interaction tests — but those gates verify <em>conformance</em>, never <em>quality</em>. A ladder for design has to be built on that split. D1–D5 is the scale that results, and it doubles as the module's map: each topic you have read lives at a rung.</p>
+      <p>Positioning, stated plainly: <strong>D1–D5 is our synthesis</strong>, inspired by P1–P5 — flag it wherever it appears. It has honest ancestors: Parasuraman's levels of automation applied to design activities by Altavilla &amp; Blanco (DESIGN 2020), Morris et al.'s per-task autonomy ladder (<em>Levels of AGI</em>, 2023 — domain-general), and Stanford's Human Agency Scale H1–H5 (arXiv:2506.06576; 1,500 workers, 844 tasks — per-task, but not design-specific). The nearest design-specific frame is Matt Davey's AI Design Capability Maturity Model (five levels, Limited → Leading, as summarized and extended with a sixth "Symbiotic" level by Jakob Nielsen, UX Tigers, March 2026) — but that is an <em>organizational</em> maturity model (leadership, budget, culture, enablement), not a per-task autonomy scale. As of July 2026 we found no published design-specific per-task autonomy ladder; the flag holds, point-in-time, and the space is moving fast.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>The calibration rule is Karpathy's (YC AI Startup School, June 2025, as P5 applied it to product): build <strong>autonomy sliders</strong>, because generation is cheap and verification is expensive — set the slider by what you can verify, not by what the model can generate. Design adds a wrinkle no other layer has: the slider has <strong>two detents</strong>. The machine can verify that a screen stayed inside the system; only the designer can verify that the screen was worth making. Every rung of the D-scale is a decision about where those two verifications meet.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The five levels</h2>
+      <div class="figscroll"><table class="map">
+        <tr><th>Level</th><th>What the agent does</th><th>What the designer does</th><th>Where it stands</th></tr>
+        <tr><td>D1</td><td>assisted drafting — completions, layout suggestions, asset generation on demand</td><td>makes every decision; AI is stationery</td><td>universal, uncontroversial</td></tr>
+        <tr><td>D2</td><td>generates screens within constraints — tokens + existing components only (v0/Lovable with a schema)</td><td>selects, edits, owns every screen</td><td><strong>today's mainstream</strong> — the vibe-tool default (D3 topic)</td></tr>
+        <tr><td>D3</td><td>generates AND maintains consistency — applies token changes across components, writes stories, fixes a11y violations</td><td>reviews every PR; owns quality</td><td><strong>today's production ceiling</strong> — our engagement stance</td></tr>
+        <tr><td>D4</td><td>proposes system changes — new token, component API change, deprecation — via PR</td><td>approves at explicit gates; owns the system</td><td>requires mature governance (D4 topic) + the harness (D5 topic)</td></tr>
+        <tr><td>D5</td><td>autonomous design — decides and ships without a human gate</td><td>rubber-stamps, then stops looking</td><td><strong>anti-pattern today</strong> (§4)</td></tr>
+      </table></div>
+      <p>Two properties matter more than the rungs themselves. First, the ladder is <strong>per artifact type, not per team</strong>: the same designer can run marketing ideation at D2 (disposable explorations), product surfaces at D3, and token changes at D4-with-gates — the level attaches to the artifact and its verifiability, not to a job title. Second, the levels describe <em>who initiates and who judges</em>, not model quality: D3 uses the same model as D2, pointed at maintenance, with the output routed through a gate. Both properties are inherited from P5 unchanged — the difference is what stands behind each rung, which is the next section.</p>
+
+      <h2 id="s2"><span class="n">2</span>The verification split — conformance vs quality</h2>
+      <p>E6's rule for engineering is that autonomy is earned, level by level, by the strength of the verification loop behind it. Design earns exactly half credit on that rule, and the half it earns is measured. On the machine side: <strong>FrontendBench</strong> (arXiv:2506.13832; 148 prompt–test pairs; preprint) reaches an average 90.54% agreement with human evaluators using purely deterministic Puppeteer/Jest scripts — no LLM judge anywhere in the evaluation loop — on spec-pinned UI behavior (fixed ids, colors, positions). Read the number with its caveat: the scripts were iteratively revised until agreement with humans was high, so this is agreement <em>after human-in-the-loop calibration</em>, not out-of-the-box reliability. On the human side: <strong>WebDevJudge</strong> (arXiv:2510.18560) finds the best LLM judge (GPT-4.1, pairwise) at 70.34% agreement with expert preference labels, with capable judges "consistently plateauing around the 70% agreement rate" while the human-expert baseline sits at 84.56% — and single-score grading is far worse than pairwise. <strong>UI-Bench</strong> (arXiv:2508.20410; vendor-affiliated — the authors run the Design Arena leaderboard) ranks text-to-app tools the old-fashioned way: 300 generated sites, 4,000+ blind pairwise judgments from 194 hand-picked experts, because "aesthetic quality lacks a single objective ground truth" and automated image proxies align weakly with human preference.</p>
+      <p>Accessibility is the sharpest illustration of why the machine half must nonetheless be maximal. The checkable half is real: axe-core's ~90 default rules catch detectable WCAG failures, against a baseline where WebAIM's Million study (2024) finds 95.9% of top homepages already failing. But Calò, Gurita &amp; De Russis (CHI EA 2026) generated 300 UIs with three commercial models and found <strong>541 semantic violations across six fault types</strong> — the kind (alt="image") that <em>passes</em> automated checkers while meaning nothing to a screen reader. The architecture this fixes, stated once and used everywhere below: <strong>machine gates verify conformance — inside the vocabulary, real components, no broken baseline, WCAG rules met. The designer gate judges quality — hierarchy, brand fit, taste, whether this was the right design at all.</strong> Everything checkable is checked by machines precisely so the designer's scarce gate capacity is spent on the one thing only it can do.</p>
+      <figure>
+      <svg viewBox="0 0 860 350" role="img" aria-label="Three autonomy ladders: engineering earns every rung through deterministic verification; design and product cap where deterministic verification ends">
+        <defs><marker id="ahD6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="20" y="22" class="tg">THREE LADDERS — AND WHAT VERIFIES EACH RUNG</text>
+        <text x="30" y="48" class="ts">engineering (E6)</text>
+        <text x="310" y="48" class="ts">design (this topic)</text>
+        <text x="590" y="48" class="ts">product (P5)</text>
+        <rect x="30" y="62" width="170" height="32" rx="7" class="bxG"/><text x="40" y="82" class="ts">L5 · full autonomy</text>
+        <rect x="30" y="102" width="170" height="32" rx="7" class="bxC"/><text x="40" y="122" class="ts">L4 · narrow autonomy</text>
+        <rect x="30" y="142" width="170" height="32" rx="7" class="bxC"/><text x="40" y="162" class="ts">L3 · delegated tasks</text>
+        <rect x="30" y="182" width="170" height="32" rx="7" class="bxC"/><text x="40" y="202" class="ts">L2 · supervised edits</text>
+        <rect x="30" y="222" width="170" height="32" rx="7" class="bxC"/><text x="40" y="242" class="ts">L1 · assist</text>
+        <line x1="218" y1="248" x2="218" y2="70" class="edD6"/>
+        <rect x="310" y="62" width="170" height="32" rx="7" class="bx" style="stroke:#B3362B"/><text x="320" y="82" class="ts">D5 · autonomous design</text>
+        <rect x="310" y="102" width="170" height="32" rx="7" class="bxA"/><text x="320" y="122" class="ts">D4 · proposes system change</text>
+        <rect x="310" y="142" width="170" height="32" rx="7" class="bxK"/><text x="320" y="162" class="ts">D3 · maintains + review</text>
+        <rect x="310" y="182" width="170" height="32" rx="7" class="bxK"/><text x="320" y="202" class="ts">D2 · constrained generation</text>
+        <rect x="310" y="222" width="170" height="32" rx="7" class="bxK"/><text x="320" y="242" class="ts">D1 · assisted drafting</text>
+        <rect x="590" y="62" width="170" height="32" rx="7" class="bx" style="stroke:#B3362B"/><text x="600" y="82" class="ts">P5 · autonomous definition</text>
+        <rect x="590" y="102" width="170" height="32" rx="7" class="bxA"/><text x="600" y="122" class="ts">P4 · decomposition + gates</text>
+        <rect x="590" y="142" width="170" height="32" rx="7" class="bxK"/><text x="600" y="162" class="ts">P3 · AI red-team</text>
+        <rect x="590" y="182" width="170" height="32" rx="7" class="bxK"/><text x="600" y="202" class="ts">P2 · draft + human edit</text>
+        <rect x="590" y="222" width="170" height="32" rx="7" class="bxK"/><text x="600" y="242" class="ts">P1 · assisted drafting</text>
+        <line x1="310" y1="98" x2="760" y2="98" stroke="#B3362B" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="30" y="280" class="ts">each rung earned by deterministic</text><text x="30" y="293" class="ts">verification — tests, CI, mutation (E4)</text>
+        <text x="310" y="280" class="ts">rungs rest on BOTH: machine gates for</text><text x="310" y="293" class="ts">conformance + designer for quality (§2)</text>
+        <text x="590" y="280" class="ts">rungs rest on human judgment +</text><text x="590" y="293" class="ts">consistency checks (P5 §2)</text>
+        <text x="310" y="322" class="ts" fill="#B3362B">- - - above the dashed line no deterministic gate exists (design, product)</text>
+      </svg>
+      <figcaption>Left: the engineering ladder earns every rung through deterministic verification. Middle: the design ladder is two ladders in one — machine gates carry conformance up to D4, judgment stays human all the way down. Right: the product ladder rests on human judgment alone (P5 §2). The red dashed line is the same line in both right-hand columns: above it, no deterministic gate exists, so a human gate is the only kind there is.</figcaption>
+      </figure>
+
+      <h2 id="s3"><span class="n">3</span>Evidence by level</h2>
+      <p>The scale is only useful if the rungs are evidence-rated, so: <strong>D1</strong> is universal and carries no controversy. <strong>D2</strong> is where the measurement starts, and it starts with the ceiling of generation <em>without</em> a system: Design2Code (arXiv:2403.03163, NAACL 2025; GPT-4V era, static placeholdered pages) — AI reconstructions judged interchangeable with the original in 49% of cases and preferred in 64% (the D3 topic carries the full caveats). Constraints are what the rung adds. The failure texture when constraints are absent is measured too: Krebs' slop audit (April 2026 — point-in-time) scored <strong>1,590 Show HN pages against 16 deterministic CSS/DOM checks</strong> (Playwright, no screenshots, no LLM judge — a conformance check, note, measuring slop) and found 22% of pages hitting 4+ slop patterns, 32% hitting 2–3, 46% clean. Shin et al.'s <em>Interrogating Design Homogenization in Web Vibe Coding</em> (arXiv:2603.13036, March 2026) supplies the mechanism, not a measurement: a 63-source review plus walkthroughs of six vibe tools, a seven-category harm taxonomy, and "productive friction" mitigations — cite it for the framing (and for independently landing on "active curators"), never as evidence that homogenization happens at some rate.</p>
+      <p><strong>D3</strong> is the rung whose costs are priced. The data is vendor-published, so labeled as such: CodeRabbit (December 2025; 470 open-source PRs, authorship assigned by signal, not ground truth) found AI-co-authored PRs carry <strong>10.83 issues vs 6.45 for human PRs (1.7×)</strong>, 26 vs 12.3 at the 90th percentile, and 2.74× more XSS vulnerabilities specifically. Veracode's 2025 GenAI Code Security Report (July 2025; 100+ LLMs, 80 tasks) found <strong>45% of AI-generated samples fail OWASP Top-10 tests</strong> — flat across model generations while syntactic correctness soared: capability growth is not judgment growth. The peer-reviewed anchor is CodeA11y (Mowar et al., CHI 2025): <strong>0 of 16 developers prompted for accessibility</strong>, empty alt attributes were pasted straight through despite the assistant's own instructions, and participants could not verify the complex cases — default AI output plus an unprimed reviewer equals regressions shipped unnoticed. These three are why D3's gate sits at PR level behind maximal deterministic pre-filtering, and why the gate is a review, not a skim.</p>
+      <p><strong>D4</strong>'s prerequisite is governance capacity, not model quality: Nathan Curtis's governance finding — "Overlords don't scale"; federated models never come first and never work without central investment (D4 topic) — applies with double force when the contributors include agents working at machine speed, and Report 1's rule caps the whole rung: <strong>never scale agents beyond review capacity</strong>. <strong>D5</strong> has no supporting evidence at all; what it has is the slop data above and the automation-bias literature below, predicting exactly how it degrades.</p>
+
+      <h2 id="s4"><span class="n">4</span>Why D5 is the anti-pattern — and the strongest counter-argument</h2>
+      <p>Assemble the pieces and the failure is overdetermined. The harness verifies conformance, not judgment (§2), so removing the designer gate means conformance-verified slop ships at agent speed — Krebs' 22% is what unconstrained generation converges to even when every page individually renders "fine." And the removal never happens by decision; it happens by drift, because automation bias is measured, not hypothetical. In the simulated-AI mammography study (Dratsch et al., <em>Radiology</em> 2023) wrong suggestions dragged inexperienced readers' accuracy <strong>below 20%</strong> — and biased even 15+-year experts. Explainability does not rescue review (Gaube et al., <em>npj Digital Medicine</em> 2021). On purely visual judgment humans already sit at chance: 48.2% accuracy distinguishing AI-generated faces (Nightingale &amp; Farid, <em>PNAS</em> 2022 — pre-diffusion; the direction since has only confirmed). Then the skills themselves go: endoscopists' unaided detection rate fell 6 points absolute after routine AI exposure (Budzyń et al., <em>Lancet Gastroenterology &amp; Hepatology</em> 2025 — observational, flagged as such by its own authors), and Anthropic's pre-registered RCT (January 2026, vendor-run) found AI-assisted learners scoring ~50% vs ~67% on a coding-skill quiz, with the debugging deficit largest. One honesty clause: none of these studies measured <em>design</em> review at agent volume specifically — the D5 prediction is an argued extrapolation from adjacent domains, and we present it as exactly that.</p>
+      <div class="callout"><div class="t">The strongest named counter-position — engaged, not dodged</div><p>Jakob Nielsen's Level 6 "Symbiotic" (March 2026) treats autonomous Generative UI as <em>aspirational</em> — plausible in 2027 for a small set of elite AI-native startups, not illegitimate. That is the most credible published challenge to D5-as-anti-pattern. But read what Nielsen keeps human even at Level 6: designers "curate the 'soul' of the experience," establish "evaluation criteria, reward functions, and safety boundaries," and intervene on strategic pivots. That is autonomy of <em>execution</em> with judgment still human-governed — on our split, his Level 6 is D4 with a far better harness, not the gate removal we call D5. The real disagreement is narrower than it looks: he expects the machine share to keep eating upward; we expect the judgment residue to remain. Both claims are point-in-time; the 2027 test he names will settle it empirically.</p></div>
+      <p>Is the anti-pattern permanent? Same honest answer as P5: unknown. What would have to change is specific — judges that demonstrably beat the 70% plateau on holistic quality (§2), drift telemetry fast enough to act as verification rather than archaeology, and an answer to the pipeline question of who trains the next generation of taste (§5). None of the three exists today. Until then the ceiling is D4-with-gates, and the gates are human.</p>
+
+      <h2 id="s5"><span class="n">5</span>The designer as curator</h2>
+      <p>The role-shift evidence, with its genres labeled. NN/g's <em>State of UX 2026: Design Deeper to Differentiate</em> (Moran, Budiu &amp; Gibbons, January 2026 — an editorial forecast, not a study): "If you're just slapping together components from a design system, you're already replaceable by AI. What isn't easy to automate? <strong>Curated taste, research-informed contextual understanding, critical thinking, and careful judgment.</strong>" Nielsen (UX Tigers, December 2025 — a retrospective self-grade of his own January 2025 prediction, so commentary, not observation): by Q3 2025 pixel-pushing "had effectively ended for commercial production." The <em>State of AI in Design 2025</em> report (~400 designers plus design-leader interviews; published by Designer Fund &amp; Foundation Capital — VC-published, directional): "It can get you to 60%, but not the last 40%, the polish and thoughtful details that distinguish great products" — an aphorism, not a measurement — alongside ~90% reporting AI improved their process and 96% self-taught on the tools. The vendors concede the same split from the other side: Figma's Config 2026 keynote framing (June 2026 — vendor claim) is "AI has lowered the floor, it has not raised the ceiling." And the labor market is not voting for extinction: WEF's <em>Future of Jobs 2025</em> ranks UI/UX designers #8 in fastest-growing roles, while Figma's S-1 (July 2025) discloses that two-thirds of its 13M+ monthly users are non-designers — design work diffusing outward, curation concentrating inward.</p>
+      <p>The "creator to curator" framing itself has no single coiner — it is a meme-level convergence (Atluru's "taste is the new weapon," September 2024; Shankarraman on Lenny's Podcast, May 2025; Nielsen's "the core design competency shifts from creation to curation and evaluation"; Shin et al.'s "active curators"). What the curator <em>does</em> is our synthesis, mirroring P4's PM: <strong>holds the write-pen on durable design context</strong> — token JSON, component API definitions, design ADRs — under I2's write-permission discipline, because agents read that context fresh every session and a stale token file poisons every downstream screen silently; <strong>sets direction</strong> (DESIGN.md and the anti-slop rules, D5 topic); <strong>reviews agent PRs for quality</strong> after the machines have proven conformance; <strong>approves or rejects system changes</strong> at the D4 gates; and <strong>watches the downshift signals</strong> (§6).</p>
+      <p>The honest problem inside the role: who trains the next curator? Nielsen names the Junior Designer Dilemma — the manual variation-grinding through which juniors developed taste is exactly what got automated — and design-education researchers measure the result as "design shallowing": students "skipping the learning process of how to design to merely choosing what to accept from among multiple AI-generated proposals" (Frontiers in Built Environment, 2025). The curator model eats its own pipeline unless the organization deliberately designs junior pathways — rotation through manual craft, structured annotation of agent failures. We have no measured solution; flag it as the role's open wound, and as the strongest internal argument against treating D3's gate as a cost to minimize rather than a capability to maintain.</p>
+      <figure>
+      <svg viewBox="0 0 860 330" role="img" aria-label="The curator loop: durable design context feeds the agent, machine gates verify conformance, the designer gate judges quality, and merges update the context; D5 deletes the designer gate">
+        <text x="20" y="22" class="tg">THE CURATOR LOOP — WHO VERIFIES WHAT, AND WHAT D5 DELETES</text>
+        <rect x="40" y="40" width="230" height="62" rx="9" class="bxC"/>
+        <text x="52" y="64" class="tt">durable design context</text>
+        <text x="52" y="80" class="ts">tokens · components · DESIGN.md</text>
+        <text x="52" y="94" class="ts">curator holds the write-pen (I2)</text>
+        <rect x="590" y="40" width="230" height="62" rx="9" class="bxK"/>
+        <text x="602" y="64" class="tt">agent generates &amp; maintains</text>
+        <text x="602" y="80" class="ts">screens · stories · a11y fixes</text>
+        <text x="602" y="94" class="ts">D2–D4 output — every change a PR</text>
+        <rect x="590" y="160" width="230" height="62" rx="9" class="bxG"/>
+        <text x="602" y="184" class="tt">machine gates (D5 harness)</text>
+        <text x="602" y="200" class="ts">lint · axe-core · visual regression</text>
+        <text x="602" y="214" class="ts">verify conformance only</text>
+        <rect x="315" y="252" width="230" height="62" rx="9" class="bxA"/>
+        <text x="327" y="276" class="tt">designer gate</text>
+        <text x="327" y="292" class="ts">quality · brand · taste</text>
+        <text x="327" y="306" class="ts">judgment — the last 40% (§5)</text>
+        <rect x="40" y="160" width="230" height="62" rx="9" class="bx"/>
+        <text x="52" y="184" class="tt">merge &amp; learn</text>
+        <text x="52" y="200" class="ts">context updated; drift signals</text>
+        <text x="52" y="214" class="ts">watched — downshift triggers (§6)</text>
+        <line x1="270" y1="71" x2="590" y2="71" class="edD6"/>
+        <line x1="705" y1="102" x2="705" y2="160" class="edD6"/>
+        <line x1="625" y1="222" x2="540" y2="254" class="edD6"/>
+        <line x1="320" y1="254" x2="235" y2="222" class="edD6"/>
+        <line x1="155" y1="160" x2="155" y2="102" class="edD6"/>
+        <line x1="590" y1="191" x2="270" y2="191" style="stroke:#B3362B;stroke-width:1.3;stroke-dasharray:5 4;fill:none;marker-end:url(#ahD6a)"/>
+        <text x="290" y="180" class="ts" fill="#B3362B">D5 removes the gate — slop at agent speed (§4)</text>
+      </svg>
+      <figcaption>The loop the curator runs. Clockwise from top-left: the durable context the curator owns feeds the agent; the agent's output passes machine gates that verify conformance; the designer gate judges quality; merged work updates the context and the drift signals. The red dashed line is D5: the same loop with the one irreplaceable node deleted — every remaining check passes, and the slop still ships.</figcaption>
+      </figure>
+
+      <h2 id="s6"><span class="n">6</span>Choosing the level — stance, downshift triggers, and the D3→D4 gate</h2>
+      <p>The deployment stance mirrors E6 and P5: <strong>start where verification exists, move one rung at a time, per artifact</strong>. In practice: D2 for ideation and anything disposable; D3 for product surfaces once the harness layers exist (D5 topic's six layers, in cost order — token lint before visual regression before interaction tests); D4 only where governance maturity is real (D4 topic's gate set operational, SemVer and three-phase deprecation actually running); never D5. Machine-verifiable gates are again the bridge: the more of the harness is deterministic, the more of the designer's hour goes to judgment.</p>
+      <p>And because the failure mode is drift rather than decision, every level assignment needs its <strong>downshift triggers</strong>, watched per artifact type: review time collapsing while PR volume grows; lint waivers accumulating; slop tells (Krebs' patterns) appearing in merged diffs; the kill rate on agent PRs falling toward zero; a designer unable to articulate why a recently shipped screen is right. Any of them fires: drop the artifact one rung and rebuild the review habit before climbing again. The scale is a dial, not a ratchet.</p>
+      <p>The topic's own open question — what measurable criteria gate a team's move from D3 to D4 — gets an honest answer: <strong>as of July 2026, no published quantitative standard exists</strong>, and we looked. What exists: adoption metrics (Pinterest's Gestalt team computes design adoption as DS-library layers ÷ total layers per frame, nightly via their FigStats service over the Figma API, plus a cloud lint of hex-codes-vs-styles — published on Figma's blog, February 2023); maturity frameworks usable as checklists (NN/g's six-dimension Design-System Maturity article, July 2026 — days old at writing; zeroheight's model, which now includes an "AI Readiness" axis — vendor); code-side component analytics (Omlet — vendor). "Self-healing design system" (Kavcic, June 2025) remains a blog concept with no measured deployment. So the D3→D4 criteria are today an engineering judgment; our candidate set (synthesis, flagged): review throughput stable as agent volume grows; waiver and revert rates on agent PRs flat or falling; drift incidents per quarter bounded; a named curator with protected review hours (the PB1 mechanic). Measure for two clean quarters at D3 before granting the rung — and treat the absence of a standard as a finding about the field, not a gap in this document.</p>
+
+      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>which level does each artifact type actually run at today — and who decided?</li><li>is the deterministic half of the harness installed (lint, axe, baselines), or is the "gate" a skim?</li><li>what are the review-capacity numbers — PRs per designer-hour, and is volume outpacing them?</li><li>any artifact already drifting toward D5 by rubber-stamp (check the §6 triggers)?</li><li>how do juniors build taste here, if the grinding work is automated?</li></ul></div>
+      <div class="box"><div class="lab">Build</div><ul><li>set levels per artifact type, explicitly, with the D-scale as shared vocabulary</li><li>install the machine half first, in D5's cost order — lint before visual regression before interaction tests</li><li>name the curator: write-pen on durable design context, protected review hours</li><li>wire the downshift triggers into the same ceremony; treat the scale as a dial</li><li>pilot D4 only after two clean quarters at D3, on the §6 candidate criteria</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember D6 by</div><p>The design layer gets its own autonomy scale because it alone has a split verifier — machines prove conformance (FrontendBench's deterministic scripts) but not quality (WebDevJudge's 70% plateau against an 84.56% human baseline; UI-Bench's expert panels) — so the D1–D5 ladder (assisted drafting → constrained generation → maintenance-with-review → gated system proposals → autonomous anti-pattern) caps where judgment begins, and it is our synthesis: Davey's maturity model (extended by Nielsen) is the nearest named frame and measures organizations, not task autonomy. The evidence rates the rungs: D2's constraints are what separate a system from the slop audit's 22%; D3's ceiling is priced by CodeRabbit (1.7× issues), Veracode (45% security failure, flat across model generations) and CodeA11y (0 of 16 prompting for accessibility); D4 is gated by governance capacity, not model quality; and D5 has no evidence, an automation-bias literature predicting its degradation, and a strongest advocate (Nielsen's Level 6) who still keeps humans curating "the soul." The designer's job becomes curator — write-pen on durable design context, quality gate at PR level, NN/g's "curated taste, research-informed contextual understanding, critical thinking, and careful judgment" — with levels set per artifact, dialed down on the drift triggers, and the Junior Designer Dilemma as the role's open wound.</p></div>
+
+      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Moran, Budiu &amp; Gibbons — State of UX 2026: Design Deeper to Differentiate</div><div class="mt">Nielsen Norman Group · Jan 16, 2026 · nngroup.com/articles/state-of-ux-2026</div><p>The role-shift source: component-slappers "already replaceable by AI"; curated taste, contextual understanding, critical thinking and judgment not automatable. An editorial forecast — cite as expert judgment, not data.</p></div>
+      <div class="item"><div class="rt">Nielsen — 2025 Predictions Revisited · The Capability Maturity Model for AI in Design</div><div class="mt">UX Tigers · Dec 22, 2025 &amp; Mar 5, 2026 · uxtigers.com</div><p>The pixel-pushing obituary (a retrospective self-grade — read it as commentary) and Davey's five-level org-maturity model with Nielsen's sixth "Symbiotic" level: the nearest named frame to D1–D5, and §4's counter-argument in full.</p></div>
+      <div class="item"><div class="rt">Designer Fund &amp; Foundation Capital — State of AI in Design Report 2025</div><div class="mt">May 2025 · ~400 designers · archived at web.archive.org (original URL dead; a 2026 edition exists)</div><p>The 60/40 aphorism in context: AI strongest early, the last 40% human; ~90% process improvement, 96% self-taught. VC-published and directional — label it.</p></div>
+      <div class="item"><div class="rt">FrontendBench · WebDevJudge · UI-Bench</div><div class="mt">arXiv:2506.13832 · arXiv:2510.18560 · arXiv:2508.20410 · 2025–26 preprints</div><p>The conformance-vs-quality evidence in three papers: deterministic scripts agreeing with humans at 90.54% (after calibration) on pinned behavior; LLM judges plateauing at ~70% on holistic preference; expert panels still required for "visual excellence."</p></div>
+      <div class="item"><div class="rt">Krebs — scoring Show HN for AI design patterns · Shin et al. — Interrogating Design Homogenization</div><div class="mt">adriankrebs.ch/blog/design-slop, Apr 2026 · arXiv:2603.13036, Mar 2026</div><p>The slop audit (1,590 pages, 16 deterministic checks, 22/32/46 — practitioner measurement, point-in-time) and the conceptual harm taxonomy with "productive friction" and "active curators." Measurement and mechanism respectively — do not swap their roles.</p></div>
+      <div class="item"><div class="rt">Dratsch et al. — Automation Bias in Mammography · Budzyń et al. — Endoscopist Deskilling</div><div class="mt">Radiology 307(4), 2023 · Lancet Gastroenterology &amp; Hepatology 10(10), 2025</div><p>The adjacent-domain evidence for §4: wrong AI advice degrading even expert reviewers, and unaided skill atrophying after routine AI exposure (observational). The extrapolation to design review is ours and is labeled.</p></div>
+      <div class="item"><div class="rt">CodeRabbit — State of AI vs Human Code Generation · Veracode — 2025 GenAI Code Security Report</div><div class="mt">coderabbit.ai, Dec 2025 · veracode.com, Jul 2025</div><p>The D3 cost data: 1.7× issues per AI PR (2.74× for XSS specifically; signal-based authorship) and 45% of AI samples failing OWASP tests, flat across generations. Vendor studies — both carry the flag.</p></div>
+      <div class="item"><div class="rt">Report 5, sections 5–6 (this workbook) · the D1–D5 deep dives</div><div class="mt">module M6 research notes · D1–D5 companions</div><p>The original research notes (role shift, the scale, the risks) and the five topics that live on the ladder's rungs: artifact (D1), tokens (D2), consumption (D3), governance (D4), harness (D5). D7 continues with the F0–F4 rollout.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (D6-design-scale-curator-deepdive.html). It closes the M6 deep-dive set together with D7. Its natural neighbours in the workbook are D1–D5 (the rungs), D7 (the F0–F4 rollout where the levels get granted), P5 (the product-layer ladder this one mirrors), P4 (the PM editor/curator role this one transplants), E4/E6 (verification-first and the engineering ladder), E5 (advisory vs deterministic — the split §2 runs on), I2/I3 (write permissions and drift on the durable context the curator owns), and S4 (the MCP injection surface the machine gates also watch). The D1–D5 scale remains this workbook's original synthesis — flagged here as everywhere; the Davey/Nielsen maturity model, the NN/g and Designer Fund role-shift claims, and all tool facts are point-in-time as of July 2026 and marked for re-verification before client use.</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>

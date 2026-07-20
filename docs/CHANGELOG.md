@@ -3,6 +3,10 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.57 · 2026-07-20
+
+Added the D6 deep-dive companion (The D1–D5 Design Scale & the Designer as Curator) — completing the M6 set with D7. The three-ladder verification split (engineering earns rungs deterministically; design and product cap where deterministic gates end), the five D-levels with evidence per rung (Design2Code ceiling, Krebs slop audit 22/32/46, CodeRabbit 1.7×/2.74×-XSS, Veracode 45%, CodeA11y 0-of-16), the D5 anti-pattern argued against Nielsen's Level-6 counter-position, the designer-as-curator role with its Junior Designer Dilemma, and the honest D3→D4 gate-metric gap. Fact-checked via an 11-agent verification swarm; also corrected the D7 Veracode misattribution.
+
 ## v1.56 · 2026-07-20
 
 **NEW RUNBOOK PB5 — Pilot: measure, gate, decide.** Fifth and final M9 runbook, in both
