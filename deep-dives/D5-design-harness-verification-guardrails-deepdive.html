@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D5 Deep Dive — The Design Harness: Verification Loops &amp; Guardrails</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edD5a{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD5a)}
+svg .edD5b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD5b)}
+svg .edD5c{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD5c)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">D5 · DEEP DIVE</span>
+    <h1>The Design Harness: Verification Loops &amp; Guardrails</h1>
+    <span class="bc">companion to module M6 · Design harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · The stack, in order</a>
+  <a href="#s2"><b>2</b> · Visual regression in practice</a>
+  <a href="#s3"><b>3</b> · Accessibility as a gate</a>
+  <a href="#s4"><b>4</b> · Lint as law</a>
+  <a href="#s5"><b>5</b> · Conformance vs quality</a>
+  <a href="#s6"><b>6</b> · Operating the gate</a>
+  <a href="#s7"><b>7</b> · Evidence &amp; do-not-cite</a>
+  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M6</p>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p>Every module so far has converged on the same sentence: <strong>an agent may do any work it can be made to verify</strong>. E4 built that into the engineering harness as the red/green loop; D1 argued the design system is the third artifact because it feeds the same loop on the visual layer. This chapter is the loop itself — the concrete checks that turn "the agent composed a screen" into "the screen is proven to conform," run in an order that spends machine time before it spends human attention. Without it, the design layer is exactly where agent output is least trustworthy: unconstrained generation converges measurably to slop (D1's audit), and accessibility is the sharpest known gap — the CHI 2025 CodeA11y study found that developers without accessibility training <em>fail to prompt AI for accessibility, omit the manual steps the AI flags, and cannot verify compliance</em> (16-developer formative study; Mowar et al., DOI 10.1145/3706598.3713335). The follow-up evidence says the fix is not a better prompt but a loop: FeedA11y (Suh &amp; Malek, arXiv:2503.15885) showed re-prompting agents <em>with machine-generated a11y reports</em> significantly outperforms prompting alone. That is the design harness in one study.</p>
+      <p>The stakes are not aesthetic. The 2026 WebAIM Million found <strong>95.9%</strong> of home pages have automatically detectable WCAG failures — worse than 2025's 94.8%, reversing years of slow improvement, before agent-generated UI has even fully arrived in the sample. And since <strong>28 June 2025</strong> the European Accessibility Act applies to e-commerce, banking, transport and e-book services sold in the EU, with WCAG-based conformance (via EN 301 549) as the de-facto bar. A team that lets agents ship unverified UI is accumulating legal and brand risk at machine speed. The harness is how you get the speed without the bill: everything checkable is checked by machines, in CI, before a designer spends a minute — and the designer's scarce judgment is reserved for the one thing no gate can decide, which is whether the result is <em>good</em> (§5).</p>
+
+      <h2 id="s1"><span class="n">1</span>The stack — six machine checks, in the order they should run</h2>
+      <p>The design harness is not one tool but a stack, and the order is a design decision: <strong>cheapest and fastest first, most expensive last, human gate at the end</strong>. Each layer catches a different failure class, so skipping one leaves a shaped hole; each layer is also a filter, so running them out of order wastes the expensive checks on failures the cheap ones would have caught. Six layers, all pre-dating agents, all now load-bearing: <strong>(1) Style &amp; token lint</strong> — Stylelint/ESLint rules that reject hardcoded values and off-system imports in milliseconds (§4). <strong>(2) The component API contract</strong> — TypeScript prop types, and increasingly machine-readable schemas per component: Red Hat's PatternFly published JSON Schema + Zod bundles for exactly this purpose, validating LLM-generated prop payloads at runtime (<span class="mono">ButtonSchema.parse(...)</span>) — a contract test for component usage, vendor-OSS but the clearest artifact of its kind. <strong>(3) Interaction tests</strong> — Storybook play functions (<span class="mono">userEvent</span>/<span class="mono">expect</span>, imported from <span class="mono">storybook/test</span> since Storybook 9) executed in CI via the Vitest addon — or the test-runner on Webpack projects — proving the component behaves, not just renders. <strong>(4) The a11y gate</strong> — axe-core, ~90 rules enabled by default, zero-false-positives as a design policy (§3). <strong>(5) Visual regression</strong> — pixel or DOM snapshots against CI-built baselines; the slowest machine check and the one that costs money per snapshot (§2). <strong>(6) Drift &amp; usage analytics</strong> — asynchronous: token-drift CLIs and adoption dashboards that open PRs instead of blocking them (§6).</p>
+      <figure>
+      <svg viewBox="0 0 1000 400" role="img" aria-label="The ordered verification funnel: agent output passes style lint, API contract, interaction tests, axe-core and visual regression — each red result loops back to the agent — before the human designer gate approves the merge">
+        <defs><marker id="ahD5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">THE DESIGN HARNESS · CHEAPEST FIRST, HUMAN LAST · THE AGENT ITERATES ON RED BEFORE ANYONE HUMAN LOOKS</text>
+        <rect x="20" y="66" width="120" height="118" rx="10" class="bxG"/>
+        <text x="32" y="90" class="tt">Agent output</text>
+        <text x="32" y="110" class="ts">PR: components,</text>
+        <text x="32" y="124" class="ts">styles, tokens</text>
+        <text x="32" y="150" class="ts">untrusted until</text>
+        <text x="32" y="163" class="ts">proven conformant</text>
+        <rect x="160" y="66" width="120" height="118" rx="10" class="bxC"/>
+        <text x="172" y="90" class="tt">1 · style lint</text>
+        <text x="172" y="110" class="ts">color-no-hex ·</text>
+        <text x="172" y="124" class="ts">strict-value ·</text>
+        <text x="172" y="138" class="ts">import bans</text>
+        <text x="172" y="163" class="ts">milliseconds</text>
+        <rect x="300" y="66" width="120" height="118" rx="10" class="bxC"/>
+        <text x="312" y="90" class="tt">2 · API contract</text>
+        <text x="312" y="110" class="ts">prop types ·</text>
+        <text x="312" y="124" class="ts">component</text>
+        <text x="312" y="138" class="ts">schemas (Zod)</text>
+        <text x="312" y="163" class="ts">seconds</text>
+        <rect x="440" y="66" width="120" height="118" rx="10" class="bxC"/>
+        <text x="452" y="90" class="tt">3 · interaction</text>
+        <text x="452" y="110" class="ts">Storybook play</text>
+        <text x="452" y="124" class="ts">functions in CI</text>
+        <text x="452" y="138" class="ts">(Vitest addon)</text>
+        <text x="452" y="163" class="ts">seconds–minutes</text>
+        <rect x="580" y="66" width="120" height="118" rx="10" class="bxC"/>
+        <text x="592" y="90" class="tt">4 · a11y gate</text>
+        <text x="592" y="110" class="ts">axe-core, ~90</text>
+        <text x="592" y="124" class="ts">default rules</text>
+        <text x="592" y="138" class="ts">blocks merge</text>
+        <text x="592" y="163" class="ts">seconds / page</text>
+        <rect x="720" y="66" width="120" height="118" rx="10" class="bxC"/>
+        <text x="732" y="90" class="tt">5 · visual regr.</text>
+        <text x="732" y="110" class="ts">snapshots vs CI-</text>
+        <text x="732" y="124" class="ts">built baselines</text>
+        <text x="732" y="138" class="ts">+ stress states</text>
+        <text x="732" y="163" class="ts">minutes · per-snap cost</text>
+        <rect x="870" y="66" width="112" height="118" rx="10" class="bxA"/>
+        <text x="882" y="90" class="tt">6 · designer</text>
+        <text x="882" y="104" class="tt">gate</text>
+        <text x="882" y="124" class="ts">intent · fit ·</text>
+        <text x="882" y="138" class="ts">taste (= L3)</text>
+        <text x="882" y="163" class="ts">the only human step</text>
+        <path class="edD5a" d="M140 125 L 156 125" />
+        <path class="edD5a" d="M280 125 L 296 125" />
+        <path class="edD5a" d="M420 125 L 436 125" />
+        <path class="edD5a" d="M560 125 L 576 125" />
+        <path class="edD5a" d="M700 125 L 716 125" />
+        <path class="edD5a" d="M840 125 L 866 125" />
+        <path class="edD5a" style="stroke-dasharray:5 4" d="M780 184 C 780 235, 220 235, 90 190" />
+        <text x="330" y="232" class="ts">any red → agent iterates against the failure output · never silently past a gate</text>
+        <rect x="20" y="262" width="470" height="100" rx="10" class="bxK"/>
+        <text x="36" y="288" class="tt">Why this order</text>
+        <text x="36" y="308" class="ts">each layer filters failures the next would price higher;</text>
+        <text x="36" y="324" class="ts">visual regression runs last among machines because it is</text>
+        <text x="36" y="340" class="ts">slowest and billed per snapshot (TurboSnap exists for a reason)</text>
+        <rect x="510" y="262" width="472" height="100" rx="10" class="bx"/>
+        <text x="526" y="288" class="tt">The async lane (does not block)</text>
+        <text x="526" y="308" class="ts">token-drift CLIs (Dembrandt) + usage analytics (Omlet, Figma)</text>
+        <text x="526" y="324" class="ts">detect erosion between PRs → open a PR, never merge one (§6)</text>
+        <text x="526" y="340" class="ts">self-healing changes who opens, never who approves (D4)</text>
+        <text x="20" y="388" class="tg">SIX LAYERS, TWO SPEED CLASSES · THE STACK IS OUR SYNTHESIS OF DOCUMENTED PRACTICE — THE INDIVIDUAL CHECKS ARE ALL OLDER THAN AGENTS</text>
+      </svg>
+      <figcaption>The verification funnel this chapter unpacks layer by layer. Everything left of the amber gate is machine-iterable: the agent reads the failure and retries, which is E4's loop with visual-layer checks plugged in. The async lane watches the system between PRs. The ordering — lint → contract → interaction → a11y → visual → human — is Report 5's synthesis; the individual tools and their documented behavior are cited in §2–§4.</figcaption>
+      </figure>
+
+      <h2 id="s2"><span class="n">2</span>Visual regression in practice — baselines, noise, and the false-positive problem</h2>
+      <p>Pixel-diffing is the oldest and noisiest check in the stack, and its mechanics deserve precision. Playwright's <span class="mono">toHaveScreenshot()</span> uses the <strong>pixelmatch</strong> library: <span class="mono">threshold</span> is per-pixel perceptual tolerance in YIQ color space (default 0.2 — do not tighten it to 0 on real UIs, anti-aliasing noise will fail everything), and <span class="mono">maxDiffPixels</span>/<span class="mono">maxDiffPixelRatio</span> are explicit noise budgets, unset by default. Stabilization is largely built in: the assertion waits for <strong>two consecutive identical screenshots</strong> before comparing, animations default to <span class="mono">disabled</span>, the caret is hidden, and volatile regions (timestamps, ads, live data) are covered with <span class="mono">mask</span> locators or a <span class="mono">stylePath</span> stylesheet. The baseline discipline is the part teams get wrong: Playwright's docs warn that rendering varies with "host OS, version, settings, hardware, power source, headless mode" — so baselines are committed to git and produced in the <em>same</em> environment that verifies them, in practice a pinned Docker image matching CI, and <span class="mono">--update-snapshots</span> is a deliberate, reviewed act, never a CI step. Environment consistency beats tolerance: widening thresholds to absorb flake is how gates quietly stop meaning anything.</p>
+      <p>Above Playwright sit the managed platforms, and their differences matter for procurement. <strong>Chromatic</strong> (built by Chroma, the company maintaining Storybook) snapshots every story per browser and viewport — component-level by construction — and splits its product into two workflows that map exactly onto this chapter's thesis: <strong>UI Tests</strong> is the deterministic regression gate (visual + interaction + accessibility on every commit, TurboSnap trimming runs to tests affected by changed files at a fraction of snapshot cost), while <strong>UI Review</strong> is the human sign-off lane — designers and PMs assigned to the PR, approval as a requirable status check (§6). Its flake handling is algorithmic, not AI: SteadySnap freezes dynamic content and flags unstable tests <em>without blocking the build</em>; the docs list the causes verbatim — "an animation might be caught mid-frame, a font might load late, dynamic data might change, or a network request might not finish in time." <strong>Percy</strong> (BrowserStack) takes a different bet: it ships <em>DOM snapshots</em> rendered in its own infrastructure, which removes cross-OS rendering noise by construction, and it is where the AI claims live — a Visual AI Engine (OCR-based text-shift tolerance), Intelli Ignore for dynamic regions, and a Visual Review Agent that draws bounding boxes around "meaningful" changes with natural-language summaries (launched with BrowserStack AI, June 2025; "3× faster reviews" is a vendor metric). <strong>Applitools</strong> markets Visual AI at "99.9999% accuracy" across "one billion images analyzed" — a 2020 press release; cite it as a vendor claim or not at all. The open-source tier needs a maintenance caveat as of mid-2026: <strong>reg-suit</strong> and <strong>Argos</strong> are actively maintained (Argos is the credible OSS Chromatic alternative), while BackstopJS and Loki have been effectively unmaintained since 2024 and Lost Pixel was archived in April 2026 (team joined Figma) — a cautionary tale about building a gate on an OSS tool without a maintenance plan.</p>
+      <p>The topic's open question — <em>how do we tame false positives so the gate doesn't drown the designer?</em> — now has a documented answer, and it is a sequence, not a knob. First kill variance at the source (pinned render environment, fonts awaited, animations off, randomness seeded, network settled). Then exclude what must vary (mask volatile regions, Intelli Ignore-style dynamic-area config). Only then budget what remains (<span class="mono">threshold</span> + <span class="mono">maxDiffPixels</span>, set globally so the budget is one reviewed decision, not fifty local ones). Finally, track flake as data: Chromatic's model — flag unstable tests, quarantine, don't block — keeps the gate credible, because a gate that cries wolf gets overridden, and an overridden gate is worse than none (E7's anti-pattern catalog applies verbatim). And there is a second, quieter answer: <strong>stop relying on the happy path</strong>. Playwright's <span class="mono">page.emulateMedia()</span> natively emulates <span class="mono">forcedColors:'active'</span>, <span class="mono">colorScheme:'dark'</span>, <span class="mono">contrast:'more'</span> and <span class="mono">reducedMotion:'reduce'</span>; Chromatic modes do the same for viewport, locale and RTL. Snapshotting each story across that stress matrix turns "works in the demo state" into six cheap deterministic checks — forced-colors breakage, dark-mode token gaps and motion-sensitivity failures are exactly the bugs a happy-path baseline never sees and a designer shouldn't have to catch by hand.</p>
+      <figure>
+      <svg viewBox="0 0 1000 360" role="img" aria-label="The stress-state matrix: one story is snapshotted across six hostile environments — forced colors, dark mode, increased contrast, reduced motion, RTL with long text, and a narrow viewport — each compared against its own CI-built baseline">
+        <defs><marker id="ahD5b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">BEYOND THE HAPPY PATH · ONE STORY × SIX HOSTILE ENVIRONMENTS · EACH VARIANT IS A CHEAP DETERMINISTIC CHECK</text>
+        <rect x="30" y="118" width="180" height="120" rx="10" class="bxG"/>
+        <text x="46" y="144" class="tt">One story</text>
+        <text x="46" y="164" class="ts">component + state,</text>
+        <text x="46" y="178" class="ts">written once</text>
+        <text x="46" y="204" class="ts">(coverage is D1/D3's</text>
+        <text x="46" y="218" class="ts">job — this is validation)</text>
+        <rect x="300" y="56" width="300" height="40" rx="8" class="bx"/>
+        <text x="316" y="73" class="ti">forced-colors: active</text>
+        <text x="316" y="88" class="ts">Windows High Contrast · does anything vanish?</text>
+        <rect x="300" y="104" width="300" height="40" rx="8" class="bx"/>
+        <text x="316" y="121" class="ti">color-scheme: dark</text>
+        <text x="316" y="136" class="ts">token theming gaps · hardcoded colors surface here</text>
+        <rect x="300" y="152" width="300" height="40" rx="8" class="bx"/>
+        <text x="316" y="169" class="ti">contrast: more / prefers-contrast</text>
+        <text x="316" y="184" class="ts">borders &amp; focus rings must survive</text>
+        <rect x="300" y="200" width="300" height="40" rx="8" class="bx"/>
+        <text x="316" y="217" class="ti">reduced-motion: reduce</text>
+        <text x="316" y="232" class="ts">vestibular safety · animations must have an off state</text>
+        <rect x="300" y="248" width="300" height="40" rx="8" class="bx"/>
+        <text x="316" y="265" class="ti">RTL + long-text / locale</text>
+        <text x="316" y="280" class="ts">layout mirroring · German-length strings · truncation</text>
+        <rect x="300" y="296" width="300" height="40" rx="8" class="bx"/>
+        <text x="316" y="313" class="ti">320px viewport</text>
+        <text x="316" y="328" class="ts">WCAG reflow · the overflow bugs agents introduce</text>
+        <rect x="700" y="118" width="270" height="120" rx="10" class="bxC"/>
+        <text x="716" y="144" class="tt">Snapshot × 6 variants</text>
+        <text x="716" y="164" class="ts">baseline per variant, built in CI</text>
+        <text x="716" y="178" class="ts">(Playwright emulateMedia · Chromatic modes)</text>
+        <text x="716" y="204" class="ts">deterministic: same component,</text>
+        <text x="716" y="218" class="ts">adversarial environment</text>
+        <path class="edD5b" d="M210 160 C 250 100, 260 76, 296 76" />
+        <path class="edD5b" d="M210 168 C 252 140, 262 124, 296 124" />
+        <path class="edD5b" d="M210 176 L 296 172" />
+        <path class="edD5b" d="M210 186 L 296 220" />
+        <path class="edD5b" d="M210 196 C 252 240, 262 268, 296 268" />
+        <path class="edD5b" d="M210 206 C 250 280, 260 316, 296 316" />
+        <path class="edD5b" d="M600 76 C 650 76, 660 130, 696 150" />
+        <path class="edD5b" d="M600 172 C 648 172, 660 176, 696 178" />
+        <path class="edD5b" d="M600 316 C 650 316, 660 226, 696 206" />
+        <text x="30" y="350" class="tg">THE MATRIX CATCHES WHAT A HAPPY-PATH BASELINE CANNOT · AND KEEPS THE DESIGNER'S REVIEW FOR DESIGN, NOT BUG-HUNTING</text>
+      </svg>
+      <figcaption>The stress-state matrix — the missing-things addition the verification pass surfaced. Each variant is a first-class harness check with its own baseline, priced in snapshots; the payoff is that forced-colors, dark-mode, motion and reflow failures stop depending on a human remembering to test them.</figcaption>
+      </figure>
+
+      <h2 id="s3"><span class="n">3</span>Accessibility as a gate — what axe proves, and what it can't</h2>
+      <p>Accessibility is where the deterministic gate is most mature, most standardized, and most legally non-optional — and still the most oversold. The engine is <strong>axe-core</strong> (Deque): an open-source rules library, ~105 rules in the 4.12 line with roughly 90 enabled by default, designed under an explicit <strong>zero-false-positives</strong> policy ("bugs notwithstanding") — which is precisely the property a blocking CI gate needs, because a gate that sometimes cries wolf teaches teams to ignore it. It is also already everywhere, which matters for the client pitch: Google Lighthouse has run axe-core for its accessibility audit since 2018, Microsoft's Accessibility Insights is built on it, and Storybook's a11y addon "uses axe-core to run the tests" — so wiring axe into CI (Playwright + <span class="mono">@axe-core/playwright</span>, or the Storybook 9/10 test integration) adds a gate whose rule set the industry already treats as canonical.</p>
+      <p>Now the honesty. Deque's widely quoted figure — automated testing finds <strong>57%</strong> of accessibility issues — comes from Deque's own 2021 study (~2,000 audits, 13,000+ pages, ~300,000 issues) and measures <em>issue volume</em>, not WCAG success criteria; by that stricter denominator only ~30% of criteria are fully automatable. W3C WAI's position is blunt: tools "can not <em>determine</em> accessibility, they can only <em>assist</em> in doing so" — alt-text <em>quality</em>, focus-order logic, keyboard-trap nuances and screen-reader UX all require human judgment. The classic demonstration is GOV.UK's 2017 "world's least accessible webpage" experiment: 143 deliberately planted barriers, ten tools, <strong>29% of barriers missed by every tool</strong>, the best single tool finding 37–41%. So the gate is necessary and nowhere near sufficient: axe in CI catches the agent's mechanical failures before a human looks; a periodic manual audit and assistive-technology testing catch the rest. Both halves are policy, and the second cannot be delegated.</p>
+      <p>Three 2025–26 developments make the gate more urgent, not less. <strong>(1) The AI-code evidence.</strong> CodeA11y (§0) showed novices don't prompt for accessibility and can't verify it; Suh &amp; Malek found LLM-generated UI beats human code on the basics (contrast, alt text) yet systematically fails ARIA semantics — and that a feedback loop with a11y reports (FeedA11y) closes the gap where prompting doesn't; Aljedaani et al. (2024) measured perceivability violations in 84% of ChatGPT-generated websites. Agent output needs the gate <em>more</em> than human output does, and the gate's output is best fed back to the agent. <strong>(2) Regulation.</strong> WCAG 2.2 has been a W3C Recommendation since 5 October 2023 (now also ISO/IEC 40500:2025); the European Accessibility Act has applied since 28 June 2025 to e-commerce, consumer banking, passenger transport and e-books, with EN 301 549 (effectively WCAG 2.1 AA) as the conformance route. <strong>(3) The anti-pattern got named and fined.</strong> Accessibility overlays — the JavaScript widgets promising compliance without gates — drew an FTC consent order against accessiBe (complaint January 2025, $1M, final order April 2025) for deceptive WCAG-compliance claims; the Overlay Fact Sheet carries 1,000+ professional signatories against the category, and UsableNet data shows 22.6% of H1-2025 accessibility lawsuits targeted sites <em>with</em> overlays installed. The contrast is the lesson: an overlay is a cosmetic layer claiming to remove the problem; a gate is a build-time proof that part of the problem never shipped. And one forward marker: the WCAG 3.0 Working Draft (refreshed March 2026) formalizes graded conformance — Bronze/Silver/Gold — the standards world itself conceding that binary pass/fail is not the whole story, which is §5's argument arriving from a second direction.</p>
+
+      <h2 id="s4"><span class="n">4</span>Lint as law — the cheapest gate, installed first</h2>
+      <p>The lint layer is where E5's advisory-vs-deterministic line becomes concrete, because every rule here replaces a sentence somebody used to write in a style guide. The Stylelint core carries the two workhorses: <span class="mono">color-no-hex</span> (disallow hex colors outright — every color becomes a token reference) and <span class="mono">declaration-property-value-allowed-list</span> (per-property allow-lists, regex-capable, unlisted properties unrestricted). The most token-shaped rule in the ecosystem is the plugin <span class="mono">scale-unlimited/declaration-strict-value</span>: for named properties the value <em>must</em> be a variable, function or keyword, with autofix support — "use tokens" enforced at build time, not requested in a prompt. On the JS side, ESLint's <span class="mono">no-restricted-imports</span> (core, with per-entry custom messages — "Use <span class="mono">&lt;DsButton&gt;</span> from <span class="mono">@acme/ds</span> instead") keeps agents off raw UI libraries and on the system. One correction to the folklore: <span class="mono">no-hardcoded-styles</span> is <em>not</em> a standard ESLint rule — it is a custom-rule example (one niche MUI-specific plugin ships it) — so treat it as a small rule you write once your tokens land, which is itself a useful exercise in what a gate actually is.</p>
+      <p>The design-system vendors encode their systems the same way, which is the strongest evidence the pattern is real practice rather than our theory: GitHub's <span class="mono">@primer/stylelint-config</span> ships <span class="mono">primer/colors</span>, <span class="mono">primer/spacing</span>, <span class="mono">primer/no-override</span> and <span class="mono">primer/no-unused-vars</span>; Shopify's stylelint-polaris rules are explicitly "grouped into categories that help us measure the Polaris design system's coverage" — lint doubles as the adoption metric; Salesforce's current slds-linter (SLDS 2) ships Stylelint <em>and</em> ESLint rules that flag raw values and suggest styling hooks; Carbon's stylelint-plugin-carbon-tokens enforces theme/layout/type/motion tokens with three severity presets and autofix. The last piece of the layer watches the boundary between PRs: the open-source CLI <strong>Dembrandt</strong> extracts a deployed site's live tokens via Playwright, and <span class="mono">--compare baseline.json</span> exits 1 on drift with a machine-readable report — the golden-master move from B2/D7, run as a cron gate, opening a PR instead of blocking one.</p>
+      <table class="map">
+      <tr><th>Advisory (CLAUDE.md / AGENTS.md)</th><th>Deterministic (lint / types / CI)</th><th>Layer</th></tr>
+      <tr><td>"Use design tokens, not hardcoded values"</td><td><span class="mono">color-no-hex</span> + <span class="mono">declaration-strict-value</span> fail the build on raw values</td><td>1 · style lint</td></tr>
+      <tr><td>"Verify props via MCP; never hallucinate a prop"</td><td>TypeScript + component schemas (PatternFly-style Zod) reject unknown props</td><td>2 · API contract</td></tr>
+      <tr><td>"Prefer existing components"</td><td><span class="mono">no-restricted-imports</span> with a message pointing at the DS component + visual regression</td><td>1 + 5</td></tr>
+      <tr><td>"Respect accessibility"</td><td>axe-core in CI blocks merge; interaction tests assert behavior</td><td>3 + 4</td></tr>
+      <tr><td>"Don't break the visual baseline"</td><td>snapshots vs CI-built baselines across the stress matrix</td><td>5 · visual</td></tr>
+      <tr><td>"Keep one aesthetic direction (DESIGN.md)"</td><td><strong>cannot be fully automated → the designer gate (§5)</strong></td><td>6 · human</td></tr>
+      </table>
+      <p>The table is Report 5's core argument applied to this stack, and its last row is the whole of §5: five of six rows compile to pass/fail; the sixth never will. Note the security footnote carried over from D2: lint configs, token files and DESIGN.md are agent-read context, so they inherit M7's rule — reviewed before an agent consumes them, write-gated under I2. There is no known lint-config injection incident as of July 2026, and the write-permission table is what keeps it that way.</p>
+
+      <h2 id="s5"><span class="n">5</span>Conformance vs quality — the evidence for where the human gate sits</h2>
+      <p>This is the chapter's load-bearing distinction, and the verification pass corrected its key citation — the correction makes the argument <em>stronger</em>. FrontendBench (arXiv:2506.13832; 148 prompt–test pairs across five component levels) does <strong>not</strong> use an LLM judge: it executes generated UI in a Puppeteer/Jest sandbox and scores it with <strong>predefined test scripts</strong>, reaching <strong>90.54% average agreement with human experts</strong>. Read correctly, that is the best available evidence <em>for</em> this chapter: <strong>scripted, harness-style verification of specific UI behavior agrees with experts ~90% of the time</strong> — the deterministic stack works. The flip side is equally well measured. UI-Bench (arXiv:2508.20410) ranks text-to-app tools on holistic visual excellence and had to use <em>expert human pairwise comparison</em> (4,000+ judgments, TrueSkill) — the field built a human panel because no machine scorer was trusted. WebDevJudge (arXiv:2510.18560) tested the alternative directly: the best LLM judge reaches <strong>70.34% agreement</strong> with experts on holistic web quality and plateaus there — "LLM-as-a-judge falls short of human-level reliability." Adobe's MLLM-as-a-UI-Judge study (arXiv:2510.08783) finds partial perceptual alignment at best, positioned as a supplement to early UX research; UICrit (UIST 2024) found human design critiques still ranked above the best LLM-generated ones. As of July 2026 there is no solid evidence that an LLM can judge holistic design quality at human level — and the burden of proof is on the claim that it can.</p>
+      <p>That evidence fixes the architecture: <strong>the machine gates verify conformance — inside the vocabulary, on real components, no broken baseline, WCAG rules met, behavior as scripted. The designer gate judges quality — hierarchy, brand fit, taste, whether this was the right design at all.</strong> The designer sits at PR level, exactly L3 on the E6 scale, reviewing work whose conformance is already machine-proven; tooling like Chromatic UI Review operationalizes that position (design/product/engineering sign-off as a required PR check), but a checklist and CODEOWNERS do the same job. WCAG 3.0's draft move from binary criteria to graded Bronze/Silver/Gold conformance is the standards world arriving at the same shape: pass/fail for what can be pass/fail, graded human judgment for the rest. And the failure mode of getting this wrong is named in D6: remove the designer gate and you have D5-on-the-D-scale — drift, slop and entropy at agent speed — because a harness that proves conformance says nothing about whether the conforming thing was worth building.</p>
+      <figure>
+      <svg viewBox="0 0 1000 330" role="img" aria-label="A spectrum from machine-verifiable conformance on the left to human design judgment on the right, with FrontendBench's scripted harness at 90.54 percent on the left, WebDevJudge's LLM judge plateauing at 70.34 percent in the middle, and human critique still best on the right">
+        <defs><marker id="ahD5c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">WHAT THE GATES PROVE vs WHAT ONLY THE DESIGNER JUDGES · BENCHMARK EVIDENCE, JULY 2026</text>
+        <rect x="30" y="70" width="440" height="150" rx="10" class="bxK"/>
+        <text x="46" y="96" class="tt">Machine-verifiable · conformance</text>
+        <text x="46" y="118" class="ts">tokens &amp; values · component APIs · interaction behavior</text>
+        <text x="46" y="133" class="ts">a11y rules · no visual regression · drift within budget</text>
+        <text x="46" y="158" class="ts">FrontendBench: scripted harness ≈ 90.54% expert agreement</text>
+        <text x="46" y="173" class="ts">on specific UI behavior (148 pairs, pass/fail scripts)</text>
+        <text x="46" y="198" class="ts">→ automate maximally; agent iterates on red</text>
+        <rect x="530" y="70" width="440" height="150" rx="10" class="bxA"/>
+        <text x="546" y="96" class="tt">Human-only · quality</text>
+        <text x="546" y="118" class="ts">hierarchy &amp; composition · brand fit · "is this good?"</text>
+        <text x="546" y="133" class="ts">was this the right design at all?</text>
+        <text x="546" y="158" class="ts">WebDevJudge: best LLM judge plateaus at 70.34%</text>
+        <text x="546" y="173" class="ts">UI-Bench: still scored by expert human panels (TrueSkill)</text>
+        <text x="546" y="198" class="ts">→ the designer gate at L3, reviewing proven-conformant work</text>
+        <path class="edD5c" d="M470 145 L 526 145" />
+        <text x="446" y="132" class="ts" text-anchor="end">boundary, mid-2026</text>
+        <rect x="30" y="246" width="940" height="56" rx="10" class="bx"/>
+        <text x="46" y="268" class="ts">The correction that strengthened the thesis: FrontendBench's 90.54% is a TEST-SCRIPT harness, not an LLM judge —</text>
+        <text x="46" y="285" class="ts">so ~90% is what deterministic checks earn, ~70% is what machine taste achieves. Both numbers argue for this stack.</text>
+        <text x="30" y="322" class="tg">WCAG 3.0 (DRAFT, MAR 2026) CONCEDES THE SAME SHAPE: GRADED BRONZE/SILVER/GOLD INSTEAD OF PURE BINARY</text>
+      </svg>
+      <figcaption>Conformance vs quality, with the benchmarks placed where they belong. The left box is §1–§4's territory; the right box is the designer's. Everything about D6's curator role and D7's rollout sequencing follows from which side of this line a check falls on.</figcaption>
+      </figure>
+
+      <h2 id="s6"><span class="n">6</span>Operating the gate — who approves, what it costs, what erodes between PRs</h2>
+      <p>Three operational truths finish the chapter. <strong>First, the human gate is a workflow artifact, not a meeting.</strong> The verifiable mechanics: Chromatic UI Review assigns designers/PMs to the PR and exposes sign-off as a requirable status check; CODEOWNERS routes durable-tier changes (tokens, APIs, new components — D4's classes) to the DS team; the deterministic checks run as required CI checks <em>before</em> either. The much-cited "Uber pattern" — CI blocks the merge <em>and</em> auto-files a Jira ticket — traces to a single Builder.io marketing post with no primary source; treat it as a vendor anecdote. The same post's "Shopify found 14% of admin UI off the Polaris mainline" is likewise vendor-only, though the mechanism underneath (stylelint-polaris's coverage-measuring rule categories) is documented and citable; and "GitHub runs a design check on every PR" is better replaced by the verifiable artifact — GitHub's public AI-powered accessibility-scanner Action (preview, October 2025), which scans, files issues and drafts Copilot fixes. <strong>Second, the gate has a budget.</strong> Managed snapshots cost money (Chromatic's free tier is 5,000 snapshots/month, Chrome-only — secondary sources; TurboSnap exists because snapshot volume is the cost driver), and review minutes cost more; the funnel order in §1 is how you spend both on failures that survived cheaper filters. <strong>Third, systems erode between PRs.</strong> The async lane — Dembrandt drift compares on a schedule, Omlet scanning codebases for off-system components and version lag, Figma Library Analytics tracking adoption (extended to styles and variables in 2025) — exists to catch the slow failures the per-PR gate never sees: shadow components, forked patterns, a deployed site drifting from its token baseline. All three open work; none of them approves it. Self-healing changes who <em>opens</em> the PR, never who <em>approves</em> it — D4's rule, and the audit trail from I3 still records why.</p>
+
+      <h2 id="s7"><span class="n">7</span>Evidence &amp; do-not-cite</h2>
+      <p><strong>Strong, citable with normal attribution:</strong> Playwright's visual-comparison docs (pixelmatch engine, thresholds, stabilization, environment warning — quoted precisely); Chromatic's docs on UI Tests vs UI Review, TurboSnap, SteadySnap and the unstable-causes list; Percy's diff-sensitivity tiers and DOM-snapshot architecture; axe-core's rule inventory, zero-false-positive policy, and its embeddings in Lighthouse (2018), Accessibility Insights and the Storybook a11y addon; W3C WAI on tool limits; GOV.UK's 2017 least-accessible-page experiment (143 barriers, 10 tools, 29% missed by all, best 37–41%); CodeA11y (CHI 2025, peer-reviewed) and FeedA11y/Suh &amp; Malek (arXiv preprint, well-cited — label it); FrontendBench, UI-Bench, WebDevJudge and MLLM-as-UI-Judge (arXiv preprints — label them); WCAG 2.2's Recommendation status and the EAA's 28 June 2025 application; the FTC accessiBe order; Shopify's stylelint-polaris coverage categories and the Primer/SLDS/Carbon lint configs; GitHub's accessibility-scanner Action (public preview). <strong>Vendor or self-published claims — label every time:</strong> Deque's 57% (2021 vendor study, issue <em>volume</em> not criteria); Applitools' 99.9999%/"one billion images" (2020 press release); Percy's Visual Review Agent "3× faster" (launch blog); Chromatic's free-tier numbers (secondary sources); FigmaLint's 26/100→100/100 example (conference-session writeup; the tool itself is Southleft's, Brad and Ian Frost co-present — don't attribute it to Frost); the Builder.io anecdotes (Uber's block-and-ticket, Shopify's 14%, GitHub's per-PR checks — no primary sources found; the Uber one has none at all); Omlet and Figma Library Analytics as adoption signals. <strong>Synthesis — ours, flagged:</strong> the six-layer stack and its cost ordering; the stress-state matrix as standard harness practice; "a gate is not an overlay"; the advisory-vs-deterministic row mapping. These are Report 5's framings argued from cited practice, not published findings.</p>
+      <p><strong>Do not cite:</strong> "FrontendBench shows LLM-as-judge reaches 90.54% agreement" — the paper has no LLM judge; 90.54% is the scripted harness's agreement with experts (this exact sentence lived in our notes and is now corrected workbook-wide); "ds-lint combines token enforcement with 233 WCAG rules" — no such tool could be found; the figure matches nothing (WCAG 2.2 has 87 success criteria, axe-core ~105 rules) and the claim was retired from Report 5's notes; "ESLint no-hardcoded-styles" as a standard rule — it's a custom-rule example (one niche MUI plugin ships that id); "automated tools catch 57% of WCAG criteria" — wrong denominator, it's 57% of issue volume; the GOV.UK study as "142 barriers, 13 tools, 40%" — actual: 143, 10, 37–41%; "animations: 'disabled' must be switched on in Playwright" — it's the default; "Storybook 9, May 2025" — officially June 2025, and in SB9+ the import is <span class="mono">storybook/test</span>, not <span class="mono">@storybook/test</span>; any implication that Chromatic has AI diff-review (it doesn't — its flake handling is algorithmic; Percy and Applitools are where the AI claims live); "accessiBe was fined in 2024" — the FTC complaint is January 2025, the final order April 2025; and BackstopJS, Loki or Lost Pixel recommended without a maintenance caveat (stale since 2024, and Lost Pixel archived April 2026).</p>
+
+      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (first client conversations)</div><ul><li>Which of the six layers exist in CI today? Most clients have types and maybe lint; the gap is almost always the a11y gate and visual regression — price the missing layers, not the present ones.</li><li>Where do visual baselines come from — a pinned CI image or someone's laptop? The answer predicts the flake rate better than any tool choice.</li><li>Who may update baselines, and is that act reviewed? An unreviewed <span class="mono">--update-snapshots</span> path is a gate that approves itself.</li><li>Does any accessibility check block a merge today — and what does the team believe it covers? (The 57%-of-issues vs ~30%-of-criteria conversation is the fastest maturity diagnostic in this chapter.)</li><li>Who holds the designer gate, and how many hours a week do they have? That number, not model quality, caps the D-level (D6).</li><li>Is there any drift/adoption telemetry between PRs — or does the system only get checked at the moment someone touches it?</li></ul></div>
+      <div class="box"><div class="lab">Commit (the defaults we bring)</div><ul><li>Six layers in cost order; the agent iterates on red before any human review; lint + types + axe land in F1, visual regression as soon as baselines are CI-built (D7 sequencing).</li><li>Baseline discipline as policy: pinned render image, baselines in git, deliberate and reviewed updates only; mask/seed/freeze first, thresholds last, flake tracked without blocking.</li><li>axe-core in CI plus a scheduled manual audit — and no overlays, ever; the FTC order is the client-friendly citation.</li><li>The first three lint rules are <span class="mono">color-no-hex</span>, <span class="mono">declaration-strict-value</span> and <span class="mono">no-restricted-imports</span> with a message pointing at the DS; a custom no-hardcoded-styles rule once tokens land.</li><li>The stress matrix (forced-colors, dark, contrast, reduced-motion, RTL/long-text, 320px) as standard story coverage, not a quarterly audit.</li><li>Designer gate at L3 with conformance machine-proven before review; drift and adoption telemetry on the async lane, opening PRs — never approving them.</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember D5 by</div><p>The design harness is E4's verification-first loop pointed at the visual layer: six checks in cost order — style lint, API contract, interaction tests, axe-core, visual regression across a stress matrix, and the human gate last — so the agent iterates against red output before a designer spends a minute. The evidence says the split is real and where to draw it: scripted verification agrees with experts ~90% on specific UI behavior (FrontendBench), while LLM judges of holistic quality plateau near 70% (WebDevJudge) and the field still scores visual excellence with human panels (UI-Bench) — so machines prove conformance, and the designer at L3 judges quality. Everything in the stack predates agents and is documented practice; what agents change is the urgency — they ship UI faster than any review scales, they omit accessibility unless a loop forces it (CodeA11y, FeedA11y), and since June 2025 the EU prices that omission in law.</p></div>
+
+      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Playwright — Visual comparisons · Chromatic docs (UI Tests / UI Review / TurboSnap / unstable tests)</div><div class="mt">playwright.dev/docs/test-snapshots · chromatic.com/docs</div><p>The mechanics of §2 from primary docs: pixelmatch, thresholds, two-consecutive-screenshot stabilization, the environment warning — and the deterministic/human split (UI Tests vs UI Review) that maps onto this chapter's thesis feature-for-feature.</p></div>
+      <div class="item"><div class="rt">BrowserStack — Percy &amp; the Visual Review Agent · Applitools — one billion images (2020)</div><div class="mt">browserstack.com/percy/ai-agents · prnewswire.com (Jun 2020)</div><p>The AI-diffing claims at their source: bounding boxes, natural-language summaries, "3× faster reviews," "99.9999% accuracy." Read as vendor marketing with real engineering underneath — label accordingly.</p></div>
+      <div class="item"><div class="rt">Deque — axe-core &amp; the 57% study · W3C WAI — Selecting evaluation tools · GOV.UK — the least accessible webpage (2017)</div><div class="mt">github.com/dequelabs/axe-core · w3.org/WAI/test-evaluate/tools/selecting · accessibility.blog.gov.uk</div><p>The a11y gate's capabilities and limits from primary sources: ~105 rules, zero-false-positive policy, issue-volume vs success-criteria denominators, and the 143-barrier experiment that still ends the "just automate it" argument.</p></div>
+      <div class="item"><div class="rt">Mowar et al. — CodeA11y (CHI 2025) · Suh &amp; Malek — FeedA11y (arXiv:2503.15885)</div><div class="mt">dl.acm.org/doi/10.1145/3706598.3713335 · arxiv.org/abs/2503.15885</div><p>The evidence pair for why agent output needs the a11y gate more than human output: novices don't prompt for it and can't verify it; a feedback loop with a11y reports closes the gap where better prompts don't.</p></div>
+      <div class="item"><div class="rt">FrontendBench (arXiv:2506.13832) · WebDevJudge (arXiv:2510.18560) · UI-Bench (arXiv:2508.20410)</div><div class="mt">arxiv.org · 2025–2026 preprints — label as such</div><p>The conformance-vs-quality evidence: scripted harnesses ~90% expert agreement on behavior; LLM judges ~70% on holistic quality; visual excellence still scored by expert human panels. The triangulation that places the designer gate.</p></div>
+      <div class="item"><div class="rt">Stylelint rules &amp; DS configs — core · declaration-strict-value · primer · stylelint-polaris · slds-linter · carbon-tokens</div><div class="mt">stylelint.io · github.com/primer/stylelint-config · polaris-react.shopify.com · github.com/salesforce-ux/slds-linter</div><p>§4's installable layer: the rules that make "use tokens" a build failure, and the four vendor systems that encode theirs the same way — Shopify's coverage-measuring rule categories are the governance bonus.</p></div>
+      <div class="item"><div class="rt">PatternFly — component schemas · Dembrandt — token drift CLI</div><div class="mt">github.com/patternfly/patternfly-component-schemas · github.com/dembrandt/dembrandt</div><p>The two youngest artifacts in the stack (Sep 2025 / 2026): JSON Schema + Zod contracts that validate LLM-generated props at runtime, and a drift gate that diffs a deployed site's live tokens against a committed baseline with honest exit codes.</p></div>
+      <div class="item"><div class="rt">FTC — accessiBe order (2025) · Overlay Fact Sheet · EAA / WCAG 2.2 / WCAG 3.0 draft</div><div class="mt">ftc.gov (Jan/Apr 2025) · overlayfactsheet.com · w3.org/TR/WCAG22 · w3.org/WAI/wcag3</div><p>The regulatory and anti-pattern file: the $1M deceptive-claims order, 1,000+ signatories against overlays, WCAG 2.2 as the current Recommendation, the EAA in force since June 2025, and WCAG 3.0's graded-conformance draft as the forward marker.</p></div>
+      <div class="item"><div class="rt">Report 5 — the design-harness research notes (this workbook)</div><div class="mt">module M6 research notes · section 4</div><p>The synthesis this deep dive expands — the verification loops, the advisory-vs-deterministic table and the designer-in-the-loop model — with this chapter's corrections applied (FrontendBench re-attributed to scripted harnesses, the ds-lint claim retired, FigmaLint re-attributed to Southleft).</p></div>
+      </div>
+
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (D5-design-harness-verification-guardrails-deepdive.html). Its natural neighbours in the workbook are D1 (why the third artifact needs gates at all), D2 (the token contract the lint layer enforces), D3 (the consumption channels whose props §1's contract layer validates), D4 (the governance that holds the human gate and the self-healing rule), D6 (the curator role §5's evidence defines), D7 (the F0–F4 rollout where these layers get installed), E4 (the verification loop this chapter instantiates visually), E5 (the advisory-vs-deterministic distinction §4 applies) and M7 (why lint configs are untrusted context). The six-layer stack, its ordering, and the stress-matrix practice are this workbook's synthesis — flagged here as everywhere; the D1–D5 scale they serve remains our original framing, not an industry standard. Tool and vendor facts (snapshot pricing, agent features, Storybook 10) are point-in-time as of July 2026 and marked for re-verification before client use.</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>

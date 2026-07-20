@@ -3,6 +3,28 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.55 · 2026-07-20
+
+**NEW DEEP DIVE D5 — The design harness: verification loops & guardrails.** Fifth M6
+companion (`deep-dives/D5-design-harness-verification-guardrails-deepdive.html` + in-workbook
+overlay), three SVG diagrams. The six-layer stack in cost order (style lint → API contract →
+interaction tests → axe-core → visual regression → designer gate); visual-regression practice
+(pixelmatch mechanics, CI-built baselines in pinned images, deliberate-only updates, the
+false-positive taming sequence that answers the topic's open question) plus the stress-state
+matrix (forced-colors/dark/contrast/reduced-motion/RTL/320px as cheap harness checks — the
+swarm's missing-things addition); axe-core as the a11y gate with honest limits (~105 rules /
+~90 default, zero-false-positive policy, Deque's 57% = issue volume not criteria, GOV.UK
+143-barrier study, WCAG 2.2/EAA, overlays anti-pattern with the FTC accessiBe order);
+lint-as-law (color-no-hex, declaration-strict-value, no-restricted-imports,
+primer/polaris/slds-linter/carbon configs, Dembrandt drift gate); conformance vs quality with
+benchmark triangulation. Fact pass corrections: **FrontendBench's 90.54% re-attributed to its
+scripted test harness (no LLM judge in the paper) — the workbook topic and Report 5 notes
+fixed**, WebDevJudge's ~70% LLM-judge plateau added as the counter-weight; the "ds-lint 233
+WCAG rules" claim retired as unverifiable; FigmaLint re-attributed to Southleft (Frosts
+co-present); Uber block+ticket and Shopify 14% labeled vendor-blog-only anecdotes; Storybook 9
+dated June 2025 with the `storybook/test` import; Chromatic noted as having NO AI diffing
+(Percy/Applitools claims labeled vendor).
+
 ## v1.54 · 2026-07-20
 
 **NEW RUNBOOK PB4 — Handoff: run the contract end-to-end.** Fourth M9 runbook, in both
