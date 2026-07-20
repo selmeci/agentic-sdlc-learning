@@ -266,8 +266,14 @@ these runbooks later — no separate repo.
   AGENTS.md; fresh point-in-time layer (Copilot↔Jira GA Jun 25, Spec Kit v0.13.0, Kiro EARS
   + Analyze Requirements, gplint, Assisted-by trailer standard); Ambig-SWE cited as mechanism
   only, Reqnroll version deliberately unpinned (conflicting sources).
-- Next, one per version: **PB5 Pilot** (E7, B6 — converges with T2's pilot playbook;
-  compares against the delivery baseline captured in PB1).
+- ~~**PB5 Pilot** (E7, B6 — converges with T2's pilot playbook; compares against the
+  delivery baseline captured in PB1)~~ — **done (v1.56)**, with a two-teammate research pass
+  (repo distillation + web fact-verification, 2026-07-20): ten steps / three phases
+  (pre-register → measured window → read/gate/decide); GO/HOLD/STOP against pre-registered
+  criteria, guardrails as automatic dials (Digital Apprentice asymmetry), the token/cost
+  column added to PB1 §3; fresh layer: METR 2026 contamination note, the 2×-mandate study
+  (arXiv:2607.01904), DX Core 4 AI addendum, cost-to-merged-feature benchmark. **M9 complete
+  (5/5)** — the module's backlog items (field-report loop, team-level tracking) remain.
 - Backlog (deliberately deferred):
   - **Field-report loop** — a completed client runbook feeds an anonymized results entry
     back into the relevant deep dive; the corpus is currently 100% externally cited, and

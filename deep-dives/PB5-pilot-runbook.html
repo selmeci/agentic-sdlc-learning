@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PB5 Runbook — Pilot: Measure, Gate, Decide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+
+/* ===== M9 playbook runbooks (v1.48) ===== */
+.pbstep{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin:9px 0}
+.pbstep input.pbck{margin-top:4px;width:16px;height:16px;accent-color:var(--cobalt);flex:none;cursor:pointer}
+.pbtxt{flex:1;min-width:0}
+.pbwhat{font-family:var(--disp);font-weight:600;font-size:14.5px;cursor:pointer}
+.pbwhy{font-size:13.5px;color:var(--soft);margin:3px 0 0}
+.pbdone{font-family:var(--mono);font-size:11px;color:var(--pine);margin-top:5px}
+.pbtpl{position:relative;margin:12px 0}
+.pbtpl pre{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--idle-bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;overflow-x:auto;white-space:pre-wrap}
+.pbcopy{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:10.5px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;color:var(--soft)}
+.pbcopy:hover{border-color:var(--cobalt);color:var(--cobalt-deep)}
+.pbprog{font-family:var(--mono);font-size:11px;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.pbnote{font-family:var(--mono);font-size:11.5px;color:var(--soft)}
+.closingnote{font-family:var(--mono);font-size:11.5px;color:var(--soft);border-top:1px solid var(--line);padding-top:14px;margin-top:26px;line-height:1.7}
+svg .edPB5{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB5a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">PB5 · RUNBOOK</span>
+    <h1>Pilot: Measure, Gate, Decide</h1>
+    <span class="bc">companion to module M9 · Playbook</span>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why this runbook exists</a>
+  <a href="#s1"><b>1</b> · How to run it</a>
+  <a href="#s2"><b>2</b> · Phase A — Pre-registration</a>
+  <a href="#s3"><b>3</b> · Phase B — The measured window</a>
+  <a href="#s4"><b>4</b> · Phase C — Read, gate, decide</a>
+  <a href="#s5"><b>5</b> · Toolbox &amp; templates</a>
+  <a href="#s6"><b>6</b> · Exit gate &amp; takeaways</a>
+</nav>
+
+<main>
+<h2 id="s0"><span class="n">0</span>Why this runbook exists</h2>
+<p class="lead">PB5 closes the journey: PB1 measured the ground, PB2 built the net, PB3 built the cage, PB4 ran the contract once — PB5 decides, with numbers, whether the whole construction earns wider scope. It is <a href="B6-roadmap-f0-f3-deepdive.html">B6</a>'s F2 phase run as an experiment: DORA supplies the metrics and <a href="E7-metrics-anti-patterns-deepdive.html">E7</a>'s METR-style method supplies the honesty — a frozen baseline, an as-random-as-possible comparison, success criteria written down <em>before</em> the first pilot task — and B6's F2→F3 gate with its back-triggers and STOP criteria supplies the decision. The exit is deliberately concrete: <strong>a signed GO / HOLD / STOP decision against pre-registered criteria, in a report the client can hand to their board.</strong></p>
+<p>Like PB3 and PB4, this runbook has exactly <strong>one</strong> entry posture: a recorded <strong>PB4 GO</strong> — the handoff-delivery report proving the discipline ran end-to-end once. Two earlier artifacts are inherited by reference: PB1's frozen delivery baseline (assessment report §3 — the pilot's "before" snapshot, to which this runbook finally adds the token column PB1 left open) and the running harness itself — PB2's net and PB3's cage stay on throughout, because <strong>the pilot measures the system, not the model</strong>: an agent with the discipline switched off is a different system, and its numbers transfer to nothing. No PB4 GO → the loop has not run even once; there is nothing to scale — go back to <a href="PB4-handoff-runbook.html">PB4 Handoff</a>.</p>
+<p>The failure PB5 prevents is the best-measured one in this workbook: <strong>believing feel</strong>. The METR RCT (16 experienced developers, 246 real tasks on their own mature repos, AI use randomized per task, arXiv:2507.09089) measured developers <strong>19% slower</strong> with early-2025 AI while they believed they were ~20% faster — having predicted +24% going in. The wider business statistics say the same thing at organisation scale, once read correctly: MIT NANDA's much-misquoted report actually says <em>"95% of organizations are getting zero measurable return"</em> on enterprise GenAI (July 2025, not peer-reviewed; 300+ initiative reviews, 52 interviews, 153 surveys — the circulating "95% of pilots fail" is a misquote), and KPMG's 2026 stall diagnosis is blunter: enterprise AI does not stall because pilots fail — it stalls because the pilot moved fast <em>"precisely because governance was minimal, data was curated, scope was controlled."</em> PB1–PB4 exist so that this pilot is not that pilot: the governance, the data discipline and the scope were installed first, which is exactly what makes its result transferable.</p>
+<div class="callout"><div class="t">The control arm is now the scarce resource</div><p>The field's flagship study broke on this in 2026, and said so: METR's follow-up (57 developers, 800+ tasks, late-2025 tools) found the original cohort still −18% (CI −38%…+9%) but new developers only −4% (CI −15%…+9%) — and METR itself rates the result <strong>"very weak evidence"</strong>, because 30–50% of developers withheld tasks they did not want to do without AI, and the experiment is being redesigned (metr.org, 2026-02-24; <a href="E7-metrics-anti-patterns-deepdive.html">E7</a> §4 tells the full story). The lesson lands directly on this runbook: by mid-2026, developers' unwillingness to work without AI is the biggest design risk in any pilot. <strong>Protect the control arm or lose the experiment</strong> — assignment is never self-selected, defections are logged, and a contaminated comparison is reported as contaminated, not spun.</p></div>
+<div class="callout amber"><div class="t">What this is not</div><p>Not a surveillance program: every delivery metric here is <strong>system/team-level, never a per-developer scorecard</strong> — the moment DORA keys become individual targets, Goodhart's law destroys the signal (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a>). Not a dashboard purchase: all of it is computable from git history, CI logs and the incident system the client already has; telemetry products are optional and their vendor numbers are marketing until reproduced locally. And not a proof machine: with dozens of tasks per arm — a realistic client sample — the honest output is often <strong>direction, not percentages</strong>, and this runbook says so out loud rather than quoting false precision.</p></div>
+<p>The theory this runbook distils: <a href="E7-metrics-anti-patterns-deepdive.html">E7</a> for the DORA process (the four keys plus rework rate, computed from data that already exists), the METR method (randomize what you can, measure objectively, pre-register success, state caveats) and the anti-pattern catalogue; <a href="B6-roadmap-f0-f3-deepdive.html">B6</a> for the F2→F3 gate, the back-triggers and the STOP criteria — and the standing flag that F0–F3 and its thresholds are this workbook's Report 4 synthesis, not an industry standard. PB5 is also the seed of the T2 deliverable (measurement &amp; pilot design), the trajectory topic this material converges with.</p>
+
+<h2 id="s1"><span class="n">1</span>How to run it</h2>
+<p>Run PB5 with one person plus the pilot team, the requirement owner keeping PB4's loop alive, and the client sponsor — who signs the pre-registration and receives the report. Scope: the F2 write scope PB3 granted (the heatmap-selected modules), one pilot window. Duration is a floor, not a target: <strong>8–12 weeks per window and dozens of comparable tasks per arm</strong> (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a>'s heuristic); below that floor, claim direction only. Steps are written as ČO (the action), PREČO (the theory link) and DONE (the exit criterion).</p>
+<p>PB3's probe rule has a measurement twin here: <strong>a metric pipeline that has not run once on real data is not installed.</strong> Phase A therefore ends with a dry run — every metric computed once on a week of existing history before the window you will bet on. What cannot be probed — whether the client will accept a STOP recommendation — is exactly the judgment this runbook exists to put in front of them, in writing.</p>
+<p><span class="pbprog" data-pbprog="pb-pilot"></span></p>
+<p class="pbnote">In the workbook version of this runbook, progress is saved locally (same store as topic progress). This standalone copy does not persist checkbox state.</p>
+<figure>
+<svg viewBox="0 0 900 300" role="img" aria-label="The pilot PB5 runs: a frozen baseline and a pre-registered bar feed a protected two-arm window, read with identical queries into a three-exit gate, while back-triggers act automatically during the window">
+  <defs><marker id="ahPB5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <text x="24" y="28" class="tg">THE PILOT — B6'S F2 PHASE RUN AS AN EXPERIMENT (PHASES A + B + C)</text>
+  <rect x="24" y="44" width="124" height="52" rx="10" class="bxG"/><text x="36" y="66" class="ti">PB1 baseline</text><text x="36" y="82" class="ts">frozen · §3 + cost</text>
+  <rect x="170" y="44" width="124" height="52" rx="10" class="bxA"/><text x="182" y="66" class="ti">Pre-register</text><text x="182" y="82" class="ts">success · guardrails</text>
+  <rect x="316" y="44" width="124" height="52" rx="10" class="bxC"/><text x="328" y="66" class="ti">F2 window</text><text x="328" y="82" class="ts">agent arm · control</text>
+  <rect x="462" y="44" width="124" height="52" rx="10" class="bx"/><text x="474" y="66" class="ti">After-window</text><text x="474" y="82" class="ts">identical queries</text>
+  <rect x="608" y="44" width="124" height="52" rx="10" class="bx"/><text x="620" y="66" class="ti">Read deltas</text><text x="620" y="82" class="ts">stability + thruput</text>
+  <rect x="754" y="44" width="122" height="52" rx="10" class="bxK"/><text x="766" y="66" class="ti">Gate</text><text x="766" y="82" class="ts">GO · HOLD · STOP</text>
+  <line x1="148" y1="70" x2="170" y2="70" class="edPB5"/>
+  <line x1="294" y1="70" x2="316" y2="70" class="edPB5"/>
+  <line x1="440" y1="70" x2="462" y2="70" class="edPB5"/>
+  <line x1="586" y1="70" x2="608" y2="70" class="edPB5"/>
+  <line x1="732" y1="70" x2="754" y2="70" class="edPB5"/>
+  <text x="24" y="134" class="tg">THE BACK-TRIGGERS — DEMOTION IS A NUMBER ACTING, NOT A MEETING (PHASE B)</text>
+  <rect x="24" y="150" width="200" height="52" rx="10" class="bxA"/><text x="36" y="172" class="ti">Guardrail fires</text><text x="36" y="188" class="ts">latency · rework · no-review</text>
+  <rect x="248" y="150" width="230" height="52" rx="10" class="bxC"/><text x="260" y="172" class="ti">The agreed dial turns</text><text x="260" y="188" class="ts">batch → scope → agents → F1</text>
+  <rect x="502" y="150" width="200" height="52" rx="10" class="bx"/><text x="514" y="172" class="ti">Weekly log entry</text><text x="514" y="188" class="ts">trigger → dial (or reason)</text>
+  <line x1="224" y1="176" x2="248" y2="176" class="edPB5"/>
+  <line x1="478" y1="176" x2="502" y2="176" class="edPB5"/>
+  <path d="M602 150 V118 H378 V100" class="edPB5 edD"/>
+  <text x="24" y="250" class="ts">The primary outcomes are read once, at the end, with the same queries that froze the baseline — the guardrails are read weekly and act automatically.</text>
+  <text x="24" y="270" class="ts">Every deterministic row is a number with an agreed threshold; the judgment — GO, HOLD or STOP — is human, signed, against the pre-registered criteria.</text>
+</svg>
+<figcaption>The pilot PB5 runs: a frozen baseline and a pre-registered bar in front, a protected two-arm window in the middle, and a three-exit gate at the end — with back-triggers acting automatically while the window runs.</figcaption>
+</figure>
+
+<h2 id="s2"><span class="n">2</span>Phase A — Pre-registration: freeze the bar before the race</h2>
+<p>Phase A is where the pilot is won or lost, and no pilot task runs until it is done. Everything in it exists to make the end-of-window conversation short: the baseline is frozen, the comparison is designed, the success bar and the kill criteria are signed — so the numbers, when they arrive, land on a decision that was already agreed.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s1" data-pb="pb-pilot" data-step="pb5-s1">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s1">A1 · Re-pull the baseline and answer the computability question</label>
+    <p class="pbwhy">Re-run PB1's §3 queries over the agreed before-window and freeze both the numbers and the queries — commit them together, because <strong>identical queries before and after are what make a delta mean anything</strong> (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a> §2). Then answer this topic's open question in writing: for each of the five keys (deploy frequency, lead time, change-fail rate, recovery time, rework rate) the client cannot compute from day 0, record the named proxy that replaces it — release tags standing in for deploy logs, hotfix-PR counts standing in for an absent incident system — and use the same proxy on both windows. A baseline captured at assess time and never re-pulled drifts: PB1 froze the snapshot, this step proves it still computes.</p>
+    <div class="pbdone">DONE = baseline table + the exact queries committed; every key either computed or replaced by a named proxy used identically on both windows.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s2" data-pb="pb-pilot" data-step="pb5-s2">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s2">A2 · Add the cost column PB1 left open</label>
+    <p class="pbwhy">Extend the baseline with the token column: measured token/usage spend per merged PR and per completed task, next to PB1's review-hours, CI-minutes and seat-licence columns (template below). The unit economics to watch is <strong>cost-to-merge, not token price</strong>: a July 2026 practitioner benchmark that held the merge gate constant measured <strong>$5.56–$69.97 per merged feature</strong> across models and found the two <em>"point in opposite directions"</em> — cheap models burn the difference in the review gate. And keep the column in its place: DX's Core 4 guidance (June 2026) files AI adoption and token spend under <strong>diagnostic telemetry, not outcomes</strong> — the cost column exists so ROI is reported <em>next to</em> the DORA deltas, never instead of them. Pricing churns monthly (Copilot moved to usage-based billing on 2026-06-01) — every price is point-in-time.</p>
+    <div class="pbdone">DONE = cost baseline computed on the before-window; the per-PR/per-task attribution rule written; token metering confirmed working for the pilot window.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-cost">copy</button><pre id="pb5-tpl-cost">
+# APPEND to the PB1 assessment report §3 (the pilot's "before" snapshot)
+## 3b Cost baseline — the token column (PB5)
+Window (same as §3): ____________
+Cost per merged PR:   review hours ____ · CI minutes ____ · seat licences ____
+                      + token/usage spend ____        (= the column PB5 adds)
+Cost per completed task: ____
+Attribution rule — how token spend maps to a PR/task (per-seat spend ÷ merged
+PRs, or per-session metering where the tool exposes it): ____________
+
+# Measure cost-to-merge, not token price: the two can point in opposite
+# directions (July 2026 benchmark: $5.56–$69.97 per merged feature; the cheap
+# model burned the difference in review). Prices churn monthly — re-verify
+# at pilot start, again at the gate.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s3" data-pb="pb-pilot" data-step="pb5-s3">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s3">A3 · Design the comparison — and protect the control arm</label>
+    <p class="pbwhy">Split comparable work into an agent arm and a control arm, <strong>as random as the work allows</strong>: per-task randomization like METR's if the stream permits, two comparable task streams or teams if not (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a> §3). Fix the unit of analysis — a team or module, never individuals — and put the contamination rules in writing: control tasks genuinely run without agents, assignment is never self-selected, defections are logged rather than punished. Include skeptics and late adopters in the agent arm — volunteer-only cohorts flatter the tool. The §0 callout is the reason this step is no longer optional politeness: METR's own follow-up collapsed on self-selection, with 30–50% of developers withholding tasks they did not want to do without AI. The closer to random, the more the result means; and how far from random you landed is itself a line in the report, not a secret.</p>
+    <div class="pbdone">DONE = assignment rule + contamination rules committed; both arms' task pools listed; the contamination log exists (and is empty).</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s4" data-pb="pb-pilot" data-step="pb5-s4">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s4">A4 · Pre-register success, guardrails and back-triggers — then sign and dry-run</label>
+    <p class="pbwhy">Write the one-page pre-registration (template below): primary outcomes with thresholds or directions, the minimum sample, the guardrail bounds, and the back-trigger each breach turns — signed by the sponsor and module owner <strong>before the first pilot task</strong>, together with the sealed answers to the survey's first question (predicted speedup). Pre-registration is what makes the result unarguable afterwards (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a> §3); agreeing back-triggers now is what makes demotion automatic later — <em>a number acting, not a meeting being won</em> (<a href="B6-roadmap-f0-f3-deepdive.html">B6</a> §5, borrowing the Digital Apprentice's asymmetry: promotion needs evidence plus a recorded human authorization, demotion happens without waiting for one — arXiv:2606.04321, a design proposal, flagged as such). The guardrail set follows the 2026 evidence to where the strain lands first: an enterprise "2× mandate" study (802 developers, 196,212 PRs, arXiv:2607.01904) watched per-capita throughput reach 2.09× the pre-mandate baseline while <strong>per-reviewer load roughly doubled and automated review overtook human review</strong> — merge and revert rates held, and the queue quietly became the constraint. Close the phase with the dry run: compute every metric once on a week of existing history, so the pipeline is proven before the window that counts.</p>
+    <div class="pbdone">DONE = pre-registration committed and signed; predicted-speedup answers sealed; dry run produced every metric once without hand-editing.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-prereg">copy</button><pre id="pb5-tpl-prereg">
+# pilot-preregistration.md — signed BEFORE the first pilot task (E7 §3, B6 §2)
+Client / module(s): ____________   Window: ____ weeks (floor: 8–12)
+Arms: agent-assisted / control     Unit of analysis: team or module
+                                   (never individuals — DORA is not a scorecard)
+
+## Assignment rule (as random as the work allows; never self-selected)
+____________
+Contamination rules: control tasks run without agents; defections logged,
+not punished; skeptics included in the agent arm (volunteers-only flatters).
+
+## Primary outcomes — read ONCE, at window end, same queries as the baseline
+deploy frequency ____      lead time ____        change-fail rate ____
+recovery time ____         rework rate ____
+Success = ____________________ (thresholds or directions, decided now)
+Minimum sample: ____ comparable tasks per arm
+  below it → direction-only claims, no percentages.
+
+## Guardrails — read weekly; each bound names the dial it turns (B6)
+review latency        ≤ ____   → shrink batch size
+PR size               ≤ ____   → hold scope
+no-review-merge share ≤ ____   → fewer agents, not more reviewers on paper
+rework / revert direction ____ → module back to F1 (demotion is automatic)
+
+## Perception capture (evidence about bias, not speed)
+Q1, sealed now:  "How much faster/slower do you expect agent-assisted
+                  work to be here?" ____
+Q2, window end:  "How much faster/slower was it?" ____  → compare to measured
+
+Signed (sponsor / module owner / requirement owner): ____________  Date: ____
+</pre></div>
+
+<h2 id="s3"><span class="n">3</span>Phase B — Run the measured window</h2>
+<p>Phase B is deliberately the quiet phase: the pilot team works, the telemetry accumulates, and the only weekly ceremony is fifteen minutes of guardrail reading. The discipline is in what does <em>not</em> happen — no mid-window autonomy promotions, no peeking at the primary outcomes to re-argue the bar, no switching the harness off to go faster.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s5" data-pb="pb-pilot" data-step="pb5-s5">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s5">B1 · Run F2 at the granted level, with the discipline on</label>
+    <p class="pbwhy">Pilot tasks flow through PB4's contract loop at PB3's granted autonomy — and stay there: no promotions mid-window, because changing the treatment mid-experiment forfeits the comparison. Keep batches small: DORA 2024's mechanism for teams that kept stability while adopting AI is adherence to <em>"small batch sizes and robust testing"</em>, and its data says batch size tends to <em>increase</em> when AI is used — resist exactly that drift. The restraint has a practitioner name: Swarmia's five-levels analysis puts the honest industry ceiling between levels 2 and 3, <em>"and the reason is usually not the tool, but how purposefully they're using it"</em> — the pilot exists to earn the next level with evidence, not to demo it early (<a href="E6-autonomy-levels-deepdive.html">E6</a>).</p>
+    <div class="pbdone">DONE = pilot underway; REQ ids on every pilot PR (PB4's gate keeps proving it); zero autonomy changes logged mid-window.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s6" data-pb="pb-pilot" data-step="pb5-s6">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s6">B2 · Read the guardrails weekly — dials, not debates</label>
+    <p class="pbwhy">Fifteen minutes weekly over the guardrail row (template below): rework direction, change-fail, review latency, PR size, queue depth, no-review-merge share, token spend. A fired trigger turns its agreed dial <strong>the same week</strong> — shrink batch, hold scope, fewer agents, module back to F1 — and the log records either the dial or the written reason it did not turn. The primary outcomes are not read mid-window; that is the pre-registration discipline holding. Why weekly, and why these: the failure shape arrives in the review queue first and fast — Faros' 2026 telemetry (vendor, ~22,000 developers, flagged as such) has median review time up 441.5%, PR size up 51.3% and <strong>31.3% more PRs merging without any review</strong>; the independent 2×-mandate study confirms the mechanism at 802 developers with reviewer load doubling while merge and revert rates stayed flat — the strain hides in the queue, not in the defect count, until review is skipped (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a> AP3). Weekly is the cadence at which a dial still beats a crisis.</p>
+    <div class="pbdone">DONE = weekly log committed every week; every fired trigger followed by its dial or a written reason — none silently ignored.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-weekly">copy</button><pre id="pb5-tpl-weekly">
+# pilot-weekly.md — 15 minutes, dials not debates (B6 back-triggers)
+| wk | rework dir | change-fail | review latency | PR size | queue | no-review % | tokens | trigger fired | dial turned |
+|----|------------|-------------|----------------|---------|-------|-------------|--------|---------------|-------------|
+
+# Rules:
+# - primary outcomes are NOT read mid-window (pre-registration discipline);
+#   guardrails are health, outcomes are the verdict.
+# - a fired trigger turns its agreed dial the same week — no meeting needed.
+# - a fired trigger with no dial turned gets a written reason on its row.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s7" data-pb="pb-pilot" data-step="pb5-s7">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s7">B3 · Run the enablement the evidence rewards — and close the survey</label>
+    <p class="pbwhy">During the window, do the two things 2026's field data says move adoption: make the champion's wins <strong>visible to peers</strong> — Microsoft's instrumented study of its own CLI-agent rollout (tens of thousands of engineers, arXiv:2607.01418) found first use spreading primarily through social networks and recommends exactly that lever — and run structured enablement rather than licence distribution: DX's Q4 2025 report (135,000 developers, 425 organizations) is blunt that <em>"simply handing out licenses is not enough."</em> Keep the two headline PR numbers separate when the client quotes them back: Microsoft's ~24% sustained merge lift and Faros' figures come from different methods and populations — never merge them into one number (<a href="B6-roadmap-f0-f3-deepdive.html">B6</a> §3). At window end, collect the survey's second half (perceived speedup) before anyone sees the measured results — the gap between the two is a deliverable, evidence about bias that pre-empts "but it feels faster" in the gate meeting.</p>
+    <div class="pbdone">DONE = enablement actions logged; both survey halves collected, the second before results were shown; friction notes filed.</div>
+  </div>
+</div>
+
+<h2 id="s4"><span class="n">4</span>Phase C — Read, gate, decide</h2>
+<p>Phase C is one honest computation and one signed decision. Everything hard was done in Phase A; what remains is refusing to soften it now that the numbers are real.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s8" data-pb="pb-pilot" data-step="pb5-s8">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s8">C1 · Compute the after-window and read the deltas honestly</label>
+    <p class="pbwhy">Recompute every pre-registered metric with the frozen queries; report per-metric deltas, <strong>stability always beside throughput</strong>, never a composite score (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a> §2). If the sample came in under the pre-registered minimum, the claims are direction-only — write "throughput moved up, stability held", not a percentage. Then compute the perception gap: predicted vs perceived vs measured. The reading rule comes from DORA's own arc: 2024 measured AI adoption costing stability (−7.2%) while 2025's report found throughput turned positive with instability still elevated — <em>faster, but not safer</em>, the amplifier thesis. A throughput gain with falling stability is not a partial win to round up; it is the signature of a weak surrounding system, and surfacing it is what separates this pilot from the vendor decks the client has already seen.</p>
+    <div class="pbdone">DONE = results table committed: every pre-registered metric, its delta (or direction), and the perception gap — same queries as the baseline, verified by diff.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s9" data-pb="pb-pilot" data-step="pb5-s9">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s9">C2 · Run the F2→F3 gate: GO / HOLD / STOP</label>
+    <p class="pbwhy">Walk the gate checklist (template in §5) with named signatories. <strong>GO</strong> = pre-registered success met and guardrails within bounds → F3 expansion opens. <strong>HOLD</strong> = mixed or underpowered → extend the window or shrink scope and re-run the gate on a named date; HOLD is a normal exit, not a failure — the METR follow-up teaches that even the field's best measurement sometimes says "we cannot tell yet", and saying it is the credible move. <strong>STOP</strong> = a <a href="B6-roadmap-f0-f3-deepdive.html">B6</a> STOP condition surfaced (no verification substrate, safety-critical scope without provenance, no audit trail) or a guardrail breached persistently with its dials exhausted → the recommendation is written down, because <em>a roadmap that cannot say no is a sales document</em> (B6 §5). Gates are decided by checkable facts, not the quarter ending: every row of the checklist is a number against a bound that was agreed in Phase A — the only judgment left is which of the three words to sign.</p>
+    <div class="pbdone">DONE = decision recorded with date, criteria and signatories; HOLD carries its re-run date; STOP names its condition.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s10" data-pb="pb-pilot" data-step="pb5-s10">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s10">C3 · Write the pilot report — and route what it earned</label>
+    <p class="pbwhy">Fill the report (template in §5): baseline-vs-pilot table, the perception gap, the guardrail log, cost per merged PR including tokens, the signed decision, and the caveats stated plainly — sample size, brownfield messiness, task heterogeneity; naming the limits is what makes the findings that survive them persuasive (<a href="E7-metrics-anti-patterns-deepdive.html">E7</a> §3). On GO, the report carries the expansion plan: F3 proceeds module by module in heatmap order, and <strong>every new module gets the F1 treatment first</strong> — PB2's net and PB3's cage are recycled per module, promotions stay dual-key, demotion thresholds carry over (<a href="B6-roadmap-f0-f3-deepdive.html">B6</a>). The report has one more customer: this methodology itself. Its corpus is 100% externally cited — a finished pilot is the first first-party evidence, and the anonymized results entry feeding back into these deep dives is the field-report loop the roadmap reserves for exactly this artifact.</p>
+    <div class="pbdone">DONE = report delivered to the sponsor; on GO, the first expansion module named with its F1 checklist opened; the anonymized field-report entry drafted.</div>
+  </div>
+</div>
+
+<h2 id="s5"><span class="n">5</span>Toolbox &amp; templates</h2>
+<p>Everything below was verified against primary sources on <strong>2026-07-20</strong> — measurement guidance and pricing both churn; <strong>re-verify before a client meeting</strong>. The runbook itself is deliberately tool-agnostic: the metrics come from git, CI and the incident system, and the templates are markdown in the repo. The ecosystem context, because the client will ask:</p>
+<div class="figscroll"><table class="map">
+<tr><th>Surface</th><th>State (verified 2026-07-20)</th><th>The note that bites</th></tr>
+<tr><td>metric frameworks</td><td>DORA 2025 = <em>State of AI-assisted Software Development</em>: AI Capabilities Model (seven capabilities), seven team profiles; no 2026 report yet (expected fall 2026)</td><td>rework rate entered the metric set in the <strong>2024</strong> report; re-verify the vocabulary before a client deck</td></tr>
+<tr><td>DX Core 4 + AI</td><td>June 2026 addendum: no new metric added; AI adoption + token spend filed as "diagnostic telemetry"; in-house figures: 27.4% of production code AI-authored (Q1 2026), ~7.8% PR-throughput lift</td><td>in-house/vendor figures — label them; useful as the realistic counter to headline hype</td></tr>
+<tr><td>pilot method</td><td>METR redesigning its uplift experiment (blog, 2026-02-24) after selection effects — 30–50% withheld tasks; result self-rated "very weak evidence"</td><td>the control arm is the scarce resource — protect it, and report contamination as contamination</td></tr>
+<tr><td>review economics</td><td>"2× mandate" longitudinal study (arXiv:2607.01904, Jul 2026): 802 devs, 196,212 PRs — 2.09× throughput, per-reviewer load ~doubled, automated review overtook human, merge/revert stable</td><td>review latency is the guardrail that fires first; the fix is fewer agents, not paper reviewers</td></tr>
+<tr><td>cost accounting</td><td>Copilot usage-based billing since 2026-06-01 (1 credit = $0.01; Pro $10 / Pro+ $39 / Max $100) · Claude Code via Pro $20 / Max $100–$200 · Cursor $20/$60/$200, team seats $120</td><td>prices churn monthly; measure cost-to-merge, not token price ($5.56–$69.97 per merged feature, Jul 2026 benchmark)</td></tr>
+<tr><td>autonomy governance</td><td>Digital Apprentice per-skill state machine (arXiv:2606.04321 — design proposal) · Swarmia's five autonomy levels ("It's not a ranking")</td><td>promotion dual-key, demotion automatic — agree the thresholds at gate-opening, not at breach time</td></tr>
+</table></div>
+<p>The two judgment templates live here — skeletons a human fills at the gate, not runnable artifacts:</p>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-gate">copy</button><pre id="pb5-tpl-gate">
+# f2-f3-gate.md — the decision, against the pre-registered criteria (B6 §2)
+Pre-registered success met (after-window, frozen queries): ____
+Stability read BESIDE throughput (no composite score): ____
+Guardrails within bounds across the window: ____
+Fired triggers → dials turned (from pilot-weekly.md): ____
+Sample ≥ pre-registered minimum: ____  (if not: direction-only claims)
+Contamination log: clean / entries explained: ____
+
+Decision (exactly one):
+GO   → F3 expansion: modules in heatmap order, EACH through the F1
+       treatment first (net + cage per module — PB2/PB3 recycled);
+       promotions dual-key (evidence + named human); demotion
+       thresholds carried over unchanged.
+HOLD → extend window / shrink scope; gate re-runs on ____ (date).
+       HOLD is a normal exit, not a failure.
+STOP → condition: no verification substrate / safety scope without
+       provenance / no audit trail / guardrail breached with dials
+       exhausted: ____________
+       Recommendation in writing — a roadmap that cannot say no
+       is a sales document.
+Signatories: ____________   Date: ____________
+</pre></div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-report">copy</button><pre id="pb5-tpl-report">
+# Pilot report — PB5 exit artifact (and the field-report loop's input)
+Client / module(s): ____________  Window: ____________
+Arms + assignment rule (and how far from random it landed): ____________
+
+## 1 Baseline vs pilot (frozen queries; per-metric; no composite)
+| metric            | before (PB1 §3) | after | delta / direction |
+|-------------------|-----------------|-------|-------------------|
+| deploy frequency  |                 |       |                   |
+| lead time         |                 |       |                   |
+| change-fail rate  |                 |       |                   |
+| recovery time     |                 |       |                   |
+| rework rate       |                 |       |                   |
+
+## 2 Cost per merged PR (incl. tokens)   before ____  after ____
+## 3 Perception gap   predicted ____  perceived ____  measured ____
+## 4 Guardrail log    triggers fired ____  dials turned ____  ignored 0
+## 5 Decision         GO / HOLD / STOP — criteria, date, signatories
+## 6 If GO — expansion: next module(s) in heatmap order; F1 checklist
+     opened per module; promotion/demotion thresholds carried over
+## 7 Caveats, stated plainly: sample size, brownfield messiness, task
+     heterogeneity, contamination — the limits are part of the result
+</pre></div>
+
+<h2 id="s6"><span class="n">6</span>Exit gate &amp; takeaways</h2>
+<p>The pilot counts as run — whatever the verdict — when every row below passes. Note what the rows check: the discipline of the measurement, not the direction of the result. A well-run pilot that ends in STOP passes this gate.</p>
+<div class="figscroll"><table class="map">
+<tr><th>Exit criterion</th><th>Check</th></tr>
+<tr><td>Baseline frozen</td><td>PB1 §3 re-pulled with committed queries; every key computed or proxied — before the first pilot task</td></tr>
+<tr><td>Cost column live</td><td>token/seat spend per merged PR computed on the before-window; attribution rule written</td></tr>
+<tr><td>Comparison designed</td><td>assignment rule committed; unit = team/module; contamination rules written, log in place</td></tr>
+<tr><td>Pre-registered</td><td>success + guardrails + back-triggers signed before the first task; predictions sealed</td></tr>
+<tr><td>Pipeline proven</td><td>dry run computed every metric once on real history without hand-editing</td></tr>
+<tr><td>Discipline held</td><td>zero mid-window autonomy promotions; REQ ids on every pilot PR</td></tr>
+<tr><td>Guardrails read</td><td>weekly log complete; every fired trigger → its dial or a written reason</td></tr>
+<tr><td>Perception captured</td><td>both survey halves collected, the second before results were shown; gap computed</td></tr>
+<tr><td>Deltas honest</td><td>frozen queries re-run; stability beside throughput; direction-only where underpowered</td></tr>
+<tr><td>Gate signed</td><td>GO / HOLD / STOP recorded against the pre-registered criteria, with signatories and date</td></tr>
+<tr><td>Report routed</td><td>report delivered; on GO the first F3 module named with its F1 checklist opened</td></tr>
+</table></div>
+<div class="callout pine"><div class="t">Exit routing</div><p>PB5 is the journey's last runbook — deliberately not the engagement's end. <strong>GO</strong> does not graduate the client out of the runbooks; it recycles them: every F3 module enters through PB2's net and PB3's cage again, in heatmap order, with the pilot's thresholds carried over — expansion that skips the per-module F1 treatment is the unverified-write failure <a href="B1-bootstrap-paradox-deepdive.html">B1</a> catalogued, at scale. <strong>HOLD</strong> re-runs this runbook's Phase C on a named date with a longer window or tighter scope. <strong>STOP</strong> is the recommendation you must be able to make — it is also the rarest, because PB1's F0 gate should have caught never-start conditions before a pilot was ever proposed; a STOP here usually means something changed mid-engagement, and the report should say what. Whichever way it goes: the anonymized results feed the field-report loop — the first first-party evidence in a corpus that has run on external citations until now.</p></div>
+<div class="callout"><div class="t">Three sentences to remember PB5 by</div><p>The pilot is B6's F2 phase run as an experiment: a frozen baseline, an as-random-as-possible split with a protected control arm, and success criteria signed before the first task — because the best RCT in the field measured developers 19% slower while they believed they were 20% faster, and feel is not evidence. Guardrails are dials, not debates: review latency, rework and the no-review-merge share carry agreed back-trigger thresholds, and demotion happens because a number moved, never because a meeting was won. The gate has three honest exits — GO recycles PB2/PB3 per module into F3, HOLD extends the measurement, STOP is the recommendation a roadmap must be able to make — and whichever fires, the report is the methodology's first first-party evidence.</p></div>
+<p>Sources and caveats for the empirical claims. Strong independent evidence: the METR RCT (arXiv:2507.09089 — 19% slower, predicted +24%, still believed ~20% faster), the "2× mandate" longitudinal study (arXiv:2607.01904 — 802 developers, 196,212 PRs, 2.09× throughput, per-reviewer load roughly doubled, automated review overtaking human, merge/revert stable), and DORA 2024/2025 (−1.5%/−7.2% decomposition; 2025's throughput-positive-stability-negative update; the small-batches mechanism; rework rate introduced 2024). Instrumented but self-studied: Microsoft's rollout study (arXiv:2607.01418 — ~24% sustained PR-merge lift over four months, peer-network diffusion; observational, Microsoft studying Microsoft). Practitioner research, method-transparent: DX Q4 2025 (135,000 developers/425 organizations — enablement effects, "simply handing out licenses is not enough"), DX's Core 4 AI addendum (27.4% and ~7.8% are in-house figures), the cost-to-merged-feature benchmark (July 2026 — $5.56–$69.97, token price vs cost-to-merge diverging), and METR's own design-change note (2026-02-24 — "very weak evidence", 30–50% withheld tasks). Vendor telemetry, labelled: Faros 2026 (+441.5% median review time, +51.3% PR size, 31.3% more no-review merges — self-selected customer base; the mechanism, not the precision, is the point). Reports handled with their real wording: MIT NANDA (July 2025, not peer-reviewed — "95% of organizations are getting zero measurable return", methodology 300+ initiative reviews / 52 interviews / 153 surveys; the "95% of pilots fail" phrasing and the "150/350" methodology are misquotes this workbook does not repeat), KPMG's stall mechanism (consulting research). Design proposals, flagged: the Digital Apprentice (arXiv:2606.04321) and GAIE (arXiv:2606.22484). Our synthesis, kept flagged: F0–F3 and the F2→F3 gate table (Report 4/B6), the GO/HOLD/STOP framing, the guardrail-to-dial mapping and this runbook's phase compression. Deliberately not cited: the DORA "2.4×" folklore, any "95% of AI pilots fail" phrasing, and any single "agents make teams X% faster" number — the honest answer is the measured delta at this client, which is the whole point of the runbook.</p>
+<p class="closingnote">This runbook is also available as a standalone file (PB5-pilot-runbook.html). Its natural neighbours are <a href="E7-metrics-anti-patterns-deepdive.html">E7 Metrics &amp; anti-patterns</a> (the DORA process and the METR method this runbook operationalizes), <a href="B6-roadmap-f0-f3-deepdive.html">B6 Roadmap F0–F3</a> (the gate, the back-triggers and the STOP criteria), the <a href="PB4-handoff-runbook.html">PB4 Handoff runbook</a> whose GO it strictly requires, and <a href="PB1-assess-runbook.html">PB1 Assess</a>, whose §3 baseline is the "before" it measures against. The F0–F3 ladder, the F2→F3 gate table, the GO/HOLD/STOP framing and the guardrail thresholds are this workbook's synthesis (Report 4 lineage), not an industry standard; every number and price — DORA report vocabulary, DX figures, the 2×-mandate study, Copilot/Claude Code/Cursor pricing — is point-in-time (verified 2026-07-20) and must be re-verified before a client meeting. With PB5, module M9's journey is complete: Assess → Bootstrap → Harness → Handoff → Pilot, and the loop the last runbook opens — expansion module by module, each through the net and the cage again — is the methodology in steady state.</p>
+</main>
+</div>
+
+<footer>
+  <b>PB4 Runbook — Handoff: Run the Contract End-to-End</b><br>
+  Companion to module M9 · Playbook in the Agentic SDLC learning workbook.
+</footer>
+
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+  /* runbook: live progress count (non-persistent) + copy buttons */
+  function upd2(){var t=document.querySelectorAll(".pbck").length,d=document.querySelectorAll(".pbck:checked").length;
+    document.querySelectorAll("[data-pbprog]").forEach(function(el){el.textContent=d+" / "+t+" steps done";});}
+  document.addEventListener("change",function(e){if(e.target.closest(".pbck"))upd2();});
+  upd2();
+  document.addEventListener("click",function(e){
+    var b2=e.target.closest(".pbcopy");if(!b2)return;
+    var pre=document.getElementById(b2.dataset.copy);if(!pre)return;
+    var txt=pre.textContent;
+    function ok(){b2.textContent="copied ✓";setTimeout(function(){b2.textContent="copy";},1400);}
+    function fb(){var ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok();}catch(err){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}
+  });
+})();
+</script>
+</body>
+</html>

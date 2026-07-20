@@ -3,6 +3,40 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.56 · 2026-07-20
+
+**NEW RUNBOOK PB5 — Pilot: measure, gate, decide.** Fifth and final M9 runbook, in both
+copies (`deep-dives/PB5-pilot-runbook.html` + in-workbook overlay): ten checklist steps
+across three phases — pre-registration (the PB1 baseline re-pulled with the computability
+question answered in writing, the token/cost column PB1 left open, a two-arm design with
+a protected control arm, the signed pre-registration plus a dry-run probe), the measured
+window (F2 at the granted level with small batches held, weekly guardrail dials, enablement
+and perception capture), and read & decide (honest deltas with stability beside throughput,
+the F2→F3 gate's three exits GO/HOLD/STOP, the pilot report routed into the field-report
+loop). Distills E7 (the DORA process and the METR method) and B6 (the gate table,
+back-triggers and STOP criteria) into the decision layer that closes the journey. Single
+entry posture: a recorded PB4 GO; PB1's report §3 is the "before" snapshot. Deterministic
+where the theory is: back-trigger thresholds agreed at gate-opening so demotion is a number
+acting, not a meeting (the Digital Apprentice asymmetry, flagged as a design proposal), and
+the Phase-A dry run — a metric pipeline that has not run once on real data is not installed.
+Fresh evidence layer (verified 2026-07-20): the "2× mandate" longitudinal study
+(arXiv:2607.01904 — 802 developers, 196,212 PRs: 2.09× throughput, per-reviewer load roughly
+doubled, automated review overtaking human review, merge/revert stable), METR's 2026
+design-change note as the contamination cautionary tale (30–50% withheld tasks, self-rated
+"very weak evidence" — the control arm is the scarce resource), DX's Core 4 AI addendum
+(no new metric; adoption and token spend filed as "diagnostic telemetry"; in-house 27.4%
+AI-authored production code and ~7.8% PR lift), the cost-to-merged-feature benchmark
+($5.56–$69.97 — token price and cost-to-merge can point in opposite directions), and
+Copilot's usage-based billing (since 2026-06-01). Honest handling kept throughout: MIT NANDA
+quoted with its real wording ("95% of organizations are getting zero measurable return", methodology
+300+/52/153 — never "95% of pilots fail"), the two 24%-ish PR findings (Microsoft, Faros)
+never merged into one number, vendor telemetry labelled, direction-only claims below the
+pre-registered sample floor. Adversarial spot-verify (ten claims against primary sources:
+nine confirmed) caught one wording erratum pre-release — MIT NANDA's verbatim line includes
+*measurable* ("getting zero measurable return"), fixed here and in both B6 copies. Exit: a signed GO / HOLD / STOP — GO recycles PB2/PB3 per
+module into F3, HOLD is a normal exit, STOP is the recommendation a roadmap must be able
+to make. **M9 complete at 5/5: Assess → Bootstrap → Harness → Handoff → Pilot.**
+
 ## v1.55 · 2026-07-20
 
 **NEW DEEP DIVE D5 — The design harness: verification loops & guardrails.** Fifth M6

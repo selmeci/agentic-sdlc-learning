@@ -343,6 +343,7 @@ footer li::before{content:"·";position:absolute;left:2px}
 .e1ov svg .edPB2{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB2a)}
 .e1ov svg .edPB3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB3a)}
 .e1ov svg .edPB4{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB4a)}
+.e1ov svg .edPB5{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB5a)}
 .e1ov svg .edD3a{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD3a)}
 .e1ov svg .edD3b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD3b)}
 .e1ov svg .edD4a{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD4a)}
@@ -2170,6 +2171,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
     <div class="bar"><span class="tag">WORKBOOK · VERSIONS</span><h3>Version history &amp; changelog</h3><button class="x" type="button" data-verclose>✕ close</button></div>
     <div class="body">
       <p class="kicker">Every released version of this workbook</p>
+            <div class="vitem"><span class="vv">v1.56</span><span class="vd">2026-07-20</span><p><strong>NEW RUNBOOK PB5 — Pilot: measure, gate, decide.</strong> Fifth and final M9 runbook, in both copies (PB5-pilot-runbook.html + overlay): ten checklist steps across three phases (pre-registration — the baseline re-pulled with the computability question answered in writing, the token/cost column PB1 left open, a two-arm design with a protected control arm, the signed pre-registration plus a dry-run probe; the measured window — F2 at the granted level with small batches held, weekly guardrail dials, enablement and perception capture; read &amp; decide — honest deltas with stability beside throughput, the F2→F3 gate's three exits GO/HOLD/STOP, the pilot report routed into the field-report loop), distilling E7 (the DORA process and the METR method) and B6 (the gate table, back-triggers and STOP criteria) into the decision layer that closes the journey. Single entry posture: a recorded PB4 GO; PB1's report §3 is the "before" snapshot. Deterministic where the theory is: back-trigger thresholds agreed at gate-opening so demotion is a number acting, not a meeting (the Digital Apprentice asymmetry, flagged as a design proposal), and the Phase-A dry run — a metric pipeline that has not run once on real data is not installed. Fresh evidence layer (verified 2026-07-20): the "2× mandate" longitudinal study (arXiv:2607.01904 — 802 developers, 196,212 PRs: 2.09× throughput, per-reviewer load roughly doubled, automated review overtaking human review, merge/revert stable), METR's 2026 design-change note as the contamination cautionary tale (30–50% withheld tasks, self-rated "very weak evidence" — the control arm is the scarce resource), DX's Core 4 AI addendum (no new metric; adoption and token spend filed as "diagnostic telemetry"; in-house 27.4% AI-authored production code and ~7.8% PR lift), the cost-to-merged-feature benchmark ($5.56–$69.97 — token price and cost-to-merge can point in opposite directions), and Copilot's usage-based billing (since 2026-06-01). Honest handling kept throughout: MIT NANDA quoted with its real wording ("95% of organizations are getting zero measurable return", methodology 300+/52/153 — never "95% of pilots fail"), the two 24%-ish PR findings (Microsoft, Faros) never merged into one number, vendor telemetry labelled, direction-only claims below the pre-registered sample floor. Adversarial spot-verify (ten claims against primary sources: nine confirmed) caught one wording erratum pre-release — MIT NANDA’s verbatim line includes <em>measurable</em> ("getting zero measurable return"), fixed here and in both B6 copies. Exit: a signed GO / HOLD / STOP — GO recycles PB2/PB3 per module into F3, HOLD is a normal exit, STOP is the recommendation a roadmap must be able to make. <strong>M9 complete at 5/5: Assess → Bootstrap → Harness → Handoff → Pilot.</strong></p></div>
             <div class="vitem"><span class="vv">v1.55</span><span class="vd">2026-07-20</span><p><strong>NEW DEEP DIVE D5 — The design harness: verification loops &amp; guardrails.</strong> Fifth M6 companion (D5-design-harness-verification-guardrails-deepdive.html + overlay), three SVG diagrams. The six-layer stack in cost order (style lint → API contract → interaction tests → axe-core → visual regression → designer gate); visual-regression practice (pixelmatch mechanics, CI-built baselines in pinned images, deliberate-only updates, the false-positive taming sequence that answers the topic's open question) plus the stress-state matrix (forced-colors/dark/contrast/reduced-motion/RTL/320px as cheap harness checks — the swarm's missing-things addition); axe-core as the a11y gate with honest limits (~105 rules/~90 default, zero-false-positive policy, Deque's 57% = issue volume not criteria, GOV.UK 143-barrier study, WCAG 2.2/EAA, overlays anti-pattern with the FTC accessiBe order); lint-as-law (color-no-hex, declaration-strict-value, no-restricted-imports, primer/polaris/slds-linter/carbon configs, Dembrandt drift gate); conformance vs quality with benchmark triangulation. Fact pass corrections: <strong>FrontendBench's 90.54% re-attributed to its scripted test harness (no LLM judge in the paper) — the workbook topic and Report 5 notes fixed</strong>, WebDevJudge's ~70% LLM-judge plateau added as the counter-weight; the "ds-lint 233 WCAG rules" claim retired as unverifiable; FigmaLint re-attributed to Southleft (Frosts co-present); Uber block+ticket and Shopify 14% labeled vendor-blog-only anecdotes; Storybook 9 dated June 2025 with the storybook/test import; Chromatic noted as having NO AI diffing (Percy/Applitools claims labeled vendor).</p></div>
             <div class="vitem"><span class="vv">v1.54</span><span class="vd">2026-07-20</span><p><strong>NEW RUNBOOK PB4 — Handoff: run the contract end-to-end.</strong> Fourth M9 runbook, in both copies (PB4-handoff-runbook.html + overlay): eleven checklist steps across four phases (contract discipline — owners, template, ids; machine-verifiable criteria — the story→EARS→Gherkin→red-tests ladder and the ten-minute spec review; the return channel &amp; drift loop; the delivery &amp; exit gate), distilling H1–H4 into the discipline that decides what the caged module's agent is told to do. Single entry posture: a recorded PB3 GO; PB1's editor becomes the requirement owner, PB1's baseline the loop-health control. Deterministic where the theory is (E5 litmus): the REQ-id gate and H3's suspect gate ship as runnable CI blocks, stop-on-ambiguity and id-stamping as <em>appends</em> to PB3's AGENTS.md master — never a second steering file; acceptance tests ride PB2's net agent-read-only under PB3's hook. Judgment stays human by construction: intent and non-goals human-written (Rationale Clarity 1.54 vs 2.66, arXiv:2507.15157), the agent as fourth amigo (drafts and asks, never ratifies), the weekly triage's three legal exits — code-wrong / requirement-wrong / we-learned — each an artifact change, never chat. Evidence framing honest: HumanEvalComm &gt;60% code-instead-of-asking (TOSEM 2025), SWE-Bench+ 32.67%/31.08% false greens, review-density 29.6 vs 4.1 tok/LOC, unmerged tail 26.1% + MSR 2026 reviewer engagement, provenance undercount 3.3%/30×, METR perception gap; preprints labelled (HiL-Bench 67–88→1–9, Orchid ~7.2pp/31pp), Ambig-SWE cited as mechanism only. Fresh point-in-time layer (verified 2026-07-20): Copilot↔Jira GA Jun 25 — the issue body IS the prompt (plus Devin↔Linear, Cursor↔Linear/Slack), Spec Kit v0.13.0, Kiro's EARS default + Analyze Requirements gate (no drift detection — not credited with one), gplint over the stale gherkin-lint, the Assisted-by: trailer standard vs Claude Code's Co-Authored-By default, EU AI Act disclosure from Aug 2026. Böckeler's spec-first→spec-anchored→spec-as-source ladder names the target: spec-anchored, via the loop. Adversarial spot-verify caught two seed errors pre-release (gplint v2.5.2 = Apr 2024 not 2026; QEMU is NOT an Assisted-by adopter — it still bans AI contributions) plus one H1 erratum, fixed in both H1 copies: the SDD tool review and its "rather review code" counter-view belong to Birgitta Böckeler, the article's actual author — not Martin Fowler. Exit test: one real feature merged with review against green acceptance tests; GO → PB5 Pilot. M9 at 4/5.</p></div>
 <div class="vitem"><span class="vv">v1.53</span><span class="vd">2026-07-18</span><p><strong>NEW DEEP DIVE D4 — Governance &amp; SSOT in the design world.</strong> Fourth M6 companion (D4-governance-ssot-design-world-deepdive.html + overlay), three SVG diagrams. Curtis's team models with the 2024 retraction quoted exactly ("federated is not a choice, it's a facet" — the circulating "facet, not a model" form marked as paraphrase; "Overlords don't scale" re-anchored to the solitary model it actually targets). The hybrid operating model — core team owns tokens/APIs/governance, agents generate and maintain, designer gate approves (L3 on the design layer) — grounded in documented mechanics: Carbon's component checklist + Labs incubation + CLA, Primer's closed writes with weekly triage, Paste's build-time status schema, SLDS's "please ask first", Figma branch review + library analytics. Versioning as the system's clock: SemVer (Curtis 2018), warn→wait→remove with real windows (Lightning 18 months, Origami 3–6), codemod-attached deprecation (Atlassian, Apr 2026), plus the three agent-consumption rules — manifests show current APIs only, "never hallucinate a prop", deprecated machine-flagged — and the ADR-lifecycle mapping. The durable/derived/disposable write-permission table applied to design artifacts (agents free in disposable, regenerate derived, propose-only to durable). The SSOT argument in three verified positions — Sewell ("Figma is, at best, a set of suggestions"; the Shopify/Uber/GitHub anecdotes labeled unsourced vendor assertions in a product-pitch article), Başcı/JumpCloud ("Figma is upstream input, not downstream truth"), Ulrey ("a single source of truth is a lie" — the "cohesive knowledge ecosystem" phrase marked as our paraphrase, not his words) — plus Equinor's tokens-first stance, Vallaure's contract-in-the-middle, and Figma's Code Layers (Jun 2026) flagged weeks-old watch-list. New section the outline missed, from the swarm's extras hunt: provenance, disclosure and the audit trail of machine contributors (OSS GenAI-governance policy clusters; Chung &amp; Hassan, AIware 2026: ≥96% agent-initiated PRs vs &lt;0.1% agent-authorized merges; "logs record the executor but not the decision-maker"). Southleft's 69→100 contract experiment labeled vendor POC. Fact pass: 6-agent verification swarm with real catches (Curtis quotes corrected to verbatim, Paste versioning docs 404 caught, SLDS SemVer softened to "SemVer-shaped", Builder.io attribution split Shopify-lint / Uber-CI / GitHub-PR-check). Topic <span class="mono">des-governance</span> src now opens the overlay first.</p></div>
@@ -5594,7 +5596,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
       <p><strong>Bootstrap progress</strong> is this module's own territory, and its metrics come from the preceding chapters: mutation score on characterized modules (primary — B3, diff-scoped advisory plus module-level exit scores), the verified share of the hypothesis register (B4's promote-through-verification path, a real documentation-coverage number rather than a page count), onboarding time, and sustained per-developer PR-merge lift. The last two now have independent anchors: DX's Q4 2025 impact report (135,000 developers, 425 organizations; practitioner research, method-transparent) measured onboarding — time to tenth PR, across six multinationals — falling <em>"from 91 days with no AI usage to just 49 days with daily use"</em>; Microsoft's instrumented rollout study put the sustained merge lift at roughly 24% (§1). The two 24%-ish PR findings arrive by different methods from different populations — cite both, never merge them into one number.</p>
       <div class="callout amber"><div class="t">The measurement traps, in evidence order</div><p><strong>Self-report is disqualified.</strong> The METR RCT (arXiv:2507.09089): 16 experienced developers, 246 real tasks on mature repos — AI increased completion time 19% while participants forecast a 24% speedup and, <em>after</em> experiencing the slowdown, still believed they had been ~20% faster. Every F2 exit decision therefore compares instrumented baseline against instrumented pilot; developer sentiment is a health signal, not an exit criterion (E7, T2).</p>
       <p><strong>Vendor telemetry shows the failure shape.</strong> Faros AI's 2025 telemetry (10,000+ developers) found +21% tasks completed and +98% PRs merged per developer against +91% median review time, +154% PR size and flat organizational delivery — the "AI Productivity Paradox." Its 2026 follow-up ("The Acceleration Whiplash," ~22,000 developers, 4,000+ teams, analysis as of March 2026) revised the shape sharper: +33.7% tasks, +16.2% PRs merged, median review time up 441.5% (their summary: increased 5×), +51.3% PR size — and 31.3% more PRs <em>"merging without any review"</em>. Vendor numbers from a self-selected customer base, flagged as such — but the mechanism (production outruns verification until verification is skipped) is exactly what the F2→F3 gate exists to catch.</p>
-      <p><strong>The boardroom number needs handling.</strong> "95% of AI pilots fail" — MIT NANDA's "The GenAI Divide: State of AI in Business 2025" (Challapally et al., July 2025, not peer-reviewed) actually says <em>"95% of organizations are getting zero return"</em> and <em>"Just 5% of integrated AI pilots are extracting millions in value, while the vast majority remain stuck with no measurable P&amp;L impact"</em> — measured on enterprise GenAI initiatives broadly (methodology: <em>"a systematic review of over 300 publicly disclosed AI initiatives, structured interviews with representatives from 52 organizations, and survey responses from 153 senior leaders"</em> — the widely-circulated "150 interviews / 350 employees" version is a misquote), with P&amp;L impact as the bar and nothing coding-agent-specific in it. Do not cite it as evidence about coding tools; do let it argue for the thing it genuinely supports — pre-registered success criteria, because "zero measurable return" is what a pilot without a baseline reports by default. KPMG's 2026 diagnosis of why scale stalls lands closer to this module's thesis: <em>"Enterprise AI doesn't stall because pilots fail. It stalls because the IT readiness required for AI scale was never fully in place"</em> — and its readiness gaps (data infrastructure, governance, <em>legacy architecture built for human workflows</em>) are what F1 exists to close. DORA 2025's amplifier finding points the same way: without user-centric focus AI adoption's team-level effect turns negative, and a high-quality internal platform correlates directly with the ability to unlock AI's value — infrastructure first is not our idiosyncrasy.</p></div>
+      <p><strong>The boardroom number needs handling.</strong> "95% of AI pilots fail" — MIT NANDA's "The GenAI Divide: State of AI in Business 2025" (Challapally et al., July 2025, not peer-reviewed) actually says <em>"95% of organizations are getting zero measurable return"</em> and <em>"Just 5% of integrated AI pilots are extracting millions in value, while the vast majority remain stuck with no measurable P&amp;L impact"</em> — measured on enterprise GenAI initiatives broadly (methodology: <em>"a systematic review of over 300 publicly disclosed AI initiatives, structured interviews with representatives from 52 organizations, and survey responses from 153 senior leaders"</em> — the widely-circulated "150 interviews / 350 employees" version is a misquote), with P&amp;L impact as the bar and nothing coding-agent-specific in it. Do not cite it as evidence about coding tools; do let it argue for the thing it genuinely supports — pre-registered success criteria, because "zero measurable return" is what a pilot without a baseline reports by default. KPMG's 2026 diagnosis of why scale stalls lands closer to this module's thesis: <em>"Enterprise AI doesn't stall because pilots fail. It stalls because the IT readiness required for AI scale was never fully in place"</em> — and its readiness gaps (data infrastructure, governance, <em>legacy architecture built for human workflows</em>) are what F1 exists to close. DORA 2025's amplifier finding points the same way: without user-centric focus AI adoption's team-level effect turns negative, and a high-quality internal platform correlates directly with the ability to unlock AI's value — infrastructure first is not our idiosyncrasy.</p></div>
 
       <h2><span class="n">4</span>Secrets from day 0</h2>
       <p>Legacy git history is an archive of every credential anyone ever pasted, and the agent is about to read all of it — then write commits at machine speed. The 2026 numbers make this concrete. GitGuardian's State of Secrets Sprawl 2026 (vendor measurement of public GitHub, March 2026): <em>"28.65 million new hardcoded secrets were added to public GitHub commits in 2025 alone, a 34% increase year over year"</em>; AI-service credentials were the fastest-growing category (<em>"in 2025, AI service secrets reached 1,275,105, up 81% year over year"</em>); and — the finding that names this section — <em>"Claude Code-assisted commits showed a 3.2% secret-leak rate, versus a 1.5% baseline across all public GitHub commits."</em> Roughly 2×, replacing the older and weaker Copilot correlation (2025 report: 6.4% of Copilot-active repos leaked vs 4.6% baseline — +40%). Leaks also do not age out: 70% of secrets confirmed valid in 2022 were still valid in January 2025, and <em>"when we retested that same dataset in January 2026, the validity rate was still above 64%."</em> One more 2026 surface belongs in this module's threat model: <em>"24,008 unique secrets exposed in MCP-related configuration files across public GitHub, including 2,117 unique valid credentials"</em> — the agent's own configuration layer is now a leak path (M7, sec-surfaces).</p>
@@ -7912,8 +7914,298 @@ Signatories: ____________   Date: ____________
   </div>
 </div>
 
+<div class="e1ov" id="pb5ov" role="dialog" aria-modal="true" aria-label="PB5 runbook">
+  <div class="panel">
+    <div class="bar"><span class="tag">PB5 · RUNBOOK</span><h3>Pilot: Measure, Gate, Decide</h3>
+      <button class="x" type="button" data-pb5close>✕ close</button></div>
+    <div class="body">
+<h2><span class="n">0</span>Why this runbook exists</h2>
+<p class="lead">PB5 closes the journey: PB1 measured the ground, PB2 built the net, PB3 built the cage, PB4 ran the contract once — PB5 decides, with numbers, whether the whole construction earns wider scope. It is <a href="&#35;b6-deepdive">B6</a>'s F2 phase run as an experiment: DORA supplies the metrics and <a href="&#35;e7-deepdive">E7</a>'s METR-style method supplies the honesty — a frozen baseline, an as-random-as-possible comparison, success criteria written down <em>before</em> the first pilot task — and B6's F2→F3 gate with its back-triggers and STOP criteria supplies the decision. The exit is deliberately concrete: <strong>a signed GO / HOLD / STOP decision against pre-registered criteria, in a report the client can hand to their board.</strong></p>
+<p>Like PB3 and PB4, this runbook has exactly <strong>one</strong> entry posture: a recorded <strong>PB4 GO</strong> — the handoff-delivery report proving the discipline ran end-to-end once. Two earlier artifacts are inherited by reference: PB1's frozen delivery baseline (assessment report §3 — the pilot's "before" snapshot, to which this runbook finally adds the token column PB1 left open) and the running harness itself — PB2's net and PB3's cage stay on throughout, because <strong>the pilot measures the system, not the model</strong>: an agent with the discipline switched off is a different system, and its numbers transfer to nothing. No PB4 GO → the loop has not run even once; there is nothing to scale — go back to <a href="&#35;pb4-deepdive">PB4 Handoff</a>.</p>
+<p>The failure PB5 prevents is the best-measured one in this workbook: <strong>believing feel</strong>. The METR RCT (16 experienced developers, 246 real tasks on their own mature repos, AI use randomized per task, arXiv:2507.09089) measured developers <strong>19% slower</strong> with early-2025 AI while they believed they were ~20% faster — having predicted +24% going in. The wider business statistics say the same thing at organisation scale, once read correctly: MIT NANDA's much-misquoted report actually says <em>"95% of organizations are getting zero measurable return"</em> on enterprise GenAI (July 2025, not peer-reviewed; 300+ initiative reviews, 52 interviews, 153 surveys — the circulating "95% of pilots fail" is a misquote), and KPMG's 2026 stall diagnosis is blunter: enterprise AI does not stall because pilots fail — it stalls because the pilot moved fast <em>"precisely because governance was minimal, data was curated, scope was controlled."</em> PB1–PB4 exist so that this pilot is not that pilot: the governance, the data discipline and the scope were installed first, which is exactly what makes its result transferable.</p>
+<div class="callout"><div class="t">The control arm is now the scarce resource</div><p>The field's flagship study broke on this in 2026, and said so: METR's follow-up (57 developers, 800+ tasks, late-2025 tools) found the original cohort still −18% (CI −38%…+9%) but new developers only −4% (CI −15%…+9%) — and METR itself rates the result <strong>"very weak evidence"</strong>, because 30–50% of developers withheld tasks they did not want to do without AI, and the experiment is being redesigned (metr.org, 2026-02-24; <a href="&#35;e7-deepdive">E7</a> §4 tells the full story). The lesson lands directly on this runbook: by mid-2026, developers' unwillingness to work without AI is the biggest design risk in any pilot. <strong>Protect the control arm or lose the experiment</strong> — assignment is never self-selected, defections are logged, and a contaminated comparison is reported as contaminated, not spun.</p></div>
+<div class="callout amber"><div class="t">What this is not</div><p>Not a surveillance program: every delivery metric here is <strong>system/team-level, never a per-developer scorecard</strong> — the moment DORA keys become individual targets, Goodhart's law destroys the signal (<a href="&#35;e7-deepdive">E7</a>). Not a dashboard purchase: all of it is computable from git history, CI logs and the incident system the client already has; telemetry products are optional and their vendor numbers are marketing until reproduced locally. And not a proof machine: with dozens of tasks per arm — a realistic client sample — the honest output is often <strong>direction, not percentages</strong>, and this runbook says so out loud rather than quoting false precision.</p></div>
+<p>The theory this runbook distils: <a href="&#35;e7-deepdive">E7</a> for the DORA process (the four keys plus rework rate, computed from data that already exists), the METR method (randomize what you can, measure objectively, pre-register success, state caveats) and the anti-pattern catalogue; <a href="&#35;b6-deepdive">B6</a> for the F2→F3 gate, the back-triggers and the STOP criteria — and the standing flag that F0–F3 and its thresholds are this workbook's Report 4 synthesis, not an industry standard. PB5 is also the seed of the T2 deliverable (measurement &amp; pilot design), the trajectory topic this material converges with.</p>
+
+<h2><span class="n">1</span>How to run it</h2>
+<p>Run PB5 with one person plus the pilot team, the requirement owner keeping PB4's loop alive, and the client sponsor — who signs the pre-registration and receives the report. Scope: the F2 write scope PB3 granted (the heatmap-selected modules), one pilot window. Duration is a floor, not a target: <strong>8–12 weeks per window and dozens of comparable tasks per arm</strong> (<a href="&#35;e7-deepdive">E7</a>'s heuristic); below that floor, claim direction only. Steps are written as ČO (the action), PREČO (the theory link) and DONE (the exit criterion).</p>
+<p>PB3's probe rule has a measurement twin here: <strong>a metric pipeline that has not run once on real data is not installed.</strong> Phase A therefore ends with a dry run — every metric computed once on a week of existing history before the window you will bet on. What cannot be probed — whether the client will accept a STOP recommendation — is exactly the judgment this runbook exists to put in front of them, in writing.</p>
+<p><span class="pbprog" data-pbprog="pb-pilot"></span></p>
+<p class="pbnote">Progress is saved locally in this workbook (same store as topic progress). The standalone copy of this runbook does not persist checkbox state.</p>
+<figure>
+<svg viewBox="0 0 900 300" role="img" aria-label="The pilot PB5 runs: a frozen baseline and a pre-registered bar feed a protected two-arm window, read with identical queries into a three-exit gate, while back-triggers act automatically during the window">
+  <defs><marker id="ahPB5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <text x="24" y="28" class="tg">THE PILOT — B6'S F2 PHASE RUN AS AN EXPERIMENT (PHASES A + B + C)</text>
+  <rect x="24" y="44" width="124" height="52" rx="10" class="bxG"/><text x="36" y="66" class="ti">PB1 baseline</text><text x="36" y="82" class="ts">frozen · §3 + cost</text>
+  <rect x="170" y="44" width="124" height="52" rx="10" class="bxA"/><text x="182" y="66" class="ti">Pre-register</text><text x="182" y="82" class="ts">success · guardrails</text>
+  <rect x="316" y="44" width="124" height="52" rx="10" class="bxC"/><text x="328" y="66" class="ti">F2 window</text><text x="328" y="82" class="ts">agent arm · control</text>
+  <rect x="462" y="44" width="124" height="52" rx="10" class="bx"/><text x="474" y="66" class="ti">After-window</text><text x="474" y="82" class="ts">identical queries</text>
+  <rect x="608" y="44" width="124" height="52" rx="10" class="bx"/><text x="620" y="66" class="ti">Read deltas</text><text x="620" y="82" class="ts">stability + thruput</text>
+  <rect x="754" y="44" width="122" height="52" rx="10" class="bxK"/><text x="766" y="66" class="ti">Gate</text><text x="766" y="82" class="ts">GO · HOLD · STOP</text>
+  <line x1="148" y1="70" x2="170" y2="70" class="edPB5"/>
+  <line x1="294" y1="70" x2="316" y2="70" class="edPB5"/>
+  <line x1="440" y1="70" x2="462" y2="70" class="edPB5"/>
+  <line x1="586" y1="70" x2="608" y2="70" class="edPB5"/>
+  <line x1="732" y1="70" x2="754" y2="70" class="edPB5"/>
+  <text x="24" y="134" class="tg">THE BACK-TRIGGERS — DEMOTION IS A NUMBER ACTING, NOT A MEETING (PHASE B)</text>
+  <rect x="24" y="150" width="200" height="52" rx="10" class="bxA"/><text x="36" y="172" class="ti">Guardrail fires</text><text x="36" y="188" class="ts">latency · rework · no-review</text>
+  <rect x="248" y="150" width="230" height="52" rx="10" class="bxC"/><text x="260" y="172" class="ti">The agreed dial turns</text><text x="260" y="188" class="ts">batch → scope → agents → F1</text>
+  <rect x="502" y="150" width="200" height="52" rx="10" class="bx"/><text x="514" y="172" class="ti">Weekly log entry</text><text x="514" y="188" class="ts">trigger → dial (or reason)</text>
+  <line x1="224" y1="176" x2="248" y2="176" class="edPB5"/>
+  <line x1="478" y1="176" x2="502" y2="176" class="edPB5"/>
+  <path d="M602 150 V118 H378 V100" class="edPB5 edD"/>
+  <text x="24" y="250" class="ts">The primary outcomes are read once, at the end, with the same queries that froze the baseline — the guardrails are read weekly and act automatically.</text>
+  <text x="24" y="270" class="ts">Every deterministic row is a number with an agreed threshold; the judgment — GO, HOLD or STOP — is human, signed, against the pre-registered criteria.</text>
+</svg>
+<figcaption>The pilot PB5 runs: a frozen baseline and a pre-registered bar in front, a protected two-arm window in the middle, and a three-exit gate at the end — with back-triggers acting automatically while the window runs.</figcaption>
+</figure>
+
+<h2><span class="n">2</span>Phase A — Pre-registration: freeze the bar before the race</h2>
+<p>Phase A is where the pilot is won or lost, and no pilot task runs until it is done. Everything in it exists to make the end-of-window conversation short: the baseline is frozen, the comparison is designed, the success bar and the kill criteria are signed — so the numbers, when they arrive, land on a decision that was already agreed.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s1" data-pb="pb-pilot" data-step="pb5-s1">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s1">A1 · Re-pull the baseline and answer the computability question</label>
+    <p class="pbwhy">Re-run PB1's §3 queries over the agreed before-window and freeze both the numbers and the queries — commit them together, because <strong>identical queries before and after are what make a delta mean anything</strong> (<a href="&#35;e7-deepdive">E7</a> §2). Then answer this topic's open question in writing: for each of the five keys (deploy frequency, lead time, change-fail rate, recovery time, rework rate) the client cannot compute from day 0, record the named proxy that replaces it — release tags standing in for deploy logs, hotfix-PR counts standing in for an absent incident system — and use the same proxy on both windows. A baseline captured at assess time and never re-pulled drifts: PB1 froze the snapshot, this step proves it still computes.</p>
+    <div class="pbdone">DONE = baseline table + the exact queries committed; every key either computed or replaced by a named proxy used identically on both windows.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s2" data-pb="pb-pilot" data-step="pb5-s2">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s2">A2 · Add the cost column PB1 left open</label>
+    <p class="pbwhy">Extend the baseline with the token column: measured token/usage spend per merged PR and per completed task, next to PB1's review-hours, CI-minutes and seat-licence columns (template below). The unit economics to watch is <strong>cost-to-merge, not token price</strong>: a July 2026 practitioner benchmark that held the merge gate constant measured <strong>$5.56–$69.97 per merged feature</strong> across models and found the two <em>"point in opposite directions"</em> — cheap models burn the difference in the review gate. And keep the column in its place: DX's Core 4 guidance (June 2026) files AI adoption and token spend under <strong>diagnostic telemetry, not outcomes</strong> — the cost column exists so ROI is reported <em>next to</em> the DORA deltas, never instead of them. Pricing churns monthly (Copilot moved to usage-based billing on 2026-06-01) — every price is point-in-time.</p>
+    <div class="pbdone">DONE = cost baseline computed on the before-window; the per-PR/per-task attribution rule written; token metering confirmed working for the pilot window.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-cost">copy</button><pre id="pb5-tpl-cost">
+# APPEND to the PB1 assessment report §3 (the pilot's "before" snapshot)
+## 3b Cost baseline — the token column (PB5)
+Window (same as §3): ____________
+Cost per merged PR:   review hours ____ · CI minutes ____ · seat licences ____
+                      + token/usage spend ____        (= the column PB5 adds)
+Cost per completed task: ____
+Attribution rule — how token spend maps to a PR/task (per-seat spend ÷ merged
+PRs, or per-session metering where the tool exposes it): ____________
+
+# Measure cost-to-merge, not token price: the two can point in opposite
+# directions (July 2026 benchmark: $5.56–$69.97 per merged feature; the cheap
+# model burned the difference in review). Prices churn monthly — re-verify
+# at pilot start, again at the gate.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s3" data-pb="pb-pilot" data-step="pb5-s3">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s3">A3 · Design the comparison — and protect the control arm</label>
+    <p class="pbwhy">Split comparable work into an agent arm and a control arm, <strong>as random as the work allows</strong>: per-task randomization like METR's if the stream permits, two comparable task streams or teams if not (<a href="&#35;e7-deepdive">E7</a> §3). Fix the unit of analysis — a team or module, never individuals — and put the contamination rules in writing: control tasks genuinely run without agents, assignment is never self-selected, defections are logged rather than punished. Include skeptics and late adopters in the agent arm — volunteer-only cohorts flatter the tool. The §0 callout is the reason this step is no longer optional politeness: METR's own follow-up collapsed on self-selection, with 30–50% of developers withholding tasks they did not want to do without AI. The closer to random, the more the result means; and how far from random you landed is itself a line in the report, not a secret.</p>
+    <div class="pbdone">DONE = assignment rule + contamination rules committed; both arms' task pools listed; the contamination log exists (and is empty).</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s4" data-pb="pb-pilot" data-step="pb5-s4">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s4">A4 · Pre-register success, guardrails and back-triggers — then sign and dry-run</label>
+    <p class="pbwhy">Write the one-page pre-registration (template below): primary outcomes with thresholds or directions, the minimum sample, the guardrail bounds, and the back-trigger each breach turns — signed by the sponsor and module owner <strong>before the first pilot task</strong>, together with the sealed answers to the survey's first question (predicted speedup). Pre-registration is what makes the result unarguable afterwards (<a href="&#35;e7-deepdive">E7</a> §3); agreeing back-triggers now is what makes demotion automatic later — <em>a number acting, not a meeting being won</em> (<a href="&#35;b6-deepdive">B6</a> §5, borrowing the Digital Apprentice's asymmetry: promotion needs evidence plus a recorded human authorization, demotion happens without waiting for one — arXiv:2606.04321, a design proposal, flagged as such). The guardrail set follows the 2026 evidence to where the strain lands first: an enterprise "2× mandate" study (802 developers, 196,212 PRs, arXiv:2607.01904) watched per-capita throughput reach 2.09× the pre-mandate baseline while <strong>per-reviewer load roughly doubled and automated review overtook human review</strong> — merge and revert rates held, and the queue quietly became the constraint. Close the phase with the dry run: compute every metric once on a week of existing history, so the pipeline is proven before the window that counts.</p>
+    <div class="pbdone">DONE = pre-registration committed and signed; predicted-speedup answers sealed; dry run produced every metric once without hand-editing.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-prereg">copy</button><pre id="pb5-tpl-prereg">
+# pilot-preregistration.md — signed BEFORE the first pilot task (E7 §3, B6 §2)
+Client / module(s): ____________   Window: ____ weeks (floor: 8–12)
+Arms: agent-assisted / control     Unit of analysis: team or module
+                                   (never individuals — DORA is not a scorecard)
+
+## Assignment rule (as random as the work allows; never self-selected)
+____________
+Contamination rules: control tasks run without agents; defections logged,
+not punished; skeptics included in the agent arm (volunteers-only flatters).
+
+## Primary outcomes — read ONCE, at window end, same queries as the baseline
+deploy frequency ____      lead time ____        change-fail rate ____
+recovery time ____         rework rate ____
+Success = ____________________ (thresholds or directions, decided now)
+Minimum sample: ____ comparable tasks per arm
+  below it → direction-only claims, no percentages.
+
+## Guardrails — read weekly; each bound names the dial it turns (B6)
+review latency        ≤ ____   → shrink batch size
+PR size               ≤ ____   → hold scope
+no-review-merge share ≤ ____   → fewer agents, not more reviewers on paper
+rework / revert direction ____ → module back to F1 (demotion is automatic)
+
+## Perception capture (evidence about bias, not speed)
+Q1, sealed now:  "How much faster/slower do you expect agent-assisted
+                  work to be here?" ____
+Q2, window end:  "How much faster/slower was it?" ____  → compare to measured
+
+Signed (sponsor / module owner / requirement owner): ____________  Date: ____
+</pre></div>
+
+<h2><span class="n">3</span>Phase B — Run the measured window</h2>
+<p>Phase B is deliberately the quiet phase: the pilot team works, the telemetry accumulates, and the only weekly ceremony is fifteen minutes of guardrail reading. The discipline is in what does <em>not</em> happen — no mid-window autonomy promotions, no peeking at the primary outcomes to re-argue the bar, no switching the harness off to go faster.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s5" data-pb="pb-pilot" data-step="pb5-s5">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s5">B1 · Run F2 at the granted level, with the discipline on</label>
+    <p class="pbwhy">Pilot tasks flow through PB4's contract loop at PB3's granted autonomy — and stay there: no promotions mid-window, because changing the treatment mid-experiment forfeits the comparison. Keep batches small: DORA 2024's mechanism for teams that kept stability while adopting AI is adherence to <em>"small batch sizes and robust testing"</em>, and its data says batch size tends to <em>increase</em> when AI is used — resist exactly that drift. The restraint has a practitioner name: Swarmia's five-levels analysis puts the honest industry ceiling between levels 2 and 3, <em>"and the reason is usually not the tool, but how purposefully they're using it"</em> — the pilot exists to earn the next level with evidence, not to demo it early (<a href="&#35;e6-deepdive">E6</a>).</p>
+    <div class="pbdone">DONE = pilot underway; REQ ids on every pilot PR (PB4's gate keeps proving it); zero autonomy changes logged mid-window.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s6" data-pb="pb-pilot" data-step="pb5-s6">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s6">B2 · Read the guardrails weekly — dials, not debates</label>
+    <p class="pbwhy">Fifteen minutes weekly over the guardrail row (template below): rework direction, change-fail, review latency, PR size, queue depth, no-review-merge share, token spend. A fired trigger turns its agreed dial <strong>the same week</strong> — shrink batch, hold scope, fewer agents, module back to F1 — and the log records either the dial or the written reason it did not turn. The primary outcomes are not read mid-window; that is the pre-registration discipline holding. Why weekly, and why these: the failure shape arrives in the review queue first and fast — Faros' 2026 telemetry (vendor, ~22,000 developers, flagged as such) has median review time up 441.5%, PR size up 51.3% and <strong>31.3% more PRs merging without any review</strong>; the independent 2×-mandate study confirms the mechanism at 802 developers with reviewer load doubling while merge and revert rates stayed flat — the strain hides in the queue, not in the defect count, until review is skipped (<a href="&#35;e7-deepdive">E7</a> AP3). Weekly is the cadence at which a dial still beats a crisis.</p>
+    <div class="pbdone">DONE = weekly log committed every week; every fired trigger followed by its dial or a written reason — none silently ignored.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-weekly">copy</button><pre id="pb5-tpl-weekly">
+# pilot-weekly.md — 15 minutes, dials not debates (B6 back-triggers)
+| wk | rework dir | change-fail | review latency | PR size | queue | no-review % | tokens | trigger fired | dial turned |
+|----|------------|-------------|----------------|---------|-------|-------------|--------|---------------|-------------|
+
+# Rules:
+# - primary outcomes are NOT read mid-window (pre-registration discipline);
+#   guardrails are health, outcomes are the verdict.
+# - a fired trigger turns its agreed dial the same week — no meeting needed.
+# - a fired trigger with no dial turned gets a written reason on its row.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s7" data-pb="pb-pilot" data-step="pb5-s7">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s7">B3 · Run the enablement the evidence rewards — and close the survey</label>
+    <p class="pbwhy">During the window, do the two things 2026's field data says move adoption: make the champion's wins <strong>visible to peers</strong> — Microsoft's instrumented study of its own CLI-agent rollout (tens of thousands of engineers, arXiv:2607.01418) found first use spreading primarily through social networks and recommends exactly that lever — and run structured enablement rather than licence distribution: DX's Q4 2025 report (135,000 developers, 425 organizations) is blunt that <em>"simply handing out licenses is not enough."</em> Keep the two headline PR numbers separate when the client quotes them back: Microsoft's ~24% sustained merge lift and Faros' figures come from different methods and populations — never merge them into one number (<a href="&#35;b6-deepdive">B6</a> §3). At window end, collect the survey's second half (perceived speedup) before anyone sees the measured results — the gap between the two is a deliverable, evidence about bias that pre-empts "but it feels faster" in the gate meeting.</p>
+    <div class="pbdone">DONE = enablement actions logged; both survey halves collected, the second before results were shown; friction notes filed.</div>
+  </div>
+</div>
+
+<h2><span class="n">4</span>Phase C — Read, gate, decide</h2>
+<p>Phase C is one honest computation and one signed decision. Everything hard was done in Phase A; what remains is refusing to soften it now that the numbers are real.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s8" data-pb="pb-pilot" data-step="pb5-s8">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s8">C1 · Compute the after-window and read the deltas honestly</label>
+    <p class="pbwhy">Recompute every pre-registered metric with the frozen queries; report per-metric deltas, <strong>stability always beside throughput</strong>, never a composite score (<a href="&#35;e7-deepdive">E7</a> §2). If the sample came in under the pre-registered minimum, the claims are direction-only — write "throughput moved up, stability held", not a percentage. Then compute the perception gap: predicted vs perceived vs measured. The reading rule comes from DORA's own arc: 2024 measured AI adoption costing stability (−7.2%) while 2025's report found throughput turned positive with instability still elevated — <em>faster, but not safer</em>, the amplifier thesis. A throughput gain with falling stability is not a partial win to round up; it is the signature of a weak surrounding system, and surfacing it is what separates this pilot from the vendor decks the client has already seen.</p>
+    <div class="pbdone">DONE = results table committed: every pre-registered metric, its delta (or direction), and the perception gap — same queries as the baseline, verified by diff.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s9" data-pb="pb-pilot" data-step="pb5-s9">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s9">C2 · Run the F2→F3 gate: GO / HOLD / STOP</label>
+    <p class="pbwhy">Walk the gate checklist (template in §5) with named signatories. <strong>GO</strong> = pre-registered success met and guardrails within bounds → F3 expansion opens. <strong>HOLD</strong> = mixed or underpowered → extend the window or shrink scope and re-run the gate on a named date; HOLD is a normal exit, not a failure — the METR follow-up teaches that even the field's best measurement sometimes says "we cannot tell yet", and saying it is the credible move. <strong>STOP</strong> = a <a href="&#35;b6-deepdive">B6</a> STOP condition surfaced (no verification substrate, safety-critical scope without provenance, no audit trail) or a guardrail breached persistently with its dials exhausted → the recommendation is written down, because <em>a roadmap that cannot say no is a sales document</em> (B6 §5). Gates are decided by checkable facts, not the quarter ending: every row of the checklist is a number against a bound that was agreed in Phase A — the only judgment left is which of the three words to sign.</p>
+    <div class="pbdone">DONE = decision recorded with date, criteria and signatories; HOLD carries its re-run date; STOP names its condition.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb5-s10" data-pb="pb-pilot" data-step="pb5-s10">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb5-s10">C3 · Write the pilot report — and route what it earned</label>
+    <p class="pbwhy">Fill the report (template in §5): baseline-vs-pilot table, the perception gap, the guardrail log, cost per merged PR including tokens, the signed decision, and the caveats stated plainly — sample size, brownfield messiness, task heterogeneity; naming the limits is what makes the findings that survive them persuasive (<a href="&#35;e7-deepdive">E7</a> §3). On GO, the report carries the expansion plan: F3 proceeds module by module in heatmap order, and <strong>every new module gets the F1 treatment first</strong> — PB2's net and PB3's cage are recycled per module, promotions stay dual-key, demotion thresholds carry over (<a href="&#35;b6-deepdive">B6</a>). The report has one more customer: this methodology itself. Its corpus is 100% externally cited — a finished pilot is the first first-party evidence, and the anonymized results entry feeding back into these deep dives is the field-report loop the roadmap reserves for exactly this artifact.</p>
+    <div class="pbdone">DONE = report delivered to the sponsor; on GO, the first expansion module named with its F1 checklist opened; the anonymized field-report entry drafted.</div>
+  </div>
+</div>
+
+<h2><span class="n">5</span>Toolbox &amp; templates</h2>
+<p>Everything below was verified against primary sources on <strong>2026-07-20</strong> — measurement guidance and pricing both churn; <strong>re-verify before a client meeting</strong>. The runbook itself is deliberately tool-agnostic: the metrics come from git, CI and the incident system, and the templates are markdown in the repo. The ecosystem context, because the client will ask:</p>
+<div class="figscroll"><table class="map">
+<tr><th>Surface</th><th>State (verified 2026-07-20)</th><th>The note that bites</th></tr>
+<tr><td>metric frameworks</td><td>DORA 2025 = <em>State of AI-assisted Software Development</em>: AI Capabilities Model (seven capabilities), seven team profiles; no 2026 report yet (expected fall 2026)</td><td>rework rate entered the metric set in the <strong>2024</strong> report; re-verify the vocabulary before a client deck</td></tr>
+<tr><td>DX Core 4 + AI</td><td>June 2026 addendum: no new metric added; AI adoption + token spend filed as "diagnostic telemetry"; in-house figures: 27.4% of production code AI-authored (Q1 2026), ~7.8% PR-throughput lift</td><td>in-house/vendor figures — label them; useful as the realistic counter to headline hype</td></tr>
+<tr><td>pilot method</td><td>METR redesigning its uplift experiment (blog, 2026-02-24) after selection effects — 30–50% withheld tasks; result self-rated "very weak evidence"</td><td>the control arm is the scarce resource — protect it, and report contamination as contamination</td></tr>
+<tr><td>review economics</td><td>"2× mandate" longitudinal study (arXiv:2607.01904, Jul 2026): 802 devs, 196,212 PRs — 2.09× throughput, per-reviewer load ~doubled, automated review overtook human, merge/revert stable</td><td>review latency is the guardrail that fires first; the fix is fewer agents, not paper reviewers</td></tr>
+<tr><td>cost accounting</td><td>Copilot usage-based billing since 2026-06-01 (1 credit = $0.01; Pro $10 / Pro+ $39 / Max $100) · Claude Code via Pro $20 / Max $100–$200 · Cursor $20/$60/$200, team seats $120</td><td>prices churn monthly; measure cost-to-merge, not token price ($5.56–$69.97 per merged feature, Jul 2026 benchmark)</td></tr>
+<tr><td>autonomy governance</td><td>Digital Apprentice per-skill state machine (arXiv:2606.04321 — design proposal) · Swarmia's five autonomy levels ("It's not a ranking")</td><td>promotion dual-key, demotion automatic — agree the thresholds at gate-opening, not at breach time</td></tr>
+</table></div>
+<p>The two judgment templates live here — skeletons a human fills at the gate, not runnable artifacts:</p>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-gate">copy</button><pre id="pb5-tpl-gate">
+# f2-f3-gate.md — the decision, against the pre-registered criteria (B6 §2)
+Pre-registered success met (after-window, frozen queries): ____
+Stability read BESIDE throughput (no composite score): ____
+Guardrails within bounds across the window: ____
+Fired triggers → dials turned (from pilot-weekly.md): ____
+Sample ≥ pre-registered minimum: ____  (if not: direction-only claims)
+Contamination log: clean / entries explained: ____
+
+Decision (exactly one):
+GO   → F3 expansion: modules in heatmap order, EACH through the F1
+       treatment first (net + cage per module — PB2/PB3 recycled);
+       promotions dual-key (evidence + named human); demotion
+       thresholds carried over unchanged.
+HOLD → extend window / shrink scope; gate re-runs on ____ (date).
+       HOLD is a normal exit, not a failure.
+STOP → condition: no verification substrate / safety scope without
+       provenance / no audit trail / guardrail breached with dials
+       exhausted: ____________
+       Recommendation in writing — a roadmap that cannot say no
+       is a sales document.
+Signatories: ____________   Date: ____________
+</pre></div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb5-tpl-report">copy</button><pre id="pb5-tpl-report">
+# Pilot report — PB5 exit artifact (and the field-report loop's input)
+Client / module(s): ____________  Window: ____________
+Arms + assignment rule (and how far from random it landed): ____________
+
+## 1 Baseline vs pilot (frozen queries; per-metric; no composite)
+| metric            | before (PB1 §3) | after | delta / direction |
+|-------------------|-----------------|-------|-------------------|
+| deploy frequency  |                 |       |                   |
+| lead time         |                 |       |                   |
+| change-fail rate  |                 |       |                   |
+| recovery time     |                 |       |                   |
+| rework rate       |                 |       |                   |
+
+## 2 Cost per merged PR (incl. tokens)   before ____  after ____
+## 3 Perception gap   predicted ____  perceived ____  measured ____
+## 4 Guardrail log    triggers fired ____  dials turned ____  ignored 0
+## 5 Decision         GO / HOLD / STOP — criteria, date, signatories
+## 6 If GO — expansion: next module(s) in heatmap order; F1 checklist
+     opened per module; promotion/demotion thresholds carried over
+## 7 Caveats, stated plainly: sample size, brownfield messiness, task
+     heterogeneity, contamination — the limits are part of the result
+</pre></div>
+
+<h2><span class="n">6</span>Exit gate &amp; takeaways</h2>
+<p>The pilot counts as run — whatever the verdict — when every row below passes. Note what the rows check: the discipline of the measurement, not the direction of the result. A well-run pilot that ends in STOP passes this gate.</p>
+<div class="figscroll"><table class="map">
+<tr><th>Exit criterion</th><th>Check</th></tr>
+<tr><td>Baseline frozen</td><td>PB1 §3 re-pulled with committed queries; every key computed or proxied — before the first pilot task</td></tr>
+<tr><td>Cost column live</td><td>token/seat spend per merged PR computed on the before-window; attribution rule written</td></tr>
+<tr><td>Comparison designed</td><td>assignment rule committed; unit = team/module; contamination rules written, log in place</td></tr>
+<tr><td>Pre-registered</td><td>success + guardrails + back-triggers signed before the first task; predictions sealed</td></tr>
+<tr><td>Pipeline proven</td><td>dry run computed every metric once on real history without hand-editing</td></tr>
+<tr><td>Discipline held</td><td>zero mid-window autonomy promotions; REQ ids on every pilot PR</td></tr>
+<tr><td>Guardrails read</td><td>weekly log complete; every fired trigger → its dial or a written reason</td></tr>
+<tr><td>Perception captured</td><td>both survey halves collected, the second before results were shown; gap computed</td></tr>
+<tr><td>Deltas honest</td><td>frozen queries re-run; stability beside throughput; direction-only where underpowered</td></tr>
+<tr><td>Gate signed</td><td>GO / HOLD / STOP recorded against the pre-registered criteria, with signatories and date</td></tr>
+<tr><td>Report routed</td><td>report delivered; on GO the first F3 module named with its F1 checklist opened</td></tr>
+</table></div>
+<div class="callout pine"><div class="t">Exit routing</div><p>PB5 is the journey's last runbook — deliberately not the engagement's end. <strong>GO</strong> does not graduate the client out of the runbooks; it recycles them: every F3 module enters through PB2's net and PB3's cage again, in heatmap order, with the pilot's thresholds carried over — expansion that skips the per-module F1 treatment is the unverified-write failure <a href="&#35;b1-deepdive">B1</a> catalogued, at scale. <strong>HOLD</strong> re-runs this runbook's Phase C on a named date with a longer window or tighter scope. <strong>STOP</strong> is the recommendation you must be able to make — it is also the rarest, because PB1's F0 gate should have caught never-start conditions before a pilot was ever proposed; a STOP here usually means something changed mid-engagement, and the report should say what. Whichever way it goes: the anonymized results feed the field-report loop — the first first-party evidence in a corpus that has run on external citations until now.</p></div>
+<div class="callout"><div class="t">Three sentences to remember PB5 by</div><p>The pilot is B6's F2 phase run as an experiment: a frozen baseline, an as-random-as-possible split with a protected control arm, and success criteria signed before the first task — because the best RCT in the field measured developers 19% slower while they believed they were 20% faster, and feel is not evidence. Guardrails are dials, not debates: review latency, rework and the no-review-merge share carry agreed back-trigger thresholds, and demotion happens because a number moved, never because a meeting was won. The gate has three honest exits — GO recycles PB2/PB3 per module into F3, HOLD extends the measurement, STOP is the recommendation a roadmap must be able to make — and whichever fires, the report is the methodology's first first-party evidence.</p></div>
+<p>Sources and caveats for the empirical claims. Strong independent evidence: the METR RCT (arXiv:2507.09089 — 19% slower, predicted +24%, still believed ~20% faster), the "2× mandate" longitudinal study (arXiv:2607.01904 — 802 developers, 196,212 PRs, 2.09× throughput, per-reviewer load roughly doubled, automated review overtaking human, merge/revert stable), and DORA 2024/2025 (−1.5%/−7.2% decomposition; 2025's throughput-positive-stability-negative update; the small-batches mechanism; rework rate introduced 2024). Instrumented but self-studied: Microsoft's rollout study (arXiv:2607.01418 — ~24% sustained PR-merge lift over four months, peer-network diffusion; observational, Microsoft studying Microsoft). Practitioner research, method-transparent: DX Q4 2025 (135,000 developers/425 organizations — enablement effects, "simply handing out licenses is not enough"), DX's Core 4 AI addendum (27.4% and ~7.8% are in-house figures), the cost-to-merged-feature benchmark (July 2026 — $5.56–$69.97, token price vs cost-to-merge diverging), and METR's own design-change note (2026-02-24 — "very weak evidence", 30–50% withheld tasks). Vendor telemetry, labelled: Faros 2026 (+441.5% median review time, +51.3% PR size, 31.3% more no-review merges — self-selected customer base; the mechanism, not the precision, is the point). Reports handled with their real wording: MIT NANDA (July 2025, not peer-reviewed — "95% of organizations are getting zero measurable return", methodology 300+ initiative reviews / 52 interviews / 153 surveys; the "95% of pilots fail" phrasing and the "150/350" methodology are misquotes this workbook does not repeat), KPMG's stall mechanism (consulting research). Design proposals, flagged: the Digital Apprentice (arXiv:2606.04321) and GAIE (arXiv:2606.22484). Our synthesis, kept flagged: F0–F3 and the F2→F3 gate table (Report 4/B6), the GO/HOLD/STOP framing, the guardrail-to-dial mapping and this runbook's phase compression. Deliberately not cited: the DORA "2.4×" folklore, any "95% of AI pilots fail" phrasing, and any single "agents make teams X% faster" number — the honest answer is the measured delta at this client, which is the whole point of the runbook.</p>
+<p class="closingnote">This runbook is also available as a standalone file (PB5-pilot-runbook.html). Its natural neighbours are <a href="&#35;e7-deepdive">E7 Metrics &amp; anti-patterns</a> (the DORA process and the METR method this runbook operationalizes), <a href="&#35;b6-deepdive">B6 Roadmap F0–F3</a> (the gate, the back-triggers and the STOP criteria), the <a href="&#35;pb4-deepdive">PB4 Handoff runbook</a> whose GO it strictly requires, and <a href="&#35;pb1-deepdive">PB1 Assess</a>, whose §3 baseline is the "before" it measures against. The F0–F3 ladder, the F2→F3 gate table, the GO/HOLD/STOP framing and the guardrail thresholds are this workbook's synthesis (Report 4 lineage), not an industry standard; every number and price — DORA report vocabulary, DX figures, the 2×-mandate study, Copilot/Claude Code/Cursor pricing — is point-in-time (verified 2026-07-20) and must be re-verified before a client meeting. With PB5, module M9's journey is complete: Assess → Bootstrap → Harness → Handoff → Pilot, and the loop the last runbook opens — expansion module by module, each through the net and the cage again — is the methodology in steady state.</p>
+    </div>
+  </div>
+</div>
+
 <footer>
-  <b>v1.55</b> · 2026-07-20 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
+  <b>v1.56</b> · 2026-07-20 · <button class="verlink" type="button" data-veropen>full version history &amp; changelog</button><br>
   <b>Artifact registry — full originals produced in this project (research artifacts, Slovak):</b>
   <ul>
     <li>Report 1 — "Adapting Classical SDLC to Agentic Development with LLM Coding Agents: Conceptual Framework 2025–2026"</li>
@@ -9098,12 +9390,14 @@ concepts:["handoff contract","EARS/Gherkin","traceability ids","return channel"]
 open:[`What is the smallest real client feature suitable for the first contract-driven delivery?`],
 src:[{t:"↳ PB4 Runbook — open here (owner map, contract template & T0–T2, EARS/Gherkin ladder, REQ-id + suspect gates, return channel, delivery report)",u:"#pb4-deepdive"},{t:"Theory: H1–H4 (open those deep dives)"}]},
 
-{id:"pb-pilot",code:"PB5",title:"Pilot: measure, gate, decide (runbook in preparation)",
-know:[`Will cover: the DORA baseline + METR-style pilot design from E7 (objective time, pre-registered success, perception-gap capture), the F0–F3 gate table with back-triggers, and STOP criteria (B6). The baseline itself is captured earlier, in PB1 — PB5 compares against it.`,
-`Self-reported speed is disqualified as evidence by design: METR measured devs 19% slower while believing they were ~20% faster.`],
-concepts:["DORA baseline","pre-registered success","STOP criteria","F0–F3 gates"],
+{id:"pb-pilot",code:"PB5",title:"Pilot: measure, gate, decide",
+know:[`The pilot is B6's F2 phase run as an experiment: PB1's frozen baseline (plus the token/cost column PB5 finally adds), an as-random-as-possible two-arm split with a protected control arm, and success criteria pre-registered and signed before the first pilot task (E7's METR method). Entry posture: a recorded PB4 GO.`,
+`Self-reported speed is disqualified as evidence by design: METR measured devs 19% slower while believing they were ~20% faster — and METR's own 2026 follow-up collapsed on control-arm contamination (30–50% withheld tasks, self-rated "very weak evidence"), which is why assignment is never self-selected.`,
+`Guardrails are dials, not debates: review latency, PR size, no-review-merge share and rework carry agreed back-trigger thresholds read weekly — demotion is automatic (shrink batch → hold scope → fewer agents → module back to F1), a number acting rather than a meeting (B6).`,
+`The F2→F3 gate has three honest exits, decided against the pre-registered criteria with stability read beside throughput: GO (expansion module by module, each through the F1 treatment first — PB2/PB3 recycled), HOLD (extend the window; a normal exit), STOP (B6's conditions, recommended in writing).`],
+concepts:["DORA baseline","pre-registered success","perception gap","GO / HOLD / STOP"],
 open:[`Which DORA keys can this client actually compute from day 0, and what replaces the ones they cannot?`],
-src:[{t:"Runbook companion in preparation — will open here as an overlay in a future version"},{t:"Theory: E7 metrics & anti-patterns, B6 roadmap F0–F3 (open those deep dives)"}]}
+src:[{t:"↳ PB5 Runbook — open here (baseline re-pull + token column, two-arm design, pre-registration, weekly guardrail dials, F2→F3 gate & pilot report)",u:"#pb5-deepdive"},{t:"Theory: E7 metrics & anti-patterns, B6 roadmap F0–F3 (open those deep dives)"}]}
 ]}
 ];
 
@@ -9521,6 +9815,15 @@ function renderSyncModal(){
       +'<div class="syncrow"><input id="synccodein" type="text" maxlength="4" placeholder="abcd" autocomplete="off"><button type="button" id="synclink">Link this device</button></div>'
       +'<p id="syncmsg"></p>';
   }
+}
+var pb5ov=document.getElementById('pb5ov');
+if(pb5ov){
+  document.addEventListener('click',function(e){
+    var open=e.target.closest('a[href="#pb5-deepdive"]');
+    if(open){e.preventDefault();pb5ov.classList.add('show');document.body.style.overflow='hidden';pb5ov.querySelector('.panel').scrollTop=0;return;}
+    if(e.target.closest('[data-pb5close]')||e.target===pb5ov){pb5ov.classList.remove('show');document.body.style.overflow='';}
+  },true);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pb5ov.classList.contains('show')){pb5ov.classList.remove('show');document.body.style.overflow='';}});
 }
 var pb4ov=document.getElementById('pb4ov');
 if(pb4ov){
