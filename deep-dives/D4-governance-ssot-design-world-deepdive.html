@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D4 Deep Dive — Governance &amp; SSOT in the Design World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edD4a{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD4a)}
+svg .edD4b{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD4b)}
+svg .edD4c{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahD4c)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">D4 · DEEP DIVE</span>
+    <h1>Governance &amp; SSOT in the Design World</h1>
+    <span class="bc">companion to module M6 · Design harness</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why it matters</a>
+  <a href="#s1"><b>1</b> · The classical models</a>
+  <a href="#s2"><b>2</b> · The hybrid operating model</a>
+  <a href="#s3"><b>3</b> · Versioning &amp; deprecation</a>
+  <a href="#s4"><b>4</b> · Durable, derived, disposable</a>
+  <a href="#s5"><b>5</b> · The SSOT question</a>
+  <a href="#s6"><b>6</b> · Provenance &amp; the audit trail</a>
+  <a href="#s7"><b>7</b> · Evidence &amp; do-not-cite</a>
+  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> · Further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M6</p>
+      <h2 id="s0"><span class="n">0</span>Why it matters</h2>
+      <p class="lead">D1 made the design system the third handoff artifact, D2 made its tokens a machine-checkable contract, and D3 showed how agents consume it. None of that answers the question every design system eventually lives or dies by: <strong>who is allowed to change the system, and which copy of it is the truth?</strong> That is governance, and agents make it the load-bearing discipline of the whole module. A coding agent is a new class of contributor — tireless, fast, and confident — plugged into a review process that was designed for a handful of busy humans. Report 1's rule applies verbatim: <strong>never scale agents beyond review capacity</strong>. In the design world that rule has a specific address, because design-system teams were already the bottleneck before the first agent opened a PR.</p>
+      <p>Two pieces of evidence frame the stakes. The first is a controlled experiment, small but pointed: Southleft's ds-contracts proof-of-concept handed an AI agent a UI task with no governance artifact and it scored <strong>69 out of 100</strong> — it invented options that did not exist and hard-coded colors; the same agent handed the design-system contract as a strict rulebook scored <strong>100 out of 100</strong>. Treat the decimals as a vendor POC, not science — but the direction is exactly what D1's slop evidence predicts, and it is the cleanest single illustration that governance artifacts are what separate "agent as system builder" from "agent as slop generator". The second is industry-scale and peer-reviewed: Chung &amp; Hassan (AIware 2026, 29,585 real PR lifecycles across Copilot, Devin, Cursor, Codex and Claude Code) found that collaborator tools show <strong>≥96% agent-initiated PRs yet &lt;0.1% agent-authorized merges</strong> — operational agency and merge authority have already decoupled in practice, and "merge governance stays concentrated in human hands." The industry has quietly decided who approves; this chapter is about building the design-layer equivalent of that decision deliberately, instead of discovering it after the drift.</p>
+      <p>The chapter runs in six moves: the classical team models and Curtis's own retraction of the federated ideal (§1); the hybrid operating model agents force, with the approval gates that make it concrete (§2); versioning and deprecation — the system's clock, and how agents must consume it (§3); the durable/derived/disposable write-permission map applied to design artifacts (§4); the single-source-of-truth question, where 2025–26 produced a genuine three-way argument (§5); and the angle the outline almost missed — provenance, disclosure and the audit trail of machine contributors (§6). Evidence labels throughout: survey data, peer-reviewed numbers, vendor claims and our own synthesis are kept on separate shelves (§7).</p>
+      <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>Curtis's three team models — and his 2024 retraction, quoted exactly (§1)</li><li>the hybrid model: core team owns, agents generate, designer gate approves (§2)</li><li>real governance mechanics from Carbon, Primer, Paste, Polaris, SLDS and Figma (§2)</li><li>SemVer + 3-phase deprecation, and the three rules for how agents consume versions (§3)</li><li>the durable/derived/disposable write-permission table for design artifacts (§4)</li><li>the SSOT argument in all three positions, with the quotes verified (§5)</li><li>provenance &amp; disclosure of machine contributors — the governance gap forming now (§6)</li><li>the evidence file with its do-not-cite list (§7)</li></ul></div>
+      <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>D1 — why the system is an artifact worth governing at all</li><li>D2 — the token contract that §3 versions and §4 stores in git</li><li>D3 — the consumption channels §5's SSOT decision feeds</li><li>D5 — the deterministic checks inside every gate drawn here</li><li>D6 — the D1–D5 scale; §2's gates are what make D4 (the level) safe</li><li>D7 — the brownfield rollout; F1 is where this chapter gets installed</li><li>Report 3 (I2) — write-permissions as governance, the pattern §4 applies</li><li>E6 — L3 autonomy: every gate below is an L3 gate wearing design clothes</li></ul></div></div>
+
+      <h2 id="s1"><span class="n">1</span>The classical models — and Curtis's retraction</h2>
+      <p>The vocabulary every governance conversation still uses comes from one article: Nathan Curtis's <strong>"Team Models for Scaling a Design System"</strong> (EightShapes, September 2015). The <strong>solitary</strong> model — one person, the "overlord", designing and producing the system alone — is cheap and coherent and dies by its own success; Curtis's verdict is a standalone sentence, <em>"Overlords don't scale."</em> (Cite it precisely: it is aimed at the solitary model, not at centralized teams — a popular 2026 secondary source misattributes it.) The <strong>centralized</strong> model — a dedicated team builds and maintains the system for everyone — buys quality and consistency at the price of a permanent bottleneck: every product team's need queues behind one backlog. The <strong>federated</strong> model — people from the product teams themselves contribute — spreads capacity and adoption, and was for a decade the stated ambition of most mature systems.</p>
+      <p>Then Curtis retracted the ambition, and the retraction is more useful than the original. In <strong>"The Fallacy of Federated Design Systems"</strong> (September 2024 — after EightShapes closed; he now works as Directed Edges) he writes, verbatim: <em>"federated is not a choice, it's a facet. In practice, it's never pursued first and never without central investment."</em> And: <em>"Positioning central versus federated as a mutually exclusive choice was a mistake."</em> The operational advice becomes additive — <em>"Don't choose federated. Instead, add federated. Gradually."</em> — because none of the federated-only systems he studied succeeded without central capacity underneath. Note the exact wording: the circulating form "federated is a facet, not a model" is a paraphrase (Shaun Bent uses it too, in his December 2025 "Why Federated Design Systems Keep Failing" — a good independent second source, nine years of design-system leadership at Spotify behind it); quote Curtis's actual sentence or nothing.</p>
+      <p>Survey data says the industry already governs tighter than its rhetoric. zeroheight's Design Systems Report 2026 (n=147) asked who may contribute: only <strong>4%</strong> answered "anyone in the company", 65% "anyone on the product team", 14% design-system team only — over two in five teams gatekeeping contributions outright, which the report reads as a trust gap between system teams and the wider org. And the capacity context for everything that follows: <strong>3 in 5 design-system teams are understaffed</strong>, the modal team is one to five people, and the federated model's top reported issue is "bottlenecks waiting on busy contributors." This was the pre-agent baseline. Now add a contributor that can open fifty component PRs before lunch.</p>
+      <p>That is what AI changes in the team-model question — not the destination, but the arithmetic. The agent is a contributor with effectively unlimited output and zero judgment, which collapses the federated model's one real advantage (more hands) while leaving its one real cost (review load) entirely with humans. The sustainable shape is the one Report 5 names the <strong>hybrid</strong>: a central core team owns tokens, APIs and the governance itself; agents generate and maintain at machine speed inside that ownership; the designer/DS team approves everything durable through explicit gates. It is the centralized model with its throughput problem outsourced to machines and its judgment problem deliberately kept in-house — and it is this workbook's synthesis, not a published industry model; the nearest published corroboration is the practice, not the theory (§2's mechanics).</p>
+      <figure>
+      <svg viewBox="0 0 1000 400" role="img" aria-label="Governance models spectrum: solitary overlord, centralized team, federated contributors, and the agentic hybrid where a core team owns the system, agents generate via PR, and a human gate approves everything durable">
+        <defs><marker id="ahD4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">TEAM MODELS 2015 → THE AGENTIC HYBRID 2026 · CAPACITY MOVES TO MACHINES, JUDGMENT STAYS HUMAN</text>
+        <rect x="30" y="60" width="210" height="96" rx="10" class="bxG"/>
+        <text x="46" y="84" class="tt">Solitary ("overlord")</text>
+        <text x="46" y="102" class="ts">one person, coherent, cheap</text>
+        <text x="46" y="116" class="ts">"Overlords don't scale" (2015)</text>
+        <text x="46" y="138" class="ts">throughput: 1 · review: 1</text>
+        <rect x="270" y="60" width="210" height="96" rx="10" class="bx"/>
+        <text x="286" y="84" class="tt">Centralized</text>
+        <text x="286" y="102" class="ts">dedicated team builds for all</text>
+        <text x="286" y="116" class="ts">quality up, backlog the bottleneck</text>
+        <text x="286" y="138" class="ts">throughput: team · review: team</text>
+        <rect x="510" y="60" width="210" height="96" rx="10" class="bx"/>
+        <text x="526" y="84" class="tt">Federated</text>
+        <text x="526" y="102" class="ts">product teams contribute</text>
+        <text x="526" y="116" class="ts">"not a choice, a facet" (2024)</text>
+        <text x="526" y="138" class="ts">throughput: org · review: still the team</text>
+        <rect x="750" y="60" width="220" height="96" rx="10" class="bxC"/>
+        <text x="766" y="84" class="tt">Hybrid + agents</text>
+        <text x="766" y="102" class="ts">core owns; agents generate &amp; maintain;</text>
+        <text x="766" y="116" class="ts">designer gate approves (§2)</text>
+        <text x="766" y="138" class="ts">throughput: machines · review: humans, unchanged</text>
+        <path class="edD4a" d="M240 108 L 266 108" />
+        <path class="edD4a" d="M480 108 L 506 108" />
+        <path class="edD4a" d="M720 108 L 746 108" />
+        <rect x="30" y="200" width="455" height="120" rx="10" class="bxA"/>
+        <text x="46" y="226" class="tt">The pre-agent baseline (zeroheight 2026, n=147)</text>
+        <text x="46" y="246" class="ts">4% let "anyone in the company" contribute · 14% DS-team only</text>
+        <text x="46" y="262" class="ts">3 in 5 DS teams understaffed · modal size 1–5 people</text>
+        <text x="46" y="278" class="ts">federated top issue: "bottlenecks waiting on busy contributors"</text>
+        <text x="46" y="302" class="ts">review capacity was the constraint before agents arrived</text>
+        <rect x="515" y="200" width="455" height="120" rx="10" class="bxK"/>
+        <text x="531" y="226" class="tt">What the agent changes</text>
+        <text x="531" y="246" class="ts">a contributor with unlimited output, zero judgment</text>
+        <text x="531" y="262" class="ts">federation's advantage (more hands) → free</text>
+        <text x="531" y="278" class="ts">its cost (review load) → unchanged, still human</text>
+        <text x="531" y="302" class="ts">∴ never scale agents beyond review capacity (Report 1)</text>
+        <text x="30" y="372" class="tg">THE HYBRID IS REPORT 5'S SYNTHESIS — THE PUBLISHED MODELS STOP AT 2024; THE PRACTICE (§2) ALREADY LOOKS LIKE THIS</text>
+      </svg>
+      <figcaption>Curtis's 2015 spectrum, his 2024 correction, and the shape agents force. The hybrid is not a fourth classical model — it is the centralized model whose throughput constraint moved to machines while its judgment constraint stayed exactly where it was. That asymmetry is why governance, not generation, is the design system's binding constraint in an agentic engagement.</figcaption>
+      </figure>
+
+      <h2 id="s2"><span class="n">2</span>The hybrid operating model — gates, and who approves what</h2>
+      <p>A model becomes governance only when it says <em>who approves what</em>. The hybrid's answer, mapped from Report 5 and consistent with everything in §1: the agent may <strong>propose</strong> anything — a token change, a component API change, a new component, a deprecation — but only as a pull request; the three durable change classes (<strong>token change, component API change, new component</strong>) always route through a human gate held by the designer or DS team. This is L3 autonomy (E6) expressed on the design layer, and it is the same shape as the P-scale in the product layer (M2): the machine drafts, the human disposes. Design review thereby becomes a third quality gate next to spec review (M3) and code review — with the same mechanics: PR, deterministic checks first, human judgment on what remains.</p>
+      <p>The checks run before the human, and they are D5's territory: token lint, type checks on props, visual regression, axe. The gate's job is deliberately narrow — conformance is already proven by the time the designer looks; what the gate judges is intent, fit and taste. "Self-healing" designs (usage analytics → drift scoring → automatically opened PRs, MAPE-K style) are promising and worth piloting, but they change who <em>opens</em> the PR, never who <em>approves</em> it — the Chung &amp; Hassan numbers from §0 say the whole industry has converged on that split even where nobody wrote the policy down.</p>
+      <p>This is not theory — the major public systems already run versions of every piece, and their docs are the best teaching material the chapter has:</p>
+      <div class="comp"><div class="chead"><span class="cid">CARBON</span><h3>open contribution, gated completion</h3><span class="role">IBM · contributing docs</span></div>
+      <p>"Anyone can contribute code, design, and documentation" — but new components "must be contributed in phases," completing a full component checklist before they count as done, and <strong>Carbon Labs</strong> exists as a formal incubation tier "separate from stable design system assets" for work that "has not yet met the definition of done." Merge control never leaves the maintainers ("a maintainer will squash and merge your commits for you"), external contributors sign a CLA, and since 2025 Carbon runs an MCP baseline program — treating agent access itself as a governed surface. The most complete public governance stack in the field.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">PRIMER</span><h3>read-mostly, write-closed</h3><span class="role">GitHub · primer.style/contribute</span></div>
+      <p>The opposite pole, stated verbatim: "at this time, we are not looking for external contributions from non-GitHub staff." Intake runs through pattern-request issues answered "after our weekly backlog triaging session" — a human cadence as the gate. A design system can be fully open source and fully centralized at the same time; openness of <em>reading</em> says nothing about permission to <em>write</em>. That distinction is exactly the one agents force (§4).</p></div>
+      <div class="comp"><div class="chead"><span class="cid">PASTE</span><h3>lifecycle as a build-time schema</h3><span class="role">Twilio · CONTRIBUTING.md</span></div>
+      <p>Every package.json must declare a <span class="mono">status</span> of exactly <span class="mono">backlog | alpha | beta | stable</span> — component maturity enforced as a machine-readable constraint, not prose. The public patterns index shows per-pattern columns for code, design assets, documentation <em>and peer review</em> as release requirements. And the human gate is contractual: product designers "are expected to partner" with the DS team, with named checkpoints before user testing and before launch.</p></div>
+      <div class="comp"><div class="chead"><span class="cid">FIGMA</span><h3>branch review — the design-side gate</h3><span class="role">help.figma.com</span></div>
+      <p>The canvas has its own approval mechanics, worth knowing because they mirror the code side: branching with "submit branches for review and, once approved, merge," the rule that without edit access to the main file "you need to request a review and allow someone who does to merge," and publish restricted to the main file. Library analytics (insertions and detaches per component, up to a year, API in beta) double as the drift sensor that feeds deprecation decisions — and as the measurable version of Builder.io's "detach" argument in §5.</p></div>
+      <p>Two more data points round out the pattern. Atlassian's system — per Curtis's Fallacy article — publicly restricts contribution classes ("unable to take [small enhancement, major enhancement, and new component or pattern] contributions"), a named example of write-permission gating of a federated community. And Salesforce's SLDS CONTRIBUTING.md adds the politest gate in the field: a CLA on first PR, plus "before starting down the long journey of any significant pull request, <strong>please ask first</strong>" — because "a small change can have a large-scale effect." Read that sentence as the one-line summary of why durable design artifacts sit behind gates at all.</p>
+      <figure>
+      <svg viewBox="0 0 1000 380" role="img" aria-label="Contribution flow in the hybrid model: agent or human proposes a PR, deterministic checks run first, durable changes route through the designer gate, merge and SemVer release follow, and deprecation runs as a parallel three-phase pipeline">
+        <defs><marker id="ahD4b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">THE HYBRID CONTRIBUTION FLOW · MACHINES PROPOSE, DETERMINISM FILTERS, HUMANS DECIDE (L3)</text>
+        <rect x="30" y="60" width="170" height="86" rx="10" class="bxC"/>
+        <text x="46" y="86" class="tt">Propose</text>
+        <text x="46" y="104" class="ts">agent or human —</text>
+        <text x="46" y="118" class="ts">always a PR, never a write</text>
+        <rect x="240" y="60" width="180" height="86" rx="10" class="bx"/>
+        <text x="256" y="86" class="tt">Deterministic checks</text>
+        <text x="256" y="104" class="ts">token lint · types ·</text>
+        <text x="256" y="118" class="ts">visual regression · axe (D5)</text>
+        <rect x="460" y="60" width="180" height="86" rx="10" class="bxA"/>
+        <text x="476" y="86" class="tt">Designer gate</text>
+        <text x="476" y="104" class="ts">durable classes only: token Δ,</text>
+        <text x="476" y="118" class="ts">API Δ, new component, deprecation</text>
+        <rect x="680" y="60" width="140" height="86" rx="10" class="bxK"/>
+        <text x="696" y="86" class="tt">Merge + release</text>
+        <text x="696" y="104" class="ts">SemVer (§3)</text>
+        <text x="696" y="118" class="ts">maintainer-held</text>
+        <rect x="850" y="60" width="130" height="86" rx="10" class="bxG"/>
+        <text x="866" y="86" class="tt">Consumers</text>
+        <text x="866" y="104" class="ts">humans + agents</text>
+        <text x="866" y="118" class="ts">via manifests (§3)</text>
+        <path class="edD4b" d="M200 103 L 236 103" />
+        <path class="edD4b" d="M420 103 L 456 103" />
+        <path class="edD4b" d="M640 103 L 676 103" />
+        <path class="edD4b" d="M820 103 L 846 103" />
+        <path class="edD4b" d="M330 150 L 330 196 L 115 196 L 115 150" />
+        <text x="222" y="212" class="ts" text-anchor="middle">fail → agent fixes and re-proposes (the E4 loop) — no human time spent</text>
+        <rect x="240" y="248" width="500" height="92" rx="10" class="bx"/>
+        <text x="256" y="274" class="tt">What the gate actually judges</text>
+        <text x="256" y="294" class="ts">conformance is already machine-proven; the gate rules on intent, fit and taste —</text>
+        <text x="256" y="308" class="ts">the judgment residue no check can carry (D5: conformance vs quality)</text>
+        <text x="256" y="330" class="ts">self-healing signals may OPEN the PR (MAPE-K); they never approve it</text>
+        <text x="30" y="368" class="tg">≥96% OF AGENT-ERA PRS ARE AGENT-INITIATED, &lt;0.1% AGENT-MERGED (CHUNG &amp; HASSAN 2026) — THE SPLIT IS ALREADY PRACTICE</text>
+      </svg>
+      <figcaption>The operating loop of the hybrid model. Notice where machine effort ends and human effort begins: everything left of the gate is scalable, everything at the gate is not — which is why review capacity, not generation quality, sets the ceiling on D-level (D6). The diagram is Report 5's synthesis; the mechanics quoted above it are documented practice at Carbon, Primer, Paste, SLDS, Atlassian and Figma.</figcaption>
+      </figure>
+
+      <h2 id="s3"><span class="n">3</span>Versioning &amp; deprecation — the system's clock, and how agents read it</h2>
+      <p>Governance decides who may change the system; versioning decides how those changes reach consumers without breaking them. The reference text is again Curtis: <strong>"Versioning Design Systems"</strong> (EightShapes, 2018), which opens with the field's consensus sentence — <em>"Every discussion about versioning design system outputs begins and ends with the industry standard Semantic Versioning (SemVer)."</em> Three of its lessons age especially well into the agent era. First, the unit of versioning is a real choice: a monolithic library version forces lockstep ("want button from 1.4.0? Then <em>every</em> component on that page must be 1.4.0"), while per-component versions let consumers mix — Twilio Paste runs per-component SemVer in production (each component its own npm package on its own version line; verifiable in the registry, though Paste's public docs no longer carry an explicit policy page — cite the practice, not a URL). Second, "breaking" is smaller than intuition says: renaming a class is a MAJOR bump, so <em>"a major version is neither a marketing ploy nor a guarantee that major effort awaits."</em> Third, deprecation is a calendar, not an event: Salesforce Lightning historically gave <strong>18 months</strong> ("We'll give you 18 months to react" — Brandon Ferrua, quoted by Curtis), FT's Origami compressed the window to <strong>3–6 months</strong>, and Morningstar ran old and new components in parallel for six months before removal in 2.0.0. The three-phase shape — <strong>warn → wait → remove</strong> — is the common denominator.</p>
+      <p>Current practice keeps the pattern alive with better tooling. IBM Carbon versions every package independently under SemVer (v11 GA March 2022; all v10 assets deprecated as of 30 September 2024 — a published end-of-life date, the politest form of "remove"). Atlassian's April 2026 deprecation of the <span class="mono">spacing</span> prop on <span class="mono">@atlaskit/icon</span> shows the modern gold standard: announced in the changelog with "will be removed in a future major release," shipped <em>with</em> "a codemod and ESLint rule with IDE quick-fix … to automate the migration" — deprecation that carries its own migration tooling is the difference between a contract and a breaking change with good PR. Shopify Polaris states the consumer-facing contract verbatim: "Deprecated components will be removed in future major versions of Polaris … will show warnings in the component file and provide details for alternative usage" — and then lived it at system scale: Polaris React was frozen on 1 October 2025 in favor of framework-agnostic Polaris Web Components, with the monorepo archived read-only in January 2026. One caution for citations: Salesforce's SLDS versions are SemVer-<em>shaped</em>, but no current public doc commits to SemVer explicitly — say "SemVer-shaped practice," not "commits to SemVer."</p>
+      <p>The agent era adds a consumer nobody versioned for in 2018, and it changes what deprecation information is <em>for</em>. An agent composing UI from a component manifest will happily call a deprecated prop or invent one that never existed — both failure modes are silent. Three consumption rules follow, and they belong in every design-layer AGENTS.md: <strong>(a) manifests show only current APIs</strong> — MCP/Storybook component manifests must filter deprecated components and props out of what the agent can retrieve, so the retrieval layer itself enforces currency; <strong>(b) never hallucinate a prop</strong> — the hard rule from D3, "verify prop existence via MCP tools before use," is the agent-side mirror of versioning discipline; <strong>(c) deprecated is machine-flagged, not prose-flagged</strong> — status metadata (Paste's <span class="mono">status</span> field is the model) plus lint warnings that fire on import, so an agent that does retrieve something deprecated gets a deterministic signal, not a paragraph to interpret. There is a direct conceptual mapping to Report 3's ADR lifecycle: a component API version is <em>Accepted</em> and immutable for its lifetime; deprecation is <em>Superseded</em> with a pointer to its replacement; and just as an ADR is never edited after acceptance, a released version is never mutated — only superseded by a new one.</p>
+      <table class="map">
+      <tr><th>Change class</th><th>SemVer bump</th><th>Gate (§2)</th><th>Deprecation duty</th><th>Agent-facing rule</th></tr>
+      <tr><td>Bug fix, visual polish within contract</td><td>PATCH</td><td>checks only, no human gate</td><td>none</td><td>consume freely via manifest</td></tr>
+      <tr><td>New optional prop, new variant, new token alias</td><td>MINOR</td><td>designer gate (API surface grew)</td><td>migration note in changelog</td><td>verify prop via MCP before use</td></tr>
+      <tr><td>Rename, removed prop, changed token value, removed component</td><td>MAJOR</td><td>designer gate + DS-team sign-off</td><td>warn → wait → remove; codemod; 3–18-month window by system</td><td>manifests filter deprecated; lint warns on import</td></tr>
+      <tr><td>New component proposal</td><td>— (enters alpha)</td><td>designer gate + incubation tier (Carbon Labs model)</td><td>status: backlog → alpha → beta → stable</td><td>not in stable manifest until beta+</td></tr>
+      </table>
+      <p>The table's last row deserves one beat: versioning discipline starts <em>before</em> a component exists. Paste's required status taxonomy and Carbon's Labs tier are the same idea — new things earn their way into the durable core through named, machine-readable stages. For agent-generated components (§6) this is the natural quarantine: the agent's proposal enters at <span class="mono">backlog</span>/<span class="mono">alpha</span>, carries its provenance label, and reaches <span class="mono">stable</span> only through the same gates a human's would. Nothing about the contributor being a machine relaxes the lifecycle — that is the entire point of governing it.</p>
+
+      <h2 id="s4"><span class="n">4</span>Durable, derived, disposable — write-permissions on design artifacts</h2>
+      <p>Report 3's information-architecture taxonomy (I1/I2) was built for exactly this question: any artifact in an agentic system falls into one of three classes, and the class dictates the write permission. Applied to the design world, the mapping is clean — and it is the connective tissue between this chapter and the rest of the workbook, because it makes design governance a special case of the general artifact governance the reader already knows.</p>
+      <table class="map">
+      <tr><th>Class</th><th>In the design world</th><th>Write permission</th><th>Why</th></tr>
+      <tr><td><b>Durable</b> (SSOT)</td><td>token JSON in git (DTCG) · component source · component API definitions &amp; manifests · design ADRs · Code Connect mappings</td><td>PR + human gate only; the agent proposes, never writes directly</td><td>everything else derives from these; an error here propagates everywhere at agent speed</td></tr>
+      <tr><td><b>Derived</b></td><td>generated CSS / platform outputs (Style Dictionary) · Storybook build · docs site · Figma library <i>when code-first</i> (§5)</td><td>agent regenerates freely; never hand-edited by anyone</td><td>reproducible from durable sources on demand — hand edits are drift by definition</td></tr>
+      <tr><td><b>Disposable</b></td><td>exploration drafts · one-shot v0/Lovable screens · scratch variants · throwaway prototypes</td><td>agent writes freely, no gate</td><td>nothing depends on them; this is where agent speed is pure upside</td></tr>
+      </table>
+      <p>Three placement decisions do the real work, and each is a conversation to have explicitly with the client. <strong>Tokens are durable, full stop</strong> — D2's whole argument is that the token JSON in git is the visual contract; the moment a token edit bypasses the PR gate, D2's enforcement stack (lint, drift detection) is auditing a lie. <strong>The Figma library's class depends on the sync direction chosen in §5</strong>: under code-first it is derived — regenerated from the durable token/component sources, free to re-render, never the master; under design-first it claims to be durable but cannot enforce it, because the canvas has no merge gate strong enough — which is most of §5's argument. <strong>Component manifests and Code Connect mappings are durable, and they are the easiest class to forget</strong>: D3 warned that a rotted mapping "arrives with import paths attached," so they live in the repo, versioned with the components they describe, changed only by PR. The engagement rule of thumb compresses the table to one sentence: <strong>agents run free in the disposable tier, regenerate the derived tier, and only ever propose to the durable tier.</strong></p>
+      <div class="callout amber"><div class="t">The anti-pattern this prevents</div><p>The failure mode of ungoverned agentic design work is not dramatic — it is a slow class error: derived artifacts hand-edited until they diverge from their sources, disposable output quietly promoted into production because it looked finished, and durable artifacts edited directly "just this once" until the SSOT is a rumor. The taxonomy's value is that each of those is a <em>permission</em> bug, visible in policy before it is visible in pixels. Uber's reported pattern — CI blocks the merge and auto-files a ticket — is the durable tier defending itself mechanically (§5 for the citation and its caveat).</p></div>
+
+      <h2 id="s5"><span class="n">5</span>The SSOT question — Figma, code, or the contract in the middle</h2>
+      <p>Every design-system engagement eventually hits the question head-on: when the Figma file and the repository disagree, which one wins? For a decade the polite answer was "Figma, of course" — the canvas was where design lived. The agent era turned the polite answer into a real argument, because the new primary consumer of the system reads structured text far more reliably than it reads a visual canvas. By mid-2026 there are three articulated positions, and the honest treatment gives each its best voice before recommending one.</p>
+      <p><strong>Position one — code is the truth.</strong> Its most quotable brief is Steve Sewell (Builder.io CEO, September 2025): <em>"Figma is, at best, a set of suggestions. All that matters is what makes it into code."</em> And on design systems in Figma specifically: <em>"a lie. Pretty, collaborative, and full of backdoors and loopholes. It's too easy to override, detach, and forget what the rules even were."</em> The article's mechanism is §4's class error in the wild: a canvas object can be detached from its master in one click, and nothing blocks the merge. Its supporting anecdotes need their honest label — Builder.io reports, <em>without linking primary sources</em>, that Shopify found 14% of its admin UI had wandered off the Polaris mainline despite a coverage dashboard, that Uber's CI blocks merges on system-rule violations with auto-filed tickets, and that GitHub runs an accessibility and token check on every PR. The direction is independently plausible (Figma's own library analytics exist precisely to measure inserts and detaches), but cite them as "Builder.io reports," not as established fact — and note the article closes as a pitch for Builder's own product. The strongest practitioner account on this side is JumpCloud's Circuit DS team (Burak Başcı, April 2026), writing from production rather than theory: <em>"The design system is the contract. Figma is upstream input, not downstream truth"</em> — and, on the operating consequence, <em>"Storybook replaced Figma as our shared working surface."</em> A team account on Medium, not an official company position; still the clearest field report of the code-first migration. Equinor's open-source design system argues the same from the token layer: <em>"Figma is no longer the source of truth for tokens. It becomes a visualisation and component design tool — a consumer of tokens rather than their origin."</em></p>
+      <p><strong>Position two — the SSOT is a lie; govern the ecosystem.</strong> Beau Ulrey (design-system manager at U.S. Bank, UX Collective, May 2024) opens with the polemic: <em>"A single source of truth is a lie and always has been."</em> His argument is that neither code nor canvas is "the truth," because code can be just as non-aligned with intent as design — truth lives in shared understanding across aligned artifacts, not in any one file. (The phrase sometimes attached to him, "aim for a cohesive knowledge ecosystem," is our paraphrase of that stance, not a quote — do not attribute it.) The position sounds defeatist until §4 lands: the durable/derived taxonomy is precisely how you run an "ecosystem" without drift — many artifacts, one of them master, the rest regenerated. Ulrey's own practice confirms the synthesis: U.S. Bank deliberately stayed centralized ("we're very centralized right now… we need as much control over the core design system as possible") while building a community "commons" layer with a review path into the core — the hybrid of §1 with a federation-shaped pressure valve.</p>
+      <p><strong>Position three — neither; the contract sits between them.</strong> The newest position, and the most interesting for agentic work: Christine Vallaure (July 2026), building on Southleft's ds-contracts POC and Curtis's "Components as Data," argues the component lives in <em>neither</em> Figma nor code but in a platform-neutral JSON/YAML contract both sides build from: <em>"Figma and code are never allowed to update each other directly… It goes into the contract first, gets reviewed like any other edit, and then both sides rebuild from it."</em> Governance does not disappear, it relocates — <em>"still a human deciding who may change the shared file."</em> Curtis himself supplies the rationale (September 2025): his job is now to <em>"architect how we record component decisions as structured data independent of any platform, including Figma,"</em> because even Figma's own MCP output is <em>"a stochastic, incomplete, and imprecise component description biased towards one platform."</em> Read carefully, position three is position one with the SSOT moved up one level of abstraction — from "the code" to "the structured data the code is built from" — and it is where our own D2/D3 chapters already sit: tokens and manifests in git, everything else derived.</p>
+      <p>Two honesty notes before the recommendation. The counter-pole exists: some practitioners still build Figma-as-law systems ("tokens defined inside the library are not suggestions — they are contractual primitives," one March 2026 consultant essay insists) — a minority position in 2026, weakest exactly where agents are the consumers, but not extinct. And the ground is still moving: Figma's Config 2026 (June) announced <strong>Code Layers</strong>, bidirectional live sync between canvas layers and Git-tracked code — "the design file and the codebase become, for the first time, the same artifact," per press coverage. If it matures, it blurs the very boundary this section argues about; as of July 2026 it is weeks old, covered only in secondary press, and practitioner recaps caution that the repo remains the truth for releases, tests and CI. Watch-list item, not a foundation — the same treatment D2 gave the DTCG Resolver draft.</p>
+      <figure>
+      <svg viewBox="0 0 1000 430" role="img" aria-label="Map of SSOT positions: Figma-as-law on the left, contract-in-the-middle in the center, code-as-truth on the right, with Code Layers as a fast-moving blur on the boundary, and the workbook default marked at code-first with tokens as the durable layer">
+        <defs><marker id="ahD4c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="22" y="24" class="tg">WHO WINS WHEN CANVAS AND REPO DISAGREE? · THREE POSITIONS, ONE FAST-MOVING BLUR · JUL 2026</text>
+        <rect x="30" y="70" width="270" height="130" rx="10" class="bxG"/>
+        <text x="46" y="96" class="tt">"Figma is law"</text>
+        <text x="46" y="114" class="ts">tokens as "contractual primitives"</text>
+        <text x="46" y="128" class="ts">in the library (consultant essays, 2026)</text>
+        <text x="46" y="150" class="ts">weakness: canvas has detach, no merge gate;</text>
+        <text x="46" y="164" class="ts">agents read canvas worst (D3)</text>
+        <text x="46" y="186" class="ts">status: minority, not extinct</text>
+        <rect x="365" y="70" width="270" height="130" rx="10" class="bxA"/>
+        <text x="381" y="96" class="tt">"The contract in the middle"</text>
+        <text x="381" y="114" class="ts">platform-neutral JSON/YAML both sides</text>
+        <text x="381" y="128" class="ts">rebuild from (Vallaure, Southleft, Curtis)</text>
+        <text x="381" y="150" class="ts">"governance does not vanish —</text>
+        <text x="381" y="164" class="ts">it moves into a review"</text>
+        <text x="381" y="186" class="ts">= position one, one abstraction up</text>
+        <rect x="700" y="70" width="270" height="130" rx="10" class="bxC"/>
+        <text x="716" y="96" class="tt">"Code is the truth"</text>
+        <text x="716" y="114" class="ts">"Figma is, at best, a set of suggestions"</text>
+        <text x="716" y="128" class="ts">(Sewell); "Figma is upstream input"</text>
+        <text x="716" y="150" class="ts">(JumpCloud); tokens: Figma "a consumer,</text>
+        <text x="716" y="164" class="ts">not their origin" (Equinor)</text>
+        <text x="716" y="186" class="ts">matches how agents consume (D3)</text>
+        <path class="edD4c" d="M300 135 L 361 135" />
+        <path class="edD4c" d="M635 135 L 696 135" />
+        <text x="332" y="122" class="ts" text-anchor="middle">drift risk</text>
+        <rect x="365" y="240" width="270" height="76" rx="10" class="bx"/>
+        <text x="381" y="264" class="tt">Code Layers (Config, Jun 2026)</text>
+        <text x="381" y="282" class="ts">bidirectional canvas↔git sync — blurs the boundary;</text>
+        <text x="381" y="296" class="ts">weeks old, secondary press — watch-list, not foundation</text>
+        <path class="edD4c" d="M500 240 L 500 204" style="stroke-dasharray:5 4"/>
+        <rect x="30" y="356" width="940" height="52" rx="10" class="bxK"/>
+        <text x="46" y="378" class="tt">Workbook default (synthesis, flagged): tokens-as-JSON + component source in git = SSOT; Figma = view &amp; ideation space</text>
+        <text x="46" y="396" class="ts">growing position, not universal — chosen because agents read code/metadata reliably and because git is the only surface with a real merge gate (§2, §4)</text>
+      </svg>
+      <figcaption>The SSOT argument mapped. The workbook's default sits at code-first — not because canvas work is lesser, but because git is the only surface in the picture with versioned history, PR gates and machine-readable diff, which are the three things agent-scale governance cannot live without. Flag it as Report 5's synthesis wherever it appears; the named positions around it are quoted from their sources.</figcaption>
+      </figure>
+
+      <h2 id="s6"><span class="n">6</span>Provenance, disclosure &amp; the audit trail — the governance gap forming now</h2>
+      <p>One governance question does not appear in Curtis, in the zeroheight survey, or in any major system's contribution docs, and 2026 is the year it became unavoidable: <strong>when a machine is the contributor, who attests to the work?</strong> The open-source world hit it first, and its answers are the design world's preview. A March 2026 empirical study of GenAI governance in OSS communities (arXiv, "Beyond Banning AI") found project responses clustering into four moves: categorical rejection of AI contributions on provenance and licensing grounds; mandatory <strong>disclosure</strong> of AI use with accountability conditions; constraining agents through repo-level instructions (AGENTS.md as policy); and, at the extreme, suspending external PRs entirely. The shared logic, in the study's own words, is to "push provenance and redistributability checks back onto contributors before technical review begins" — curl's maintainers put the burden of license-cleanliness on the submitter, and legal scholarship the same year noted that CLAs and codes of conduct all "assume a legally accountable person who can attest to provenance." A machine cannot attest. A human must sign for it.</p>
+      <p>Translate that into design-system terms and four concrete policies emerge, all cheap, all worth putting in the F1 foundation (D7). <strong>Provenance labels:</strong> agent-authored components and token PRs carry a machine-readable provenance flag (in the manifest, the status metadata, the PR template) — Paste's status taxonomy extends naturally. <strong>Human attestation:</strong> every durable-tier PR from an agent has a named human submitter who owns its provenance — the §2 gate approves intent, the attestation owns origin; both are needed because they answer different questions. <strong>Disclosure by default:</strong> the system docs state plainly which components are agent-generated and gate-reviewed — zeroheight's 2026 data (only 10% of teams have AI built into processes, and practitioner comments cite hallucination distrust) says the trust to skip this step does not exist yet. <strong>Audit trail:</strong> Chung &amp; Hassan found that where automation executes a merge, "logs record the executor but not the decision-maker" — the fix is boring and old: the design ADR (I3) records <em>why</em>, the PR gate records <em>who</em>, SemVer records <em>when and how much</em>. Together they are the decision trail automation erases by default. This is the section to revisit in a year: the legal/IP status of AI-generated design is explicitly unresolved (Report 5's own "not covered" list), and disclosure policy is where that unresolved question will land first.</p>
+
+      <h2 id="s7"><span class="n">7</span>Evidence &amp; do-not-cite</h2>
+      <p><strong>Strong, citable with normal attribution:</strong> Curtis's 2015 team models and 2024 Fallacy retraction (primary essays, quotes verified verbatim); Curtis's 2018 versioning essay including the SemVer consensus line and the 18-month Lightning window; documented mechanics at Carbon, Primer, Paste, Polaris, SLDS, Atlassian and Figma (vendor docs, quoted in §2–§3); zeroheight's 2026 survey (n=147, self-reported, vendor-sponsored — say so); Chung &amp; Hassan's 29,585-PR lifecycle study (peer-reviewed, AIware 2026) for the propose/merge split and the audit-trail gap; the OSS GenAI-governance study for the provenance/disclosure clusters; the Sewell, Başcı, Ulrey, Equinor and Vallaure essays for the §5 positions (all primary, all opinion by design). <strong>Vendor or POC claims — label every time:</strong> Southleft's 69→100 ds-contracts experiment (a vendor proof-of-concept, small and self-published — directionally consistent with D1's slop evidence, nothing more); Builder.io's company anecdotes (Shopify's 14%, Uber's Jira auto-filing, GitHub's PR checks — asserted in a vendor blog without primary links, in an article that closes as a product pitch); Supernova's "agentic autonomous governance" trend copy; anything Figma says about Code Layers before it ships broadly. <strong>Synthesis — ours, flagged:</strong> the hybrid operating model as a named model; the durable/derived/disposable mapping onto design artifacts; the code-as-SSOT default; the §6 policy set. These are Report 5's framings, argued from the cited practice but not themselves published findings.</p>
+      <p><strong>Do not cite:</strong> "federated is a facet, not a model" as a Curtis quote — his sentence is "federated is not a choice, it's a facet"; "Overlords don't scale" aimed at centralized teams — it aims at the solitary model; "Paste's versioning docs" — the policy page no longer exists, the per-component SemVer practice is verifiable only in the registry; "SLDS commits to SemVer" — the versions are SemVer-shaped, no public commitment found; "cohesive knowledge ecosystem" as Ulrey's words — paraphrase, not quote; "agents can approve their own PRs anywhere in production" — the 2026 data says &lt;0.1%; and any sentence presenting Code Layers as settled practice — it is a June 2026 announcement with weeks of mileage.</p>
+
+      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <div class="io"><div class="box"><div class="lab">Assess (first client conversations)</div><ul><li>Where does the Figma library sit today — master, copy, or rumor? Who believes which? (The disagreement itself is the finding.)</li><li>Who can merge a token change today, and through what path? If the answer is "anyone with edit access," governance work starts at F0.</li><li>Is there any versioning on components/tokens at all — and does deprecation exist as a calendar or only as an apology?</li><li>Review capacity: how many people can approve durable changes, and how many hours do they have? This number caps the D-level (D6), not the model.</li><li>Which tier is the client's design system on zeroheight's gatekeeping ladder — 4%, 65% or 14%? And is there an incubation path (a Labs) or only a wall?</li></ul></div>
+      <div class="box"><div class="lab">Commit (the defaults we bring)</div><ul><li>Hybrid by design: core team owns tokens/APIs/governance; agents generate and maintain; every durable change through the designer gate (L3).</li><li>Code-first SSOT as the default recommendation, flagged as our synthesis; the Figma library is derived or explicitly governed — never silently master.</li><li>SemVer + warn→wait→remove + codemods from day one; manifests filter deprecated APIs; "never hallucinate a prop" in every design-layer AGENTS.md.</li><li>Write-permissions by class: agents free in disposable, regenerating derived, proposing-only to durable — enforced by tooling, not trust.</li><li>Provenance policy in F1: agent PRs labeled, human attestation on durable changes, ADR + PR + SemVer as the decision trail.</li></ul></div></div>
+      <div class="callout"><div class="t">Three sentences to remember D4 by</div><p>Governance is the design system's answer to agent speed: the classical team models already ended with review capacity as the constraint (understaffed teams, gatekept contributions, "Overlords don't scale"), and an agent — a contributor of unlimited output and zero judgment — breaks any model that lets output scale faster than approval, so the working shape is a hybrid where a core team owns the durable artifacts, machines propose everything through PRs, and a human gate approves tokens, APIs, new components and deprecations. Versioning is how governed change reaches consumers: SemVer with a deprecation calendar (warn → wait → remove, codemods attached), consumed by agents through manifests that show only current APIs under the hard rule "never hallucinate a prop" — with durable artifacts in git, derived ones regenerated, disposable ones free. On the source-of-truth question the field now argues three positions — code is truth (Sewell: "Figma is, at best, a set of suggestions"), SSOT is a lie (Ulrey), or the contract sits between them (Vallaure/Curtis) — and our flagged default is code-first with Figma as view and ideation, extended by one new duty: provenance labels, human attestation and an audit trail, because when the contributor is a machine someone still has to sign for the work.</p></div>
+
+      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      <div class="reading">
+      <div class="item"><div class="rt">Nathan Curtis — Team Models for Scaling a Design System (2015) · The Fallacy of Federated Design Systems (2024)</div><div class="mt">medium.com/eightshapes-llc · medium.com/@nathanacurtis · Sep 2015 · Sep 2024</div><p>The founding taxonomy and its author's retraction — "federated is not a choice, it's a facet." Read the pair together; the 2024 essay is the more useful one. Second source: Shaun Bent, "Why Federated Design Systems Keep Failing" (Dec 2025).</p></div>
+      <div class="item"><div class="rt">Nathan Curtis — Versioning Design Systems (2018) · Components as Data (2025)</div><div class="mt">eightshapes.com/articles · medium.com/@nathanacurtis · 2018 · Sep 2025</div><p>SemVer as consensus, library-vs-component versioning, deprecation windows (Lightning's 18 months, Origami's 3–6) — then the 2025 turn: component decisions as platform-neutral structured data, with Figma's MCP output called "stochastic, incomplete, and imprecise."</p></div>
+      <div class="item"><div class="rt">Steve Sewell — Code is the source of truth (not Figma)</div><div class="mt">builder.io/blog/governance-beyond-figma · Sep 2025</div><p>The polemic for position one: "Figma is, at best, a set of suggestions." Valuable for the mechanism (detaches as ungoverned writes); handle the company anecdotes as unsourced vendor assertion and note the product pitch at the end.</p></div>
+      <div class="item"><div class="rt">Burak Başcı — Figma is no longer the source of truth (Circuit DS, JumpCloud)</div><div class="mt">medium.com/@jc-design · Apr 2026</div><p>The practitioner field report: "The design system is the contract. Figma is upstream input, not downstream truth" — Storybook as the shared working surface, Cursor as execution layer. Team account, not official company position.</p></div>
+      <div class="item"><div class="rt">Beau Ulrey — A "single source of truth" — and other Design System lies</div><div class="mt">uxdesign.cc · May 2024</div><p>Position two at its sharpest: "A single source of truth is a lie and always has been." Pair with his Knapsack podcast appearance on why U.S. Bank stayed centralized with a community commons — the ecosystem answer in practice.</p></div>
+      <div class="item"><div class="rt">Christine Vallaure — Design system contracts: the component lives in neither Figma nor code</div><div class="mt">uxdesign.cc · Jul 2026 · with southleft/ds-contracts-poc on GitHub</div><p>Position three: a platform-neutral contract both surfaces rebuild from, with governance relocated into review — and the POC's 69→100 agent experiment as the empirical hook (vendor POC, label it). Equinor's EDS 2.0 GitHub discussion #4639 argues the token-layer version.</p></div>
+      <div class="item"><div class="rt">Contribution &amp; governance docs — Carbon · Primer · Paste · Polaris · SLDS · Figma</div><div class="mt">carbondesignsystem.com/contributing · primer.style/contribute · github.com/twilio-labs/paste · polaris.shopify.com · salesforce-ux/design-system · help.figma.com</div><p>The primary mechanics quoted in §2–§4: Carbon's checklist + Labs + CLA, Primer's closed writes, Paste's status schema, Polaris's deprecation contract, SLDS's "please ask first," Figma's branch review and library analytics. Best classroom material in the chapter.</p></div>
+      <div class="item"><div class="rt">Chung &amp; Hassan — Collaborator or Assistant? (AIware 2026) · Beyond Banning AI (arXiv, Mar 2026)</div><div class="mt">arxiv.org/abs/2605.08017 · arxiv.org/abs/2603.26487</div><p>The evidence base for §0/§2/§6: 29,585 PR lifecycles showing agent-initiated but human-merged contribution, the audit-trail gap, and the four OSS policy clusters on provenance and disclosure of machine contributors.</p></div>
+      <div class="item"><div class="rt">zeroheight — Design Systems Report 2026</div><div class="mt">report.zeroheight.com · n=147, fielded 2025</div><p>The survey baseline: contribution gatekeeping (4%/65%/14%), understaffing (3 in 5), AI adoption (46% experimenting, 10% built-in). Self-reported and vendor-sponsored — the numbers are mood, not measurement, but the mood is data too.</p></div>
+      <div class="item"><div class="rt">Report 5 — the design-harness research notes (this workbook)</div><div class="mt">module M6 research notes · section 3</div><p>The synthesis this deep dive expands — hybrid governance, the gate set, the write-permission table and the SSOT recommendation — with this chapter's corrections applied (Curtis quotes verbatim, Ulrey's paraphrase marked, Builder.io anecdotes labeled).</p></div>
+      </div>
+
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (D4-governance-ssot-design-world-deepdive.html). Its natural neighbours in the workbook are D1 (why the system is worth governing), D2 (the token contract this chapter versions), D3 (the consumption channels the SSOT decision feeds), D5 (the deterministic checks inside every gate), D6 (the D-scale whose ceiling review capacity sets), D7 (the F0–F4 rollout where this gets installed), Report 3 / I2 (the write-permission pattern §4 applies) and E6 (the L3 gate these gates inherit from). The hybrid operating model, the artifact-class mapping, the code-first default and the §6 policy set are this workbook's synthesis — flagged here as everywhere; the D1–D5 scale they serve remains our original framing, not an industry standard. Quotes were verified against primary sources in July 2026; tool and vendor facts (Code Layers above all) are point-in-time and marked for re-verification before client use.</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>

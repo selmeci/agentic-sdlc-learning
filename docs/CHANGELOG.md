@@ -3,6 +3,39 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.53 · 2026-07-18
+
+**NEW DEEP DIVE D4 — Governance & SSOT in the design world.** Fourth M6 companion
+(`deep-dives/D4-governance-ssot-design-world-deepdive.html` + in-workbook overlay), three
+SVG diagrams. Curtis's team models with the 2024 retraction quoted exactly ("federated is
+not a choice, it's a facet" — the circulating "facet, not a model" form marked as
+paraphrase; "Overlords don't scale" re-anchored to the solitary model it actually
+targets). The hybrid operating model — core team owns tokens/APIs/governance, agents
+generate and maintain, designer gate approves (L3 on the design layer) — grounded in
+documented mechanics: Carbon's component checklist + Labs incubation + CLA, Primer's
+closed writes with weekly triage, Paste's build-time status schema, SLDS's "please ask
+first", Figma branch review + library analytics. Versioning as the system's clock: SemVer
+(Curtis 2018), warn→wait→remove with real windows (Lightning 18 months, Origami 3–6),
+codemod-attached deprecation (Atlassian, Apr 2026), plus the three agent-consumption
+rules — manifests show current APIs only, "never hallucinate a prop", deprecated
+machine-flagged — and the ADR-lifecycle mapping. The durable/derived/disposable
+write-permission table applied to design artifacts (agents free in disposable, regenerate
+derived, propose-only to durable). The SSOT argument in three verified positions — Sewell
+("Figma is, at best, a set of suggestions"; the Shopify/Uber/GitHub anecdotes labeled
+unsourced vendor assertions in a product-pitch article), Başcı/JumpCloud ("Figma is
+upstream input, not downstream truth"), Ulrey ("a single source of truth is a lie" — the
+"cohesive knowledge ecosystem" phrase marked as our paraphrase, not his words) — plus
+Equinor's tokens-first stance, Vallaure's contract-in-the-middle, and Figma's Code Layers
+(Jun 2026) flagged weeks-old watch-list. New section the outline missed, from the swarm's
+extras hunt: provenance, disclosure and the audit trail of machine contributors (OSS
+GenAI-governance policy clusters; Chung & Hassan, AIware 2026: ≥96% agent-initiated PRs
+vs <0.1% agent-authorized merges; "logs record the executor but not the decision-maker").
+Southleft's 69→100 contract experiment labeled vendor POC. Fact pass: 6-agent
+verification swarm with real catches (Curtis quotes corrected to verbatim, Paste
+versioning docs 404 caught, SLDS SemVer softened to "SemVer-shaped", Builder.io
+attribution split Shopify-lint / Uber-CI / GitHub-PR-check). Topic `des-governance` src
+now opens the overlay first.
+
 ## v1.52 · 2026-07-18
 
 **NEW RUNBOOK PB3 — Harness: stand up the engineering harness.** Third M9 runbook, in both copies (`deep-dives/PB3-harness-runbook.html` + in-workbook overlay): thirteen checklist steps across four phases (context layer extracted-not-decreed, deterministic guardrails, the write-permission matrix & the platform layer, autonomy & the probe-driven exit gate), distilling E1–E5 and I2 into an installable harness for the module PB2's GO opened. Its templates ARE the starter kit — runnable configs, not prose: a `settings.json` permission baseline carrying the verified gotchas (deny→ask→allow with no exceptions, `Edit(path)` covers Write, settings-file path anchoring, deny rules don't bind subprocesses), a PreToolUse guard hook (deny + reason, no-opinion fall-through, regression-checked), a CI verification gate (suite intact · genuinely green · mutation bar per the PB2 ADR), a gitleaks/detect-secrets/TruffleHog secret-scan stack, the I2 write-permission matrix pre-filled for week one (Report 3 synthesis, flagged), CODEOWNERS + restrict-file-paths with the GitLab caveat, and the harness-install report. Single entry posture by design: a recorded PB2 GO. Answers the topic's open question via I2's sequencing — gate the scorers first, then the steering files, then decisions, then the long tail. One correction carried, flagged point-in-time: per current official docs a PreToolUse hook decision does NOT override `permissions.deny/ask` (E5's prose describes hook-wins semantics — erratum to follow); E5's design rule stands (no-opinion fall-through, never blanket-allow). Evidence framing honest: ImpossibleBench 54% / >79% test-editing / abort-tool 54→9 (arXiv:2510.20270), the Replit July 2025 code-freeze incident, harness variance 7.8× (arXiv:2605.23950), GitGuardian 2026 as vendor-published research (28.65M secrets +34%, AI-tied +81%, 64% unrevoked; the pinned 3.2% vs 1.5%), named MCP CVEs only — no aggregator stats. Every DONE criterion is a deliberate probe, blocked or caught, verified once. Exit: GO → PB4 Handoff; demotion instant, promotion slow (E6).
