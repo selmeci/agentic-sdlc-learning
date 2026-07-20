@@ -3,6 +3,10 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.58 · 2026-07-20
+
+Added the D7 deep-dive companion (Design Archaeology & the F0–F4 Rollout) — completing module M6. The characterization parallel (golden-master baseline + de-facto token extraction as the visual layer's B2; Frost's 2013 interface inventory and Curtis's audit practice as anchors), the F0 audit toolbox (Project Wallace DTCG + usage counts; Dembrandt --compare drift gate; CSS Stats/Superposition flagged stale), the golden-master tooling landscape (Percy AI review shipped vs Chromatic pixel-only; Lost Pixel archived), the agent-readiness heatmap (legibility × brand risk; Callahan, Curtis 0–4 scorecard, stylelint-polaris coverage), the F0–F4 permission ladder with the F0 STOP branch (B6 spine-and-rails), strangler mechanics decomposed into named practice (Fluent shims, Carbon windows, Polaris lifecycle, Gestalt lint — pattern name flagged as ours), the measured risk ledger (CodeA11y 0-of-16, WebAIM 95.9%, EAA/EN 301 549, CodeRabbit 1.7×/2.74×-XSS, Veracode 45% flat across generations, the MCP injection canon incl. Figma hidden-layer injection) and the mature end-state. Fact-checked via a 12-agent verification + discovery swarm; all load-bearing figures confirmed against primary sources.
+
 ## v1.57 · 2026-07-20
 
 Added the D6 deep-dive companion (The D1–D5 Design Scale & the Designer as Curator) — completing the M6 set with D7. The three-ladder verification split (engineering earns rungs deterministically; design and product cap where deterministic gates end), the five D-levels with evidence per rung (Design2Code ceiling, Krebs slop audit 22/32/46, CodeRabbit 1.7×/2.74×-XSS, Veracode 45%, CodeA11y 0-of-16), the D5 anti-pattern argued against Nielsen's Level-6 counter-position, the designer-as-curator role with its Junior Designer Dilemma, and the honest D3→D4 gate-metric gap. Fact-checked via an 11-agent verification swarm; also corrected the D7 Veracode misattribution.

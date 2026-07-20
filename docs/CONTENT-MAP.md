@@ -78,9 +78,9 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | D2 Design tokens as the visual contract (DTCG) | `des-tokens` | ✅ embedded + standalone |
 | D3 How agents consume design context | `des-consumption` | ✅ embedded + standalone |
 | D4 Governance & SSOT in the design world | `des-governance` | ✅ embedded + standalone |
-| D5 The design harness: verification loops & guardrails | `des-harness` | |
-| D6 D1–D5 scale & the designer as curator | `des-scale` | |
-| D7 Design archaeology & the F0–F4 rollout | `des-brownfield` | |
+| D5 The design harness: verification loops & guardrails | `des-harness` | ✅ embedded + standalone |
+| D6 D1–D5 scale & the designer as curator | `des-scale` | ✅ embedded + standalone |
+| D7 Design archaeology & the F0–F4 rollout | `des-brownfield` | ✅ embedded + standalone |
 
 ### M7 · Security — cross-cutting (id `m8sec`) — Report 6; 8 research-note sections
 | Topic | id |

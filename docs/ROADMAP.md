@@ -42,7 +42,13 @@ harness: Stylelint/visual-regression/axe-core) are the most concrete.
   gate, Adobe Spectrum/Braithwaite designer-authored/code-stored, Sopelnik + Builder.io/Sewell
   verbatims, Penpot first open-source native-DTCG tool. The tier reading, sync-direction table
   and six-step SCSS→DTCG migration flagged as our synthesis.
-- Next: **D5** (the design harness — the remaining most-concrete one), then D3/D4/D6/D7.
+- ~~**D3** `des-consumption` — how agents consume design context~~ — **done (v1.51)**.
+- ~~**D4** `des-governance` — governance & SSOT in the design world~~ — **done (v1.53)**.
+- ~~**D5** `des-harness` — the design harness: verification loops & guardrails~~ — **done (v1.55)**.
+- ~~**D6** `des-scale` — the D1–D5 scale & the designer as curator~~ — **done (v1.57)**.
+- ~~**D7** `des-brownfield` — design archaeology & the F0–F4 rollout~~ — **done (v1.58)**,
+  built on a 12-agent verification + discovery swarm. M6 complete: all seven
+  design-harness topics have deep-dive companions.
 
 ### 3. M3 / M4 / M5 topic deep dives
 - **M3 Handoff contract** (H1–H4): the contract anatomy + EARS/Gherkin — directly reusable as
