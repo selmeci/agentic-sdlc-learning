@@ -8,9 +8,11 @@ goal: be ready to walk a brownfield client from "why" through a measured pilot t
 - **Workbook**: 8 modules, 55 topics, 6 research reports, SDLC + Domain map sections. (v1.33 —
   M1 grew to E1–E11 in the July 2026 source-evaluation round: E9 harness tuning, E10 background
   agents, E11 formal methods, each with a deep-dive companion.)
-- **Deep-dive companions (36)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
-  **D1–D2** (M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B6** (all of M5).
-- Cross-cutting **M7 Security** module + two security domain-map views.
+- **Deep-dive companions (47)**: SDLC Foundations, **E1–E11** (all of M1), **P1–P5** (all of M2),
+  **D1–D7** (all of M6), **H1–H4** (all of M3), **I1–I7** (all of M4), **B1–B6** (all of M5),
+  **S1** (first of M7, v1.59), **PB1–PB5** runbooks (all of M9).
+- Cross-cutting **M7 Security** module + two security domain-map views; **S1 deep dive shipped
+  (v1.59)** via a 12-agent fact-verify + discovery swarm (see the v1.59 CHANGELOG entry).
 - Three autonomy scales in place: **L1–L5**, **P1–P5**, **D1–D5** (D-scale flagged as original).
 
 ## Next (in suggested order)

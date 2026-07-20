@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S1 Deep Dive — Security is Cross-Cutting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edS1{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahS1a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">S1 · DEEP DIVE</span>
+    <h1>Security is Cross-Cutting</h1>
+    <span class="bc">companion to module M7 · topic S1</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why security is a posture</a>
+  <a href="#s1"><b>1</b> · One token stream, no trust separation</a>
+  <a href="#s2"><b>2</b> · The privileged runtime</a>
+  <a href="#s3"><b>3</b> · Assume breach, reduce blast radius</a>
+  <a href="#s4"><b>4</b> · The honest ceiling</a>
+  <a href="#s5"><b>5</b> · The cross-cut map</a>
+  <a href="#s6"><b>6</b> · Takeaways &amp; further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M7</p>
+      <h2 id="s0"><span class="n">0</span>Why security is a posture, not a component</h2>
+      <p class="lead">Modules M1–M6 built the harness: seven components — prompt, context, memory, tools/MCP, loop, verification, governance — plus the two contract surfaces that feed it. M7 adds no eighth. Security is a property of all of them, and almost all of it reduces to one unsolved root cause: prompt injection. This opener makes the mindset shift that the rest of the module unpacks — S2's lethal trifecta, S3's advisory-vs-deterministic split, S4's MCP surface, S5's loop risks, S6's memory poisoning, S7's contract and brownfield surfaces, S8's practical configuration — and ties it to E5, which already owns the enforcement mechanisms this posture depends on.</p>
+      <p>Two incidents frame the stakes, one adversarial and one not (both point-in-time). The adversarial case: in April 2026 ("Comment and Control", Guan et al.), a single pull-request title made three different vendors' coding agents — Claude Code Security Review, Gemini CLI Action and Copilot Agent — post their own API keys as PR comments. Rated CVSS 9.4; silently patched, no CVEs issued. Untrusted content reached a privileged agent, and the agent turned on its operator — three times, across three independent harnesses, from one payload. The second case had no attacker at all: in December 2025 (reported by the Financial Times in February 2026), Amazon's internal Kiro agent, holding operator-level permissions, deleted and recreated an environment and caused a roughly 13-hour AWS Cost Explorer outage. Same lesson from both directions: the controls that bound an injected agent also bound an honest agent that is simply wrong. Blast-radius engineering is dual-purpose.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>You cannot train, prompt or filter your way out of prompt injection — the best cross-lab evidence says adaptive attackers bypass every published defense. What you can do is decide in advance how much damage a compromised (or merely mistaken) agent is able to do, and engineer that number down. Security work on an agentic harness is blast-radius engineering applied to every component — which is why this module re-reads the whole framework instead of adding to it.</p></div>
+
+      <h2 id="s1"><span class="n">1</span>The root cause: one token stream, no trust separation</h2>
+      <p>Simon Willison's one-sentence mechanism (June 2025): "Everything eventually gets glued together into a sequence of tokens and fed to the model." The system prompt, the user's task, and every piece of content the agent retrieves — tickets, web pages, tool output, tool descriptions — arrive as one undifferentiated stream, and the model has no reliable way to treat one span as orders and another as inert data. Willison coined the term at the very start of the LLM era ("Prompt injection attacks against GPT-3", 12 Sep 2022 — Riley Goodside demonstrated the attack, Willison named it): "I coined the term prompt injection… I named it after SQL injection, which has the same underlying problem."</p>
+      <p>The SQL analogy is worth completing, because it explains why no patch is coming. Classic SQL injection was solved by parameterized queries: the database receives instructions and data through separate channels, so data can never execute. Willison initially hoped for an equivalent — "parameterized prompts" — and retracted the hope in April 2023 as "extremely difficult, if not impossible". The UK NCSC's David C. wrote the definitive version ("Prompt injection is not SQL injection (it may be worse)", 8 Dec 2025): parameterized queries fix SQLi "at its root", but under an LLM "there is only ever 'next token'". One channel, one mechanism, no separation to engineer.</p>
+      <p>Two delivery modes matter in practice. <strong>Direct</strong> injection — the attacker types at the model — is mostly the lab case. <strong>Indirect</strong> injection — the payload sits in content the agent reads on its operator's behalf — is the delivery vector behind nearly every real incident in this module, because an agent that reads tickets, browses the web and runs tools ingests attacker-controlled text by design. And the channel is wider than document text: MCP tool descriptions are themselves executable trust and can carry poisoned instructions (Invariant's tool-poisoning work — one sentence here; S4 owns the depth).</p>
+      <figure>
+      <svg viewBox="0 0 860 352" role="img" aria-label="Trusted instructions and untrusted content merge into one token stream that feeds the model and its privileged tools">
+        <defs><marker id="ahS1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="20" y="36" width="230" height="56" rx="10" class="bxC"/><text x="34" y="60" class="ti">System prompt</text><text x="34" y="78" class="ts">trusted · operator intent</text>
+        <rect x="20" y="108" width="230" height="56" rx="10" class="bxC"/><text x="34" y="132" class="ti">User task</text><text x="34" y="150" class="ts">trusted · this session's goal</text>
+        <rect x="20" y="180" width="230" height="104" rx="10" class="bxA"/><text x="34" y="200" class="tg">ATTACKER-CONTROLLED</text><text x="34" y="220" class="ti">Untrusted content</text><text x="34" y="238" class="ts">tickets · web pages</text><text x="34" y="254" class="ts">tool output · tool descriptions</text>
+        <line x1="250" y1="64" x2="342" y2="112" class="edS1"/><line x1="250" y1="136" x2="342" y2="152" class="edS1"/><line x1="250" y1="232" x2="342" y2="192" class="edS1"/>
+        <text x="256" y="250" class="ts">injection rides in as data</text>
+        <rect x="340" y="96" width="200" height="150" rx="10" class="bx" style="stroke:#B3362B;stroke-width:1.6"/>
+        <text x="354" y="116" class="tg">NO TRUST SEPARATION</text><text x="354" y="138" class="ti">one token stream</text>
+        <text x="354" y="158" class="ts">everything glued together</text><text x="354" y="174" class="ts">instructions + data alike</text>
+        <text x="354" y="200" class="ts">the model cannot tell</text><text x="354" y="216" class="ts">which tokens to obey</text>
+        <line x1="540" y1="171" x2="612" y2="171" class="edS1"/>
+        <rect x="610" y="121" width="120" height="100" rx="10" class="bxG"/><text x="624" y="155" class="ti">Model</text><text x="624" y="175" class="ts">only ever</text><text x="624" y="190" class="ts">"next token"</text>
+        <line x1="664" y1="221" x2="335" y2="284" class="edS1"/><line x1="666" y1="221" x2="480" y2="284" class="edS1"/><line x1="668" y1="221" x2="625" y2="284" class="edS1"/><line x1="670" y1="221" x2="770" y2="284" class="edS1"/>
+        <rect x="270" y="284" width="130" height="44" rx="10" class="bx" style="stroke:#B3362B"/><text x="335" y="311" class="ti" text-anchor="middle">shell</text>
+        <rect x="415" y="284" width="130" height="44" rx="10" class="bx" style="stroke:#B3362B"/><text x="480" y="311" class="ti" text-anchor="middle">file write</text>
+        <rect x="560" y="284" width="130" height="44" rx="10" class="bx" style="stroke:#B3362B"/><text x="625" y="311" class="ti" text-anchor="middle">network</text>
+        <rect x="705" y="284" width="130" height="44" rx="10" class="bx" style="stroke:#B3362B"/><text x="770" y="311" class="ti" text-anchor="middle">credentials</text>
+        <text x="552" y="346" class="tg" text-anchor="middle">PRIVILEGED TOOLS — THE DEFENDED ASSET</text>
+      </svg>
+      <figcaption>Why injection works. Trusted instructions (system prompt, user task) and untrusted content (tickets, web pages, tool output, tool descriptions) are glued into a single token stream; the model — which only ever predicts the next token — cannot mark a boundary between them, and whatever it decides next drives privileged tools: shell, file write, network, credentials. There is no perimeter inside the stream.</figcaption>
+      </figure>
+
+      <h2 id="s2"><span class="n">2</span>What we are defending: a privileged runtime (a confused deputy)</h2>
+      <p>The asset under attack is not a chatbot, where the worst case is a bad answer. A coding agent holds shell access, file write, network and credentials at the same time — securing it is closer to securing a shell, a package manager and a CI runner combined. The classic name for this situation is the <strong>confused deputy</strong> (Hardy, 1988): a program that holds authority its caller lacks, tricked into exercising that authority on someone else's behalf. The NCSC's description of LLMs as "inherently confusable" is the same diagnosis forty years later. Willison states the consequence: once attacker-controlled tokens are in the stream, the attacker has "complete control over what happens next" — and "what happens next" is whatever the deputy is allowed to do.</p>
+      <div class="io"><div class="box"><div class="lab">What a compromised coding agent can do</div><ul><li>exfiltrate every secret it can read — or find in its own environment (S5/S7 incidents)</li><li>modify code and CI configuration so the compromise persists</li><li>edit its own harness config to escalate its permissions (S5)</li><li>communicate the result home — the exfiltration leg (S2)</li></ul></div>
+      <div class="box"><div class="lab">What it cannot be talked out of</div><ul><li>advisory text (CLAUDE.md, system prompt) is itself injectable content</li><li>an instruction the model <em>interprets</em> holds only until a better instruction arrives</li><li>only harness-enforced constraints survive compromise — the E5 litmus</li></ul></div>
+      <div class="box sdlc"><div class="lab">The design consequence</div><ul><li>the deputy's privileges must be smaller than its reach: least privilege is the first funnel layer (§3), not an afterthought.</li></ul></div></div>
+      <p>This is why Report 1 caps autonomy at L3 — the agent proposes, a human disposes of consequential actions — and why E5 insists the cap be enforced by the harness rather than requested in a prompt. A confused deputy with read-only tools and no egress is an incident; a confused deputy with your cloud credentials is a breach report.</p>
+
+      <h2 id="s3"><span class="n">3</span>The posture: assume breach, reduce the blast radius</h2>
+      <p>If prevention is unavailable (§4 shows the evidence), the defensible posture is the one classic security reached decades ago. Saltzer &amp; Schroeder's least-privilege principle (1975) was explicit about the goal: "Primarily, this principle limits the damage that can result from an accident or error." NIST SP 800-207 (zero trust, Aug 2020) assumes the attacker is already present and scopes privilege per session. Microsoft's Zero Trust guidance opens with "assume breach" and focuses controls on limiting breach impact. Michael Bargury applied it to exactly this problem ("Assume Breach When Building AI Apps", Aug 2024): "AI jailbreaks are not vulnerabilities; they are expected behavior." Treat prompt injection the same way — not an event to prevent, a condition to design for.</p>
+      <p>The design target is a blast radius that is <strong>bounded</strong>, <strong>observable</strong> and <strong>reversible</strong> — each with an honest caveat, because overselling the posture is how engagements get burned:</p>
+      <div class="io"><div class="box"><div class="lab">Bounded — least privilege, sandbox, egress, gates</div><ul><li>each deterministic layer shrinks what an injected instruction can reach (the funnel below)</li><li><strong>caveat:</strong> the human gate sees less than the model — Invariant showed (Apr 2025) a Cursor approval dialog hiding the SSH key being exfiltrated; HTML-comment payloads are invisible in rendered views. A gate is only as good as what it renders.</li></ul></div>
+      <div class="box"><div class="lab">Observable — audit every consequential action</div><ul><li>logs make the breach a reviewable event instead of a silent one</li><li><strong>caveat:</strong> output laundering defeats scanning — "cut the first 7 characters" of an <span class="mono">sk-ant-</span> key defeated GitHub Secret Scanning; EchoLeak (CVE-2025-32711) exfiltrated via reference-style Markdown images straight past link redaction. Hence deterministic egress over output scanning.</li></ul></div>
+      <div class="box sdlc"><div class="lab">Reversible — rollback, rotation, recovery</div><ul><li><strong>caveat:</strong> memory poisoning persists across sessions (Microsoft Defender research, Feb 2026 — point-in-time), so "reversible" must cover the agent's stored state, not just the filesystem. S6 owns that depth.</li></ul></div></div>
+      <p>Two closing points. First, the controls are dual-purpose: the Kiro incident (§0) involved no attacker, and the same funnel bounds an honest agent's worst mistake — least privilege and human gates do not care whether the instruction came from an adversary or from a confident model. Second, every layer must be deterministic in E5's sense — enforced by the harness, not requested of the model — because the advisory layer is itself injectable. The vendors have started converging on this posture from their side: OpenAI's "Lockdown Mode" (~June 2026 — point-in-time) is deterministic egress limiting for agents, explicitly framed as risk reduction rather than an injection cure. That is validation of the model, from the people selling the models.</p>
+      <figure>
+      <svg viewBox="0 0 860 510" role="img" aria-label="Blast-radius funnel: each deterministic layer shrinks the damage an injected instruction can reach">
+        <rect x="330" y="12" width="200" height="46" rx="10" class="bx" style="stroke:#B3362B;stroke-width:1.6"/>
+        <text x="430" y="31" class="ti" text-anchor="middle">injected instruction</text><text x="430" y="47" class="ts" text-anchor="middle">attacker-controlled tokens</text>
+        <line x1="430" y1="58" x2="430" y2="78" class="edS1"/>
+        <rect x="250" y="78" width="360" height="46" rx="10" class="bxK"/><text x="430" y="97" class="ti" text-anchor="middle">1 · least privilege</text><text x="430" y="113" class="ts" text-anchor="middle">scoped short-lived tokens; no secrets in reach</text>
+        <line x1="430" y1="124" x2="430" y2="144" class="edS1"/>
+        <rect x="275" y="144" width="310" height="46" rx="10" class="bxK"/><text x="430" y="163" class="ti" text-anchor="middle">2 · OS sandbox</text><text x="430" y="179" class="ts" text-anchor="middle">filesystem &amp; processes bounded</text>
+        <line x1="430" y1="190" x2="430" y2="210" class="edS1"/>
+        <rect x="300" y="210" width="260" height="46" rx="10" class="bxK"/><text x="430" y="229" class="ti" text-anchor="middle">3 · egress allowlist</text><text x="430" y="245" class="ts" text-anchor="middle">the exfiltration path severed</text>
+        <line x1="430" y1="256" x2="430" y2="276" class="edS1"/>
+        <rect x="325" y="276" width="210" height="46" rx="10" class="bxK"/><text x="430" y="295" class="ti" text-anchor="middle">4 · human gate</text><text x="430" y="311" class="ts" text-anchor="middle">consequential actions ask first</text>
+        <line x1="430" y1="322" x2="430" y2="342" class="edS1"/>
+        <rect x="350" y="342" width="160" height="46" rx="10" class="bxK"/><text x="430" y="361" class="ti" text-anchor="middle">5 · audit &amp; rotate</text><text x="430" y="377" class="ts" text-anchor="middle">logged · keys rotated</text>
+        <text x="430" y="414" class="ts" text-anchor="middle">residual damage: small, observable, reversible</text>
+        <text x="648" y="72" class="tg">REACHABLE DAMAGE</text>
+        <rect x="648" y="84" width="190" height="12" fill="#B3362B" opacity="0.9"/>
+        <rect x="648" y="150" width="140" height="12" fill="#B3362B" opacity="0.72"/>
+        <rect x="648" y="216" width="95" height="12" fill="#B3362B" opacity="0.55"/>
+        <rect x="648" y="282" width="55" height="12" fill="#B3362B" opacity="0.4"/>
+        <rect x="648" y="348" width="25" height="12" fill="#B3362B" opacity="0.28"/>
+        <rect x="40" y="440" width="370" height="58" rx="10" class="bx" style="stroke:#B3362B"/><text x="56" y="464" class="ti">prevention wall</text><text x="56" y="482" class="ts">one breach = everything the agent holds</text>
+        <rect x="450" y="440" width="370" height="58" rx="10" class="bxK"/><text x="466" y="464" class="ti">bounded blast radius</text><text x="466" y="482" class="ts">a breach is an incident, not a loss</text>
+      </svg>
+      <figcaption>The blast-radius funnel. Prevention is a wall: one breach and the attacker holds everything the agent holds. The funnel assumes the breach — each deterministic layer (least privilege, OS sandbox, egress allowlist, human gate, audit &amp; rotate) shrinks what an injected instruction can still reach, until the residual damage is small, logged and reversible. The same layers bound non-adversarial error (Kiro, §0).</figcaption>
+      </figure>
+
+      <h2 id="s4"><span class="n">4</span>The honest ceiling: unsolved — and how to say it</h2>
+      <p>Three years of defenses tell one consistent story: the arms race is real and the attacker is winning it. OpenAI's <strong>instruction hierarchy</strong> (arXiv 2404.13208) ranked system over user over tool text — Rehberger bypassed GPT-4o-mini's hierarchy within three days of its release (Jul 2024). Microsoft's <strong>Spotlighting</strong> (arXiv 2403.14720) delimits untrusted spans and claimed attack success cut from above 50% to below 2% — but it is prompt-layer only, defense-in-depth by its own framing. <strong>StruQ</strong> (arXiv 2402.06363, USENIX Security 2025) trains the separation in — and was broken whitebox at 85–95% attack success (arXiv 2507.07417). <strong>SecAlign</strong> (CCS 2025; Meta's SecAlign++ 70B ships open weights, arXiv 2507.02735) continues the line. Each defense raises the bar; none eliminates the attack.</p>
+      <p>The definitive verdict is cross-lab. "The Attacker Moves Second" (Nasr, Carlini, Tramèr et al. — 14 authors spanning OpenAI, Anthropic and DeepMind plus HackAPrompt, Northeastern, ETH Zürich and MATS; arXiv 2510.09023, v1 10 Oct 2025) set adaptive attackers against twelve published defenses covering both jailbreak and prompt-injection protection: every one fell, with over 90% success for most — even the two strongest, PIGuard and MELON, were bypassed at 71% and 76%. Most of these defenses had originally reported near-zero attack success against static attacks; adaptation is the difference. Human red-teamers (500+) outperformed automation, 100% versus 69%. Independent confirmations keep arriving (point-in-time, July 2026): a SoK on agentic coding assistants (arXiv 2601.17548, 78 studies) puts adaptive attack success above 85%, and AutoDojo (arXiv 2606.15057) recovered a filter from 0% static attack success to 28% — 64% on action-open tasks.</p>
+      <p>Architectural defenses reduce risk without eliminating it. Meta's Rule of Two drops one trifecta leg per session (S2 owns it). Willison's Dual-LLM (2023) and its rigorous successor CaMeL ("Defeating Prompt Injections by Design", arXiv 2503.18813, v1 24 Mar 2025; Google / Google DeepMind / ETH Zurich; published at IEEE SaTML 2026) split a privileged planner from a quarantined reader and execute the plan through a custom Python interpreter — the only approach with a formal security argument, bought at roughly 7 percentage points of task utility (77% versus 84% undefended on AgentDojo, v2). The design-patterns paper (Beurer-Kellner et al., arXiv 2506.08837, v1 10 Jun 2025) catalogues six such patterns — action-selector, plan-then-execute, LLM map-reduce, dual-LLM, code-then-execute, context-minimization — and is explicit that each trades utility for security: once an LLM agent has ingested untrusted input, its authors warn, the guarantees degrade, and it is "unlikely that general-purpose agents can provide meaningful and reliable safety guarantees". Even Willison's mid-2026 softening holds the bottom line: frontier-model training makes naive attacks "much harder to pull off", but "I still wouldn't recommend deploying a production system where a prompt injection attack could cause irreversible damage" (Jun 2026 — point-in-time).</p>
+      <div class="callout"><div class="t">How to say this to a client — without killing the engagement</div><p>Neither oversell nor catastrophize; borrow the field's own calibrated wording. OWASP (LLM01:2025 Prompt Injection — #1 on both the 2023 and 2025 lists): "it is unclear if there are fool-proof methods of prevention", so the standard's advice is to "mitigate the impact" — which is precisely §3. OpenAI's Atlas hardening post (Dec 2025): prompt injection is "unlikely to ever be fully 'solved'"; their CISO calls it "a frontier, unsolved security problem" (Oct 2025, via The Register) and analogizes it to scams and social engineering — a permanent risk category you manage, like phishing, not a bug you patch. The NCSC is the bluntest: it "will remain a residual risk, and cannot be fully mitigated with a product or appliance" — and "beware any [product] that claim they can 'stop' prompt injection". The engagement framing writes itself: complete security is a different, much harder, unsolved problem; what we sell is a measured, engineered reduction of likelihood and blast radius, with the receipts — controls, gates, audit logs — to show for it. Beware any product, including ours, that claims otherwise.</p></div>
+
+      <h2 id="s5"><span class="n">5</span>The cross-cut map: where S1 lands on the framework</h2>
+      <p>The domain map's V4 (lethal trifecta &amp; defense) and V5 (threat map) views already draw the visual version of this; the table below is the topic-level index — one row per framework component, what injection turns it into, and which topic owns the depth. Where the mapping is established, rows are keyed to the OWASP Top 10 for Agentic Applications (2026): ASI01 Agent Goal Hijack ("LLMs can't reliably tell instructions from data") and ASI03 (confused deputies) are the anchor IDs. The mapping itself is this workbook's synthesis — flagged here as everywhere.</p>
+      <div class="figscroll"><table class="map"><tr><th>Component</th><th>What injection turns it into</th><th>OWASP ASI</th><th>Depth</th></tr>
+      <tr><td>prompt &amp; rules files</td><td>instruction override; the rules-file backdoor — advisory text rewritten by content</td><td>ASI01</td><td>S3</td></tr>
+      <tr><td>context (tickets, web, RAG)</td><td>the indirect-injection delivery channel into every privileged session</td><td>ASI01</td><td>S2 · S7</td></tr>
+      <tr><td>tools / MCP</td><td>the confused deputy's authority; poisoned tool descriptions as a channel</td><td>ASI03</td><td>S4</td></tr>
+      <tr><td>loop / auto-run</td><td>self-escalation — the agent edits its own config; YOLO mode and sandbox escapes</td><td>—</td><td>S5</td></tr>
+      <tr><td>memory</td><td>persistence — poison survives the session and spreads between agents</td><td>—</td><td>S6</td></tr>
+      <tr><td>verification</td><td>gates that see less than the model; output laundering past scanners</td><td>—</td><td>S8 · E4</td></tr>
+      <tr><td>governance</td><td>the layer that must stay deterministic — advisory governance is itself injectable</td><td>—</td><td>E5</td></tr>
+      <tr><td>contract surfaces</td><td>untrusted PRDs, design files and legacy estate flowing into privileged sessions; secrets in reach</td><td>—</td><td>S7</td></tr></table></div>
+
+      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <div class="callout"><div class="t">Three sentences to remember S1 by</div><p>One root cause explains nearly the whole module: trusted instructions and untrusted data share a single token stream, and no model-layer defense has survived an adaptive attacker (&gt;90% bypass for most, cross-lab, Oct 2025) — so injection is a permanent risk category, managed, never solved. What you are defending is a privileged runtime, a confused deputy with shell, files, network and credentials, so the posture is assume breach: least privilege, sandbox, egress allowlist, human gates and audit, deterministic controls only (E5), because the advisory layer is itself injectable. And the honest client sentence is a feature, not a concession: complete security is unsolved, every control reduces likelihood and blast radius, none prevents injection — which is exactly why autonomy stays capped at Report 1's L3.</p></div>
+      <h3>Further reading</h3>
+      <div class="reading">
+      <div class="item"><div class="rt">Simon Willison — the prompt-injection series &amp; "The lethal trifecta for AI agents"</div><div class="mt">simonwillison.net/series/prompt-injection · trifecta post 16 Jun 2025</div><p>The primary source for §1–§2: the 2022 coinage ("Prompt injection attacks against GPT-3", 12 Sep 2022), the token-stream mechanism, the Dual-LLM proposal, and the Jun 2026 softening that still refuses irreversible autonomy. Start here.</p></div>
+      <div class="item"><div class="rt">NCSC — "Prompt injection is not SQL injection (it may be worse)"</div><div class="mt">ncsc.gov.uk · David C., 8 Dec 2025</div><p>The regulator-grade wording for §1 and §4: "only ever 'next token'", "inherently confusable", residual risk that no product or appliance removes, and the anti-silver-bullet line. Advice aligned to ETSI TS 104 223.</p></div>
+      <div class="item"><div class="rt">Nasr, Carlini, Tramèr et al. — "The Attacker Moves Second"</div><div class="mt">arXiv:2510.09023 · v1 10 Oct 2025 · OpenAI / Anthropic / DeepMind / HackAPrompt / Northeastern / ETH Zürich / MATS</div><p>The cross-lab verdict: all 12 tested jailbreak and prompt-injection defenses bypassed, &gt;90% for most (PIGuard 71%, MELON 76%), human red-teamers at 100%. The citation behind every "unsolved" claim in this deep dive.</p></div>
+      <div class="item"><div class="rt">CaMeL — "Defeating Prompt Injections by Design" · Beurer-Kellner et al. — design patterns for secure agents</div><div class="mt">arXiv:2503.18813 (IEEE SaTML 2026) · arXiv:2506.08837</div><p>The architectural wing of §4: privileged/quarantined LLM split with a custom Python interpreter (77% vs 84% AgentDojo utility — the provable approach's price), and the six-pattern catalogue with the utility-vs-security trade-off stated plainly.</p></div>
+      <div class="item"><div class="rt">SoK: Prompt Injection Attacks on Agentic Coding Assistants</div><div class="mt">arXiv:2601.17548 · 78 studies · point-in-time, re-verify</div><p>The 2026 systematization aimed squarely at this workbook's subject: &gt;85% adaptive attack success across the literature on coding agents specifically.</p></div>
+      <div class="item"><div class="rt">OWASP — LLM01:2025 Prompt Injection · Top 10 for Agentic Applications (2026)</div><div class="mt">owasp.org · LLM01 #1 in 2023 and 2025 · ASI01 / ASI03 anchor the §5 map</div><p>The standard-setter's own wording: "unclear if there are fool-proof methods of prevention", so "mitigate the impact" — the blast-radius posture, institutionalized.</p></div>
+      <div class="item"><div class="rt">Microsoft Threat Intelligence — Claude Code GitHub Action injection · OpenAI — hardening Atlas against prompt injection</div><div class="mt">Jun 2026 · Dec 2025 · vendor research, point-in-time</div><p>The incident and the posture from the vendors themselves: injection to <span class="mono">/proc/self/environ</span> to an unscrubbed API key (fixed in Claude Code 2.1.128), and OpenAI's "unlikely to ever be fully 'solved'" with the scam/social-engineering analogy.</p></div>
+      <div class="item"><div class="rt">Saltzer &amp; Schroeder — protection principles (1975) · NIST SP 800-207 Zero Trust (2020)</div><div class="mt">the lineage behind §3</div><p>Least privilege as damage limitation, and the assume-breach architecture, fifty and six years before agents made them urgent again.</p></div>
+      <div class="item"><div class="rt">E5 deep dive · Report 6 (this workbook)</div><div class="mt">module M1 · module M7 research notes</div><p>E5 owns the enforcement mechanisms (permissions, hooks, sandbox, egress, audit) that §3's funnel assumes; Report 6 is the full threat model this chapter opens. Read S1 → E5 → S2 in that order.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (S1-security-crosscutting-deepdive.html). It opens module M7: its natural neighbours are S2 (the lethal trifecta &amp; Rule of Two, previewed here), S3 (advisory vs deterministic), S4–S8 (the per-component depth), E5 (the enforcement layer the blast-radius funnel is built from), E6/Report 1 (the L3 autonomy ceiling), and the domain map's V4/V5 views (the visual threat map). All incident, CVE and product facts (Comment and Control, Kiro, EchoLeak, Lockdown Mode, the 2026 papers) are point-in-time as of July 2026 and marked for re-verification before client use; the strong-evidence core (Willison, NCSC, arXiv 2510.09023, arXiv 2503.18813, arXiv 2506.08837, OWASP) is cited against primary sources.</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>
