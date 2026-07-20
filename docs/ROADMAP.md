@@ -260,8 +260,14 @@ these runbooks later — no separate repo.
 - ~~**PB2 Bootstrap** (B1–B3 distilled)~~ — **done (v1.50)**.
 - ~~**PB3 Harness** (E1–E5, I2 — templates ship as runnable configs: hook scripts,
   permission baselines, CI gates, per the E5 litmus)~~ — **done (v1.52)**.
-- Next, one per version: **PB4 Handoff** (H1–H4) → **PB5 Pilot** (E7, B6 — converges with
-  T2's pilot playbook; compares against the delivery baseline captured in PB1).
+- ~~**PB4 Handoff** (H1–H4)~~ — **done (v1.54)**, with a two-teammate research pass (repo
+  distillation + web fact-verification, 2026-07-20): eleven steps / four phases; REQ-id +
+  suspect gates as runnable CI blocks, stop-on-ambiguity + stamping as appends to PB3's
+  AGENTS.md; fresh point-in-time layer (Copilot↔Jira GA Jun 25, Spec Kit v0.13.0, Kiro EARS
+  + Analyze Requirements, gplint, Assisted-by trailer standard); Ambig-SWE cited as mechanism
+  only, Reqnroll version deliberately unpinned (conflicting sources).
+- Next, one per version: **PB5 Pilot** (E7, B6 — converges with T2's pilot playbook;
+  compares against the delivery baseline captured in PB1).
 - Backlog (deliberately deferred):
   - **Field-report loop** — a completed client runbook feeds an anonymized results entry
     back into the relevant deep dive; the corpus is currently 100% externally cited, and

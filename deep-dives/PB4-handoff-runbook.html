@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PB4 Runbook — Handoff: Run the Contract End-to-End</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+
+/* ===== M9 playbook runbooks (v1.48) ===== */
+.pbstep{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);margin:9px 0}
+.pbstep input.pbck{margin-top:4px;width:16px;height:16px;accent-color:var(--cobalt);flex:none;cursor:pointer}
+.pbtxt{flex:1;min-width:0}
+.pbwhat{font-family:var(--disp);font-weight:600;font-size:14.5px;cursor:pointer}
+.pbwhy{font-size:13.5px;color:var(--soft);margin:3px 0 0}
+.pbdone{font-family:var(--mono);font-size:11px;color:var(--pine);margin-top:5px}
+.pbtpl{position:relative;margin:12px 0}
+.pbtpl pre{font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--idle-bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px;overflow-x:auto;white-space:pre-wrap}
+.pbcopy{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:10.5px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;color:var(--soft)}
+.pbcopy:hover{border-color:var(--cobalt);color:var(--cobalt-deep)}
+.pbprog{font-family:var(--mono);font-size:11px;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.pbnote{font-family:var(--mono);font-size:11.5px;color:var(--soft)}
+.closingnote{font-family:var(--mono);font-size:11.5px;color:var(--soft);border-top:1px solid var(--line);padding-top:14px;margin-top:26px;line-height:1.7}
+svg .edPB4{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB4a)}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">PB4 · RUNBOOK</span>
+    <h1>Handoff: Run the Contract End-to-End</h1>
+    <span class="bc">companion to module M9 · Playbook</span>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why this runbook exists</a>
+  <a href="#s1"><b>1</b> · How to run it</a>
+  <a href="#s2"><b>2</b> · Phase A — Contract discipline</a>
+  <a href="#s3"><b>3</b> · Phase B — Machine-verifiable criteria</a>
+  <a href="#s4"><b>4</b> · Phase C — Return channel &amp; drift loop</a>
+  <a href="#s5"><b>5</b> · Phase D — Delivery &amp; exit gate</a>
+  <a href="#s6"><b>6</b> · Toolbox &amp; templates</a>
+  <a href="#s7"><b>7</b> · Exit gate &amp; takeaways</a>
+</nav>
+
+<main>
+<h2 id="s0"><span class="n">0</span>Why this runbook exists</h2>
+<p class="lead">PB4 turns the caged module into a delivery system. PB1 measured the ground, PB2 built the net, PB3 built the cage — PB4 installs the discipline that decides what the agent inside the cage is told to do: the <strong>handoff contract as the unit of delegation</strong> (<a href="H1-handoff-contract-anatomy-deepdive.html">H1</a>), acceptance criteria machine-verifiable enough to be the agent's reward signal (<a href="H2-ears-gherkin-deepdive.html">H2</a>), traceability ids that keep spec, code and test linked at agent speed (<a href="H3-traceability-spec-modes-deepdive.html">H3</a>), and the return channel that keeps the contract honest when reality disagrees with it (<a href="H4-feedback-anti-patterns-deepdive.html">H4</a>). The exit test is deliberately concrete: <strong>one real feature delivered end-to-end against a written contract, with review running against passing acceptance tests.</strong></p>
+<p>Like PB3, this runbook has exactly <strong>one</strong> entry posture: a recorded <strong>PB3 GO</strong> — the harness-install report with its granted autonomy level and its probe results. Two earlier artifacts are inherited by reference, not rebuilt: PB1's named editor/curator with a protected review budget (the <em>requirement owner</em> of everything below — <a href="P4-pm-role-deepdive.html">P4</a>'s editor role made concrete) and PB1's delivery baseline including the rework rate (the loop-health number this runbook's ritual exists to move); the acceptance tests built here ride PB2's characterization net and PB3's CI gate. No PB3 GO → there is no cage to run a contract in — go back to <a href="PB3-harness-runbook.html">PB3 Harness</a> first.</p>
+<p>The failure PB4 prevents is the measured default, not an edge case. Agents do not ask: in <strong>HumanEvalComm</strong> (ACM TOSEM 2025) models produced code instead of a clarifying question in more than 60% of cases that warranted one, and <strong>HiL-Bench</strong> (preprint) watched 67–88% of agent runs plough ahead where a human answer was required — falling to 1–9% when asking was made part of the task. Ambiguity is expensive: <strong>Orchid</strong> (preprint) measured a ~7.2-point average Pass@1 drop on ambiguous requirements, 31 points in the worst case. And the other half of the loop fails silently too: <strong>SWE-Bench+</strong> traced 31.08% of benchmark passes to weak tests and 32.67% to leaked solutions — green that means nothing. The repair mechanism is also measured: agents that detect ambiguity and ask before patching resolve under-specified issues better than agents that guess (Ambig-SWE, CMU, arXiv:2502.13069 — we cite the mechanism and deliberately no single percentage), and clarification pays even for plain codegen (ClarifyGPT, FSE 2024: +11.52% relative Pass@1).</p>
+<div class="callout"><div class="t">The ticket is now the prompt — literally</div><p>GitHub Copilot's coding agent ↔ Jira integration went GA on 25 June 2026: assign a Jira issue to the agent and a draft PR appears, status streaming back to the ticket. Devin takes Linear issues by assignment or label; Cursor agents take Linear issues and Slack threads. (All point-in-time, verified 2026-07-20.) This is why acceptance-criteria discipline in the issue body is not bureaucracy: <strong>the issue body is the prompt</strong>, and H1's contract anatomy is what makes it a good one.</p></div>
+<div class="callout amber"><div class="t">What this is not</div><p>Not a documentation bureaucracy. The whole discipline is a handful of committed templates, one appended steering-file section, two CI greps and a fifteen-minute weekly ritual; a full contract is 10–30 lines, and T0 work needs no artifact at all (H1's sizing). The counterweight anti-pattern is real: over-specification is HAP1 in H4's catalogue, and AI-assisted code already draws 29.6 review-tokens per changed line against 4.1 on human code (arXiv:2603.15911) — the contract exists to spend scarce human judgment where it pays, not to add mass.</p></div>
+<p>The theory this runbook distils: <a href="H1-handoff-contract-anatomy-deepdive.html">H1</a> for the six-component anatomy and T0–T2 sizing, <a href="H2-ears-gherkin-deepdive.html">H2</a> for the story → EARS → Gherkin → tests ladder, <a href="H3-traceability-spec-modes-deepdive.html">H3</a> for the id scheme, the suspect gate and the spec-mode ladder (Böckeler's spec-first → spec-anchored → spec-as-source: PB4 installs spec-first, and the registry plus gates make it spec-anchored — spec-as-source is deliberately not the target), and <a href="H4-feedback-anti-patterns-deepdive.html">H4</a> for the return channel and the four anti-patterns; <a href="E8-spec-driven-development-deepdive.html">E8</a> places all of it in the SDD landscape.</p>
+
+<h2 id="s1"><span class="n">1</span>How to run it</h2>
+<p>Run PB4 with one person plus the agent, the requirement owner (PB1's editor/curator) within reach, and the module owner reachable for the spec review. Scope: the PB3 module and <strong>one real feature</strong> — the smallest one somebody genuinely wants shipped, not a toy (picking it is this topic's open question; a feature nobody wants teaches nothing about the loop). Steps are written as ČO (the action), PREČO (the theory link) and DONE (the exit criterion), and the sequence is <a href="B1-bootstrap-paradox-deepdive.html">B1</a>'s discipline unchanged: templates before the first contract, the contract before the tests, the tests before delivery — never verify a step with a later step.</p>
+<p>PB3's probe rule carries over wherever a criterion is deterministic: <strong>a deliberate probe fires or the thing is not installed.</strong> A PR without a REQ id must bounce off the gate; a drifting PR must get flagged; a seeded ambiguity must produce a filed question, not a guess. What cannot be probed here — the quality of an intent paragraph, the honesty of a triage — is exactly the part that stays human, which is the point of the whole module.</p>
+<p><span class="pbprog" data-pbprog="pb-handoff"></span></p>
+<p class="pbnote">In the workbook version of this runbook, progress is saved locally (same store as topic progress). This standalone copy does not persist checkbox state.</p>
+<figure>
+<svg viewBox="0 0 900 290" role="img" aria-label="The two halves PB4 installs: a forward chain that delegates through a contract and proves delivery with green acceptance tests, and a return loop that turns ambiguity and drift into artifact changes">
+  <defs><marker id="ahPB4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <text x="24" y="28" class="tg">FORWARD — THE CONTRACT DELEGATES (PHASES A + B + D)</text>
+  <rect x="24" y="44" width="138" height="52" rx="10" class="bxA"/><text x="36" y="66" class="ti">Contract</text><text x="36" y="82" class="ts">REQ-NNN · T2</text>
+  <rect x="186" y="44" width="138" height="52" rx="10" class="bxC"/><text x="198" y="66" class="ti">Red AC tests</text><text x="198" y="82" class="ts">EARS → Gherkin</text>
+  <rect x="348" y="44" width="132" height="52" rx="10" class="bx"/><text x="360" y="66" class="ti">Agent implements</text><text x="360" y="82" class="ts">at PB3's level</text>
+  <rect x="504" y="44" width="128" height="52" rx="10" class="bxC"/><text x="516" y="66" class="ti">CI: AC green</text><text x="516" y="82" class="ts">gate + REQ grep</text>
+  <rect x="656" y="44" width="118" height="52" rx="10" class="bx"/><text x="668" y="66" class="ti">Review</text><text x="668" y="82" class="ts">against green AC</text>
+  <rect x="798" y="44" width="78" height="52" rx="10" class="bxK"/><text x="808" y="66" class="ti">Merge</text><text x="808" y="82" class="ts">Closes REQ</text>
+  <line x1="162" y1="70" x2="186" y2="70" class="edPB4"/>
+  <line x1="324" y1="70" x2="348" y2="70" class="edPB4"/>
+  <line x1="480" y1="70" x2="504" y2="70" class="edPB4"/>
+  <line x1="632" y1="70" x2="656" y2="70" class="edPB4"/>
+  <line x1="774" y1="70" x2="798" y2="70" class="edPB4"/>
+  <text x="24" y="134" class="tg">RETURN — THE LOOP KEEPS THE CONTRACT HONEST (PHASE C)</text>
+  <rect x="24" y="150" width="170" height="52" rx="10" class="bxA"/><text x="36" y="172" class="ti">Ambiguity mid-task</text><text x="36" y="188" class="ts">contradictory · two-way</text>
+  <rect x="218" y="150" width="170" height="52" rx="10" class="bxC"/><text x="230" y="172" class="ti">spec-question filed</text><text x="230" y="188" class="ts">artifact + REQ id</text>
+  <rect x="412" y="150" width="170" height="52" rx="10" class="bx"/><text x="424" y="172" class="ti">Owner + weekly triage</text><text x="424" y="188" class="ts">code / req / learned</text>
+  <rect x="606" y="150" width="180" height="52" rx="10" class="bxK"/><text x="618" y="172" class="ti">Answer lands in artifact</text><text x="618" y="188" class="ts">spec PR · criterion · log</text>
+  <line x1="194" y1="176" x2="218" y2="176" class="edPB4"/>
+  <line x1="388" y1="176" x2="412" y2="176" class="edPB4"/>
+  <line x1="582" y1="176" x2="606" y2="176" class="edPB4"/>
+  <path d="M696 150 V118 H93 V100" class="edPB4 edD"/>
+  <text x="24" y="250" class="ts">The second sensor is CI-side: the suspect gate labels PRs whose diff and spec disagree (H3 §4) — drift feeds the same triage.</text>
+  <text x="24" y="270" class="ts">Every arrow that matters is deterministic — a grep, a label, a red test. Advisory prose only instructs the stop; the gates do the rest.</text>
+</svg>
+<figcaption>The two halves PB4 installs: the forward chain that delegates through a contract and proves delivery with green acceptance tests, and the return loop that turns mid-task ambiguity and drift into artifact changes instead of silent guesses.</figcaption>
+</figure>
+
+<h2 id="s2"><span class="n">2</span>Phase A — Contract discipline: owners, template, ids</h2>
+<p>Phase A is pure installation — no feature work yet, and nothing PB3 already shipped gets rebuilt. Everything here is a committed template, an <em>append</em> to PB3's steering file, or a grep in PB3's CI: cheap by design, because this part of the theory is deterministic where it matters and the judgment parts are one page of names.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s1" data-pb="pb-handoff" data-step="pb4-s1">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s1">A1 · Name the requirement owners and the amigo lenses</label>
+    <p class="pbwhy">Publish a one-page owner map: for every requirement area the pilot touches, one person entitled to <em>declare the requirement wrong</em> — at this client that is PB1's named editor/curator unless the map says otherwise. Record the three lenses that must see every contract — business (intent, scope), developer (constraints, context links), tester (boundary and failure scenarios) — and the standing rule that the agent is the <strong>fourth amigo: it drafts and it asks; it never ratifies</strong>. Why: <a href="H4-feedback-anti-patterns-deepdive.html">H4</a>'s Move 1 — a triage without an owner is a discussion, not a decision; and <a href="H1-handoff-contract-anatomy-deepdive.html">H1</a>'s anatomy assigns every contract component an owner, so the names must exist before the first contract does (<a href="P4-pm-role-deepdive.html">P4</a>).</p>
+    <div class="pbdone">DONE = owner map committed; zero requirement areas without a named owner; the PB1 editor confirmed as triage authority.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-owners">copy</button><pre id="pb4-tpl-owners">
+# owners.md — who can declare a requirement wrong (H4 Move 1)
+| REQ area              | owner (declares it wrong) | business lens | dev lens | tester lens |
+|-----------------------|---------------------------|---------------|----------|-------------|
+| e.g. checkout / promo | &lt;PM — PB1's editor&gt;       | &lt;name&gt;        | &lt;name&gt;   | &lt;name&gt;      |
+
+# Standing rule — the fourth amigo:
+# the agent DRAFTS candidate EARS rules and Gherkin scenarios and ASKS the
+# boundary questions. It never ratifies. Ratification is human, per lens.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s2" data-pb="pb-handoff" data-step="pb4-s2">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s2">A2 · Commit the contract template and its sizing rule</label>
+    <p class="pbwhy">Put the six-component skeleton (template in §6) into the repo as <span class="mono">specs/CONTRACT-TEMPLATE.md</span>, the T0/T1/T2 sizing rule at its head, and record the registry on PB3's write-permission matrix as <em>durable — decisions</em>: agent proposes, human ratifies, changed only by PR. Why: <a href="H1-handoff-contract-anatomy-deepdive.html">H1</a> — the unit of delegation is a contract, not a prompt, and the two components humans must write themselves are <strong>intent</strong> and <strong>non-goals</strong>: rationale is precisely what generated requirements are weakest at (Rationale Clarity 1.54 for GPT-4 against a 2.66 human ground truth across 153 stories, arXiv:2507.15157), and non-goals are where agents measurably wander. Sizing is the HAP1 guard — a full contract on a fifteen-minute task is process theater, which is how spec discipline dies at clients.</p>
+    <div class="pbdone">DONE = template with T0–T2 header committed under <span class="mono">specs/</span>; the registry recorded on the PB3 matrix's durable row.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s3" data-pb="pb-handoff" data-step="pb4-s3">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s3">A3 · Wire the traceability scheme: registry, stamping, REQ-id gate</label>
+    <p class="pbwhy">Stand up <a href="H3-traceability-spec-modes-deepdive.html">H3</a>'s five-move scheme in one step: create <span class="mono">specs/</span> (move 1); <em>append</em> the stamping section to PB3's AGENTS.md master — branch <span class="mono">req/NNN-*</span>, commit trailer <span class="mono">Refs: REQ-NNN</span>, provenance trailer, tests named <span class="mono">test_reqNNN_*</span> (move 3); and install the first of the two CI greps — every PR carries a REQ id that resolves to a file in <span class="mono">specs/</span> (move 4; the second grep is C2). Why: at agent speed the link is the memory. Inference-based trace recovery tops out around ~85% recovery accuracy in the best RAG setups (RE:FSQ 2025) — structural ids are deterministic and cost an agent nothing; and unstamped provenance is unrecoverable after the fact: bot-detection methods recovered 3.3% of Claude Code's actual commits, a 30× undercount (arXiv:2606.24429). On the provenance trailer, one decision to make explicit: PB3's matrix introduced it as a team convention — <strong>this step makes it enforced</strong>. The cross-project standard has settled on <span class="mono">Assisted-by:</span> (Linux kernel, Fedora, LLVM — as of May 2026; not universal: QEMU still bans AI-generated contributions and floated its own <span class="mono">AI-used-for:</span> trailer instead), while Claude Code stamps <span class="mono">Co-Authored-By:</span> by default; pick one form per repo and grep for that form (point-in-time; EU AI Act disclosure duties from Aug 2026 are the regulatory tailwind).</p>
+    <div class="pbdone">DONE = probe PR without a REQ id fails the gate and a stamped PR passes, verified once; stamping section live in AGENTS.md.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-stamp">copy</button><pre id="pb4-tpl-stamp">
+# 1) APPEND to AGENTS.md (PB3's master — do not fork a second steering file)
+## Traceability (H3 five-move scheme)
+Every delegated task starts from a contract in specs/REQ-NNN-&lt;slug&gt;.md.
+- Branch:          req/NNN-&lt;slug&gt;
+- Commit trailer:  Refs: REQ-NNN     (merge PR body: "Closes REQ-NNN")
+- Provenance:      Assisted-by: &lt;agent&gt;:&lt;model&gt;   on every commit an agent touched
+- Tests:           name acceptance tests test_reqNNN_*
+T0 work (&lt; ~15 min, pairing) needs no REQ id. Anything delegated does —
+if the task has none, ask for one; never invent one.
+
+# 2) CI gate — .github/workflows/req-id-gate.yml (adapt to the client's CI)
+name: req-id-gate
+on: pull_request
+jobs:
+  req-id:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PR carries a REQ id that exists in specs/
+        env:
+          TITLE:  ${{ github.event.pull_request.title }}
+          BODY:   ${{ github.event.pull_request.body }}
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          ID=$(printf '%s\n%s\n%s\n' "$TITLE" "$BODY" "$BRANCH" \
+               | grep -oE 'REQ-[0-9]+' | head -n1) || true
+          if [ -z "$ID" ]; then
+            echo "::error::No REQ-NNN in PR title/body/branch (T0 work: label the PR t0)"; exit 1; fi
+          ls specs/ | grep -qi "^${ID}-" \
+            || { echo "::error::${ID} has no file in specs/"; exit 1; }
+# Exemption: skip the job when the PR carries the label t0 or chore —
+# wire that as an `if:` on the job; keep the exemption list short and visible.
+</pre></div>
+
+<h2 id="s3"><span class="n">3</span>Phase B — Machine-verifiable criteria: the ladder and the inversion</h2>
+<p>Phase B runs the ladder on the one real feature. The order inside the phase <em>is</em> the handoff: contract → criteria → red tests → review — each artifact ratified before the next is built from it, <a href="B1-bootstrap-paradox-deepdive.html">B1</a>'s never-verify-a-step-with-a-later-step applied to specs. The output is the strange-looking artifact that makes agent delegation work: a committed set of acceptance tests that <strong>fail</strong>.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s4" data-pb="pb-handoff" data-step="pb4-s4">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s4">B1 · Write the first contract: story → EARS → Gherkin</label>
+    <p class="pbwhy">Author the feature's T2 contract on the committed template. The ladder is <a href="H2-ears-gherkin-deepdive.html">H2</a>'s: the story states intent; each requirement becomes an EARS rule (six patterns — card below); each rule that can execute becomes a Gherkin scenario — declarative, real data, and <strong>failure paths are half the set</strong> (empty result, timeout, unavailable dependency). Division of labour per A1: the agent drafts candidate rules and scenarios and asks the boundary questions — drafting is where measured gains live (grounding requirement generation in project context: +23.2 points case-level in RAGcceptance, arXiv:2508.06888) — and the humans ratify. EARS is not academic: Kiro writes its <span class="mono">requirements.md</span> in EARS by default and ships an "Analyze Requirements" ambiguity gate, and across 1,400+ acceptance criteria in 35 AWS projects, roughly 60% of first-draft requirements needed refinement in AWS's own testing (vendor figure) — first drafts are drafts, which is why ratification is a step and not a courtesy.</p>
+    <div class="pbdone">DONE = contract committed as <span class="mono">specs/REQ-NNN-&lt;slug&gt;.md</span> with at least one failure-path scenario and every criterion falsifiable.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-ears">copy</button><pre id="pb4-tpl-ears">
+# Acceptance criteria — EARS first, Gherkin where executable (H2)
+# EARS patterns (Mavin et al., IEEE RE'09 — Rolls-Royce):
+Ubiquitous          The &lt;system&gt; shall &lt;response&gt;
+Event-driven        WHEN &lt;trigger&gt;, the &lt;system&gt; shall &lt;response&gt;
+State-driven        WHILE &lt;state&gt;, the &lt;system&gt; shall &lt;response&gt;
+Optional feature    WHERE &lt;feature is included&gt;, the &lt;system&gt; shall &lt;response&gt;
+Unwanted behaviour  IF &lt;trigger&gt;, THEN the &lt;system&gt; shall &lt;response&gt;
+Complex             WHILE &lt;state&gt;, WHEN &lt;trigger&gt;, the &lt;system&gt; shall &lt;response&gt;
+
+# Gherkin — declarative, real data, intention-revealing (BRIEF); example from H2:
+Feature: password-reset throttling
+  Scenario: sixth request in the window is throttled
+    Given account "ada@example.com" has made 5 reset requests in the last 15 minutes
+    When the client submits another reset request for "ada@example.com"
+    Then the response status is 429
+    And no reset email is sent
+
+# Craft rules: one behaviour per scenario; no UI mechanics ("click", "navigate");
+# failure paths are half the set — empty result, timeout, unavailable dependency.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s5" data-pb="pb-handoff" data-step="pb4-s5">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s5">B2 · Compile the criteria into red acceptance tests</label>
+    <p class="pbwhy">Have the agent do the mechanical half: generate step definitions and test skeletons for the ratified scenarios and commit them <strong>red</strong>, wired into PB3's CI gate alongside PB2's net. The failing suite <em>is</em> the handoff artifact — <a href="H2-ears-gherkin-deepdive.html">H2</a> §4's point, and the industry's revealed preference: SWE-bench Verified defines "resolved" purely as designated FAIL_TO_PASS tests going green, and its authors had to prune under-specified issues to make that grading fair — spec quality visibly changes measured success. The reason the tests must exist <em>before</em> implementation is SWE-Bench+'s false-green data (31.08% weak-test passes): criteria that arrive after the code describe the code, not the requirement (<a href="E4-verification-first-deepdive.html">E4</a>). The acceptance tests inherit PB3's protection from day one — agent-read-only under the guard hook, so the reward signal cannot be edited by the thing it rewards.</p>
+    <div class="pbdone">DONE = acceptance tests run red in CI end-to-end, verified once; an agent edit of an acceptance test bounces off PB3's hook (probe).</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s6" data-pb="pb-handoff" data-step="pb4-s6">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s6">B3 · Run the ten-minute spec review — before implementation</label>
+    <p class="pbwhy">The inversion <a href="H1-handoff-contract-anatomy-deepdive.html">H1</a> argues for: move the scarce human minutes from after the diff to before it. Review the contract with the seven questions (checklist in §6), ratify rules and scenarios per lens, and keep it to ten minutes — a contract that needs an hour of review is too big; split it and re-size (T-tiers). The gate only pays while contracts stay at 10–30 lines; past that you have rebuilt the pile of markdown H1 quotes the counter-view against (<em>"To be honest, I'd rather review code than all these markdown files"</em>) — the check is falsifiability, not prose volume. This is also where review economics get set: intent settled on paper is what lets D1's code review run against green acceptance tests instead of reconstructing intent from a cold diff (<a href="E8-spec-driven-development-deepdive.html">E8</a>).</p>
+    <div class="pbdone">DONE = seven-question checklist filed on the contract PR with every question answered; contract ≤30 lines; sign-off recorded per lens.</div>
+  </div>
+</div>
+
+<h2 id="s4"><span class="n">4</span>Phase C — The return channel and the drift loop</h2>
+<p>Phase C is the loop. A contract that cannot push back is HAP4 — thrown over the wall; a contract nobody re-reads is HAP3 — silently stale. These three steps install the return path: the instruction to stop, the place questions land, the sensor that catches drift, and the ritual that answers both. The loop is what upgrades the spec from spec-first to spec-anchored — an anchored spec is <em>allowed to be wrong</em> and gets corrected by implementation learning (<a href="H3-traceability-spec-modes-deepdive.html">H3</a>).</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s7" data-pb="pb-handoff" data-step="pb4-s7">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s7">C1 · Instruct stop-on-ambiguity and give questions a landing place</label>
+    <p class="pbwhy">Append one paragraph to the steering file (template below): on a contradictory, impossible or two-way-interpretable criterion, <strong>stop and file a question — never pick a branch silently</strong> (<a href="H4-feedback-anti-patterns-deepdive.html">H4</a>'s return-channel rule 1, verbatim). Create the <span class="mono">spec-question</span> label routing to the requirement owner, with the SLA split: blockers get an async answer, everything else queues for the weekly triage. Why: asking is <em>not</em> the default — that is the HumanEvalComm &gt;60% and the HiL-Bench 67–88% → 1–9% from §0 — but the inversion is cheap, because an <em>instructed</em> stop is advisory-layer work agents comply with far more reliably than they volunteer it, and the question itself is an artifact carrying the REQ id, not a chat line that evaporates. The practitioner canon converged on the same loop: SPDD (martinfowler.com, Apr 2026) mandates <em>fix the prompt/spec first, then the code</em> when reality diverges.</p>
+    <div class="pbdone">DONE = a seeded ambiguous criterion makes the agent file a <span class="mono">spec-question</span> carrying the REQ id — not a guess — verified once; the label routes to the named owner.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-stop">copy</button><pre id="pb4-tpl-stop">
+# APPEND to AGENTS.md (PB3's master)
+## Spec questions — stop, don't guess
+If an acceptance criterion is contradictory, impossible, or allows two
+reasonable readings: STOP. Do not pick a branch silently.
+File the question as an artifact, not a chat line: an issue / PR comment
+labelled spec-question, carrying the REQ id and the readings you considered.
+Blocked on the answer? The requirement owner (owners.md) answers async.
+Not blocked? Park the question, continue other criteria, and it will be
+answered at the weekly triage. Resume the parked criterion only when the
+answer has landed in the spec itself.
+
+# Label definition (issue tracker):
+# spec-question — routes to the requirement owner from owners.md.
+# SLA: blocker = async same-day; otherwise = next weekly triage.
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s8" data-pb="pb-handoff" data-step="pb4-s8">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s8">C2 · Wire the suspect gate — drift's smoke detector</label>
+    <p class="pbwhy">Install the second CI grep, <a href="H3-traceability-spec-modes-deepdive.html">H3</a> §4's suspect gate: <strong>code-side</strong> — a PR that touches source paths a spec's context links name, but not the spec, gets labelled <span class="mono">suspect-spec</span>; <strong>spec-side</strong> — a spec change with no linked code or test change (and no <span class="mono">spec-only</span> label) gets flagged in reverse. Run it advisory (a label) first and promote it to a failing check once the team trusts it. Why: no shipping SDD tool detects silent drift for you (Kiro's spec sync is file synchronisation, not drift detection — point-in-time), so the sensor is a grep over the diff and the spec's own link list, not a product — <a href="E5-governance-deepdive.html">E5</a>'s litmus applied to the loop itself. HAP3 is the anti-pattern this catches: a spec the team quietly stopped maintaining keeps steering every agent that reads it.</p>
+    <div class="pbdone">DONE = probe PR editing a linked source path without its spec gets labelled, and the reverse probe gets flagged — each verified once.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-suspect">copy</button><pre id="pb4-tpl-suspect">
+#!/usr/bin/env bash
+# suspect-gate.sh — flag PRs whose diff and specs disagree (H3 §4).
+# Convention: each specs/REQ-*.md lists its context links as backtick-quoted
+# repo paths (component E). Advisory first: emit labels, exit 0; flip the
+# exit codes once the team trusts the signal.
+set -euo pipefail
+BASE="${BASE_BRANCH:-origin/main}"
+CHANGED=$(git diff --name-only "$BASE"...HEAD)
+FLAGGED=0
+for spec in specs/REQ-*.md; do
+  [ -e "$spec" ] || continue
+  LINKS=$(grep -oE '`[^`]+`' "$spec" | tr -d '`' | grep -E '^(src|app|lib|tests)/' || true)
+  [ -z "$LINKS" ] &amp;&amp; continue
+  HIT=$(printf '%s\n' "$CHANGED" | grep -xF -f &lt;(printf '%s\n' "$LINKS") || true)
+  SPEC_TOUCHED=$(printf '%s\n' "$CHANGED" | grep -xF "$spec" || true)
+  if [ -n "$HIT" ] &amp;&amp; [ -z "$SPEC_TOUCHED" ]; then
+    echo "suspect-spec: $spec names changed path(s):"; echo "$HIT"; FLAGGED=1
+  fi
+  if [ -n "$SPEC_TOUCHED" ] &amp;&amp; [ -z "$HIT" ]; then
+    echo "suspect-code: $spec changed but no linked code/test changed (label spec-only if intended)"
+    FLAGGED=1
+  fi
+done
+# advisory mode: report only. Enforced mode: exit $FLAGGED
+exit 0
+</pre></div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s9" data-pb="pb-handoff" data-step="pb4-s9">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s9">C3 · Install the weekly triage — three legal exits</label>
+    <p class="pbwhy">Fifteen minutes weekly over everything labelled <span class="mono">spec-question</span> or <span class="mono">suspect-spec</span>, the requirement owner in the chair, one row per item. Every row exits through <a href="H4-feedback-anti-patterns-deepdive.html">H4</a>'s triage question — <em>"is the code wrong, is the requirement wrong, or did we learn something?"</em> — and every exit is an artifact change: code-wrong turns the criterion into a failing test and a fix; requirement-wrong is a spec PR whose dependents flip suspect; we-learned updates the spec and logs the learning — and it is a <strong>normal</strong> exit, not a failure. A verbal "we aligned" is not an exit: the answer lands in the artifact, not the chat (H4 rule 4 — the same closed loop SPDD mandates). Until a flagged item has been through this question, it is the <em>process</em> that is broken, not just the spec.</p>
+    <div class="pbdone">DONE = first triage held and its log committed; every entry exited as a spec PR, a criterion rewrite or a logged learning — none verbal-only.</div>
+  </div>
+</div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-triage">copy</button><pre id="pb4-tpl-triage">
+# triage.md — weekly, 15 min, requirement owner chairs (H4 §3)
+| date | item (issue/PR) | REQ | exit: code-wrong / req-wrong / learned | owner | artifact changed (PR/commit) |
+|------|-----------------|-----|----------------------------------------|-------|------------------------------|
+
+# Rules:
+# - one row per spec-question / suspect-spec item; blockers were answered async
+#   but still get their row (the answer must be IN the spec by triage time).
+# - every row ends in an artifact change. "We aligned on a call" is not an exit.
+# - "learned" is a normal exit — count them; zero learnings for weeks means
+#   the questions are not being asked, not that the specs are perfect.
+</pre></div>
+
+<h2 id="s5"><span class="n">5</span>Phase D — The delivery and the exit gate</h2>
+<p>Phase D cashes the cheque: the discipline exists so that one real feature can cross it end-to-end.</p>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s10" data-pb="pb-handoff" data-step="pb4-s10">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s10">D1 · Deliver the feature against the contract</label>
+    <p class="pbwhy">Run the delivery at PB3's granted autonomy level, not above it (<a href="E6-autonomy-levels-deepdive.html">E6</a> — the level was earned by probes, not enthusiasm): the agent takes the contract, implements until the red acceptance tests are green, files <span class="mono">spec-question</span>s instead of guessing, and opens the PR with <span class="mono">Closes REQ-NNN</span> and the provenance trailer. Review runs <strong>against passing acceptance tests</strong>: the reviewer reads the diff knowing intent was settled in B3 and the criteria already executed — that is where B3's ten minutes pay out. The merge tail is the risk this closes: 26.1% of 8,106 studied fix PRs closed unmerged, and reviewer engagement is the strongest merge predictor (MSR 2026) — green acceptance tests give the reviewer something concrete to engage with instead of a cold diff.</p>
+    <div class="pbdone">DONE = feature merged with AC green in CI; PR carries <span class="mono">Closes REQ-NNN</span> + provenance trailer; the return channel fired at least once — or its silence is explained by clarity on a session-log read, not by silent guessing.</div>
+  </div>
+</div>
+
+<div class="pbstep">
+  <input type="checkbox" class="pbck" id="pb4-s11" data-pb="pb-handoff" data-step="pb4-s11">
+  <div class="pbtxt">
+    <label class="pbwhat" for="pb4-s11">D2 · Run the exit gate and write the handoff-delivery report</label>
+    <p class="pbwhy">Walk §7's exit table and fill the delivery report (template in §6): the installed templates, the contract, the spec-review record, the four probes, the triage log, and the loop-health read against PB1's baseline — rework-rate direction and review latency, <em>measured, not felt</em>: the METR RCT's perception gap (19% slower while believing ~20% faster, <a href="E7-metrics-anti-patterns-deepdive.html">E7</a>) is the standing reason self-report is inadmissible here. Why: the report is PB5's input — <a href="B6-roadmap-f0-f3-deepdive.html">B6</a>'s gates need evidence, and PB5 measures at scale what PB4 proved once.</p>
+    <div class="pbdone">DONE = report delivered; go/no-go recorded with date, criteria and signatories.</div>
+  </div>
+</div>
+
+<h2 id="s6"><span class="n">6</span>Toolbox &amp; templates</h2>
+<p>Everything below was verified against primary sources on <strong>2026-07-20</strong> — this layer moves weekly (Spec Kit alone shipped three releases in the week before this was written); <strong>re-verify before a client meeting</strong>. The runbook itself is deliberately tool-agnostic: contracts are markdown in git, the gates are greps — nothing here depends on buying anything. But the ecosystem is worth knowing, because the client will ask:</p>
+<div class="figscroll"><table class="map">
+<tr><th>Surface</th><th>State (verified 2026-07-20)</th><th>The note that bites</th></tr>
+<tr><td>contract scaffolds</td><td>GitHub Spec Kit v0.13.0 (Jul 17): <span class="mono">/speckit.specify</span> → spec.md, plan.md, tasks.md, constitution.md</td><td>weekly releases — re-verify command names before demoing; E8 covers where scaffolds help and where they add mass</td></tr>
+<tr><td>EARS in the wild</td><td>Kiro: requirements.md written in EARS; design.md + tasks.md; "Analyze Requirements" ambiguity gate</td><td>Kiro does NOT document spec↔code drift detection — do not credit it with one; access/tiering in flux</td></tr>
+<tr><td>Gherkin runners</td><td>Cucumber (JS/JVM/Ruby) · pytest-bdd / behave (Python) · Reqnroll (.NET — the maintained SpecFlow successor)</td><td>SpecFlow is discontinued; Reqnroll releases actively in 2026 — check the current version at install time, do not pin from memory</td></tr>
+<tr><td>Gherkin lint in CI</td><td>gplint v2.5.2 — fork of gherkin-lint (last releases 2024)</td><td>the original gherkin-lint is staler still (~3 years); verify the fork's maintenance state before wiring either into CI</td></tr>
+<tr><td>ticket → agent</td><td>Copilot coding agent ↔ Jira <strong>GA</strong> Jun 25 2026 (assign issue → draft PR, status back to the ticket) · Devin ↔ Linear (assign / label) · Cursor ↔ Linear + Slack</td><td>the issue body is the prompt — make the contract anatomy the issue template before turning any of these on</td></tr>
+<tr><td>provenance</td><td><span class="mono">Assisted-by: &lt;agent&gt;:&lt;model&gt;</span> trailer — Linux kernel, Fedora, LLVM (May 2026); QEMU declined, still banning AI-generated contributions</td><td>Claude Code defaults to <span class="mono">Co-Authored-By:</span> — pick one form per repo and grep for that form; EU AI Act disclosure applies from Aug 2026</td></tr>
+</table></div>
+<p>The three judgment templates live here rather than at their steps — they are skeletons a human fills, not runnable artifacts:</p>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-contract">copy</button><pre id="pb4-tpl-contract">
+# specs/CONTRACT-TEMPLATE.md — the handoff contract (H1 anatomy)
+# Sizing first (T0–T2 — our synthesis, H1 §5):
+#   T0 conversational — pairing (L2, &lt; ~15 min): say it, watch it, no artifact.
+#   T1 light contract — the ~30-min task: one intent sentence, 2–3 checkable
+#      criteria, one non-goals line, links. 5–10 lines; versioned if the diff is.
+#   T2 full contract — delegated L3+ / multi-hour / cross-file: all six
+#      components below + the ten-minute spec review + traceability ids.
+
+## A Intent / why           &lt;the problem, for whom, why now — HUMAN-written (PM)&gt;
+## B Scope &amp; non-goals      &lt;where the task stops; files not to touch — HUMAN-written&gt;
+## C Acceptance criteria    &lt;EARS rules + Gherkin scenarios; failure paths mandatory —
+                             agent drafts, tester/tech lead ratify&gt;
+## D Constraints            &lt;perf / security / tech budgets; the deterministic ones
+                             ALSO live in PB3's hooks and CI — prose is not a gate&gt;
+## E Context links          &lt;code paths · ADR ids · design refs — links, never copies&gt;
+## F Definition of done     &lt;the standing merge bar — stable across tasks&gt;
+
+# The restraint rule (H1): no implementation plan, no file-by-file
+# instructions — the contract constrains outcomes, not methods.
+</pre></div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-review">copy</button><pre id="pb4-tpl-review">
+# The 10-minute spec review — seven questions (H1 §3), filed on the contract PR
+1 · Is the WHY present — would a stranger act differently for knowing it?
+2 · Are non-goals explicit — could the agent know what NOT to build?
+3 · Is every acceptance criterion falsifiable, and executable where possible?
+4 · Are failure paths specified (empty result, timeout, unavailable dependency)?
+5 · Which constraints can be enforced deterministically — and are they wired
+    into hooks/CI rather than prose?
+6 · Do the context links resolve, and is nothing copy-pasted from a master?
+7 · Does "done" mean the standing DoD — not a per-task improvisation?
+# Ten minutes, 10–30 lines. Longer? The contract is too big — split it (P3).
+</pre></div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb4-tpl-report">copy</button><pre id="pb4-tpl-report">
+# Handoff-delivery report — PB4 exit artifact
+Module: ____________  Feature / REQ id: ____________
+Client / system: ____________  Date: ________  Author: ____________
+
+## 1 Contract discipline (A1–A3)
+Owner map committed: ____   Areas without an owner: 0 (hard requirement)
+Contract template + T0–T2 in specs/: ____   Matrix row recorded: ____
+REQ-id gate — unstamped probe PR bounced: ____ (link)   Stamped PR passed: ____
+Stamping live in AGENTS.md (branch / trailer / test-name / provenance): ____
+
+## 2 The contract (B1–B3)
+Lines: ____ (≤30)   Failure-path scenarios: ____ (≥1)
+Seven questions filed, all answered: ____   Sign-off per lens: ____
+Acceptance tests committed red in CI: ____ (run link)
+Agent edit of an acceptance test blocked by PB3's hook (probe): ____
+
+## 3 Return channel &amp; loop (C1–C3)
+Seeded-ambiguity probe → spec-question filed, not a guess: ____
+Suspect gate — drift probe labelled: ____   Reverse probe flagged: ____
+First triage held (date): ____   Entries: ____   All exits artifact changes: ____
+
+## 4 The delivery (D1)
+PR: ____   AC green in CI: ____   Closes REQ-NNN: ____   Provenance trailer: ____
+Return channel fired: ____ ×  (if 0: session log reviewed for silent guesses: ____)
+Reviewer confirms review ran against green AC: ____
+
+## 5 Loop health vs the PB1 baseline
+Rework-rate direction: ____   Review latency: ____   Notes: ____
+
+## 6 Go / no-go (D2)
+Decision: GO (proceed to PB5 Pilot) / NO-GO (fix the failed row, re-probe, rerun)
+Signatories: ____________   Date: ____________
+</pre></div>
+
+<h2 id="s7"><span class="n">7</span>Exit gate &amp; takeaways</h2>
+<p>The handoff discipline counts as installed when every row below passes — and, as in PB3, every deterministic row is a probe that fired or did not.</p>
+<div class="figscroll"><table class="map">
+<tr><th>Exit criterion</th><th>Check</th></tr>
+<tr><td>Owners named</td><td>owner map committed; zero unowned areas; PB1's editor confirmed as triage authority</td></tr>
+<tr><td>Templates installed</td><td>contract template + T0–T2 sizing under <span class="mono">specs/</span>; registry on PB3's matrix durable row</td></tr>
+<tr><td>REQ-id gate holds</td><td>unstamped probe PR bounced; stamped PR passed — verified once</td></tr>
+<tr><td>Contract ratified</td><td>≤30 lines; ≥1 failure-path scenario; seven questions filed; sign-off per lens</td></tr>
+<tr><td>Criteria executable</td><td>acceptance tests ran red in CI end-to-end before implementation began</td></tr>
+<tr><td>Reward signal protected</td><td>agent edit of an acceptance test bounced off PB3's guard hook (probe)</td></tr>
+<tr><td>Return channel live</td><td>seeded ambiguity produced a <span class="mono">spec-question</span> carrying the REQ id — not a guess</td></tr>
+<tr><td>Suspect gate holds</td><td>drift probe labelled <span class="mono">suspect-spec</span>; reverse probe flagged — each verified once</td></tr>
+<tr><td>Triage ritual live</td><td>first triage held; every entry exited as an artifact change; log committed</td></tr>
+<tr><td>Feature delivered</td><td>PR merged with AC green; <span class="mono">Closes REQ-NNN</span> + provenance trailer present</td></tr>
+<tr><td>Report written</td><td>delivery report filed with the loop-health read vs PB1's baseline; go/no-go signed</td></tr>
+</table></div>
+<div class="callout pine"><div class="t">Exit routing</div><p>If GO → proceed to <strong>PB5 Pilot</strong>: the discipline has run end-to-end exactly once, which proves it works and proves nothing about scale — PB5 turns the one-off into a measured pilot against the baseline PB1 captured, with B6's gates and STOP criteria deciding what happens next. If any row fails → the fix is almost always smaller than it looks (a template edit, a grep fix, a rewritten criterion); fix that row, re-probe, re-run the gate in hours. The one failure that is not small: if the triage keeps exiting verbally, the client has a culture problem no template fixes — name it in the report rather than shipping a green row you do not believe.</p></div>
+<div class="callout"><div class="t">Three sentences to remember PB4 by</div><p>The contract, not the prompt, is the unit of delegation — six components, two of them permanently human (intent and non-goals), sized T0–T2 so the discipline never costs more than the work. Acceptance criteria are the agent's reward signal, and the evidence says defaults fail on both sides — agents code instead of asking in &gt;60% of cases that warrant a question, and ~31% of benchmark passes traced to weak tests — so criteria ship as red tests the agent cannot edit, and ambiguity ships as a stop-and-ask rule with a place for questions to land. The loop is the product: ids make drift visible, the suspect gate flags it, and the weekly triage's only legal exits are code-wrong, requirement-wrong or we-learned — with every answer landing in the artifact, never in the chat.</p></div>
+<p>Sources and caveats for the empirical claims. Strong independent evidence: HumanEvalComm (ACM TOSEM 2025, arXiv:2406.00215 — the &gt;60% code-instead-of-question rate), SWE-Bench+ (arXiv:2410.06992 — 32.67% solution leakage, 31.08% weak-test passes), ClarifyGPT (FSE 2024, arXiv:2310.10996 — +11.52% relative Pass@1), RAGcceptance (arXiv:2508.06888 — +23.2 points case-level), the review-density study (arXiv:2603.15911 — 29.6 vs 4.1 review-tokens per changed line), the LLM-story-quality study (arXiv:2507.15157 — Rationale Clarity 1.54 vs 2.66), the provenance undercount (arXiv:2606.24429 — 3.3%, 30×), the unmerged-fix tail (arXiv:2602.00164 — 26.1% of 8,106) with the MSR 2026 reviewer-engagement study, and the METR RCT (arXiv:2507.09089 — the 19%-slower/20%-faster perception gap). Preprints, cited as such: HiL-Bench (arXiv:2604.09408 — 67–88% → 1–9%), Orchid (arXiv:2604.21505 — ~7.2 pp / 31 pp), Ambig-SWE (arXiv:2502.13069 — mechanism cited, percentages deliberately not). Practitioner synthesis: Böckeler's spec-first / spec-anchored / spec-as-source ladder and the SDD tool review on martinfowler.com (the "rather review code" counter-view), SPDD's closed loop (Zhang &amp; Xia, martinfowler.com, Apr 2026), EARS (Mavin et al., IEEE RE'09 — the adopter roster is creator-self-reported and not cited here). Vendor claims, labelled: Kiro's EARS default and Analyze Requirements gate plus the ~60%-of-1,400+ first-draft figure (AWS internal testing), the ticket-to-agent GA statuses (vendor changelogs, verified 2026-07-20). Our synthesis, kept flagged: the six-component anatomy and T0–T2 tiers (H1), the story → EARS → Gherkin → tests ladder (H2/Report 2), the five-move id scheme and the suspect gate (H3), the return-channel protocol (H4) and the fourth-amigo rule (H1/H2), and this runbook's phase compression. Deliberately not cited: Boehm's 100:1 defect-cost multiplier (folklore per Bossavit — the direction survives, the number does not), the "30-minute task balloons to three hours" line (unattributable), and any "EARS improves agent codegen by X%" figure — none exists, and we decline to invent one.</p>
+<p class="closingnote">This file is the standalone copy of the runbook; the workbook version lives in module M9. Its natural neighbours are <a href="H1-handoff-contract-anatomy-deepdive.html">H1 Contract anatomy</a>, <a href="H2-ears-gherkin-deepdive.html">H2 EARS &amp; Gherkin</a>, <a href="H3-traceability-spec-modes-deepdive.html">H3 Traceability &amp; spec modes</a>, <a href="H4-feedback-anti-patterns-deepdive.html">H4 Feedback loop</a>, <a href="E8-spec-driven-development-deepdive.html">E8 Spec-driven development</a> and the <a href="PB3-harness-runbook.html">PB3 Harness runbook</a> whose GO this one strictly requires. The contract anatomy, T0–T2 sizing, the EARS→Gherkin ladder, the five-move id scheme, the suspect gate and the return-channel protocol are this workbook's synthesis (Reports 2–3 lineage), not an industry standard; every tool fact — Spec Kit v0.13.0, Kiro's spec surface, gplint, Reqnroll, the ticket-to-agent integrations — is point-in-time (verified 2026-07-20) and must be re-verified before installation at a client.</p>
+</main>
+</div>
+
+<footer>
+  <b>PB4 Runbook — Handoff: Run the Contract End-to-End</b><br>
+  Companion to module M9 · Playbook in the Agentic SDLC learning workbook.
+</footer>
+
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+  /* runbook: live progress count (non-persistent) + copy buttons */
+  function upd2(){var t=document.querySelectorAll(".pbck").length,d=document.querySelectorAll(".pbck:checked").length;
+    document.querySelectorAll("[data-pbprog]").forEach(function(el){el.textContent=d+" / "+t+" steps done";});}
+  document.addEventListener("change",function(e){if(e.target.closest(".pbck"))upd2();});
+  upd2();
+  document.addEventListener("click",function(e){
+    var b2=e.target.closest(".pbcopy");if(!b2)return;
+    var pre=document.getElementById(b2.dataset.copy);if(!pre)return;
+    var txt=pre.textContent;
+    function ok(){b2.textContent="copied ✓";setTimeout(function(){b2.textContent="copy";},1400);}
+    function fb(){var ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok();}catch(err){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}
+  });
+})();
+</script>
+</body>
+</html>

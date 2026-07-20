@@ -3,6 +3,38 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.54 · 2026-07-20
+
+**NEW RUNBOOK PB4 — Handoff: run the contract end-to-end.** Fourth M9 runbook, in both
+copies (`deep-dives/PB4-handoff-runbook.html` + in-workbook overlay): eleven checklist steps
+across four phases (contract discipline — owners, template, ids; machine-verifiable criteria
+— the story→EARS→Gherkin→red-tests ladder and the ten-minute spec review; the return channel
+& drift loop; the delivery & exit gate), distilling H1–H4 into the discipline that decides
+what the caged module's agent is told to do. Single entry posture: a recorded PB3 GO; PB1's
+editor becomes the requirement owner, PB1's baseline the loop-health control. Deterministic
+where the theory is (E5 litmus): the REQ-id gate and H3's suspect gate ship as runnable CI
+blocks, stop-on-ambiguity and id-stamping as *appends* to PB3's AGENTS.md master — never a
+second steering file; acceptance tests ride PB2's net agent-read-only under PB3's hook.
+Judgment stays human by construction: intent and non-goals human-written (Rationale Clarity
+1.54 vs 2.66, arXiv:2507.15157), the agent as fourth amigo (drafts and asks, never ratifies),
+the weekly triage's three legal exits — code-wrong / requirement-wrong / we-learned — each an
+artifact change, never chat. Evidence framing honest: HumanEvalComm >60% code-instead-of-asking
+(TOSEM 2025), SWE-Bench+ 32.67%/31.08% false greens, review-density 29.6 vs 4.1 tok/LOC,
+unmerged tail 26.1% + MSR 2026 reviewer engagement, provenance undercount 3.3%/30×, METR
+perception gap; preprints labelled (HiL-Bench 67–88→1–9, Orchid ~7.2pp/31pp), Ambig-SWE
+(arXiv:2502.13069) cited as mechanism only. Fresh point-in-time layer (verified 2026-07-20):
+Copilot↔Jira GA Jun 25 — the issue body IS the prompt (plus Devin↔Linear, Cursor↔Linear/Slack),
+Spec Kit v0.13.0, Kiro's EARS default + Analyze Requirements gate (no drift detection — not
+credited with one), gplint over the stale gherkin-lint, the `Assisted-by:` trailer standard
+vs Claude Code's `Co-Authored-By` default, EU AI Act disclosure from Aug 2026. Böckeler's
+spec-first→spec-anchored→spec-as-source ladder names the target: spec-anchored, via the loop.
+Adversarial spot-verify caught two seed errors pre-release (gplint v2.5.2 = Apr 2024 not 2026;
+QEMU is NOT an `Assisted-by:` adopter — it still bans AI contributions and floated its own
+`AI-used-for:` trailer) plus one H1 erratum, fixed in both H1 copies: the SDD tool review and
+its "rather review code" counter-view belong to Birgitta Böckeler, the article's actual author
+— not Martin Fowler. Exit test: one real feature merged with review against green acceptance
+tests; GO → PB5 Pilot. M9 at 4/5 — next PB5 Pilot.
+
 ## v1.53 · 2026-07-18
 
 **NEW DEEP DIVE D4 — Governance & SSOT in the design world.** Fourth M6 companion
