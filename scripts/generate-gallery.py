@@ -251,6 +251,7 @@ GALLERY_CSS = """
 .gallery-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
 .gallery-title{font-family:var(--disp);font-weight:700;font-size:16px;line-height:1.3}
 .gallery-section{font-family:var(--mono);font-size:10.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.gallery-caption{font-family:var(--mono);font-size:10.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;padding:10px 14px 0;background:var(--card);border-bottom:1px solid var(--line-soft)}
 .gallery-why{font-size:14px;color:var(--soft);line-height:1.5;flex:1}
 .gallery-link{font-family:var(--mono);font-size:12px;color:var(--cobalt-deep);text-decoration:none;font-weight:600}
 .gallery-link:hover{color:var(--cobalt)}
@@ -273,6 +274,9 @@ def render_card(entry, svg, file_stem, card_index, svg_styles, file_markers):
     if anchor:
         href += f"#{anchor}"
 
+    module = file_stem
+    caption = f"{module} · {section}" if section else module
+
     used_classes = set()
     for class_attr in re.findall(r'class="([^"]+)"', svg):
         used_classes.update(class_attr.split())
@@ -293,7 +297,10 @@ def render_card(entry, svg, file_stem, card_index, svg_styles, file_markers):
 
     return (
         f'<article class="gallery-card" data-title="{escape_html(title.lower())}" '
-        f'data-section="{escape_html(section.lower())}" data-why="{escape_html(why.lower())}">\n'
+        f'data-section="{escape_html(section.lower())}" '
+        f'data-module="{escape_html(module.lower())}" '
+        f'data-why="{escape_html(why.lower())}">\n'
+        f'  <div class="gallery-caption">{escape_html(caption)}</div>\n'
         f'  <div class="gallery-preview {card_class}">{svg}</div>\n'
         f'  <div class="gallery-body">\n'
         f'    <div class="gallery-title">{escape_html(title)}</div>\n'
@@ -393,7 +400,7 @@ footer{{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px sol
 
 <div class="gallery-wrap">
   <p class="gallery-intro">A browsable collection of every diagram across the deep-dive companions. Each card shows the diagram, the section it belongs to, and why it is there.</p>
-  <input class="gallery-filter" type="search" placeholder="Filter by title, section, or reason…" aria-label="Filter diagrams">
+  <input class="gallery-filter" type="search" placeholder="Filter by title, module, section, or reason…" aria-label="Filter diagrams by title, module, section, or reason">
   <div class="gallery-grid">
 {''.join(cards)}
   </div>
@@ -416,7 +423,7 @@ footer{{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px sol
     var cards = grid.querySelectorAll('.gallery-card');
     var visible = 0;
     cards.forEach(function(card){{
-      var match = (card.dataset.title + ' ' + card.dataset.section + ' ' + card.dataset.why).indexOf(q) !== -1;
+      var match = (card.dataset.title + ' ' + card.dataset.module + ' ' + card.dataset.section + ' ' + card.dataset.why).indexOf(q) !== -1;
       card.style.display = match ? '' : 'none';
       if (match) visible++;
     }});
