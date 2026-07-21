@@ -1,0 +1,596 @@
+{
+  "entries": [
+    {
+      "deepDive": "B1-bootstrap-paradox-deepdive",
+      "figureIndex": 0,
+      "title": "The paradox. Each statement is separately true; together they form a loop with two entrances. Entering at writes leaves statement 1 unsatisfied — the agent works without an error signal. Entering read-only satisfies the statements one at a time.",
+      "section": "1 · The paradox, stated precisely",
+      "sectionAnchor": "s1",
+      "why": "Shows why the bootstrap paradox is a loop, not a contradiction: a write-first entry fails silently, while a read-only entry can satisfy each statement in turn."
+    },
+    {
+      "deepDive": "B1-bootstrap-paradox-deepdive",
+      "figureIndex": 1,
+      "title": "The chain. Each box's \"needs\" line points left; its \"yields\" line is what the next box consumes. The chain as a package is our Report 4 synthesis — the components are individually standard (Feathers 2004, approval testing, CI, context files), the forced ordering of them for agent adoption is ours.",
+      "section": "3 · The dependency chain — why the ordering is not arbitrary",
+      "sectionAnchor": "s3",
+      "why": "Makes the ordering of bootstrap activities explicit so the team sees which capabilities must precede agent writes and why the sequence is forced."
+    },
+    {
+      "deepDive": "B2-characterization-golden-master-deepdive",
+      "figureIndex": 0,
+      "title": "Two grains of the same contract. Characterization asserts behavior-by-behavior and reads as documentation; approval captures everything at once and needs no assertions. Both defer the spec question — \"is this a bug?\" — to a human step that the generator never performs.",
+      "section": "2 · The whole output at once: approval / golden-master testing",
+      "sectionAnchor": "s2",
+      "why": "Contrasts characterization and approval testing so the team picks the right capture strategy for legacy behavior without confusing documentation with oracle."
+    },
+    {
+      "deepDive": "B2-characterization-golden-master-deepdive",
+      "figureIndex": 1,
+      "title": "The characterization workflow. Steps 2, 4 and 5 carry the guarantees; steps 1, 3 and 6 exist so the guarantees have something to work on. The assembly is our Report 4 synthesis; every component is standard and named.",
+      "section": "5 · The workflow: document, don't fix — then triage",
+      "sectionAnchor": "s5",
+      "why": "Maps the characterization workflow to its guarantee-bearing steps so the team treats captured behavior as a triage input, not an automatic fix."
+    },
+    {
+      "deepDive": "B3-mutation-testing-gate-deepdive",
+      "figureIndex": 0,
+      "title": "The loop and the gate are two different runs. In the generation loop the agent should see surviving mutants — that is the feedback that lifts 53% to 89.5%. The gate run that decides the exit criterion uses freshly generated mutants the agent never optimized against, for the same reason exams are not the practice sheet (§8, our synthesis).",
+      "section": "4 · The feedback loop: survivors teach the generator",
+      "sectionAnchor": "s4",
+      "why": "Separates the learning loop from the exit gate so surviving mutants feed the generator without letting the agent overfit the gate itself."
+    },
+    {
+      "deepDive": "B3-mutation-testing-gate-deepdive",
+      "figureIndex": 1,
+      "title": "Two consumption modes, one instrument. Mode 1 runs continuously and is advisory — Google's shape. Mode 2 runs once per module per phase boundary and is deterministic — the exit criterion. The dashed return: a failed gate turns its survivors into Mode 1 work items. (Our synthesis.)",
+      "section": "8 · Designing the gate for our rollout",
+      "sectionAnchor": "s8",
+      "why": "Shows how mutation testing can be both advisory feedback and a deterministic phase gate, with failed gate survivors recycled as new learning items."
+    },
+    {
+      "deepDive": "B4-agent-archaeology-deepdive",
+      "figureIndex": 0,
+      "title": "The pipeline. The top row is generation; the bottom row is what makes it trustworthy. The dashed edge is the failure mode of §4 — interpretation consumed directly as documentation. Anchoring (§5) means the interpretation layer reads the deterministic layer's graph, not its own recall; the B2 net is the executable cross-check that turns surviving hypotheses into promoted knowledge.",
+      "section": "6 · The F0 archaeology workflow",
+      "sectionAnchor": "s6",
+      "why": "Lays out the generation-and-verification pipeline so interpretation is anchored to deterministic artifacts rather than consumed as raw documentation."
+    },
+    {
+      "deepDive": "B5-strangler-heatmap-deepdive",
+      "figureIndex": 0,
+      "title": "The strangler in three phases. The facade is transitional architecture, not a destination: Microsoft's own guidance warns against letting it become a single point of failure or a performance bottleneck. Phase 3's success criterion is not \"the new system exists\" but \"the old one serves no traffic\" — the difference between a migration and a dual-stack.",
+      "section": "2 · The strangler fig pattern",
+      "sectionAnchor": "s2",
+      "why": "Defines the three-phase strangler so the team treats the facade as temporary and judges migration success by old-system traffic, not new-system existence."
+    },
+    {
+      "deepDive": "B5-strangler-heatmap-deepdive",
+      "figureIndex": 1,
+      "title": "The selection picture. The heatmap ranks by heat (churn × complexity); it does not rank by extractability or safety — those are §5's second and third axes. The red-ringed bubble is the discipline: high churn makes a module tempting, high business criticality makes it inadmissible as a first battlefield regardless of score.",
+      "section": "4 · The heatmap: churn times complexity",
+      "sectionAnchor": "s4",
+      "why": "Explains how to read the heatmap as a selection filter, not a simple priority score, by adding business-criticality and safety axes."
+    },
+    {
+      "deepDive": "B6-roadmap-f0-f3-deepdive",
+      "figureIndex": 0,
+      "title": "Fig. 1 — The roadmap as a permission ladder. Gates open on measured exit criteria (§2); the two back-arrows and the STOP band are as much a part of the plan as the forward path. F0–F3 is this workbook's Report 4 synthesis.",
+      "section": "1 · The four phases — permissions, not quarters",
+      "sectionAnchor": "s1",
+      "why": "Presents the F0–F3 roadmap as a permission ladder with explicit gates and rollback paths so progress is measured by evidence, not calendar."
+    },
+    {
+      "deepDive": "D1-design-system-artifact-deepdive",
+      "figureIndex": 0,
+      "title": "The two established artifacts answer \"what\" and \"how + prove it\"; the design system answers \"what it must look like\" — and, critically, feeds the same deterministic gate loop the engineering harness runs. An agent that fails a token-lint or visual-regression check iterates before a human reviews anything. The \"third artifact\" framing is Report 5's synthesis.",
+      "section": "1 · From human library to machine-readable infrastructure",
+      "sectionAnchor": "s1",
+      "why": "Positions the design system as a third artifact that feeds deterministic gates so visual work is verified before human review."
+    },
+    {
+      "deepDive": "D2-design-tokens-dtcg-deepdive",
+      "figureIndex": 0,
+      "title": "The tier model, standard practice by 2026 but community convention rather than DTCG normative text (the spec supplies only groups and aliases). Aliases point left — every semantic token is a named decision about a primitive; usage flows right. The semantic tier is where the contract lives: primitives change on rebrand, component tokens are optional sugar, but \"cite color.action.primary, never a hex\" is the rule a linter can enforce and an agent can follow.",
+      "section": "1 · Anatomy of a token — and the tier that carries the contract",
+      "sectionAnchor": "s1",
+      "why": "Clarifies the token tier model so the contract lives in semantic tokens that agents and linters can enforce without hard-coding values."
+    },
+    {
+      "deepDive": "D2-design-tokens-dtcg-deepdive",
+      "figureIndex": 1,
+      "title": "The reference pipeline. The git JSON is the durable artifact (I1) behind a PR gate (I2); every emitted format is derived and regenerates; the design tool is a consumer under code-first, a contributor via a PR-shaped bridge otherwise. The bottom band is where the contract becomes enforceable — without the gate, tokens are documentation. One sobering adoption number: in zeroheight's 2026 survey only about 40% of teams report having any token pipeline at all — the majority still sync by hand.",
+      "section": "3 · The pipeline — from decision to production, tool by tool",
+      "sectionAnchor": "s3",
+      "why": "Shows how token decisions flow from git through gates and derived formats so the contract stays enforceable and regenerable."
+    },
+    {
+      "deepDive": "D3-how-agents-consume-design-context-deepdive",
+      "figureIndex": 0,
+      "title": "The consumption ladder. Each rung adds the information the rung below cannot express; the cost of the upper rungs is paid in context-window budget (§5) and, for Code Connect, in plan tier and maintenance (§3). Channels compose rather than compete — Figma's own guidance and OpenAI's curated Figma skill both prescribe metadata first, screenshot as visual supplement, small selections only.",
+      "section": "1 · The screenshot ceiling",
+      "sectionAnchor": "s1",
+      "why": "Ranks design-consumption channels by information density so teams reach for structured metadata before burning context windows on screenshots."
+    },
+    {
+      "deepDive": "D3-how-agents-consume-design-context-deepdive",
+      "figureIndex": 1,
+      "title": "The loop that makes consumption verifiable. Conformance — props, tests, a11y — is checked deterministically before any human sees the PR; the designer's gate (D5) reviews what the loop cannot. The escalation band is not decoration: an agent that retries taste-level failures burns the context budget of §5 and the reviewer's patience.",
+      "section": "4 · Storybook MCP — from consumption to a self-healing loop",
+      "sectionAnchor": "s4",
+      "why": "Closes the design-consumption loop with deterministic conformance checks before the designer gate and escalation rules that prevent wasteful agent retries."
+    },
+    {
+      "deepDive": "D4-governance-ssot-design-world-deepdive",
+      "figureIndex": 0,
+      "title": "Curtis's 2015 spectrum, his 2024 correction, and the shape agents force. The hybrid is not a fourth classical model — it is the centralized model whose throughput constraint moved to machines while its judgment constraint stayed exactly where it was. That asymmetry is why governance, not generation, is the design system's binding constraint in an agentic engagement.",
+      "section": "1 · The classical models — and Curtis's retraction",
+      "sectionAnchor": "s1",
+      "why": "Maps the governance spectrum and Curtis's correction so the team sees why agentic design systems shift throughput to machines while judgment stays human."
+    },
+    {
+      "deepDive": "D4-governance-ssot-design-world-deepdive",
+      "figureIndex": 1,
+      "title": "The operating loop of the hybrid model. Notice where machine effort ends and human effort begins: everything left of the gate is scalable, everything at the gate is not — which is why review capacity, not generation quality, sets the ceiling on D-level (D6). The diagram is Report 5's synthesis; the mechanics quoted above it are documented practice at Carbon, Primer, Paste, SLDS, Atlassian and Figma.",
+      "section": "2 · The hybrid operating model — gates, and who approves what",
+      "sectionAnchor": "s2",
+      "why": "Draws the machine/human boundary in the hybrid model so the team recognizes review capacity, not generation speed, as the scaling limit."
+    },
+    {
+      "deepDive": "D4-governance-ssot-design-world-deepdive",
+      "figureIndex": 2,
+      "title": "The SSOT argument mapped. The workbook's default sits at code-first — not because canvas work is lesser, but because git is the only surface in the picture with versioned history, PR gates and machine-readable diff, which are the three things agent-scale governance cannot live without. Flag it as Report 5's synthesis wherever it appears; the named positions around it are quoted from their sources.",
+      "section": "5 · The SSOT question — Figma, code, or the contract in the middle",
+      "sectionAnchor": "s5",
+      "why": "Places the code-first SSOT choice in context so the team understands git is the only surface that gives versioning, gates, and machine-readable diffs."
+    },
+    {
+      "deepDive": "D5-design-harness-verification-guardrails-deepdive",
+      "figureIndex": 0,
+      "title": "The verification funnel this chapter unpacks layer by layer. Everything left of the amber gate is machine-iterable: the agent reads the failure and retries, which is E4's loop with visual-layer checks plugged in. The async lane watches the system between PRs. The ordering — lint → contract → interaction → a11y → visual → human — is Report 5's synthesis; the individual tools and their documented behavior are cited in §2–§4.",
+      "section": "1 · The stack — six machine checks, in the order they should run",
+      "sectionAnchor": "s1",
+      "why": "Orders the design verification funnel so the agent iterates on conformance checks before a human ever sees the output."
+    },
+    {
+      "deepDive": "D5-design-harness-verification-guardrails-deepdive",
+      "figureIndex": 1,
+      "title": "The stress-state matrix — the missing-things addition the verification pass surfaced. Each variant is a first-class harness check with its own baseline, priced in snapshots; the payoff is that forced-colors, dark-mode, motion and reflow failures stop depending on a human remembering to test them.",
+      "section": "2 · Visual regression in practice — baselines, noise, and the false-positive problem",
+      "sectionAnchor": "s2",
+      "why": "Expands visual regression into a stress-state matrix so forced-colors, dark-mode, motion, and reflow failures are caught by baselines instead of memory."
+    },
+    {
+      "deepDive": "D5-design-harness-verification-guardrails-deepdive",
+      "figureIndex": 2,
+      "title": "Conformance vs quality, with the benchmarks placed where they belong. The left box is §1–§4's territory; the right box is the designer's. Everything about D6's curator role and D7's rollout sequencing follows from which side of this line a check falls on.",
+      "section": "5 · Conformance vs quality — the evidence for where the human gate sits",
+      "sectionAnchor": "s5",
+      "why": "Draws the line between conformance and quality so the team knows which failures the agent can fix and which require a designer judgment gate."
+    },
+    {
+      "deepDive": "D6-design-scale-curator-deepdive",
+      "figureIndex": 0,
+      "title": "Left: the engineering ladder earns every rung through deterministic verification. Middle: the design ladder is two ladders in one — machine gates carry conformance up to D4, judgment stays human all the way down. Right: the product ladder rests on human judgment alone (P5 §2). The red dashed line is the same line in both right-hand columns: above it, no deterministic gate exists, so a human gate is the only kind there is.",
+      "section": "2 · The verification split — conformance vs quality",
+      "sectionAnchor": "s2",
+      "why": "Compares engineering, design, and product ladders so the team sees where deterministic verification ends and human judgment becomes the only gate."
+    },
+    {
+      "deepDive": "D6-design-scale-curator-deepdive",
+      "figureIndex": 1,
+      "title": "The loop the curator runs. Clockwise from top-left: the durable context the curator owns feeds the agent; the agent's output passes machine gates that verify conformance; the designer gate judges quality; merged work updates the context and the drift signals. The red dashed line is D5: the same loop with the one irreplaceable node deleted — every remaining check passes, and the slop still ships.",
+      "section": "5 · The designer as curator",
+      "sectionAnchor": "s5",
+      "why": "Shows the curator loop so the designer's quality gate is explicitly wired into context updates, drift detection, and agent feedback."
+    },
+    {
+      "deepDive": "D7-design-archaeology-f0-f4-rollout-deepdive",
+      "figureIndex": 0,
+      "title": "The bootstrap order as a pipeline. Grey boxes are F0 — strictly read-only, exactly like B4's archaeology; amber is F1's consolidation, the first write, and it lands in git as infrastructure; blue is the gate layer (D5's harness); green is the first agent output, which arrives only after everything left of it exists. The chain is Report 4's ordering transplanted to the visual layer: audit → characterize → consolidate → gates → pilot.",
+      "section": "2 · The F0 audit toolbox",
+      "sectionAnchor": "s2",
+      "why": "Sequences the visual-layer bootstrap from read-only audit to first agent output so each phase's exit gate is built before it is needed."
+    },
+    {
+      "deepDive": "D7-design-archaeology-f0-f4-rollout-deepdive",
+      "figureIndex": 1,
+      "title": "The design-layer heatmap, parallel to B5's. The vertical axis is what makes it agent-readiness rather than ordinary adoption scoring: an area is legible to a machine when it carries stories, tokens, Code Connect mappings and CI. The pilot quadrant is high-legibility, low-brand-risk; the red quadrant is the F0 STOP profile. Axes are exclusionary — brand risk is a gate, not a tradeable score.",
+      "section": "4 · The agent-readiness heatmap",
+      "sectionAnchor": "s4",
+      "why": "Turns adoption planning into an agent-readiness map so pilot areas are chosen by legibility and brand-risk gates, not by score alone."
+    },
+    {
+      "deepDive": "D7-design-archaeology-f0-f4-rollout-deepdive",
+      "figureIndex": 2,
+      "title": "F0–F4 as a permission ladder. The D-level is granted by the phase's exit gate, never by ambition: no agent writes exist before F2, D3 is earned area-by-area and then held by review capacity, and D4 remains gated forever. The red branch is the honest exit: where no harness can be built and the brand risk is high, the audit is the deliverable and the agent rollout does not start.",
+      "section": "5 · The F0–F4 rollout",
+      "sectionAnchor": "s5",
+      "why": "Frames F0–F4 as a permission ladder with an honest exit branch so autonomy is granted by gates, not ambition."
+    },
+    {
+      "deepDive": "E1-agent-model-harness-deepdive",
+      "figureIndex": 0,
+      "title": "The framework as a loop. Amber = task/context inputs, green = memory (cross-cutting), the cobalt dashed box = the harness wrapping the model, gray = governance constraining every action. The dashed return path is what makes it \"agentic\": verification results and updated state feed back rather than terminating a one-shot generation.",
+      "section": "2 · The seven components — with inputs & outputs",
+      "sectionAnchor": "map",
+      "why": "Shows the agent framework as a feedback loop of seven components so the audience stops treating the agent as just the model."
+    },
+    {
+      "deepDive": "E10-background-agents-deepdive",
+      "figureIndex": 0,
+      "title": "Brain, hands, session. The process is disposable; the append-only log and the durable files are not — recovery is a replay, not a resurrection.",
+      "section": "3 · Persistence mechanics — surviving the context window",
+      "sectionAnchor": "s3",
+      "why": "Separates brain, hands, and session so the team builds recovery around replaying durable logs and files rather than resurrecting processes."
+    },
+    {
+      "deepDive": "E10-background-agents-deepdive",
+      "figureIndex": 1,
+      "title": "The adoption path. Phase two is where the governance gets built; the dashed shortcut is where pilots die.",
+      "section": "6 · The adoption path — maturity, first use cases, and the vendor numbers",
+      "sectionAnchor": "s6",
+      "why": "Plots the background-agent adoption path so governance is built in phase two before the shortcut to phase three becomes fatal."
+    },
+    {
+      "deepDive": "E11-formal-methods-deepdive",
+      "figureIndex": 0,
+      "title": "Two directions under one label. The antfly essay is Direction A; AgentSpec and its successors are Direction B; sales decks routinely blur them.",
+      "section": "1 · Two directions, one label — keep them apart",
+      "sectionAnchor": "s1",
+      "why": "Keeps Direction A (specification) and Direction B (runtime enforcement) apart so formal-methods claims are not confused in procurement."
+    },
+    {
+      "deepDive": "E11-formal-methods-deepdive",
+      "figureIndex": 1,
+      "title": "The safety–utility curve, quantified. Hard-stop enforcement nearly eliminates unsafe executions — and nearly eliminates the work. Blast radius decides the threshold.",
+      "section": "5 · Direction B — runtime enforcement of agent behaviour",
+      "sectionAnchor": "s5",
+      "why": "Quantifies the safety–utility trade-off so hard-stop thresholds are chosen by blast radius, not by idealized guarantees."
+    },
+    {
+      "deepDive": "E2-context-engineering-deepdive",
+      "figureIndex": 0,
+      "title": "Recall is not flat across the window. It is highest in a small, high-signal context and degrades as tokens accumulate — long before the model's maximum window is reached. The engineering goal is to stay in the green zone, not to fill the window.",
+      "section": "2 · The physics: context rot & the attention budget",
+      "sectionAnchor": "s2",
+      "why": "Shows that recall degrades well before the context-window limit so the team optimizes signal density instead of token count."
+    },
+    {
+      "deepDive": "E3-harness-in-practice-deepdive",
+      "figureIndex": 0,
+      "title": "Sessions are relay legs. Durable state (green) is the baton; each session (cobalt) bootstraps from it, does bounded work, then writes progress and commits before ending merge-ready. Governance (gray) is enforced across all sessions. The model has no memory between legs — the harness supplies all continuity.",
+      "section": "2 · The core patterns — inputs & outputs",
+      "sectionAnchor": "s2",
+      "why": "Models sessions as relay legs so durable state, not the model, carries continuity between bounded runs."
+    },
+    {
+      "deepDive": "E4-verification-first-deepdive",
+      "figureIndex": 0,
+      "title": "Red-green-refactor maps directly onto the agent loop. The critical governance choice is who writes the red: when a human or a separate agent authors the failing test against a clear requirement, the coding agent's job becomes \"reach green without touching the test\" — and review runs against a passing, trusted oracle.",
+      "section": "2 · TDD as the agent's native loop",
+      "sectionAnchor": "s2",
+      "why": "Maps red-green-refactor onto the agent loop and fixes who writes the red test so the coding agent cannot weaken its own oracle."
+    },
+    {
+      "deepDive": "E4-verification-first-deepdive",
+      "figureIndex": 1,
+      "title": "A mutant is your code with one deliberate fault. If a test fails on the mutant, the mutant is \"killed\" — your tests have teeth there. If every test still passes, the mutant \"survived\" — a real, specific gap in what your tests check. The mutation score is the share of mutants killed.",
+      "section": "5 · Mutation testing in depth — how it actually works",
+      "sectionAnchor": "s5",
+      "why": "Defines mutation testing as deliberate-fault probes so the team reads surviving mutants as precise, actionable gaps in the test suite."
+    },
+    {
+      "deepDive": "E5-governance-deepdive",
+      "figureIndex": 0,
+      "title": "Governance is a gate, not a suggestion. A proposed action is checked by permission rules and PreToolUse hooks; if it passes, the sandbox and egress policy bound what it can actually touch; a PostToolUse hook and audit log record it. Anything unsafe is denied or escalated to a human before it can have an effect.",
+      "section": "2 · The mechanisms — inputs & outputs",
+      "sectionAnchor": "s2",
+      "why": "Shows governance as a layered gate so unsafe actions are denied, bounded, or escalated before they have effects."
+    },
+    {
+      "deepDive": "E6-autonomy-levels-deepdive",
+      "figureIndex": 0,
+      "title": "The ladder rises by delegated judgment, not model power. Most teams sit at L2; L3 (delegated task → reviewed PR) is today's realistic production ceiling; L4 is viable only for narrow, repeated, deterministically-verifiable tasks; L5 (no human in the loop) is not achieved for general software development.",
+      "section": "1 · The five levels",
+      "sectionAnchor": "s1",
+      "why": "Ranks autonomy by delegated judgment so the team sets realistic production ceilings instead of assuming model capability equals autonomy."
+    },
+    {
+      "deepDive": "E7-metrics-anti-patterns-deepdive",
+      "figureIndex": 0,
+      "title": "Agentic development speeds up writing so much that review becomes the bottleneck. Output metrics (PRs, tasks) rise sharply while org-level outcomes stay flat, because the work accumulates at the human review gate. This is why E6 caps autonomy at review capacity and why we measure outcomes, not output.",
+      "section": "5 · The review bottleneck, visualised",
+      "sectionAnchor": "s5",
+      "why": "Visualizes why output metrics rise while outcomes stall, making the case for capping autonomy at review capacity and measuring outcomes."
+    },
+    {
+      "deepDive": "E8-spec-driven-development-deepdive",
+      "figureIndex": 0,
+      "title": "The SDD flow (Spec Kit's shape): a constitution fixes non-negotiables, then specify → plan → tasks → implement. The decisive difference from ad-hoc prompting is the spec review gate: the specification is reviewed and agreed before implementation, so intent is validated on paper rather than discovered in a PR.",
+      "section": "1 · What SDD actually is",
+      "sectionAnchor": "s1",
+      "why": "Shows how spec-driven development fixes non-negotiables up front and reviews intent before code, preventing late discovery of misunderstood requirements."
+    },
+    {
+      "deepDive": "E8-spec-driven-development-deepdive",
+      "figureIndex": 1,
+      "title": "Both plugins enforce plan-before-code and review-before-done. The structural difference is the green return arrow: Compound Engineering's /ce-compound writes each task's lessons into CLAUDE.md and docs, so the next cycle's planning reads them as grounding — the system improves with use, rather than resetting.",
+      "section": "3 · Two plugin approaches: Superpowers & Compound Engineering",
+      "sectionAnchor": "s3",
+      "why": "Contrasts Superpowers and Compound Engineering so the team sees the value of closing the loop by writing lessons back into project memory."
+    },
+    {
+      "deepDive": "E9-harness-tuning-deepdive",
+      "figureIndex": 0,
+      "title": "The tunable surface. The model is the one part you cannot change; everything around it is configuration — and §2's evidence says the configuration often decides more than the model does.",
+      "section": "1 · The tunable surface — anatomy of the thing you tune",
+      "sectionAnchor": "s1",
+      "why": "Surfaces every harness configuration as a tunable lever so the team stops tuning the model and starts tuning what surrounds it."
+    },
+    {
+      "deepDive": "E9-harness-tuning-deepdive",
+      "figureIndex": 1,
+      "title": "The eval-driven tuning loop. One change at a time, screened cheaply, confirmed expensively, kept only if the win repeats — the harness equivalent of red-green TDD.",
+      "section": "4 · Eval-driven tuning — the method",
+      "sectionAnchor": "s4",
+      "why": "Describes the eval-driven tuning loop so harness changes are screened cheaply, confirmed expensively, and kept only on repeated wins."
+    },
+    {
+      "deepDive": "H1-handoff-contract-anatomy-deepdive",
+      "figureIndex": 0,
+      "title": "Each component exists to drive a specific harness mechanism. Reading the arrows right-to-left is the review question: if a harness stage keeps failing, which contract field is starving it?",
+      "section": "2 · The six components",
+      "sectionAnchor": "s2",
+      "why": "Maps each handoff-contract field to the harness stage it feeds so failing gates can be traced back to missing or malformed inputs."
+    },
+    {
+      "deepDive": "H1-handoff-contract-anatomy-deepdive",
+      "figureIndex": 1,
+      "title": "The inversion in one line: validate intent on paper, then let the harness prove the implementation. The dashed return path is H4's feedback loop — the engineering layer is the best detector of bad requirements.",
+      "section": "3 · The gate inversion — reviewing the spec before the code",
+      "sectionAnchor": "s3",
+      "why": "Inverts the review order so intent is validated on paper before the harness proves implementation, with engineering feedback closing the loop."
+    },
+    {
+      "deepDive": "H2-ears-gherkin-deepdive",
+      "figureIndex": 0,
+      "title": "The ladder is also a division of labour: everything left of the amber gate is where humans spend judgement (rules and which examples matter); everything right of it is mechanical and delegable. The agent may draft the left side too — but drafts cross the gate only with human ratification.",
+      "section": "4 · The ladder: story → EARS → Gherkin → red tests",
+      "sectionAnchor": "s4",
+      "why": "Divides the specification ladder at the human judgment gate so rules and examples are ratified before tests become mechanical and delegable."
+    },
+    {
+      "deepDive": "H3-traceability-spec-modes-deepdive",
+      "figureIndex": 0,
+      "title": "The traceability chain. Forward: one requirement ID travels through spec, task, branch, commit, test name and PR — cheap, structural, greppable. Backward: a change flips linked artifacts to \"suspect\" until the link is re-affirmed, so drift is detected rather than discovered in an audit.",
+      "section": "2 · The chain — IDs travel forward",
+      "sectionAnchor": "s2",
+      "why": "Shows how requirement IDs flow through artifacts so drift can be detected structurally rather than left for audits."
+    },
+    {
+      "deepDive": "H4-feedback-anti-patterns-deepdive",
+      "figureIndex": 0,
+      "title": "The feedback loop. Solid: the forward path M3 built. Dashed: the return signals — an agent-detected contradiction mid-implementation, or a suspect label from H3's drift gate at review time. Both land in the same triage question, whose three exits each name a different owner and a different artifact to change.",
+      "section": "3 · Drift triage — the three-way question",
+      "sectionAnchor": "s3",
+      "why": "Routes feedback from mid-implementation contradictions and drift labels into a triage question that names the owner and artifact to change."
+    },
+    {
+      "deepDive": "I1-artifact-taxonomy-deepdive",
+      "figureIndex": 0,
+      "title": "The triad and its flows. Durables change only through the human gate; derived artifacts are projections — regenerated on master change, with the hand-edit path explicitly crossed out; disposables default to pruning. The one path upward is deliberate promotion through validation and ownership — never inertia.",
+      "section": "1 · The triad — durable, derived, disposable",
+      "sectionAnchor": "s1",
+      "why": "Classifies artifacts by lifecycle so durables are human-gated, derived artifacts are regenerated, and disposables are pruned."
+    },
+    {
+      "deepDive": "I1-artifact-taxonomy-deepdive",
+      "figureIndex": 1,
+      "title": "The SSOT boundary. Solid arrows are the two correct bridges: a pointer that fetches the product master at need, or a labelled derived digest regenerated from it. The dashed paste path creates the fork — a copy inside the repo's most-trusted file, with no regeneration path and full agent trust.",
+      "section": "5 · The SSOT boundary — two mastering systems, one taxonomy",
+      "sectionAnchor": "s5",
+      "why": "Shows the two safe bridges across mastering systems and flags the paste path as a fork that breaks single-source-of-truth."
+    },
+    {
+      "deepDive": "I2-lifecycle-write-permissions-deepdive",
+      "figureIndex": 0,
+      "title": "The ADR status walk. The only write against an accepted record is a link added by its successor; everything else — including the fix-it-in-place instinct — is refused. MADR's rejected keeps declined roads visible. The code-seam references on the right are our practice, not part of the standard (see the flag below).",
+      "section": "1 · The ADR — a lifecycle worth copying",
+      "sectionAnchor": "s1",
+      "why": "Uses the ADR status walk to show how accepted decisions are superseded, not edited, keeping the record of declined options visible."
+    },
+    {
+      "deepDive": "I2-lifecycle-write-permissions-deepdive",
+      "figureIndex": 1,
+      "title": "The matrix as a flow. The agent is the same in all four paths; what differs is the gate its write must pass. Durable writes become proposals; derived writes become regenerations; disposable writes are free but homed and mortal; memory writes pass validation and stay auditable.",
+      "section": "2 · The write-permission matrix",
+      "sectionAnchor": "s2",
+      "why": "Turns the write-permission matrix into a flow so the same agent faces different gates depending on whether it writes durables, derived artifacts, disposables, or memory."
+    },
+    {
+      "deepDive": "I3-consistency-drift-deepdive",
+      "figureIndex": 0,
+      "title": "The compounding loop unique to agentic development: documentation errors used to decay quietly; now they are re-injected into generation every session. The deterministic gate (§4) intercepts the return edge — drift still happens, but it cannot survive a build.",
+      "section": "2 · What agentic development changes",
+      "sectionAnchor": "s2",
+      "why": "Surfaces the compounding loop where documentation errors are re-injected into generation, and shows how deterministic gates intercept it."
+    },
+    {
+      "deepDive": "I3-consistency-drift-deepdive",
+      "figureIndex": 1,
+      "title": "Start at the bottom: rung 1 ships with your language, rung 2 is an afternoon of CI work. Rungs 4–5 earn their keep where an OpenAPI spec or spec-driven workflow already exists. The graveyard column is load-bearing: five of the tools this space produced since 2019 are already dead or repurposed — bind the practice to the check, not the vendor.",
+      "section": "4 · Docs-as-tests — consistency as a failing build",
+      "sectionAnchor": "s4",
+      "why": "Ranks docs-as-tests rungs and warns against vendor lock-in so consistency is bound to a check the team controls."
+    },
+    {
+      "deepDive": "I4-memory-systems-deepdive",
+      "figureIndex": 0,
+      "title": "The four layers by lifetime. The window is E2's problem; the files and project state are this chapter's; the organizational layer is §6's decision. CoALA's procedural type is the quiet punchline — the harness itself is memory, which is why its write-gate (I2) is the hardest one.",
+      "section": "1 · What agent memory is — a working typology",
+      "sectionAnchor": "s1",
+      "why": "Layers memory by lifetime so the team sees why the harness itself is memory and why its write gate is the hardest to pass."
+    },
+    {
+      "deepDive": "I4-memory-systems-deepdive",
+      "figureIndex": 1,
+      "title": "Memory as a pipeline with gates. The agent's write freedom decreases left to right; the artifact's authority increases. The only path into a steering file runs through a human merge — the write-permission matrix (I2), drawn as a flow.",
+      "section": "4 · The governed write-mode — provenance, validation, promotion",
+      "sectionAnchor": "s4",
+      "why": "Draws memory as a gated pipeline so authority increases as agent write freedom decreases, with steering files reachable only through human merge."
+    },
+    {
+      "deepDive": "I5-progressive-disclosure-deepdive",
+      "figureIndex": 0,
+      "title": "The three tiers. Tier 1 is the only place where a line costs something every single session — which is why the entire gardening discipline (§5) concentrates there, and why the core's best use is as a map of tiers 2 and 3.",
+      "section": "1 · From UX pattern to context discipline",
+      "sectionAnchor": "s1",
+      "why": "Applies progressive disclosure to context so tier-1 bloat is minimized and the core acts as a map to deeper material."
+    },
+    {
+      "deepDive": "I5-progressive-disclosure-deepdive",
+      "figureIndex": 1,
+      "title": "The map pattern. The core carries facts plus pointers; each branch loads by its own trigger. The map is the highest-leverage staleness target in the repo — I3's reference checks apply here before anywhere else.",
+      "section": "4 · The map layer — indexes as tables of contents",
+      "sectionAnchor": "s4",
+      "why": "Models the map layer as pointers plus triggers so indexes stay fresh and reference checks catch staleness first."
+    },
+    {
+      "deepDive": "I6-retrieval-deepdive",
+      "figureIndex": 0,
+      "title": "The four lanes. The x-axis is the load-bearing one: everything precomputed is a second artifact with its own freshness problem (I3), its own storage bill, and its own security surface (M7). The lanes compose — §2's products mix them per query, and MCP makes the mix a tool-selection decision rather than a harness rewrite.",
+      "section": "1 · The four retrieval lanes",
+      "sectionAnchor": "s1",
+      "why": "Contrasts precomputed and runtime retrieval so teams weigh freshness, cost, and security before adding a second artifact."
+    },
+    {
+      "deepDive": "I6-retrieval-deepdive",
+      "figureIndex": 1,
+      "title": "The ladder. Default at L0, take L1 early when it is nearly free, buy L2 only with a measured trigger and full derived-artifact governance, and leave L3 on the watchlist. The arrows only point right — but notice Sourcegraph walked left, and shipped the blog post to prove it.",
+      "section": "6 · The escalation ladder",
+      "sectionAnchor": "s6",
+      "why": "Gives a default-to-simple escalation ladder for retrieval strategies so expensive indexes are bought only with governance and measured triggers."
+    },
+    {
+      "deepDive": "I7-linking-product-engineering-deepdive",
+      "figureIndex": 0,
+      "title": "The link layer. The key is dumb on purpose — a greppable string both planes already understand. Downward traffic (ticket as prompt) and upward traffic (links as status) both ride on it; the enforcement ladder decides whether it is actually there. Rungs 1–3 are advisory or bypassable; governance lives at 4–5 (E5).",
+      "section": "1 · The two planes and the one key",
+      "sectionAnchor": "s1",
+      "why": "Shows the dumb key linking product and engineering planes so status and prompts ride on a greppable ID and enforcement escalates through governance rungs."
+    },
+    {
+      "deepDive": "I7-linking-product-engineering-deepdive",
+      "figureIndex": 1,
+      "title": "Willison's lethal trifecta instantiated on the product↔engineering bridge: the ticket supplies untrusted content, the agent's tools supply private-data reach, and the same integrations supply the exfiltration channel. All three named incidents used this exact topology. The defenses column is enforced outside the model — E5's deterministic layer.",
+      "section": "5 · The MCP bridge",
+      "sectionAnchor": "s5",
+      "why": "Instantiates Willison's lethal trifecta on the product↔engineering bridge so the team builds defenses outside the model rather than trusting the LLM perimeter."
+    },
+    {
+      "deepDive": "P1-ai-assisted-discovery-deepdive",
+      "figureIndex": 0,
+      "title": "Lazy synthesis (top) captures roughly 5% of the value and removes the PM from the thinking; the two-perspectives method (bottom) keeps the PM's own synthesis first, uses AI as an independent second pass, and extracts the value from the differences. Torres's practitioner estimate (not a study result): unreviewed AI synthesis misses 20–40% of important detail.",
+      "section": "2 · The anti-pattern: \"lazy AI interview synthesis\"",
+      "sectionAnchor": "s2",
+      "why": "Contrasts lazy synthesis with the two-perspectives method so PMs keep their own synthesis first and use AI disagreement as signal, not replacement."
+    },
+    {
+      "deepDive": "P2-prds-with-ai-deepdive",
+      "figureIndex": 0,
+      "title": "Top: the healthy division of labour — AI expands (draft, edge cases) and challenges (red-team); the PM judges, edits, and supplies the rationale. Bottom: the measured gap. LLM user stories fail review far more often than human ones, and the failure concentrates on Rationale Clarity — the why.",
+      "section": "2 · What doesn't work — and the evidence",
+      "sectionAnchor": "s2",
+      "why": "Shows the healthy AI/PM division of labor and the measured gap in rationale clarity so teams do not ship LLM user stories unreviewed."
+    },
+    {
+      "deepDive": "P3-decomposition-deepdive",
+      "figureIndex": 0,
+      "title": "Top: the healthy division of labour in decomposition — AI expands (candidate split), the human judges (seams, sizes, relevance). Bottom: the measured results. AI effort estimation failed (16% vs 60% accuracy); AI splitting was finer-grained but needed human filtering — in the follow-up study only 59% of AI-generated tasks were actually implemented, vs 100% of manually authored ones.",
+      "section": "3 · The evidence — splitting helps, estimating fails",
+      "sectionAnchor": "s3",
+      "why": "Summarizes the decomposition evidence so teams let AI propose splits while humans judge seams, and do not trust AI effort estimates."
+    },
+    {
+      "deepDive": "P4-pm-role-deepdive",
+      "figureIndex": 0,
+      "title": "Top: the structural exposure — engineering review has a deterministic backstop; product review does not, so bias erodes the only gate. Bottom: the evidence base — expert pilots missed 55% of automation failures; clinicians' unassisted detection dropped 6 points after three months of AI assistance; knowledge workers who trust the AI more think less critically about its output.",
+      "section": "2 · Risk 1: automation bias — review is the only gate, and bias erodes it",
+      "sectionAnchor": "s2",
+      "why": "Shows why product review lacks a deterministic backstop and how automation bias erodes the only gate that remains."
+    },
+    {
+      "deepDive": "P5-assistance-scale-deepdive",
+      "figureIndex": 0,
+      "title": "Left: the engineering ladder earns each rung through deterministic verification. Right: the product ladder rests on human judgment — it caps below P5, where the only verifier would be removed. The box lists the three independent reasons the cap is real: the decision-task meta-analysis, the automation-bias literature (P4), and the regulatory floor.",
+      "section": "2 · The structural difference — verification asymmetry",
+      "sectionAnchor": "s2",
+      "why": "Contrasts the engineering and product ladders so the team accepts that product assistance caps below fully autonomous decisions."
+    },
+    {
+      "deepDive": "PB1-assess-runbook",
+      "figureIndex": 0,
+      "title": "The journey the M9 module walks. PB1 produces the assessment report, the delivery baseline, and the F0 entry decision; PB2–PB5 build on its findings in order.",
+      "section": "1 · How to run it",
+      "sectionAnchor": "s1",
+      "why": "Maps the M9 assessment journey so PB1 produces the baseline report and F0 entry decision that later runbooks build on."
+    },
+    {
+      "deepDive": "PB2-bootstrap-runbook",
+      "figureIndex": 0,
+      "title": "B1's dependency chain (top) and where PB2's phases land on it (bottom). PB2 ends at the F0→F2 gate; AGENTS.md and scoped writes are PB3's territory, opened only if the gate says GO.",
+      "section": "1 · How to run it",
+      "sectionAnchor": "s1",
+      "why": "Places PB2's phases onto B1's dependency chain so the team sees where the F0→F2 gate sits and what it unlocks."
+    },
+    {
+      "deepDive": "PB3-harness-runbook",
+      "figureIndex": 0,
+      "title": "The harness PB3 installs, as a write experiences it: advisory context steers the call (dashed — read, not enforced); permission rules and the PreToolUse hook gate it at session time; the CI gate, secret scan and platform rules bind it — and every other writer — at merge time. Phase D probes every layer deliberately before autonomy is granted.",
+      "section": "1 · How to run it",
+      "sectionAnchor": "s1",
+      "why": "Shows the harness from a write's perspective so advisory context, session gates, and merge-time controls are probed before autonomy is granted."
+    },
+    {
+      "deepDive": "PB4-handoff-runbook",
+      "figureIndex": 0,
+      "title": "The two halves PB4 installs: the forward chain that delegates through a contract and proves delivery with green acceptance tests, and the return loop that turns mid-task ambiguity and drift into artifact changes instead of silent guesses.",
+      "section": "1 · How to run it",
+      "sectionAnchor": "s1",
+      "why": "Depicts the handoff runbook as both forward delivery and feedback loops so ambiguity and drift become artifact changes instead of silent guesses."
+    },
+    {
+      "deepDive": "PB5-pilot-runbook",
+      "figureIndex": 0,
+      "title": "The pilot PB5 runs: a frozen baseline and a pre-registered bar in front, a protected two-arm window in the middle, and a three-exit gate at the end — with back-triggers acting automatically while the window runs.",
+      "section": "1 · How to run it",
+      "sectionAnchor": "s1",
+      "why": "Outlines the pilot structure so a protected two-arm window runs against a frozen baseline and a pre-registered bar, ending in one of three exits."
+    },
+    {
+      "deepDive": "S1-security-crosscutting-deepdive",
+      "figureIndex": 0,
+      "title": "Why injection works. Trusted instructions (system prompt, user task) and untrusted content (tickets, web pages, tool output, tool descriptions) are glued into a single token stream; the model — which only ever predicts the next token — cannot mark a boundary between them, and whatever it decides next drives privileged tools: shell, file write, network, credentials. There is no perimeter inside the stream.",
+      "section": "1 · The root cause: one token stream, no trust separation",
+      "sectionAnchor": "s1",
+      "why": "Explains why injection is possible: trusted and untrusted content share one token stream with no internal perimeter before privileged tools."
+    },
+    {
+      "deepDive": "S1-security-crosscutting-deepdive",
+      "figureIndex": 1,
+      "title": "The blast-radius funnel. Prevention is a wall: one breach and the attacker holds everything the agent holds. The funnel assumes the breach — each deterministic layer (least privilege, OS sandbox, egress allowlist, human gate, audit & rotate) shrinks what an injected instruction can still reach, until the residual damage is small, logged and reversible. The same layers bound non-adversarial error (Kiro, §0).",
+      "section": "3 · The posture: assume breach, reduce the blast radius",
+      "sectionAnchor": "s3",
+      "why": "Replaces a single prevention wall with layered blast-radius controls so a breach causes small, logged, reversible damage."
+    },
+    {
+      "deepDive": "SDLC-foundations-deepdive",
+      "figureIndex": 0,
+      "title": "The universal stages. Notice they map onto the components we've studied — this is the same \"where it sits in the SDLC\" line from each E-topic, gathered in one place. A process model is just a route through this spine: once (Waterfall), in widening loops (Iterative/Spiral), in tight repeated loops (Agile), or continuously (DevOps).",
+      "section": "1 · The universal stages — the spine",
+      "sectionAnchor": "s1",
+      "why": "Collects the universal SDLC stages in one spine so every process model can be understood as a different route through the same components."
+    }
+  ]
+}

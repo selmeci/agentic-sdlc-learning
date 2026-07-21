@@ -86,7 +86,7 @@ svg .tt{font:600 13px var(--disp);fill:var(--ink)}
 svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
 svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
 svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
-svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah-e2)}
 svg .edD{stroke-dasharray:5 4}
 
 table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
@@ -171,7 +171,7 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <p>The hard constraint that shapes everything is <strong>context rot</strong>: a model's ability to accurately recall and use information degrades as the context window grows. This is not a bug to be patched; it is an empirical regularity: attention spread across more tokens gets diluted, and models are simply not trained or optimised to perform at those depths — architectures with sub-quadratic attention exhibit the same degradation, so it is not just a compute-cost artifact of full attention. Chroma's research across 18 models showed recall falling well before the advertised window limit, and getting worse as the needle's semantic similarity to the question dropped.</p>
       <figure>
       <svg viewBox="0 0 860 320" role="img" aria-label="Context rot: recall degrades as the window fills">
-        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <defs><marker id="ah-e2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <line x1="80" y1="250" x2="800" y2="250" class="ed"/><text x="800" y="272" class="ts" text-anchor="end">tokens in context →</text>
         <line x1="80" y1="250" x2="80" y2="40" class="ed"/><text x="70" y="46" class="ts" text-anchor="end">recall</text>
         <path d="M80 70 C 260 78, 380 120, 500 175 S 720 250, 790 262" fill="none" stroke="#B3362B" stroke-width="2.2"/>

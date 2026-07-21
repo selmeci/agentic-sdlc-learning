@@ -15,12 +15,18 @@ Checks:
     - playbook checklist step ids (data-step) are unique (frozen progress keys)
   deep-dives/*.html
     - HTML balances, every <svg> well-formed, TOC #sN anchors all resolve to an id
+    - SVG ids are unique within and across deep dives
+  gallery
+    - gallery-registry.json schema, coverage, duplicate keys, orphaned entries
+    - sectionAnchor values exist as ids in the corresponding deep-dive file
+    - gallery.html is up-to-date with scripts/generate-gallery.py
   all files
     - CSS class coverage: every class used in markup is either styled by a CSS
       selector in <style> or referenced as a JS selector (querySelector/closest/
       matches) — catches drift like `.rt` markup vs `.ti` stylesheet
 """
-import os, re, sys, subprocess, shutil
+import json
+import os, re, sys, subprocess, shutil, tempfile
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
@@ -32,6 +38,18 @@ VOID = {"meta","link","input","br","img","path","circle","line","rect",
         "polygon","marker","text","g","defs","hr","source","use","stop","ellipse","polyline"}
 
 problems = []
+
+GALLERY_REGISTRY = os.path.join(ROOT, "gallery-registry.json")
+
+def load_registry():
+    if not os.path.exists(GALLERY_REGISTRY):
+        return None
+    try:
+        with open(GALLERY_REGISTRY, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        note(False, f"gallery-registry.json is not valid JSON: {e}")
+        return None
 
 def note(ok, msg):
     print(("  ok  " if ok else " FAIL ") + msg)
@@ -83,6 +101,125 @@ def check_css_class_coverage(s, label):
     missing = sorted(used - covered)
     note(not missing, f"{label}: all {len(used)} markup classes covered by CSS/JS"
          if not missing else f"{label}: classes used but never styled/referenced: {missing}")
+
+def check_gallery_registry():
+    print("gallery registry")
+    before = len(problems)
+    registry = load_registry()
+    if registry is None:
+        return
+
+    entries = registry.get("entries", [])
+    if not isinstance(entries, list):
+        note(False, "gallery-registry.json: 'entries' must be a list")
+        return
+
+    # Schema check
+    keys = set()
+    dup_keys = set()
+    required = {"deepDive", "figureIndex", "why"}
+    for i, e in enumerate(entries):
+        missing = required - set(e.keys())
+        if missing:
+            note(False, f"gallery-registry.json entry {i} missing fields: {sorted(missing)}")
+        if not isinstance(e.get("deepDive"), str):
+            note(False, f"gallery-registry.json entry {i}: deepDive must be a string")
+        if not isinstance(e.get("figureIndex"), int):
+            note(False, f"gallery-registry.json entry {i}: figureIndex must be an int")
+        if not isinstance(e.get("why"), str):
+            note(False, f"gallery-registry.json entry {i}: why must be a string")
+        if isinstance(e.get("why"), str) and not e.get("why").strip():
+            note(False, f"gallery-registry.json entry {i}: why is empty")
+        key = (e.get("deepDive"), e.get("figureIndex"))
+        if key in keys:
+            dup_keys.add(key)
+        keys.add(key)
+    if dup_keys:
+        note(False, f"gallery-registry.json duplicate keys: {sorted(dup_keys)}")
+
+    # Coverage check: every figure in deep-dives has a registry entry.
+    deep_figures = {}
+    for fn in sorted(os.listdir(DEEPDIR)):
+        if not fn.endswith(".html"):
+            continue
+        stem = fn[:-5]
+        s = open(os.path.join(DEEPDIR, fn), encoding="utf-8").read()
+        count = len(re.findall(r"<figure\b", s))
+        deep_figures[stem] = count
+
+    # Only structurally valid entries participate in coverage/orphan/anchor
+    # checks; malformed ones were already noted above and must not crash the
+    # run with a KeyError before the remaining checks execute.
+    valid_entries = [
+        e for e in entries
+        if isinstance(e.get("deepDive"), str) and isinstance(e.get("figureIndex"), int)
+    ]
+
+    registry_figures = {}
+    for e in valid_entries:
+        registry_figures.setdefault(e["deepDive"], set()).add(e["figureIndex"])
+
+    for stem, count in sorted(deep_figures.items()):
+        expected = set(range(count))
+        actual = registry_figures.get(stem, set())
+        missing = expected - actual
+        if missing:
+            note(False, f"{stem}.html missing gallery-registry entries for figureIndex: {sorted(missing)}")
+        extra = actual - expected
+        if extra:
+            note(False, f"gallery-registry.json has orphaned figureIndex for {stem}.html: {sorted(extra)}")
+
+    # Orphaned deepDive values pointing to non-existent files.
+    for stem in sorted(registry_figures.keys() - deep_figures.keys()):
+        note(False, f"gallery-registry.json references missing deep-dive file: {stem}.html")
+
+    # sectionAnchor values must exist as ids in the corresponding deep-dive file.
+    for i, e in enumerate(valid_entries):
+        anchor = e.get("sectionAnchor", "")
+        if not anchor:
+            continue
+        stem = e.get("deepDive")
+        html_path = os.path.join(DEEPDIR, f"{stem}.html")
+        if not os.path.exists(html_path):
+            continue
+        s = open(html_path, encoding="utf-8").read()
+        if f'id="{anchor}"' not in s:
+            note(False, f"gallery-registry.json entry {i}: sectionAnchor '#{anchor}' not found in {stem}.html")
+
+    note(len(problems) == before,
+         f"gallery-registry.json covers all {sum(deep_figures.values())} figures"
+         if len(problems) == before
+         else "gallery-registry.json has problems (see above)")
+
+
+def check_svg_id_uniqueness():
+    print("svg id uniqueness")
+    ids_by_file = {}
+    cross_file_dupes = {}
+    within_file_dupes = {}
+    for fn in sorted(os.listdir(DEEPDIR)):
+        if not fn.endswith(".html"):
+            continue
+        s = open(os.path.join(DEEPDIR, fn), encoding="utf-8").read()
+        seen_in_file = set()
+        for svg in re.findall(r"<svg\b.*?</svg>", s, flags=re.S):
+            for i in re.findall(r'<[^>]+\bid="([^"]+)"', svg):
+                if i in seen_in_file:
+                    within_file_dupes.setdefault(fn, set()).add(i)
+                seen_in_file.add(i)
+                if i in ids_by_file and ids_by_file[i] != fn:
+                    cross_file_dupes.setdefault(i, set()).update([ids_by_file[i], fn])
+                ids_by_file[i] = fn
+    messages = []
+    if cross_file_dupes:
+        messages.append(f"SVG ids reused across deep dives (would collide in gallery.html): {sorted(cross_file_dupes)}")
+    if within_file_dupes:
+        messages.append(f"SVG ids duplicated within a deep dive: {within_file_dupes}")
+    if messages:
+        note(False, "; ".join(messages))
+    else:
+        note(True, "all SVG ids are unique within and across deep-dives")
+
 
 def check_workbook():
     print("workbook/agentic-development-study.html")
@@ -143,6 +280,31 @@ def check_workbook():
     note(not dup_steps, f"playbook step ids unique ({len(steps)} step(s))"
          if not dup_steps else f"DUPLICATE playbook step ids: {dup_steps}")
 
+def check_gallery_freshness():
+    print("gallery freshness")
+    gallery_path = os.path.join(ROOT, "gallery.html")
+    if not os.path.exists(gallery_path):
+        note(False, "gallery.html missing")
+        return
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".html", delete=False, encoding="utf-8") as tmp:
+        tmp_path = tmp.name
+    try:
+        r = subprocess.run(
+            [sys.executable, os.path.join(ROOT, "scripts", "generate-gallery.py"), "--output", tmp_path],
+            capture_output=True, text=True
+        )
+        if r.returncode != 0:
+            note(False, f"generate-gallery.py failed: {r.stderr.strip()[:200]}")
+            return
+        generated = open(tmp_path, encoding="utf-8").read()
+        committed = open(gallery_path, encoding="utf-8").read()
+        note(generated == committed,
+             "gallery.html is up-to-date" if generated == committed
+             else "gallery.html is stale; run `python3 scripts/generate-gallery.py`")
+    finally:
+        os.unlink(tmp_path)
+
+
 def check_deepdives():
     print("deep-dives/")
     if not os.path.isdir(DEEPDIR):
@@ -164,6 +326,12 @@ if __name__ == "__main__":
     check_workbook()
     print()
     check_deepdives()
+    print()
+    check_gallery_registry()
+    print()
+    check_svg_id_uniqueness()
+    print()
+    check_gallery_freshness()
     print()
     if problems:
         print(f"RESULT: {len(problems)} problem(s) — fix before committing.")

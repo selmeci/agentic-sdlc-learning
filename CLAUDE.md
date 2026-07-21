@@ -22,7 +22,8 @@ Content in English (English technical terms preserved); prose is dense and conci
    both — the AUTHORING-GUIDE recipe builds both from one shared body file.
 3. **No external links between artifacts.** Cross-references open **in-page overlays**
    (`href="#e4-deepdive"` etc.), never relative file links — the hosted preview 404s on sibling
-   files. This is why deep dives are embedded, not linked.
+   files. This is why deep dives are embedded, not linked. Site-level navigation to root pages
+   such as `gallery.html` and `index.html` is exempt (header/footer links).
 4. **Inline HTML/SVG only for diagrams.** Figma is deliberately excluded so diagrams embed
    directly in the artifact. Do not introduce an image/asset pipeline or external diagram tools.
 5. **All persistence goes through the single `store` backend** (key `agentic-study-v1`):
@@ -66,7 +67,9 @@ Content in English (English technical terms preserved); prose is dense and conci
    extend the JS handler chain, switch the topic's first `src` entry to `#<id>-deepdive`.
 4. Optionally enrich the topic's `know`/`concepts`/`checks` in the workbook data.
 5. Bump the version: prepend a `.vitem` to the version-history modal (`#verov`), update the
-   footer current-version line, mirror to `docs/CHANGELOG.md`. Run `scripts/validate.py`. Done.
+   footer current-version line, mirror to `docs/CHANGELOG.md`.
+6. Register any new deep-dive figure in `gallery-registry.json` and regenerate `gallery.html`
+   (`docs/AUTHORING-GUIDE.md` Step 7). Run `scripts/validate.py`. Done.
 
 Full step-by-step in `docs/AUTHORING-GUIDE.md`. `docs/ROADMAP.md` says what's next.
 

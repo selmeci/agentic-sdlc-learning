@@ -75,6 +75,19 @@ current-version `<b>vX.Y</b>` line (the top-bar button label updates itself from
 Run `python3 scripts/validate.py` — it must report JS OK, HTML balanced, 0 SVG errors, the new
 `#p2-deepdive` wired ×2, and topic count intact. Present both changed files.
 
+## Step 7 — register the diagram in the gallery
+
+Every new `<figure>` in a deep-dive companion must appear in `gallery-registry.json`.
+
+1. Run `python3 scripts/generate-gallery.py --draft-registry` to refresh the draft.
+2. Copy the new/updated entry into `gallery-registry.json` and fill the `why` field.
+3. Run `python3 scripts/generate-gallery.py` to regenerate `gallery.html`.
+4. Run `python3 scripts/validate.py` — registry coverage failures must be green.
+5. Commit `gallery-registry.json`, `gallery.html`, and the deep-dive file together.
+
+If you edit an existing figure (caption, section, anchor), update the matching
+`gallery-registry.json` entry and regenerate `gallery.html`.
+
 ## Editing an existing overlay (e.g. adding a section)
 To modify a deep dive already embedded, you must swap the overlay by an **exact** string match:
 1. Keep the previous body as `…_old.html` (back it up before editing).

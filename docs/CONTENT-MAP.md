@@ -149,3 +149,10 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
 `#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive` … `#d7-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#s1-deepdive`, `#pb1-deepdive` … `#pb5-deepdive` (each appears
 exactly twice: the "Go deeper" link + the JS open handler).
+
+## Gallery
+
+- `gallery.html` — browsable grid of all 74 diagrams from the deep-dive companions,
+  with section context, "why" summaries, and links back to each deep dive.
+- `gallery-registry.json` — curated metadata; validated by `scripts/validate.py`.
+- `scripts/generate-gallery.py` — generates `gallery.html` from the registry.

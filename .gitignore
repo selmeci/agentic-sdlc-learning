@@ -12,6 +12,7 @@ Thumbs.db
 /tmp/
 *_old.html
 *.bak
+gallery-registry-draft.json
 
 # node (only used transiently by validate.py via `node --check`)
 node_modules/
