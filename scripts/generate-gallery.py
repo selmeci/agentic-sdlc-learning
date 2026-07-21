@@ -123,12 +123,14 @@ def extract_figure_svgs(html_path):
     return svgs
 
 
-def collect_edge_styles(deep_dir):
-    """Gather deep-dive SVG edge-class CSS keyed by (file_stem, class_name).
+def collect_svg_styles(deep_dir):
+    """Gather deep-dive SVG class CSS keyed by (file_stem, class_name).
 
-    Deep-dive files add per-file rules like:
+    Deep-dive files style their figures with per-file class rules like:
+      svg .bx { fill:#FBFCFD; stroke:#57656F; ... }
+      svg .tt { font:600 13px var(--disp); fill:var(--ink) }
       svg .edE1 { stroke:#57656F; ...; marker-end:url(#ahE1a) }
-    Because each gallery card prefixes SVG ids, edge CSS must be scoped to the
+    Because each gallery card prefixes SVG ids, this CSS must be scoped to the
     card that came from the same source file. Collapsing all files into a
     single class-keyed map would let one file's marker URL overwrite another's.
     """
@@ -143,13 +145,13 @@ def collect_edge_styles(deep_dir):
         if not style_blocks:
             continue
         css = "".join(style_blocks)
-        # Single-class and grouped selectors: svg .ed { ... }, svg .ed, svg .edD { ... }
-        for rule in re.findall(r"svg\s+\.ed[\w-]*(?:\s*,\s*svg\s+\.ed[\w-]+)*\s*\{[^}]+\}", css):
+        # Single-class and grouped selectors: svg .bx { ... }, svg .ed, svg .edD { ... }
+        for rule in re.findall(r"svg\s+\.[\w-]+(?:\s*,\s*svg\s+\.[\w-]+)*\s*\{[^}]+\}", css):
             selectors_part, props = rule.split("{", 1)
             props = props.rstrip("}").strip()
             for sel in selectors_part.split(","):
                 sel = sel.strip()
-                m = re.search(r"\.(ed[\w-]*)$", sel)
+                m = re.search(r"\.([\w-]+)$", sel)
                 if m:
                     cls = m.group(1)
                     styles[(stem, cls)] = props
@@ -223,13 +225,13 @@ def prefix_svg_ids(svg, prefix):
     return svg, ids
 
 
-def scope_edge_css(card_class, id_prefix, used_classes, svg_ids, file_edge_styles):
+def scope_svg_css(card_class, id_prefix, used_classes, svg_ids, file_styles):
     """Generate scoped CSS rules for one card, rewriting marker url() refs."""
     rules = []
     for cls in sorted(used_classes):
-        if cls not in file_edge_styles:
+        if cls not in file_styles:
             continue
-        props = file_edge_styles[cls]
+        props = file_styles[cls]
         for old_id in sorted(svg_ids, key=len, reverse=True):
             new_id = f"{id_prefix}{old_id}"
             escaped = re.escape(old_id)
@@ -262,7 +264,7 @@ def escape_html(s):
     return html.escape(s, quote=True)
 
 
-def render_card(entry, svg, file_stem, card_index, edge_styles, file_markers):
+def render_card(entry, svg, file_stem, card_index, svg_styles, file_markers):
     title = entry.get("title") or "Diagram"
     section = entry.get("section") or ""
     why = entry.get("why") or ""
@@ -271,25 +273,23 @@ def render_card(entry, svg, file_stem, card_index, edge_styles, file_markers):
     if anchor:
         href += f"#{anchor}"
 
-    used_edge_classes = set()
+    used_classes = set()
     for class_attr in re.findall(r'class="([^"]+)"', svg):
-        for cls in class_attr.split():
-            if re.fullmatch(r'ed[\w-]*', cls):
-                used_edge_classes.add(cls)
+        used_classes.update(class_attr.split())
 
-    # Edge styles are keyed by (file_stem, class_name) so each card only sees
+    # Styles are keyed by (file_stem, class_name) so each card only sees
     # the CSS from the deep-dive file it was extracted from.
-    file_edge_styles = {
-        cls: props for (stem, cls), props in edge_styles.items() if stem == file_stem
+    file_styles = {
+        cls: props for (stem, cls), props in svg_styles.items() if stem == file_stem
     }
 
-    svg = inject_missing_markers(svg, used_edge_classes, file_edge_styles, file_markers.get(file_stem, {}))
+    svg = inject_missing_markers(svg, used_classes, file_styles, file_markers.get(file_stem, {}))
 
     card_class = f"g-card-{card_index}"
     id_prefix = f"g-{card_index}-"
     svg, svg_ids = prefix_svg_ids(svg, id_prefix)
 
-    scoped_css = scope_edge_css(card_class, id_prefix, used_edge_classes, svg_ids, file_edge_styles)
+    scoped_css = scope_svg_css(card_class, id_prefix, used_classes, svg_ids, file_styles)
 
     return (
         f'<article class="gallery-card" data-title="{escape_html(title.lower())}" '
@@ -310,7 +310,7 @@ def generate_gallery(deep_dir, registry_path, out_path):
         registry = json.load(f)
     entries = registry.get("entries", [])
 
-    edge_styles = collect_edge_styles(deep_dir)
+    svg_styles = collect_svg_styles(deep_dir)
     file_markers = collect_file_markers(deep_dir)
 
     # figureIndex enumerates <figure> elements, so resolve the SVG inside the
@@ -333,7 +333,7 @@ def generate_gallery(deep_dir, registry_path, out_path):
         if svg is None:
             skipped.append(f"{stem} figureIndex {idx} has no SVG")
             continue
-        card_html, card_css = render_card(entry, svg, stem, card_index, edge_styles, file_markers)
+        card_html, card_css = render_card(entry, svg, stem, card_index, svg_styles, file_markers)
         cards.append(card_html)
         if card_css:
             scoped_css_blocks.append(card_css)
