@@ -3,6 +3,10 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.60 · 2026-07-21
+
+NEW DIAGRAM GALLERY — browsable grid of all 74 figures from the deep-dive companions. Added `gallery.html`, `gallery-registry.json`, and `scripts/generate-gallery.py`; registered every deep-dive figure; updated `CLAUDE.md` golden rule 3 with a site-level navigation exemption and added the gallery registration step to the typical next-task recipe; gitignored `gallery-registry-draft.json`.
+
 ## v1.59 · 2026-07-20
 
 Added the S1 deep-dive companion (Security is cross-cutting: prompt injection & blast-radius reduction) — opening module M7. The root cause from primary sources (Willison's token-stream quote, the Sep 2022 coinage, the SQLi-analogy arc through NCSC's "it may be worse", 8 Dec 2025), the privileged runtime as confused deputy (Hardy 1988; NCSC "inherently confusable"), the assume-breach posture with lineage (Saltzer & Schroeder → NIST SP 800-207 → Microsoft → Bargury) and three honest caveats (gates see less, laundering defeats scanning, memory breaks reversibility), the honest ceiling with the arms-race arc (instruction hierarchy → Spotlighting → StruQ/SecAlign → CaMeL/design patterns; Attacker Moves Second as ">90% for most" with PIGuard 71%/MELON 76%; 2026 confirmations SoK >85%, AutoDojo), client wording borrowed from OWASP/NCSC/OpenAI, and the cross-cut map keyed to OWASP ASI01/ASI03. Two SVGs (token stream, blast-radius funnel); Kiro and Comment-and-Control as dual hooks. Fact fixes: the S1 know bullet and Report 6 TL;DR now carry the verified ">90% for most" figure with full affiliations, dropping the unattributable "architectural limitation" phrasing for OWASP's own wording. Verified by a 12-agent swarm; fast-moving items marked point-in-time.
