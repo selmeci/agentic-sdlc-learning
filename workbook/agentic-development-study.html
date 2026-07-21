@@ -88,11 +88,12 @@ button{font-family:var(--mono);cursor:pointer}
 .fchip[data-f="studying"].on{background:var(--amber);border-color:var(--amber)}
 .fchip[data-f="done"].on{background:var(--pine);border-color:var(--pine)}
 .bulk{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
-.bulk button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink);transition:background .12s,border-color .12s}
-.bulk button:hover{background:var(--card);border-color:var(--line-soft)}
-.bulk button:active{background:var(--paper)}
-.bulk button svg{width:15px;height:15px;flex:none;color:var(--soft);transition:color .12s}
-.bulk button:hover svg{color:var(--cobalt)}
+.bulk button,.bulk a{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-size:12px;padding:7px 9px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink);transition:background .12s,border-color .12s}
+.bulk a{text-decoration:none}
+.bulk button:hover,.bulk a:hover{background:var(--card);border-color:var(--line-soft)}
+.bulk button:active,.bulk a:active{background:var(--paper)}
+.bulk button svg,.bulk a svg{width:15px;height:15px;flex:none;color:var(--soft);transition:color .12s}
+.bulk button:hover svg,.bulk a:hover svg{color:var(--cobalt)}
 .bulk button .bn{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--pine)}
 
 .intro{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin-bottom:30px}
@@ -253,7 +254,7 @@ footer li::before{content:"·";position:absolute;left:2px}
   .status button{padding:10px 12px;font-size:10.5px}
   .fchip{padding:8px 14px;font-size:11.5px}
   .bulk{flex-direction:row;flex-wrap:wrap;gap:5px;margin-bottom:0}
-  .bulk button{width:auto;padding:9px 12px;font-size:12.5px}
+  .bulk button,.bulk a{width:auto;padding:9px 12px;font-size:12.5px}
   .bulk button .bn{margin-left:4px}
   .dtabs button{padding:9px 13px;font-size:11.5px}
   .t-toggle{padding:10px 6px}
@@ -548,6 +549,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
       <button id="impData" title="Merge a previously exported JSON back in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9.5v-7M5.5 5 8 2.5 10.5 5M3.5 13h9"/></svg>import data</button>
       <button id="notesbtn" type="button" data-notesopen title="Your saved highlight-notes from the deep dives"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 2.5h6.4v11H4.8z"/><path d="M6.6 6h2.8M6.6 8.4h2.8M6.6 10.8h1.8"/></svg>my notes <span class="bn" id="notesN">(0)</span></button>
       <button id="syncbtn" type="button" data-syncopen title="Sync progress across devices with a short code"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 6.5a4.5 4.5 0 0 1 7.9-1.2M12.4 9.5a4.5 4.5 0 0 1-7.9 1.2"/><path d="M11.5 2.5v2.8H8.7M4.5 13.5v-2.8h2.8"/></svg>sync across devices</button>
+      <a href="../gallery.html" title="Browse all diagrams in the gallery"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>diagram gallery</a>
     </div>
     <input id="impFile" type="file" accept="application/json,.json" style="display:none">
   </aside>
