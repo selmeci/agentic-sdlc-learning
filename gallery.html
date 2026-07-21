@@ -45,6 +45,14 @@ a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
 .gallery-empty{display:none;padding:30px 0;color:var(--soft)}
 .gallery-empty.show{display:block}
 @media (max-width:760px){.gallery-grid{grid-template-columns:1fr}}
+.gallery-preview{cursor:zoom-in}
+.gallery-preview:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.gallery-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:3vh 3vw;background:rgba(26,36,48,.72)}
+.gallery-modal[hidden]{display:none}
+.gallery-modal-box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:min(1100px,94vw);max-height:90vh;overflow:auto;padding:26px;box-shadow:0 18px 60px rgba(26,36,48,.35)}
+.gallery-modal-body svg{width:100%;height:auto;display:block}
+.gallery-modal-close{position:absolute;top:10px;right:10px;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:16px;line-height:1;cursor:pointer}
+.gallery-modal-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
 .g-card-0 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
 .g-card-0 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
 .g-card-0 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
@@ -652,7 +660,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   <input class="gallery-filter" type="search" placeholder="Filter by title, section, or reason…" aria-label="Filter diagrams">
   <div class="gallery-grid">
 <article class="gallery-card" data-title="the paradox. each statement is separately true; together they form a loop with two entrances. entering at writes leaves statement 1 unsatisfied — the agent works without an error signal. entering read-only satisfies the statements one at a time." data-section="1 · the paradox, stated precisely" data-why="shows why the bootstrap paradox is a loop, not a contradiction: a write-first entry fails silently, while a read-only entry can satisfy each statement in turn.">
-  <div class="gallery-preview g-card-0"><svg viewBox="0 0 980 400" role="img" aria-label="The bootstrap paradox as three boxes closing into a loop. Box one: the agent needs a verification loop — tests and CI are its error signal. Box two: legacy does not have one — legacy code is simply code without tests. Box three: the agent is the cheapest tool to build one — mass characterization tests, doc drafts, CI configs. Arrows connect one to two to three and back to one, with the annotation that box three's output is unverified too. A column at right names the exit: anchor every agent output in a deterministic signal, start read-only, then unwind the chain one verified step at a time.">
+  <div class="gallery-preview g-card-0" tabindex="0"><svg viewBox="0 0 980 400" role="img" aria-label="The bootstrap paradox as three boxes closing into a loop. Box one: the agent needs a verification loop — tests and CI are its error signal. Box two: legacy does not have one — legacy code is simply code without tests. Box three: the agent is the cheapest tool to build one — mass characterization tests, doc drafts, CI configs. Arrows connect one to two to three and back to one, with the annotation that box three's output is unverified too. A column at right names the exit: anchor every agent output in a deterministic signal, start read-only, then unwind the chain one verified step at a time.">
 <defs><marker id="g-0-ahB1a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE BOOTSTRAP PARADOX — THREE TRUE STATEMENTS THAT CLOSE INTO A LOOP</text>
 <rect x="28" y="54" width="300" height="104" rx="12" class="bxC"/>
@@ -700,7 +708,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the chain. each box&#x27;s &quot;needs&quot; line points left; its &quot;yields&quot; line is what the next box consumes. the chain as a package is our report 4 synthesis — the components are individually standard (feathers 2004, approval testing, ci, context files), the forced ordering of them for agent adoption is ours." data-section="3 · the dependency chain — why the ordering is not arbitrary" data-why="makes the ordering of bootstrap activities explicit so the team sees which capabilities must precede agent writes and why the sequence is forced.">
-  <div class="gallery-preview g-card-1"><svg viewBox="0 0 980 370" role="img" aria-label="The dependency chain as five boxes connected by arrows. F0 read-only comprehension yields trust and a map. Characterization golden-master tests pin actual behavior and yield a regression signal. Minimal CI runs build lint and tests on every change and yields the feedback loop. AGENTS.md holds conventions extracted from code, human-pruned, and yields a cheaper next task. Scoped writes happen in low-risk modules at L1 to L2 autonomy. Below, a banner: skipping an arrow means an agent without an error signal, the configuration DORA associates with the stability drop.">
+  <div class="gallery-preview g-card-1" tabindex="0"><svg viewBox="0 0 980 370" role="img" aria-label="The dependency chain as five boxes connected by arrows. F0 read-only comprehension yields trust and a map. Characterization golden-master tests pin actual behavior and yield a regression signal. Minimal CI runs build lint and tests on every change and yields the feedback loop. AGENTS.md holds conventions extracted from code, human-pruned, and yields a cheaper next task. Scoped writes happen in low-risk modules at L1 to L2 autonomy. Below, a banner: skipping an arrow means an agent without an error signal, the configuration DORA associates with the stability drop.">
 <defs><marker id="g-1-ahB1b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE DEPENDENCY CHAIN — EACH STEP IS THE PRECONDITION OF THE NEXT (REPORT 4 · OUR SYNTHESIS)</text>
 <rect x="16" y="70" width="176" height="124" rx="10" class="bxG"/>
@@ -755,7 +763,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="two grains of the same contract. characterization asserts behavior-by-behavior and reads as documentation; approval captures everything at once and needs no assertions. both defer the spec question — &quot;is this a bug?&quot; — to a human step that the generator never performs." data-section="2 · the whole output at once: approval / golden-master testing" data-why="contrasts characterization and approval testing so the team picks the right capture strategy for legacy behavior without confusing documentation with oracle.">
-  <div class="gallery-preview g-card-2"><svg viewBox="0 0 980 440" role="img" aria-label="Two panels comparing the two pinning techniques. Left panel, characterization test: run the code with a chosen input, observe the actual result, write an assertion stating that result — one behavior per test, readable as documentation, requires picking inputs that matter. Right panel, approval or golden-master test: run the code over a representative input set, capture the entire output to a file, a human approves it once, and every later run diffs against the approved file — no assertions written, no understanding of internals required, nondeterminism handled by scrubbers. A banner below both: both families assert what IS, not what SHOULD be; the difference is granularity and who has to understand the code.">
+  <div class="gallery-preview g-card-2" tabindex="0"><svg viewBox="0 0 980 440" role="img" aria-label="Two panels comparing the two pinning techniques. Left panel, characterization test: run the code with a chosen input, observe the actual result, write an assertion stating that result — one behavior per test, readable as documentation, requires picking inputs that matter. Right panel, approval or golden-master test: run the code over a representative input set, capture the entire output to a file, a human approves it once, and every later run diffs against the approved file — no assertions written, no understanding of internals required, nondeterminism handled by scrubbers. A banner below both: both families assert what IS, not what SHOULD be; the difference is granularity and who has to understand the code.">
 <defs><marker id="g-2-ahB2a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">TWO WAYS TO PIN ACTUAL BEHAVIOR — SAME CONTRACT, DIFFERENT GRAIN</text>
 <rect x="28" y="54" width="452" height="286" rx="12" class="bxC"/>
@@ -802,7 +810,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the characterization workflow. steps 2, 4 and 5 carry the guarantees; steps 1, 3 and 6 exist so the guarantees have something to work on. the assembly is our report 4 synthesis; every component is standard and named." data-section="5 · the workflow: document, don&#x27;t fix — then triage" data-why="maps the characterization workflow to its guarantee-bearing steps so the team treats captured behavior as a triage input, not an automatic fix.">
-  <div class="gallery-preview g-card-3"><svg viewBox="0 0 980 430" role="img" aria-label="The characterization workflow as a pipeline. Step one: agent generates tests with the prompt document, don't fix; suspicious behavior is marked SUSPECTED-BUG. Step two: deterministic filter — every candidate must build, run, and raise coverage; failures are discarded silently. Step three: human review — a sample of roughly twenty percent of passing tests plus every SUSPECTED-BUG item. Step four: triage of each suspected bug into load-bearing bug, kept and pinned with an ADR, or real bug, filed as a separate ticket and fixed only after the safety net exists. Step five: mutation verification, the B3 gate. Step six: commit; the approved tests become read-only for the agent. A banner below: generation is cheap — the filter and the triage are the engineering.">
+  <div class="gallery-preview g-card-3" tabindex="0"><svg viewBox="0 0 980 430" role="img" aria-label="The characterization workflow as a pipeline. Step one: agent generates tests with the prompt document, don't fix; suspicious behavior is marked SUSPECTED-BUG. Step two: deterministic filter — every candidate must build, run, and raise coverage; failures are discarded silently. Step three: human review — a sample of roughly twenty percent of passing tests plus every SUSPECTED-BUG item. Step four: triage of each suspected bug into load-bearing bug, kept and pinned with an ADR, or real bug, filed as a separate ticket and fixed only after the safety net exists. Step five: mutation verification, the B3 gate. Step six: commit; the approved tests become read-only for the agent. A banner below: generation is cheap — the filter and the triage are the engineering.">
 <defs><marker id="g-3-ahB2b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE CHARACTERIZATION WORKFLOW — GENERATE CHEAP, FILTER HARD, TRIAGE WHAT SURVIVES</text>
 <rect x="28" y="54" width="286" height="96" rx="12" class="bxC"/>
@@ -852,7 +860,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the loop and the gate are two different runs. in the generation loop the agent should see surviving mutants — that is the feedback that lifts 53% to 89.5%. the gate run that decides the exit criterion uses freshly generated mutants the agent never optimized against, for the same reason exams are not the practice sheet (§8, our synthesis)." data-section="4 · the feedback loop: survivors teach the generator" data-why="separates the learning loop from the exit gate so surviving mutants feed the generator without letting the agent overfit the gate itself.">
-  <div class="gallery-preview g-card-4"><svg viewBox="0 0 840 300" role="img" aria-label="The mutation feedback loop, and the held-out gate">
+  <div class="gallery-preview g-card-4" tabindex="0"><svg viewBox="0 0 840 300" role="img" aria-label="The mutation feedback loop, and the held-out gate">
         <defs><marker id="g-4-ahB3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="20" y="60" width="170" height="64" rx="10" class="bxA"/><text x="32" y="86" class="ti">Agent generates /</text><text x="32" y="103" class="ti">repairs tests</text>
         <rect x="250" y="60" width="180" height="64" rx="10" class="bx"/><text x="262" y="86" class="ti">Mutation run</text><text x="262" y="103" class="ts">inject faults, run suite</text>
@@ -875,7 +883,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="two consumption modes, one instrument. mode 1 runs continuously and is advisory — google&#x27;s shape. mode 2 runs once per module per phase boundary and is deterministic — the exit criterion. the dashed return: a failed gate turns its survivors into mode 1 work items. (our synthesis.)" data-section="8 · designing the gate for our rollout" data-why="shows how mutation testing can be both advisory feedback and a deterministic phase gate, with failed gate survivors recycled as new learning items.">
-  <div class="gallery-preview g-card-5"><svg viewBox="0 0 840 280" role="img" aria-label="The two-mode mutation gate">
+  <div class="gallery-preview g-card-5" tabindex="0"><svg viewBox="0 0 840 280" role="img" aria-label="The two-mode mutation gate">
         <defs><marker id="g-5-ahB3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="34" class="tg">MODE 1 — CONTINUOUS (advisory, per PR)</text>
         <rect x="20" y="46" width="200" height="58" rx="10" class="bx"/><text x="32" y="70" class="ti">Diff-scoped mutation</text><text x="32" y="87" class="ts">changed, covered lines only</text>
@@ -899,7 +907,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the pipeline. the top row is generation; the bottom row is what makes it trustworthy. the dashed edge is the failure mode of §4 — interpretation consumed directly as documentation. anchoring (§5) means the interpretation layer reads the deterministic layer&#x27;s graph, not its own recall; the b2 net is the executable cross-check that turns surviving hypotheses into promoted knowledge." data-section="6 · the f0 archaeology workflow" data-why="lays out the generation-and-verification pipeline so interpretation is anchored to deterministic artifacts rather than consumed as raw documentation.">
-  <div class="gallery-preview g-card-6"><svg viewBox="0 0 840 300" role="img" aria-label="The F0 archaeology pipeline: deterministic extraction, LLM interpretation as labeled hypotheses, human promotion">
+  <div class="gallery-preview g-card-6" tabindex="0"><svg viewBox="0 0 840 300" role="img" aria-label="The F0 archaeology pipeline: deterministic extraction, LLM interpretation as labeled hypotheses, human promotion">
         <defs><marker id="g-6-ahB4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="20" y="40" width="150" height="70" rx="10" class="bxA"/><text x="32" y="66" class="ti">The estate</text><text x="32" y="83" class="ts">code, git history,</text><text x="32" y="98" class="ts">build, ticket archive</text>
         <rect x="230" y="40" width="170" height="70" rx="10" class="bx"/><text x="242" y="66" class="ti">Deterministic layer</text><text x="242" y="83" class="ts">AST/dependency graph,</text><text x="242" y="98" class="ts">repo map, build topology</text>
@@ -925,7 +933,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the strangler in three phases. the facade is transitional architecture, not a destination: microsoft&#x27;s own guidance warns against letting it become a single point of failure or a performance bottleneck. phase 3&#x27;s success criterion is not &quot;the new system exists&quot; but &quot;the old one serves no traffic&quot; — the difference between a migration and a dual-stack." data-section="2 · the strangler fig pattern" data-why="defines the three-phase strangler so the team treats the facade as temporary and judges migration success by old-system traffic, not new-system existence.">
-  <div class="gallery-preview g-card-7"><svg viewBox="0 0 840 320" role="img" aria-label="Strangler fig in three phases: the facade routes traffic, the new system grows slice by slice, the monolith shrinks to nothing">
+  <div class="gallery-preview g-card-7" tabindex="0"><svg viewBox="0 0 840 320" role="img" aria-label="Strangler fig in three phases: the facade routes traffic, the new system grows slice by slice, the monolith shrinks to nothing">
         <defs><marker id="g-7-ahB5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="30" y="22" class="ti">Phase 1 — seed at the edges</text>
         <rect x="55" y="40" width="160" height="34" rx="8" class="bxA"/><text x="70" y="61" class="ti">Facade / router</text>
@@ -955,7 +963,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the selection picture. the heatmap ranks by heat (churn × complexity); it does not rank by extractability or safety — those are §5&#x27;s second and third axes. the red-ringed bubble is the discipline: high churn makes a module tempting, high business criticality makes it inadmissible as a first battlefield regardless of score." data-section="4 · the heatmap: churn times complexity" data-why="explains how to read the heatmap as a selection filter, not a simple priority score, by adding business-criticality and safety axes.">
-  <div class="gallery-preview g-card-8"><svg viewBox="0 0 840 330" role="img" aria-label="Hotspot heatmap: change frequency against complexity, with quadrants and an excluded business-critical bubble">
+  <div class="gallery-preview g-card-8" tabindex="0"><svg viewBox="0 0 840 330" role="img" aria-label="Hotspot heatmap: change frequency against complexity, with quadrants and an excluded business-critical bubble">
         <defs><marker id="g-8-ahB5b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <line x1="70" y1="280" x2="790" y2="280" class="edB5b"/>
         <line x1="70" y1="280" x2="70" y2="25" class="edB5b"/>
@@ -986,7 +994,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="fig. 1 — the roadmap as a permission ladder. gates open on measured exit criteria (§2); the two back-arrows and the stop band are as much a part of the plan as the forward path. f0–f3 is this workbook&#x27;s report 4 synthesis." data-section="1 · the four phases — permissions, not quarters" data-why="presents the f0–f3 roadmap as a permission ladder with explicit gates and rollback paths so progress is measured by evidence, not calendar.">
-  <div class="gallery-preview g-card-9"><svg viewBox="0 0 1000 342" role="img" aria-label="F0 to F3 rollout pipeline with gates, back-arrows and the STOP band">
+  <div class="gallery-preview g-card-9" tabindex="0"><svg viewBox="0 0 1000 342" role="img" aria-label="F0 to F3 rollout pipeline with gates, back-arrows and the STOP band">
         <defs><marker id="g-9-ahB6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">ROADMAP F0–F3 · PERMISSION TIERS WITH MEASURED GATES · REPORT 4 SYNTHESIS</text>
         <path class="edB6" d="M560 96 C 520 56, 400 56, 328 92" />
@@ -1036,7 +1044,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the two established artifacts answer &quot;what&quot; and &quot;how + prove it&quot;; the design system answers &quot;what it must look like&quot; — and, critically, feeds the same deterministic gate loop the engineering harness runs. an agent that fails a token-lint or visual-regression check iterates before a human reviews anything. the &quot;third artifact&quot; framing is report 5&#x27;s synthesis." data-section="1 · from human library to machine-readable infrastructure" data-why="positions the design system as a third artifact that feeds deterministic gates so visual work is verified before human review.">
-  <div class="gallery-preview g-card-10"><svg viewBox="0 0 860 350" role="img" aria-label="The three handoff artifacts: contract, codebase plus harness, and design system, each feeding the agent a different kind of constraint">
+  <div class="gallery-preview g-card-10" tabindex="0"><svg viewBox="0 0 860 350" role="img" aria-label="The three handoff artifacts: contract, codebase plus harness, and design system, each feeding the agent a different kind of constraint">
         <defs><marker id="g-10-ahD1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="26" class="tg">THE THREE HANDOFF ARTIFACTS — WHAT EACH ONE TELLS THE AGENT</text>
         <rect x="30" y="48" width="230" height="76" rx="10" class="bxK"/>
@@ -1077,7 +1085,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the tier model, standard practice by 2026 but community convention rather than dtcg normative text (the spec supplies only groups and aliases). aliases point left — every semantic token is a named decision about a primitive; usage flows right. the semantic tier is where the contract lives: primitives change on rebrand, component tokens are optional sugar, but &quot;cite color.action.primary, never a hex&quot; is the rule a linter can enforce and an agent can follow." data-section="1 · anatomy of a token — and the tier that carries the contract" data-why="clarifies the token tier model so the contract lives in semantic tokens that agents and linters can enforce without hard-coding values.">
-  <div class="gallery-preview g-card-11"><svg viewBox="0 0 1000 360" role="img" aria-label="Three-tier design token architecture: primitive, semantic and component tokens with alias references">
+  <div class="gallery-preview g-card-11" tabindex="0"><svg viewBox="0 0 1000 360" role="img" aria-label="Three-tier design token architecture: primitive, semantic and component tokens with alias references">
         <defs><marker id="g-11-ahD2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">TOKEN TIERS · ALIASES POINT LEFT · THE SEMANTIC TIER IS THE CONTRACT · TIERS = COMMUNITY PRACTICE, NOT SPEC</text>
         <rect x="30" y="48" width="280" height="250" rx="12" class="bxG"/>
@@ -1125,7 +1133,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the reference pipeline. the git json is the durable artifact (i1) behind a pr gate (i2); every emitted format is derived and regenerates; the design tool is a consumer under code-first, a contributor via a pr-shaped bridge otherwise. the bottom band is where the contract becomes enforceable — without the gate, tokens are documentation. one sobering adoption number: in zeroheight&#x27;s 2026 survey only about 40% of teams report having any token pipeline at all — the majority still sync by hand." data-section="3 · the pipeline — from decision to production, tool by tool" data-why="shows how token decisions flow from git through gates and derived formats so the contract stays enforceable and regenerable.">
-  <div class="gallery-preview g-card-12"><svg viewBox="0 0 1000 400" role="img" aria-label="Design token pipeline from Figma and git through a translator to platform outputs, with the sync-direction decision and the CI gate">
+  <div class="gallery-preview g-card-12" tabindex="0"><svg viewBox="0 0 1000 400" role="img" aria-label="Design token pipeline from Figma and git through a translator to platform outputs, with the sync-direction decision and the CI gate">
         <defs><marker id="g-12-ahD2b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">THE TOKEN PIPELINE · CODE-FIRST DEFAULT · DERIVED OUTPUTS REGENERATE, NEVER HAND-EDITED</text>
         <rect x="30" y="60" width="210" height="84" rx="12" class="bxG"/>
@@ -1178,7 +1186,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the consumption ladder. each rung adds the information the rung below cannot express; the cost of the upper rungs is paid in context-window budget (§5) and, for code connect, in plan tier and maintenance (§3). channels compose rather than compete — figma&#x27;s own guidance and openai&#x27;s curated figma skill both prescribe metadata first, screenshot as visual supplement, small selections only." data-section="1 · the screenshot ceiling" data-why="ranks design-consumption channels by information density so teams reach for structured metadata before burning context windows on screenshots.">
-  <div class="gallery-preview g-card-13"><svg viewBox="0 0 1000 430" role="img" aria-label="Four channels carry design context into the agent's context window: screenshot, Figma MCP metadata, Code Connect identity mapping, and the repository itself — annotated with what each channel carries and what it cannot">
+  <div class="gallery-preview g-card-13" tabindex="0"><svg viewBox="0 0 1000 430" role="img" aria-label="Four channels carry design context into the agent's context window: screenshot, Figma MCP metadata, Code Connect identity mapping, and the repository itself — annotated with what each channel carries and what it cannot">
         <defs><marker id="g-13-ahD3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">FOUR CHANNELS INTO THE CONTEXT WINDOW · ASCENDING FIDELITY · POINT-IN-TIME JUL 2026</text>
         <rect x="30" y="56" width="220" height="70" rx="10" class="bxK"/>
@@ -1222,7 +1230,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the loop that makes consumption verifiable. conformance — props, tests, a11y — is checked deterministically before any human sees the pr; the designer&#x27;s gate (d5) reviews what the loop cannot. the escalation band is not decoration: an agent that retries taste-level failures burns the context budget of §5 and the reviewer&#x27;s patience." data-section="4 · storybook mcp — from consumption to a self-healing loop" data-why="closes the design-consumption loop with deterministic conformance checks before the designer gate and escalation rules that prevent wasteful agent retries.">
-  <div class="gallery-preview g-card-14"><svg viewBox="0 0 1000 340" role="img" aria-label="The self-healing loop: agent reads the component manifest, generates the component, runs story tests, and on failure fixes its own output and re-runs until green, escalating to the human gate only on judgment calls">
+  <div class="gallery-preview g-card-14" tabindex="0"><svg viewBox="0 0 1000 340" role="img" aria-label="The self-healing loop: agent reads the component manifest, generates the component, runs story tests, and on failure fixes its own output and re-runs until green, escalating to the human gate only on judgment calls">
         <defs><marker id="g-14-ahD3b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">SELF-HEALING LOOP · STORYBOOK MCP (10.3+, REACT, PREVIEW) · THE E4 PATTERN ON THE DESIGN LAYER</text>
         <rect x="40" y="70" width="190" height="84" rx="12" class="bxC"/>
@@ -1258,7 +1266,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="curtis&#x27;s 2015 spectrum, his 2024 correction, and the shape agents force. the hybrid is not a fourth classical model — it is the centralized model whose throughput constraint moved to machines while its judgment constraint stayed exactly where it was. that asymmetry is why governance, not generation, is the design system&#x27;s binding constraint in an agentic engagement." data-section="1 · the classical models — and curtis&#x27;s retraction" data-why="maps the governance spectrum and curtis&#x27;s correction so the team sees why agentic design systems shift throughput to machines while judgment stays human.">
-  <div class="gallery-preview g-card-15"><svg viewBox="0 0 1000 400" role="img" aria-label="Governance models spectrum: solitary overlord, centralized team, federated contributors, and the agentic hybrid where a core team owns the system, agents generate via PR, and a human gate approves everything durable">
+  <div class="gallery-preview g-card-15" tabindex="0"><svg viewBox="0 0 1000 400" role="img" aria-label="Governance models spectrum: solitary overlord, centralized team, federated contributors, and the agentic hybrid where a core team owns the system, agents generate via PR, and a human gate approves everything durable">
         <defs><marker id="g-15-ahD4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">TEAM MODELS 2015 → THE AGENTIC HYBRID 2026 · CAPACITY MOVES TO MACHINES, JUDGMENT STAYS HUMAN</text>
         <rect x="30" y="60" width="210" height="96" rx="10" class="bxG"/>
@@ -1306,7 +1314,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the operating loop of the hybrid model. notice where machine effort ends and human effort begins: everything left of the gate is scalable, everything at the gate is not — which is why review capacity, not generation quality, sets the ceiling on d-level (d6). the diagram is report 5&#x27;s synthesis; the mechanics quoted above it are documented practice at carbon, primer, paste, slds, atlassian and figma." data-section="2 · the hybrid operating model — gates, and who approves what" data-why="draws the machine/human boundary in the hybrid model so the team recognizes review capacity, not generation speed, as the scaling limit.">
-  <div class="gallery-preview g-card-16"><svg viewBox="0 0 1000 380" role="img" aria-label="Contribution flow in the hybrid model: agent or human proposes a PR, deterministic checks run first, durable changes route through the designer gate, merge and SemVer release follow, and deprecation runs as a parallel three-phase pipeline">
+  <div class="gallery-preview g-card-16" tabindex="0"><svg viewBox="0 0 1000 380" role="img" aria-label="Contribution flow in the hybrid model: agent or human proposes a PR, deterministic checks run first, durable changes route through the designer gate, merge and SemVer release follow, and deprecation runs as a parallel three-phase pipeline">
         <defs><marker id="g-16-ahD4b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">THE HYBRID CONTRIBUTION FLOW · MACHINES PROPOSE, DETERMINISM FILTERS, HUMANS DECIDE (L3)</text>
         <rect x="30" y="60" width="170" height="86" rx="10" class="bxC"/>
@@ -1350,7 +1358,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the ssot argument mapped. the workbook&#x27;s default sits at code-first — not because canvas work is lesser, but because git is the only surface in the picture with versioned history, pr gates and machine-readable diff, which are the three things agent-scale governance cannot live without. flag it as report 5&#x27;s synthesis wherever it appears; the named positions around it are quoted from their sources." data-section="5 · the ssot question — figma, code, or the contract in the middle" data-why="places the code-first ssot choice in context so the team understands git is the only surface that gives versioning, gates, and machine-readable diffs.">
-  <div class="gallery-preview g-card-17"><svg viewBox="0 0 1000 430" role="img" aria-label="Map of SSOT positions: Figma-as-law on the left, contract-in-the-middle in the center, code-as-truth on the right, with Code Layers as a fast-moving blur on the boundary, and the workbook default marked at code-first with tokens as the durable layer">
+  <div class="gallery-preview g-card-17" tabindex="0"><svg viewBox="0 0 1000 430" role="img" aria-label="Map of SSOT positions: Figma-as-law on the left, contract-in-the-middle in the center, code-as-truth on the right, with Code Layers as a fast-moving blur on the boundary, and the workbook default marked at code-first with tokens as the durable layer">
         <defs><marker id="g-17-ahD4c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">WHO WINS WHEN CANVAS AND REPO DISAGREE? · THREE POSITIONS, ONE FAST-MOVING BLUR · JUL 2026</text>
         <rect x="30" y="70" width="270" height="130" rx="10" class="bxG"/>
@@ -1394,7 +1402,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the verification funnel this chapter unpacks layer by layer. everything left of the amber gate is machine-iterable: the agent reads the failure and retries, which is e4&#x27;s loop with visual-layer checks plugged in. the async lane watches the system between prs. the ordering — lint → contract → interaction → a11y → visual → human — is report 5&#x27;s synthesis; the individual tools and their documented behavior are cited in §2–§4." data-section="1 · the stack — six machine checks, in the order they should run" data-why="orders the design verification funnel so the agent iterates on conformance checks before a human ever sees the output.">
-  <div class="gallery-preview g-card-18"><svg viewBox="0 0 1000 400" role="img" aria-label="The ordered verification funnel: agent output passes style lint, API contract, interaction tests, axe-core and visual regression — each red result loops back to the agent — before the human designer gate approves the merge">
+  <div class="gallery-preview g-card-18" tabindex="0"><svg viewBox="0 0 1000 400" role="img" aria-label="The ordered verification funnel: agent output passes style lint, API contract, interaction tests, axe-core and visual regression — each red result loops back to the agent — before the human designer gate approves the merge">
         <defs><marker id="g-18-ahD5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">THE DESIGN HARNESS · CHEAPEST FIRST, HUMAN LAST · THE AGENT ITERATES ON RED BEFORE ANYONE HUMAN LOOKS</text>
         <rect x="20" y="66" width="120" height="118" rx="10" class="bxG"/>
@@ -1467,7 +1475,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the stress-state matrix — the missing-things addition the verification pass surfaced. each variant is a first-class harness check with its own baseline, priced in snapshots; the payoff is that forced-colors, dark-mode, motion and reflow failures stop depending on a human remembering to test them." data-section="2 · visual regression in practice — baselines, noise, and the false-positive problem" data-why="expands visual regression into a stress-state matrix so forced-colors, dark-mode, motion, and reflow failures are caught by baselines instead of memory.">
-  <div class="gallery-preview g-card-19"><svg viewBox="0 0 1000 360" role="img" aria-label="The stress-state matrix: one story is snapshotted across six hostile environments — forced colors, dark mode, increased contrast, reduced motion, RTL with long text, and a narrow viewport — each compared against its own CI-built baseline">
+  <div class="gallery-preview g-card-19" tabindex="0"><svg viewBox="0 0 1000 360" role="img" aria-label="The stress-state matrix: one story is snapshotted across six hostile environments — forced colors, dark mode, increased contrast, reduced motion, RTL with long text, and a narrow viewport — each compared against its own CI-built baseline">
         <defs><marker id="g-19-ahD5b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">BEYOND THE HAPPY PATH · ONE STORY × SIX HOSTILE ENVIRONMENTS · EACH VARIANT IS A CHEAP DETERMINISTIC CHECK</text>
         <rect x="30" y="118" width="180" height="120" rx="10" class="bxG"/>
@@ -1519,7 +1527,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="conformance vs quality, with the benchmarks placed where they belong. the left box is §1–§4&#x27;s territory; the right box is the designer&#x27;s. everything about d6&#x27;s curator role and d7&#x27;s rollout sequencing follows from which side of this line a check falls on." data-section="5 · conformance vs quality — the evidence for where the human gate sits" data-why="draws the line between conformance and quality so the team knows which failures the agent can fix and which require a designer judgment gate.">
-  <div class="gallery-preview g-card-20"><svg viewBox="0 0 1000 330" role="img" aria-label="A spectrum from machine-verifiable conformance on the left to human design judgment on the right, with FrontendBench's scripted harness at 90.54 percent on the left, WebDevJudge's LLM judge plateauing at 70.34 percent in the middle, and human critique still best on the right">
+  <div class="gallery-preview g-card-20" tabindex="0"><svg viewBox="0 0 1000 330" role="img" aria-label="A spectrum from machine-verifiable conformance on the left to human design judgment on the right, with FrontendBench's scripted harness at 90.54 percent on the left, WebDevJudge's LLM judge plateauing at 70.34 percent in the middle, and human critique still best on the right">
         <defs><marker id="g-20-ahD5c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="22" y="24" class="tg">WHAT THE GATES PROVE vs WHAT ONLY THE DESIGNER JUDGES · BENCHMARK EVIDENCE, JULY 2026</text>
         <rect x="30" y="70" width="440" height="150" rx="10" class="bxK"/>
@@ -1551,7 +1559,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="left: the engineering ladder earns every rung through deterministic verification. middle: the design ladder is two ladders in one — machine gates carry conformance up to d4, judgment stays human all the way down. right: the product ladder rests on human judgment alone (p5 §2). the red dashed line is the same line in both right-hand columns: above it, no deterministic gate exists, so a human gate is the only kind there is." data-section="2 · the verification split — conformance vs quality" data-why="compares engineering, design, and product ladders so the team sees where deterministic verification ends and human judgment becomes the only gate.">
-  <div class="gallery-preview g-card-21"><svg viewBox="0 0 860 350" role="img" aria-label="Three autonomy ladders: engineering earns every rung through deterministic verification; design and product cap where deterministic verification ends">
+  <div class="gallery-preview g-card-21" tabindex="0"><svg viewBox="0 0 860 350" role="img" aria-label="Three autonomy ladders: engineering earns every rung through deterministic verification; design and product cap where deterministic verification ends">
         <defs><marker id="g-21-ahD6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="22" class="tg">THREE LADDERS — AND WHAT VERIFIES EACH RUNG</text>
         <text x="30" y="48" class="ts">engineering (E6)</text>
@@ -1587,7 +1595,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the loop the curator runs. clockwise from top-left: the durable context the curator owns feeds the agent; the agent&#x27;s output passes machine gates that verify conformance; the designer gate judges quality; merged work updates the context and the drift signals. the red dashed line is d5: the same loop with the one irreplaceable node deleted — every remaining check passes, and the slop still ships." data-section="5 · the designer as curator" data-why="shows the curator loop so the designer&#x27;s quality gate is explicitly wired into context updates, drift detection, and agent feedback.">
-  <div class="gallery-preview g-card-22"><svg viewBox="0 0 860 330" role="img" aria-label="The curator loop: durable design context feeds the agent, machine gates verify conformance, the designer gate judges quality, and merges update the context; D5 deletes the designer gate"><defs><marker id="g-22-ahD6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-22" tabindex="0"><svg viewBox="0 0 860 330" role="img" aria-label="The curator loop: durable design context feeds the agent, machine gates verify conformance, the designer gate judges quality, and merges update the context; D5 deletes the designer gate"><defs><marker id="g-22-ahD6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="22" class="tg">THE CURATOR LOOP — WHO VERIFIES WHAT, AND WHAT D5 DELETES</text>
         <rect x="40" y="40" width="230" height="62" rx="9" class="bxC"/>
         <text x="52" y="64" class="tt">durable design context</text>
@@ -1625,7 +1633,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the bootstrap order as a pipeline. grey boxes are f0 — strictly read-only, exactly like b4&#x27;s archaeology; amber is f1&#x27;s consolidation, the first write, and it lands in git as infrastructure; blue is the gate layer (d5&#x27;s harness); green is the first agent output, which arrives only after everything left of it exists. the chain is report 4&#x27;s ordering transplanted to the visual layer: audit → characterize → consolidate → gates → pilot." data-section="2 · the f0 audit toolbox" data-why="sequences the visual-layer bootstrap from read-only audit to first agent output so each phase&#x27;s exit gate is built before it is needed.">
-  <div class="gallery-preview g-card-23"><svg viewBox="0 0 860 300" role="img" aria-label="The design-archaeology pipeline: read-only audit and characterization feed consolidation, gates, and only then the agent pilot">
+  <div class="gallery-preview g-card-23" tabindex="0"><svg viewBox="0 0 860 300" role="img" aria-label="The design-archaeology pipeline: read-only audit and characterization feed consolidation, gates, and only then the agent pilot">
         <defs><marker id="g-23-ahD7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="22" class="tg">THE BOOTSTRAP ORDER — READ-ONLY FIRST, GENERATION LAST</text>
         <rect x="24" y="44" width="150" height="64" rx="9" class="bxG"/>
@@ -1671,7 +1679,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the design-layer heatmap, parallel to b5&#x27;s. the vertical axis is what makes it agent-readiness rather than ordinary adoption scoring: an area is legible to a machine when it carries stories, tokens, code connect mappings and ci. the pilot quadrant is high-legibility, low-brand-risk; the red quadrant is the f0 stop profile. axes are exclusionary — brand risk is a gate, not a tradeable score." data-section="4 · the agent-readiness heatmap" data-why="turns adoption planning into an agent-readiness map so pilot areas are chosen by legibility and brand-risk gates, not by score alone.">
-  <div class="gallery-preview g-card-24"><svg viewBox="0 0 860 330" role="img" aria-label="The agent-readiness heatmap: machine-legibility against brand risk; pilot in the high-legibility, low-risk quadrant; stop when no harness is possible and brand risk is high"><defs><marker id="g-24-ahD7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-24" tabindex="0"><svg viewBox="0 0 860 330" role="img" aria-label="The agent-readiness heatmap: machine-legibility against brand risk; pilot in the high-legibility, low-risk quadrant; stop when no harness is possible and brand risk is high"><defs><marker id="g-24-ahD7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="22" class="tg">PILOT SELECTION — LEGIBILITY × BRAND RISK (AXES EXCLUSIONARY, NOT AVERAGED)</text>
         <line x1="120" y1="270" x2="780" y2="270" class="edD7"/>
         <line x1="120" y1="270" x2="120" y2="46" class="edD7"/>
@@ -1706,7 +1714,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="f0–f4 as a permission ladder. the d-level is granted by the phase&#x27;s exit gate, never by ambition: no agent writes exist before f2, d3 is earned area-by-area and then held by review capacity, and d4 remains gated forever. the red branch is the honest exit: where no harness can be built and the brand risk is high, the audit is the deliverable and the agent rollout does not start." data-section="5 · the f0–f4 rollout" data-why="frames f0–f4 as a permission ladder with an honest exit branch so autonomy is granted by gates, not ambition.">
-  <div class="gallery-preview g-card-25"><svg viewBox="0 0 860 360" role="img" aria-label="The F0 to F4 ladder: each phase grants a D-level only after its exit gate; F0 has a STOP branch"><defs><marker id="g-25-ahD7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-25" tabindex="0"><svg viewBox="0 0 860 360" role="img" aria-label="The F0 to F4 ladder: each phase grants a D-level only after its exit gate; F0 has a STOP branch"><defs><marker id="g-25-ahD7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="22" class="tg">THE ROLLOUT AS A PERMISSION LADDER — D-LEVELS ARE EARNED, NOT DECLARED</text>
         <rect x="40" y="52" width="140" height="56" rx="9" class="bxG"/>
         <text x="52" y="74" class="tt">F0 · archaeology</text>
@@ -1744,7 +1752,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the framework as a loop. amber = task/context inputs, green = memory (cross-cutting), the cobalt dashed box = the harness wrapping the model, gray = governance constraining every action. the dashed return path is what makes it &quot;agentic&quot;: verification results and updated state feed back rather than terminating a one-shot generation." data-section="2 · the seven components — with inputs &amp; outputs" data-why="shows the agent framework as a feedback loop of seven components so the audience stops treating the agent as just the model.">
-  <div class="gallery-preview g-card-26"><svg viewBox="0 0 900 470" role="img" aria-label="The seven-component agent framework as a loop">
+  <div class="gallery-preview g-card-26" tabindex="0"><svg viewBox="0 0 900 470" role="img" aria-label="The seven-component agent framework as a loop">
     <defs><marker id="g-26-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
     <text x="30" y="26" class="tg">INPUTS</text>
     <rect x="24" y="36" width="150" height="40" rx="8" class="bxA"/><text x="34" y="54" class="ti">Prompt (intent)</text><text x="34" y="69" class="ts">task spec · goal</text>
@@ -1780,7 +1788,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="brain, hands, session. the process is disposable; the append-only log and the durable files are not — recovery is a replay, not a resurrection." data-section="3 · persistence mechanics — surviving the context window" data-why="separates brain, hands, and session so the team builds recovery around replaying durable logs and files rather than resurrecting processes.">
-  <div class="gallery-preview g-card-27"><svg viewBox="0 0 980 340" role="img" aria-label="Brain, hands, session: the harness loop and model form the brain; sandboxed ephemeral execution environments are the hands; the session is an append-only event log below both. When a container dies, a fresh one calls wake with the session id, replays the log, and resumes. External state files — PRD, progress notes, feature list, git — feed each fresh context. A note says the log, not the process, is the unit of persistence.">
+  <div class="gallery-preview g-card-27" tabindex="0"><svg viewBox="0 0 980 340" role="img" aria-label="Brain, hands, session: the harness loop and model form the brain; sandboxed ephemeral execution environments are the hands; the session is an append-only event log below both. When a container dies, a fresh one calls wake with the session id, replays the log, and resumes. External state files — PRD, progress notes, feature list, git — feed each fresh context. A note says the log, not the process, is the unit of persistence.">
       <defs><marker id="g-27-ahE10a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
       <rect x="0" y="0" width="980" height="340" fill="#FBFCFD" stroke="#D6DDE4"/>
       <rect x="60" y="40" width="280" height="80" rx="10" fill="#2A4AD0"/>
@@ -1816,7 +1824,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the adoption path. phase two is where the governance gets built; the dashed shortcut is where pilots die." data-section="6 · the adoption path — maturity, first use cases, and the vendor numbers" data-why="plots the background-agent adoption path so governance is built in phase two before the shortcut to phase three becomes fatal.">
-  <div class="gallery-preview g-card-28"><svg viewBox="0 0 980 300" role="img" aria-label="Three-phase adoption path. Phase one: laptop assistant, human initiates, synchronous, watched — labelled a false summit for organizational throughput. Phase two: background agents — cloud sandbox, async, human reviews PRs; the infrastructure built here is sandboxing, verification, observability, budgets. Phase three: software factory — event-driven fleets, humans manage by exception. An arrow warns against jumping from phase one to phase three: that skips the harness. Below, an axis contrasts who initiates: human prompt versus events such as PRs, tickets, CVEs and cron."><defs><marker id="g-28-ahE10a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-28" tabindex="0"><svg viewBox="0 0 980 300" role="img" aria-label="Three-phase adoption path. Phase one: laptop assistant, human initiates, synchronous, watched — labelled a false summit for organizational throughput. Phase two: background agents — cloud sandbox, async, human reviews PRs; the infrastructure built here is sandboxing, verification, observability, budgets. Phase three: software factory — event-driven fleets, humans manage by exception. An arrow warns against jumping from phase one to phase three: that skips the harness. Below, an axis contrasts who initiates: human prompt versus events such as PRs, tickets, CVEs and cron."><defs><marker id="g-28-ahE10a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
       <rect x="0" y="0" width="980" height="300" fill="#FBFCFD" stroke="#D6DDE4"/>
       <rect x="40" y="50" width="260" height="96" rx="10" fill="#EDF1F4" stroke="#D6DDE4"/>
       <text x="170" y="76" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">1 · laptop assistant</text>
@@ -1849,7 +1857,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="two directions under one label. the antfly essay is direction a; agentspec and its successors are direction b; sales decks routinely blur them." data-section="1 · two directions, one label — keep them apart" data-why="keeps direction a (specification) and direction b (runtime enforcement) apart so formal-methods claims are not confused in procurement.">
-  <div class="gallery-preview g-card-29"><svg viewBox="0 0 980 290" role="img" aria-label="Two directions of formal methods in the agentic loop. Direction A: the agent authors code plus a formal specification; a mechanical verifier such as Dafny, Lean or the TLC model checker checks the artifact; the guarantee attaches to the artifact. Direction B: the agent is an opaque component; a runtime monitor checks each proposed action against declarative safety rules before execution; the guarantee bounds behaviour. A centre note warns the two are routinely conflated under one label.">
+  <div class="gallery-preview g-card-29" tabindex="0"><svg viewBox="0 0 980 290" role="img" aria-label="Two directions of formal methods in the agentic loop. Direction A: the agent authors code plus a formal specification; a mechanical verifier such as Dafny, Lean or the TLC model checker checks the artifact; the guarantee attaches to the artifact. Direction B: the agent is an opaque component; a runtime monitor checks each proposed action against declarative safety rules before execution; the guarantee bounds behaviour. A centre note warns the two are routinely conflated under one label.">
       <defs><marker id="g-29-ahE11a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
       <rect x="0" y="0" width="980" height="290" fill="#FBFCFD" stroke="#D6DDE4"/>
       <text x="245" y="36" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">DIRECTION A · verify the OUTPUT</text>
@@ -1887,7 +1895,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the safety–utility curve, quantified. hard-stop enforcement nearly eliminates unsafe executions — and nearly eliminates the work. blast radius decides the threshold." data-section="5 · direction b — runtime enforcement of agent behaviour" data-why="quantifies the safety–utility trade-off so hard-stop thresholds are chosen by blast radius, not by idealized guarantees.">
-  <div class="gallery-preview g-card-30"><svg viewBox="0 0 980 300" role="img" aria-label="The measured safety-utility trade-off on SafeAgentBench. Four horizontal bars show unsafe-execution rates: no enforcement 40.63 percent unsafe with 59.38 percent task completion; reactive rules AgentSpec 19.79 percent unsafe; predictive reflect mode 14.07 percent unsafe with 47.74 percent completion; predictive hard-stop 2.60 percent unsafe but only 10.42 percent completion. A caption notes safety is purchasable and the currency is task utility."><defs><marker id="g-30-ahE11a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-30" tabindex="0"><svg viewBox="0 0 980 300" role="img" aria-label="The measured safety-utility trade-off on SafeAgentBench. Four horizontal bars show unsafe-execution rates: no enforcement 40.63 percent unsafe with 59.38 percent task completion; reactive rules AgentSpec 19.79 percent unsafe; predictive reflect mode 14.07 percent unsafe with 47.74 percent completion; predictive hard-stop 2.60 percent unsafe but only 10.42 percent completion. A caption notes safety is purchasable and the currency is task utility."><defs><marker id="g-30-ahE11a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
       <rect x="0" y="0" width="980" height="300" fill="#FBFCFD" stroke="#D6DDE4"/>
       <text x="490" y="34" text-anchor="middle" font-size="12.5" fill="#1A2430" font-weight="700">the measured trade-off — SafeAgentBench, embodied agents (ProbGuard evaluation; preprint, self-comparison)</text>
       <text x="235" y="70" text-anchor="end" font-size="11" fill="#1A2430">no enforcement</text>
@@ -1913,7 +1921,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="recall is not flat across the window. it is highest in a small, high-signal context and degrades as tokens accumulate — long before the model&#x27;s maximum window is reached. the engineering goal is to stay in the green zone, not to fill the window." data-section="2 · the physics: context rot &amp; the attention budget" data-why="shows that recall degrades well before the context-window limit so the team optimizes signal density instead of token count.">
-  <div class="gallery-preview g-card-31"><svg viewBox="0 0 860 320" role="img" aria-label="Context rot: recall degrades as the window fills">
+  <div class="gallery-preview g-card-31" tabindex="0"><svg viewBox="0 0 860 320" role="img" aria-label="Context rot: recall degrades as the window fills">
         <defs><marker id="g-31-ah-e2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <line x1="80" y1="250" x2="800" y2="250" class="ed"/><text x="800" y="272" class="ts" text-anchor="end">tokens in context →</text>
         <line x1="80" y1="250" x2="80" y2="40" class="ed"/><text x="70" y="46" class="ts" text-anchor="end">recall</text>
@@ -1933,7 +1941,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="sessions are relay legs. durable state (green) is the baton; each session (cobalt) bootstraps from it, does bounded work, then writes progress and commits before ending merge-ready. governance (gray) is enforced across all sessions. the model has no memory between legs — the harness supplies all continuity." data-section="2 · the core patterns — inputs &amp; outputs" data-why="models sessions as relay legs so durable state, not the model, carries continuity between bounded runs.">
-  <div class="gallery-preview g-card-32"><svg viewBox="0 0 880 340" role="img" aria-label="The harness runs sessions as relay legs from durable state">
+  <div class="gallery-preview g-card-32" tabindex="0"><svg viewBox="0 0 880 340" role="img" aria-label="The harness runs sessions as relay legs from durable state">
         <defs><marker id="g-32-ahE3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="30" y="40" width="180" height="120" rx="12" class="bxK"/><text x="40" y="62" class="tg">DURABLE STATE</text>
         <text x="40" y="84" class="ti">progress file</text><text x="40" y="104" class="ti">git history</text><text x="40" y="124" class="ti">CLAUDE.md · specs</text><text x="40" y="144" class="ti">feature_list.json</text>
@@ -1958,7 +1966,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="red-green-refactor maps directly onto the agent loop. the critical governance choice is who writes the red: when a human or a separate agent authors the failing test against a clear requirement, the coding agent&#x27;s job becomes &quot;reach green without touching the test&quot; — and review runs against a passing, trusted oracle." data-section="2 · tdd as the agent&#x27;s native loop" data-why="maps red-green-refactor onto the agent loop and fixes who writes the red test so the coding agent cannot weaken its own oracle.">
-  <div class="gallery-preview g-card-33"><svg viewBox="0 0 820 300" role="img" aria-label="Red-green-refactor as the agent's verification loop">
+  <div class="gallery-preview g-card-33" tabindex="0"><svg viewBox="0 0 820 300" role="img" aria-label="Red-green-refactor as the agent's verification loop">
         <defs><marker id="g-33-ahE4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <circle cx="150" cy="120" r="52" class="bx" style="stroke:#B3362B"/><text x="150" y="115" class="tt" text-anchor="middle">RED</text><text x="150" y="133" class="ts" text-anchor="middle">failing test</text>
         <circle cx="410" cy="120" r="52" class="bxK"/><text x="410" y="115" class="tt" text-anchor="middle">GREEN</text><text x="410" y="133" class="ts" text-anchor="middle">make it pass</text>
@@ -1978,7 +1986,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="a mutant is your code with one deliberate fault. if a test fails on the mutant, the mutant is &quot;killed&quot; — your tests have teeth there. if every test still passes, the mutant &quot;survived&quot; — a real, specific gap in what your tests check. the mutation score is the share of mutants killed." data-section="5 · mutation testing in depth — how it actually works" data-why="defines mutation testing as deliberate-fault probes so the team reads surviving mutants as precise, actionable gaps in the test suite.">
-  <div class="gallery-preview g-card-34"><svg viewBox="0 0 840 250" role="img" aria-label="How mutation testing works">
+  <div class="gallery-preview g-card-34" tabindex="0"><svg viewBox="0 0 840 250" role="img" aria-label="How mutation testing works">
         <defs><marker id="g-34-ahE4b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker><marker id="g-34-ahE4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="20" y="90" width="150" height="60" rx="10" class="bxK"/><text x="30" y="114" class="ti">Your code</text><text x="30" y="132" class="ti">+ tests (green)</text>
         <rect x="230" y="80" width="170" height="80" rx="10" class="bxA"/><text x="240" y="102" class="ti">Generate mutants</text><text x="240" y="120" class="ts">inject 1 fault each:</text><text x="240" y="135" class="ts">&gt; becomes &gt;=, + becomes -,</text><text x="240" y="149" class="ts">delete a line, flip a bool…</text>
@@ -1999,7 +2007,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="governance is a gate, not a suggestion. a proposed action is checked by permission rules and pretooluse hooks; if it passes, the sandbox and egress policy bound what it can actually touch; a posttooluse hook and audit log record it. anything unsafe is denied or escalated to a human before it can have an effect." data-section="2 · the mechanisms — inputs &amp; outputs" data-why="shows governance as a layered gate so unsafe actions are denied, bounded, or escalated before they have effects.">
-  <div class="gallery-preview g-card-35"><svg viewBox="0 0 860 300" role="img" aria-label="Governance as the gate between model intent and real effects">
+  <div class="gallery-preview g-card-35" tabindex="0"><svg viewBox="0 0 860 300" role="img" aria-label="Governance as the gate between model intent and real effects">
         <defs><marker id="g-35-ahE5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="20" y="110" width="150" height="60" rx="10" class="bxC"/><text x="30" y="134" class="ti">Model proposes</text><text x="30" y="152" class="ts">a tool call / action</text>
         <rect x="250" y="60" width="180" height="70" rx="10" class="bx"/><text x="260" y="84" class="ti">Permission rule</text><text x="260" y="102" class="ts">allow / deny / ask</text><text x="260" y="118" class="ts">per tool &amp; pattern</text>
@@ -2021,7 +2029,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the ladder rises by delegated judgment, not model power. most teams sit at l2; l3 (delegated task → reviewed pr) is today&#x27;s realistic production ceiling; l4 is viable only for narrow, repeated, deterministically-verifiable tasks; l5 (no human in the loop) is not achieved for general software development." data-section="1 · the five levels" data-why="ranks autonomy by delegated judgment so the team sets realistic production ceilings instead of assuming model capability equals autonomy.">
-  <div class="gallery-preview g-card-36"><svg viewBox="0 0 860 360" role="img" aria-label="The L1 to L5 autonomy ladder">
+  <div class="gallery-preview g-card-36" tabindex="0"><svg viewBox="0 0 860 360" role="img" aria-label="The L1 to L5 autonomy ladder">
         <defs><marker id="g-36-ahE6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="30" y="292" width="560" height="40" rx="8" class="bxG"/><text x="42" y="312" class="tt">L1 · Assistant</text><text x="42" y="326" class="ts">inline suggestions, single file — Copilot autocomplete</text>
         <rect x="70" y="244" width="560" height="40" rx="8" class="bxG"/><text x="82" y="264" class="tt">L2 · Conversational</text><text x="82" y="278" class="ts">multi-turn, codebase navigation — IDE chat  (most teams are here)</text>
@@ -2039,7 +2047,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="agentic development speeds up writing so much that review becomes the bottleneck. output metrics (prs, tasks) rise sharply while org-level outcomes stay flat, because the work accumulates at the human review gate. this is why e6 caps autonomy at review capacity and why we measure outcomes, not output." data-section="5 · the review bottleneck, visualised" data-why="visualizes why output metrics rise while outcomes stall, making the case for capping autonomy at review capacity and measuring outcomes.">
-  <div class="gallery-preview g-card-37"><svg viewBox="0 0 840 250" role="img" aria-label="Agentic development relocates the bottleneck from writing to reviewing">
+  <div class="gallery-preview g-card-37" tabindex="0"><svg viewBox="0 0 840 250" role="img" aria-label="Agentic development relocates the bottleneck from writing to reviewing">
         <defs><marker id="g-37-ahE7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="34" class="tg">BEFORE — writing is the constraint</text>
         <rect x="20" y="46" width="150" height="40" rx="8" class="bx"/><text x="30" y="70" class="ts">write (slow)</text>
@@ -2061,7 +2069,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the sdd flow (spec kit&#x27;s shape): a constitution fixes non-negotiables, then specify → plan → tasks → implement. the decisive difference from ad-hoc prompting is the spec review gate: the specification is reviewed and agreed before implementation, so intent is validated on paper rather than discovered in a pr." data-section="1 · what sdd actually is" data-why="shows how spec-driven development fixes non-negotiables up front and reviews intent before code, preventing late discovery of misunderstood requirements.">
-  <div class="gallery-preview g-card-38"><svg viewBox="0 0 860 250" role="img" aria-label="The spec-driven development flow">
+  <div class="gallery-preview g-card-38" tabindex="0"><svg viewBox="0 0 860 250" role="img" aria-label="The spec-driven development flow">
         <defs><marker id="g-38-ahE8a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="20" y="96" width="120" height="52" rx="10" class="bxG"/><text x="30" y="120" class="ti">Constitution</text><text x="30" y="137" class="ts">non-negotiables</text>
         <rect x="168" y="96" width="120" height="52" rx="10" class="bxA"/><text x="178" y="120" class="ti">Specify</text><text x="178" y="137" class="ts">what &amp; why</text>
@@ -2082,7 +2090,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="both plugins enforce plan-before-code and review-before-done. the structural difference is the green return arrow: compound engineering&#x27;s /ce-compound writes each task&#x27;s lessons into claude.md and docs, so the next cycle&#x27;s planning reads them as grounding — the system improves with use, rather than resetting." data-section="3 · two plugin approaches: superpowers &amp; compound engineering" data-why="contrasts superpowers and compound engineering so the team sees the value of closing the loop by writing lessons back into project memory.">
-  <div class="gallery-preview g-card-39"><svg viewBox="0 0 860 250" role="img" aria-label="Within-task discipline versus between-task compounding">
+  <div class="gallery-preview g-card-39" tabindex="0"><svg viewBox="0 0 860 250" role="img" aria-label="Within-task discipline versus between-task compounding">
         <defs><marker id="g-39-ahE8b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="30" class="tg">SUPERPOWERS — within-task discipline (resets each session)</text>
         <rect x="20" y="44" width="120" height="40" rx="8" class="bxA"/><text x="30" y="68" class="ts">brainstorm</text>
@@ -2112,7 +2120,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the tunable surface. the model is the one part you cannot change; everything around it is configuration — and §2&#x27;s evidence says the configuration often decides more than the model does." data-section="1 · the tunable surface — anatomy of the thing you tune" data-why="surfaces every harness configuration as a tunable lever so the team stops tuning the model and starts tuning what surrounds it.">
-  <div class="gallery-preview g-card-40"><svg viewBox="0 0 980 330" role="img" aria-label="The tunable surface: a model core surrounded by six harness responsibilities — observation, context, control, action, state, verification — each annotated with concrete levers such as tool descriptions, turn budgets, hooks, progress files and test wiring. An arrow labelled eval-driven tuning circles the surface, and a caption notes that benchmark scores attach to the whole assembly, not the core.">
+  <div class="gallery-preview g-card-40" tabindex="0"><svg viewBox="0 0 980 330" role="img" aria-label="The tunable surface: a model core surrounded by six harness responsibilities — observation, context, control, action, state, verification — each annotated with concrete levers such as tool descriptions, turn budgets, hooks, progress files and test wiring. An arrow labelled eval-driven tuning circles the surface, and a caption notes that benchmark scores attach to the whole assembly, not the core.">
       <defs><marker id="g-40-ahE9a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
       <rect x="0" y="0" width="980" height="330" fill="#FBFCFD" stroke="#D6DDE4"/>
       <rect x="400" y="130" width="180" height="70" rx="10" fill="#2A4AD0"/>
@@ -2155,7 +2163,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the eval-driven tuning loop. one change at a time, screened cheaply, confirmed expensively, kept only if the win repeats — the harness equivalent of red-green tdd." data-section="4 · eval-driven tuning — the method" data-why="describes the eval-driven tuning loop so harness changes are screened cheaply, confirmed expensively, and kept only on repeated wins.">
-  <div class="gallery-preview g-card-41"><svg viewBox="0 0 980 300" role="img" aria-label="The eval-driven tuning loop: run the eval suite, read failing traces, diagnose a behaviour class, make one targeted change, re-run up a cost ladder from cheap screen to full suite, then a gate decides: keep if the win repeats and nothing regresses, revert otherwise. A side note distinguishes behaviour-class fixes from benchmark tricks, and an exit arrow notes that categories flat under tuning indicate a model limitation."><defs><marker id="g-41-ahE9a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-41" tabindex="0"><svg viewBox="0 0 980 300" role="img" aria-label="The eval-driven tuning loop: run the eval suite, read failing traces, diagnose a behaviour class, make one targeted change, re-run up a cost ladder from cheap screen to full suite, then a gate decides: keep if the win repeats and nothing regresses, revert otherwise. A side note distinguishes behaviour-class fixes from benchmark tricks, and an exit arrow notes that categories flat under tuning indicate a model limitation."><defs><marker id="g-41-ahE9a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
       <rect x="0" y="0" width="980" height="300" fill="#FBFCFD" stroke="#D6DDE4"/>
       <rect x="30" y="60" width="150" height="56" rx="8" fill="#2A4AD0"/>
       <text x="105" y="84" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">1 · run the eval</text>
@@ -2190,7 +2198,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="each component exists to drive a specific harness mechanism. reading the arrows right-to-left is the review question: if a harness stage keeps failing, which contract field is starving it?" data-section="2 · the six components" data-why="maps each handoff-contract field to the harness stage it feeds so failing gates can be traced back to missing or malformed inputs.">
-  <div class="gallery-preview g-card-42"><svg viewBox="0 0 980 452" role="img" aria-label="Anatomy of the handoff contract: six components and what the engineering harness does with each">
+  <div class="gallery-preview g-card-42" tabindex="0"><svg viewBox="0 0 980 452" role="img" aria-label="Anatomy of the handoff contract: six components and what the engineering harness does with each">
         <defs><marker id="g-42-ahH1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="60" y="26" class="tg">THE CONTRACT (ONE MARKDOWN FILE IN THE REPO)</text>
         <text x="600" y="26" class="tg">WHAT THE ENGINEERING HARNESS DOES WITH IT</text>
@@ -2236,7 +2244,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the inversion in one line: validate intent on paper, then let the harness prove the implementation. the dashed return path is h4&#x27;s feedback loop — the engineering layer is the best detector of bad requirements." data-section="3 · the gate inversion — reviewing the spec before the code" data-why="inverts the review order so intent is validated on paper before the harness proves implementation, with engineering feedback closing the loop.">
-  <div class="gallery-preview g-card-43"><svg viewBox="0 0 980 250" role="img" aria-label="The gate inversion: spec review before implementation, code review lighter after"><defs><marker id="g-43-ahH1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-43" tabindex="0"><svg viewBox="0 0 980 250" role="img" aria-label="The gate inversion: spec review before implementation, code review lighter after"><defs><marker id="g-43-ahH1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="26" class="tg">WHERE THE PRIMARY HUMAN GATE SITS</text>
         <rect x="16" y="60" width="120" height="46" rx="8" class="bxG"/>
         <text x="30" y="79" class="ti">PRD</text><text x="30" y="95" class="ts">problem level (P2)</text>
@@ -2267,7 +2275,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the ladder is also a division of labour: everything left of the amber gate is where humans spend judgement (rules and which examples matter); everything right of it is mechanical and delegable. the agent may draft the left side too — but drafts cross the gate only with human ratification." data-section="4 · the ladder: story → ears → gherkin → red tests" data-why="divides the specification ladder at the human judgment gate so rules and examples are ratified before tests become mechanical and delegable.">
-  <div class="gallery-preview g-card-44"><svg viewBox="0 0 980 330" role="img" aria-label="The handoff ladder: user story to EARS rules to Gherkin scenarios to failing tests to agent implementation, with the spec review gate and the merge gate">
+  <div class="gallery-preview g-card-44" tabindex="0"><svg viewBox="0 0 980 330" role="img" aria-label="The handoff ladder: user story to EARS rules to Gherkin scenarios to failing tests to agent implementation, with the spec review gate and the merge gate">
         <defs><marker id="g-44-ahH2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="40" y="26" class="tg">HUMAN-LED · INTENT</text>
         <text x="620" y="26" class="tg">AGENT-LED · EXECUTION</text>
@@ -2314,7 +2322,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the traceability chain. forward: one requirement id travels through spec, task, branch, commit, test name and pr — cheap, structural, greppable. backward: a change flips linked artifacts to &quot;suspect&quot; until the link is re-affirmed, so drift is detected rather than discovered in an audit." data-section="2 · the chain — ids travel forward" data-why="shows how requirement ids flow through artifacts so drift can be detected structurally rather than left for audits.">
-  <div class="gallery-preview g-card-45"><svg viewBox="0 0 980 300" role="img" aria-label="The traceability chain: requirement to spec to task to code to test to PR, with IDs traveling forward and suspicion traveling back">
+  <div class="gallery-preview g-card-45" tabindex="0"><svg viewBox="0 0 980 300" role="img" aria-label="The traceability chain: requirement to spec to task to code to test to PR, with IDs traveling forward and suspicion traveling back">
 <defs><marker id="g-45-ahH3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="20" y="28" class="tg">THE CHAIN — IDS TRAVEL FORWARD, SUSPICION TRAVELS BACK</text>
 <rect x="20" y="60" width="140" height="56" rx="10" class="bxC"/>
@@ -2358,7 +2366,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the feedback loop. solid: the forward path m3 built. dashed: the return signals — an agent-detected contradiction mid-implementation, or a suspect label from h3&#x27;s drift gate at review time. both land in the same triage question, whose three exits each name a different owner and a different artifact to change." data-section="3 · drift triage — the three-way question" data-why="routes feedback from mid-implementation contradictions and drift labels into a triage question that names the owner and artifact to change.">
-  <div class="gallery-preview g-card-46"><svg viewBox="0 0 980 440" role="img" aria-label="The feedback loop: forward delegation from contract through agent to PR, return signals on contradiction or drift, and the three-way triage decision">
+  <div class="gallery-preview g-card-46" tabindex="0"><svg viewBox="0 0 980 440" role="img" aria-label="The feedback loop: forward delegation from contract through agent to PR, return signals on contradiction or drift, and the three-way triage decision">
 <defs><marker id="g-46-ahH4a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="20" y="28" class="tg">THE FEEDBACK LOOP — FORWARD DELEGATION, RETURN SIGNALS, THREE-WAY TRIAGE</text>
 <rect x="20" y="60" width="200" height="56" rx="10" class="bxC"/>
@@ -2407,7 +2415,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the triad and its flows. durables change only through the human gate; derived artifacts are projections — regenerated on master change, with the hand-edit path explicitly crossed out; disposables default to pruning. the one path upward is deliberate promotion through validation and ownership — never inertia." data-section="1 · the triad — durable, derived, disposable" data-why="classifies artifacts by lifecycle so durables are human-gated, derived artifacts are regenerated, and disposables are pruned.">
-  <div class="gallery-preview g-card-47"><svg viewBox="0 0 980 470" role="img" aria-label="The artifact taxonomy: durable masters changed through a human gate, derived artifacts regenerated from them and never hand-edited, disposable working files pruned, and a validated promotion path back up to durable">
+  <div class="gallery-preview g-card-47" tabindex="0"><svg viewBox="0 0 980 470" role="img" aria-label="The artifact taxonomy: durable masters changed through a human gate, derived artifacts regenerated from them and never hand-edited, disposable working files pruned, and a validated promotion path back up to durable">
 <defs><marker id="g-47-ahI1a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">DURABLE — SOURCES OF TRUTH</text>
 <rect x="24" y="42" width="932" height="92" rx="12" class="bxC"/>
@@ -2442,7 +2450,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the ssot boundary. solid arrows are the two correct bridges: a pointer that fetches the product master at need, or a labelled derived digest regenerated from it. the dashed paste path creates the fork — a copy inside the repo&#x27;s most-trusted file, with no regeneration path and full agent trust." data-section="5 · the ssot boundary — two mastering systems, one taxonomy" data-why="shows the two safe bridges across mastering systems and flags the paste path as a fork that breaks single-source-of-truth.">
-  <div class="gallery-preview g-card-48"><svg viewBox="0 0 980 380" role="img" aria-label="The SSOT boundary: product masters in Notion or Jira on the left, engineering masters in git on the right, with a pointer and a labelled derived digest as the two correct bridges and a pasted copy crossed out as drift"><defs><marker id="g-48-ahI1a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-48" tabindex="0"><svg viewBox="0 0 980 380" role="img" aria-label="The SSOT boundary: product masters in Notion or Jira on the left, engineering masters in git on the right, with a pointer and a labelled derived digest as the two correct bridges and a pasted copy crossed out as drift"><defs><marker id="g-48-ahI1a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">PRODUCT MASTERS — NOTION / CONFLUENCE / JIRA</text>
 <rect x="24" y="42" width="380" height="240" rx="12" class="bxC"/>
 <rect x="48" y="66" width="150" height="52" rx="8" class="bx"/><text x="123" y="89" text-anchor="middle" class="ti">PRD</text><text x="123" y="105" text-anchor="middle" class="ts">owner: PM (P4)</text>
@@ -2469,7 +2477,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the adr status walk. the only write against an accepted record is a link added by its successor; everything else — including the fix-it-in-place instinct — is refused. madr&#x27;s rejected keeps declined roads visible. the code-seam references on the right are our practice, not part of the standard (see the flag below)." data-section="1 · the adr — a lifecycle worth copying" data-why="uses the adr status walk to show how accepted decisions are superseded, not edited, keeping the record of declined options visible.">
-  <div class="gallery-preview g-card-49"><svg viewBox="0 0 980 300" role="img" aria-label="The ADR lifecycle: a decision is proposed, accepted through PR review, and never edited afterwards — later change produces a new ADR that supersedes or deprecates the old one, keeping the history readable">
+  <div class="gallery-preview g-card-49" tabindex="0"><svg viewBox="0 0 980 300" role="img" aria-label="The ADR lifecycle: a decision is proposed, accepted through PR review, and never edited afterwards — later change produces a new ADR that supersedes or deprecates the old one, keeping the history readable">
 <defs><marker id="g-49-ahI2a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">ADR LIFECYCLE — ACCEPTED IS IMMUTABLE</text>
 <rect x="24" y="60" width="150" height="56" rx="8" class="bxG"/><text x="99" y="84" text-anchor="middle" class="ti">Proposed</text><text x="99" y="101" text-anchor="middle" class="ts">numbered MD file</text>
@@ -2494,7 +2502,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the matrix as a flow. the agent is the same in all four paths; what differs is the gate its write must pass. durable writes become proposals; derived writes become regenerations; disposable writes are free but homed and mortal; memory writes pass validation and stay auditable." data-section="2 · the write-permission matrix" data-why="turns the write-permission matrix into a flow so the same agent faces different gates depending on whether it writes durables, derived artifacts, disposables, or memory.">
-  <div class="gallery-preview g-card-50"><svg viewBox="0 0 980 430" role="img" aria-label="Write-permissions per artifact category: durable changes pass a human PR gate, derived artifacts are regenerated only, disposables are written freely and pruned, and agent-written memory takes a governed fourth path with provenance, audit and rollback"><defs><marker id="g-50-ahI2a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-50" tabindex="0"><svg viewBox="0 0 980 430" role="img" aria-label="Write-permissions per artifact category: durable changes pass a human PR gate, derived artifacts are regenerated only, disposables are written freely and pruned, and agent-written memory takes a governed fourth path with provenance, audit and rollback"><defs><marker id="g-50-ahI2a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">ONE AGENT, FOUR WRITE PATHS</text>
 <rect x="24" y="52" width="150" height="60" rx="10" class="bxC"/><text x="99" y="78" text-anchor="middle" class="ti">agent</text><text x="99" y="95" text-anchor="middle" class="ts">wants to write</text>
 <path d="M174 70 L300 70" class="edI2"/>
@@ -2523,7 +2531,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the compounding loop unique to agentic development: documentation errors used to decay quietly; now they are re-injected into generation every session. the deterministic gate (§4) intercepts the return edge — drift still happens, but it cannot survive a build." data-section="2 · what agentic development changes" data-why="surfaces the compounding loop where documentation errors are re-injected into generation, and shows how deterministic gates intercept it.">
-  <div class="gallery-preview g-card-51"><svg viewBox="0 0 980 330" role="img" aria-label="The drift loop: durable docs and agent config files are loaded as context every session, the agent generates changes at machine speed, the codebase moves on, and nobody updates the prose — which is loaded again, slightly more wrong, next session. A docs-as-tests gate in CI cuts the loop by making a stale reference a failing build.">
+  <div class="gallery-preview g-card-51" tabindex="0"><svg viewBox="0 0 980 330" role="img" aria-label="The drift loop: durable docs and agent config files are loaded as context every session, the agent generates changes at machine speed, the codebase moves on, and nobody updates the prose — which is loaded again, slightly more wrong, next session. A docs-as-tests gate in CI cuts the loop by making a stale reference a failing build.">
 <defs><marker id="g-51-ahI3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE DRIFT LOOP — DOCS ARE INPUT NOW</text>
 <rect x="24" y="60" width="200" height="64" rx="10" class="bxC"/><text x="124" y="86" text-anchor="middle" class="ti">durable docs &amp; config</text><text x="124" y="104" text-anchor="middle" class="ts">CLAUDE.md · AGENTS.md · spec</text>
@@ -2547,7 +2555,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="start at the bottom: rung 1 ships with your language, rung 2 is an afternoon of ci work. rungs 4–5 earn their keep where an openapi spec or spec-driven workflow already exists. the graveyard column is load-bearing: five of the tools this space produced since 2019 are already dead or repurposed — bind the practice to the check, not the vendor." data-section="4 · docs-as-tests — consistency as a failing build" data-why="ranks docs-as-tests rungs and warns against vendor lock-in so consistency is bound to a check the team controls.">
-  <div class="gallery-preview g-card-52"><svg viewBox="0 0 980 420" role="img" aria-label="The docs-as-tests ladder: five rungs of deterministic checks — executable examples, reference and link checks, docs exercised against the product, contract tests from the spec, and spec-to-code sync in the agent layer — with rising scope and cost, next to a graveyard of discontinued tools reminding that the principle outlives any vendor."><defs><marker id="g-52-ahI3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-52" tabindex="0"><svg viewBox="0 0 980 420" role="img" aria-label="The docs-as-tests ladder: five rungs of deterministic checks — executable examples, reference and link checks, docs exercised against the product, contract tests from the spec, and spec-to-code sync in the agent layer — with rising scope and cost, next to a graveyard of discontinued tools reminding that the principle outlives any vendor."><defs><marker id="g-52-ahI3a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE DOCS-AS-TESTS LADDER — WHAT FAILS THE BUILD, AND WHERE</text>
 <path d="M44 384 L44 64" class="edI3"/><text x="36" y="52" class="ts">scope &amp; cost rise</text>
 <rect x="70" y="60" width="640" height="56" rx="8" class="bxG"/><text x="86" y="83" class="tt">5 · spec ↔ code sync in the agent layer</text><text x="86" y="102" class="ts">tasks/requirements behind the code — Kiro "Sync Files" (on demand, not automatic detection)</text>
@@ -2565,7 +2573,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the four layers by lifetime. the window is e2&#x27;s problem; the files and project state are this chapter&#x27;s; the organizational layer is §6&#x27;s decision. coala&#x27;s procedural type is the quiet punchline — the harness itself is memory, which is why its write-gate (i2) is the hardest one." data-section="1 · what agent memory is — a working typology" data-why="layers memory by lifetime so the team sees why the harness itself is memory and why its write gate is the hardest to pass.">
-  <div class="gallery-preview g-card-53"><svg viewBox="0 0 980 360" role="img" aria-label="Four operational layers of agent memory arranged by lifetime: the context window lasting one session, persistent memory files and cross-session project state lasting a project, and organizational stores lasting beyond any one repo — with the CoALA memory types working, episodic, semantic and procedural mapped onto them, and a reminder that git history is already a memory system.">
+  <div class="gallery-preview g-card-53" tabindex="0"><svg viewBox="0 0 980 360" role="img" aria-label="Four operational layers of agent memory arranged by lifetime: the context window lasting one session, persistent memory files and cross-session project state lasting a project, and organizational stores lasting beyond any one repo — with the CoALA memory types working, episodic, semantic and procedural mapped onto them, and a reminder that git history is already a memory system.">
 <defs><marker id="g-53-ahI4a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">FOUR LAYERS, BY LIFETIME — AND WHERE CoALA'S TYPES LIVE</text>
 <path d="M60 320 L940 320" class="edI4"/><text x="868" y="306" class="ts">lifetime →</text>
@@ -2586,7 +2594,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="memory as a pipeline with gates. the agent&#x27;s write freedom decreases left to right; the artifact&#x27;s authority increases. the only path into a steering file runs through a human merge — the write-permission matrix (i2), drawn as a flow." data-section="4 · the governed write-mode — provenance, validation, promotion" data-why="draws memory as a gated pipeline so authority increases as agent write freedom decreases, with steering files reachable only through human merge.">
-  <div class="gallery-preview g-card-54"><svg viewBox="0 0 980 340" role="img" aria-label="The memory promotion path: session observations flow into the memory directory through validation and provenance, memory entries that prove durable are proposed for steering files through a human pull-request gate, and entries contradicted by the codebase are demoted and deleted. The agent writes freely only at the leftmost stage; each step right adds a gate."><defs><marker id="g-54-ahI4a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-54" tabindex="0"><svg viewBox="0 0 980 340" role="img" aria-label="The memory promotion path: session observations flow into the memory directory through validation and provenance, memory entries that prove durable are proposed for steering files through a human pull-request gate, and entries contradicted by the codebase are demoted and deleted. The agent writes freely only at the leftmost stage; each step right adds a gate."><defs><marker id="g-54-ahI4a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE PROMOTION PATH — EACH STEP RIGHT ADDS A GATE</text>
 <rect x="24" y="70" width="200" height="80" rx="10" class="bx"/><text x="124" y="98" text-anchor="middle" class="ti">session observation</text><text x="124" y="116" text-anchor="middle" class="ts">disposable · in-window</text><text x="124" y="134" text-anchor="middle" class="ts">free — dies with the session</text>
 <path d="M224 110 L306 110" class="edI4"/><text x="265" y="62" text-anchor="middle" class="ts">validated write</text>
@@ -2607,7 +2615,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the three tiers. tier 1 is the only place where a line costs something every single session — which is why the entire gardening discipline (§5) concentrates there, and why the core&#x27;s best use is as a map of tiers 2 and 3." data-section="1 · from ux pattern to context discipline" data-why="applies progressive disclosure to context so tier-1 bloat is minimized and the core acts as a map to deeper material.">
-  <div class="gallery-preview g-card-55"><svg viewBox="0 0 980 380" role="img" aria-label="Three tiers of progressive disclosure: the always-loaded core containing the system prompt, root context files and skill metadata; relevance-triggered bodies containing skill bodies, subdirectory context files and glob-scoped rules; and on-demand leaves containing bundled resources, indexed documents and repository files. Arrows show triggers firing left to right; a cost axis below shows per-session cost falling from paid-every-session to free-until-touched.">
+  <div class="gallery-preview g-card-55" tabindex="0"><svg viewBox="0 0 980 380" role="img" aria-label="Three tiers of progressive disclosure: the always-loaded core containing the system prompt, root context files and skill metadata; relevance-triggered bodies containing skill bodies, subdirectory context files and glob-scoped rules; and on-demand leaves containing bundled resources, indexed documents and repository files. Arrows show triggers firing left to right; a cost axis below shows per-session cost falling from paid-every-session to free-until-touched.">
 <defs><marker id="g-55-ahI5a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THREE TIERS — WHAT LOADS WHEN</text>
 <rect x="40" y="52" width="270" height="200" rx="12" class="bxC"/>
@@ -2648,7 +2656,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the map pattern. the core carries facts plus pointers; each branch loads by its own trigger. the map is the highest-leverage staleness target in the repo — i3&#x27;s reference checks apply here before anywhere else." data-section="4 · the map layer — indexes as tables of contents" data-why="models the map layer as pointers plus triggers so indexes stay fresh and reference checks catch staleness first.">
-  <div class="gallery-preview g-card-56"><svg viewBox="0 0 980 340" role="img" aria-label="The map pattern: a small always-loaded core file contains pointers to an ARCHITECTURE.md codemap, per-package context files, a skills directory and documentation; each pointer is followed on demand. A broken pointer from a stale map is marked as misrouting every session, and a CI reference check guards the map."><defs><marker id="g-56-ahI5a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-56" tabindex="0"><svg viewBox="0 0 980 340" role="img" aria-label="The map pattern: a small always-loaded core file contains pointers to an ARCHITECTURE.md codemap, per-package context files, a skills directory and documentation; each pointer is followed on demand. A broken pointer from a stale map is marked as misrouting every session, and a CI reference check guards the map."><defs><marker id="g-56-ahI5a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE MAP PATTERN — A SMALL CORE THAT KNOWS WHERE EVERYTHING LIVES</text>
 <rect x="60" y="120" width="240" height="120" rx="12" class="bxC"/>
 <text x="180" y="150" text-anchor="middle" class="tt">CLAUDE.md / AGENTS.md</text>
@@ -2676,7 +2684,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the four lanes. the x-axis is the load-bearing one: everything precomputed is a second artifact with its own freshness problem (i3), its own storage bill, and its own security surface (m7). the lanes compose — §2&#x27;s products mix them per query, and mcp makes the mix a tool-selection decision rather than a harness rewrite." data-section="1 · the four retrieval lanes" data-why="contrasts precomputed and runtime retrieval so teams weigh freshness, cost, and security before adding a second artifact.">
-  <div class="gallery-preview g-card-57"><svg viewBox="0 0 980 400" role="img" aria-label="Four retrieval lanes compared: agentic search with nothing precomputed, embedding index with chunks and vectors precomputed, symbol index derived from syntax, and knowledge graph as a full database of the repo. Each lane lists build cost, freshness, query cost and what it is best at. An axis below shows precomputation increasing from left to right, with maintenance and attack surface growing with it.">
+  <div class="gallery-preview g-card-57" tabindex="0"><svg viewBox="0 0 980 400" role="img" aria-label="Four retrieval lanes compared: agentic search with nothing precomputed, embedding index with chunks and vectors precomputed, symbol index derived from syntax, and knowledge graph as a full database of the repo. Each lane lists build cost, freshness, query cost and what it is best at. An axis below shows precomputation increasing from left to right, with maintenance and attack surface growing with it.">
 <defs><marker id="g-57-ahI6a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">FOUR LANES — WHAT IS PRECOMPUTED, WHAT IS PAID LIVE</text>
 <rect x="28" y="52" width="218" height="240" rx="12" class="bxC"/>
@@ -2732,7 +2740,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the ladder. default at l0, take l1 early when it is nearly free, buy l2 only with a measured trigger and full derived-artifact governance, and leave l3 on the watchlist. the arrows only point right — but notice sourcegraph walked left, and shipped the blog post to prove it." data-section="6 · the escalation ladder" data-why="gives a default-to-simple escalation ladder for retrieval strategies so expensive indexes are bought only with governance and measured triggers.">
-  <div class="gallery-preview g-card-58"><svg viewBox="0 0 980 340" role="img" aria-label="Escalation ladder for retrieval: L0 agentic search plus map is the default; L1 adds derived structure tools like repo maps and LSP symbol servers; L2 adds a governed embedding index; L3 code knowledge graph remains a watchlist item. Arrows between rungs carry the triggers: token pressure and structural queries move L0 to L1; measured scale, query-shape and latency triggers move L1 to L2; only independent evidence plus a freshness story would move L2 to L3."><defs><marker id="g-58-ahI6a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-58" tabindex="0"><svg viewBox="0 0 980 340" role="img" aria-label="Escalation ladder for retrieval: L0 agentic search plus map is the default; L1 adds derived structure tools like repo maps and LSP symbol servers; L2 adds a governed embedding index; L3 code knowledge graph remains a watchlist item. Arrows between rungs carry the triggers: token pressure and structural queries move L0 to L1; measured scale, query-shape and latency triggers move L1 to L2; only independent evidence plus a freshness story would move L2 to L3."><defs><marker id="g-58-ahI6a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE ESCALATION LADDER — EACH RUNG BOUGHT BY A MEASURED TRIGGER (OUR SYNTHESIS)</text>
 <rect x="28" y="150" width="210" height="130" rx="12" class="bxC"/>
 <text x="133" y="178" text-anchor="middle" class="tt">L0 · default</text>
@@ -2779,7 +2787,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the link layer. the key is dumb on purpose — a greppable string both planes already understand. downward traffic (ticket as prompt) and upward traffic (links as status) both ride on it; the enforcement ladder decides whether it is actually there. rungs 1–3 are advisory or bypassable; governance lives at 4–5 (e5)." data-section="1 · the two planes and the one key" data-why="shows the dumb key linking product and engineering planes so status and prompts ride on a greppable id and enforcement escalates through governance rungs.">
-  <div class="gallery-preview g-card-59"><svg viewBox="0 0 980 430" role="img" aria-label="Two planes joined by one key. The product plane (Jira, Linear, Notion) holds epic, story and acceptance criteria. The engineering plane (git and forge) holds branch, commits, PR and tests. The issue key PROJ-123 sits between them; downward arrows show the agent reading the ticket as prompt via MCP, upward arrows show links auto-created by smart commits, magic words and closing keywords. An enforcement column lists CLAUDE.md convention, prepare-commit-msg auto-fill, commit-msg reject, server-side ruleset and CI grep.">
+  <div class="gallery-preview g-card-59" tabindex="0"><svg viewBox="0 0 980 430" role="img" aria-label="Two planes joined by one key. The product plane (Jira, Linear, Notion) holds epic, story and acceptance criteria. The engineering plane (git and forge) holds branch, commits, PR and tests. The issue key PROJ-123 sits between them; downward arrows show the agent reading the ticket as prompt via MCP, upward arrows show links auto-created by smart commits, magic words and closing keywords. An enforcement column lists CLAUDE.md convention, prepare-commit-msg auto-fill, commit-msg reject, server-side ruleset and CI grep.">
 <defs><marker id="g-59-ahI7a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">ONE KEY, TWO PLANES — THE LINK LAYER</text>
 <rect x="28" y="48" width="640" height="110" rx="12" class="bxC"/>
@@ -2825,7 +2833,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="willison&#x27;s lethal trifecta instantiated on the product↔engineering bridge: the ticket supplies untrusted content, the agent&#x27;s tools supply private-data reach, and the same integrations supply the exfiltration channel. all three named incidents used this exact topology. the defenses column is enforced outside the model — e5&#x27;s deterministic layer." data-section="5 · the mcp bridge" data-why="instantiates willison&#x27;s lethal trifecta on the product↔engineering bridge so the team builds defenses outside the model rather than trusting the llm perimeter.">
-  <div class="gallery-preview g-card-60"><svg viewBox="0 0 980 360" role="img" aria-label="The lethal trifecta on the product-engineering bridge. An agent sits between the product plane and the engineering plane. From the product plane, untrusted ticket text flows in — anyone can file an issue. From the engineering plane, the agent has access to private repositories and secrets. A third arrow shows external communication: public comments, PRs and ticket replies. The three together form the lethal trifecta; three incident labels — GitHub MCP May 2025, Supabase MCP July 2025, GitLost July 2026 — sit under the diagram with the defenses listed at the right."><defs><marker id="g-60-ahI7a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-60" tabindex="0"><svg viewBox="0 0 980 360" role="img" aria-label="The lethal trifecta on the product-engineering bridge. An agent sits between the product plane and the engineering plane. From the product plane, untrusted ticket text flows in — anyone can file an issue. From the engineering plane, the agent has access to private repositories and secrets. A third arrow shows external communication: public comments, PRs and ticket replies. The three together form the lethal trifecta; three incident labels — GitHub MCP May 2025, Supabase MCP July 2025, GitLost July 2026 — sit under the diagram with the defenses listed at the right."><defs><marker id="g-60-ahI7a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
 <text x="24" y="30" class="tg">THE TRIFECTA RIDES THE BRIDGE — WHY TICKET TEXT IS AN ATTACK SURFACE</text>
 <rect x="28" y="60" width="250" height="120" rx="12" class="bxC"/>
 <text x="153" y="90" text-anchor="middle" class="tt">product plane</text>
@@ -2863,7 +2871,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="lazy synthesis (top) captures roughly 5% of the value and removes the pm from the thinking; the two-perspectives method (bottom) keeps the pm&#x27;s own synthesis first, uses ai as an independent second pass, and extracts the value from the differences. torres&#x27;s practitioner estimate (not a study result): unreviewed ai synthesis misses 20–40% of important detail." data-section="2 · the anti-pattern: &quot;lazy ai interview synthesis&quot;" data-why="contrasts lazy synthesis with the two-perspectives method so pms keep their own synthesis first and use ai disagreement as signal, not replacement.">
-  <div class="gallery-preview g-card-61"><svg viewBox="0 0 860 250" role="img" aria-label="Lazy AI synthesis versus the two-perspectives method">
+  <div class="gallery-preview g-card-61" tabindex="0"><svg viewBox="0 0 860 250" role="img" aria-label="Lazy AI synthesis versus the two-perspectives method">
         <defs><marker id="g-61-ahP1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="28" class="tg">ANTI-PATTERN — LAZY AI SYNTHESIS (captures ~5% of the value)</text>
         <rect x="20" y="40" width="130" height="42" rx="8" class="bxA"/><text x="30" y="61" class="ts">interview</text><text x="30" y="75" class="ts">transcript</text>
@@ -2887,7 +2895,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="top: the healthy division of labour — ai expands (draft, edge cases) and challenges (red-team); the pm judges, edits, and supplies the rationale. bottom: the measured gap. llm user stories fail review far more often than human ones, and the failure concentrates on rationale clarity — the why." data-section="2 · what doesn&#x27;t work — and the evidence" data-why="shows the healthy ai/pm division of labor and the measured gap in rationale clarity so teams do not ship llm user stories unreviewed.">
-  <div class="gallery-preview g-card-62"><svg viewBox="0 0 860 270" role="img" aria-label="The rationale gap: where AI helps in the PRD pipeline and where it systematically fails">
+  <div class="gallery-preview g-card-62" tabindex="0"><svg viewBox="0 0 860 270" role="img" aria-label="The rationale gap: where AI helps in the PRD pipeline and where it systematically fails">
         <defs><marker id="g-62-ahP2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="26" class="tg">THE DRAFT-AND-CHALLENGE PIPELINE — AI EXPANDS AND CHALLENGES, THE PM JUDGES</text>
         <rect x="20" y="38" width="128" height="46" rx="8" class="bxA"/><text x="30" y="59" class="ts">rough input</text><text x="30" y="73" class="ts">notes / transcript</text>
@@ -2913,7 +2921,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="top: the healthy division of labour in decomposition — ai expands (candidate split), the human judges (seams, sizes, relevance). bottom: the measured results. ai effort estimation failed (16% vs 60% accuracy); ai splitting was finer-grained but needed human filtering — in the follow-up study only 59% of ai-generated tasks were actually implemented, vs 100% of manually authored ones." data-section="3 · the evidence — splitting helps, estimating fails" data-why="summarizes the decomposition evidence so teams let ai propose splits while humans judge seams, and do not trust ai effort estimates.">
-  <div class="gallery-preview g-card-63"><svg viewBox="0 0 860 336" role="img" aria-label="The decomposition pipeline and the GitLab Duo experiment results">
+  <div class="gallery-preview g-card-63" tabindex="0"><svg viewBox="0 0 860 336" role="img" aria-label="The decomposition pipeline and the GitLab Duo experiment results">
         <defs><marker id="g-63-ahP3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="26" class="tg">FROM EPIC TO PARALLEL SESSIONS — AI PROPOSES THE SPLIT, THE HUMAN OWNS THE SEAMS</text>
         <rect x="20" y="38" width="128" height="46" rx="8" class="bxA"/><text x="30" y="59" class="ts">epic + PRD</text><text x="30" y="73" class="ts">from P2, red-teamed</text>
@@ -2941,7 +2949,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="top: the structural exposure — engineering review has a deterministic backstop; product review does not, so bias erodes the only gate. bottom: the evidence base — expert pilots missed 55% of automation failures; clinicians&#x27; unassisted detection dropped 6 points after three months of ai assistance; knowledge workers who trust the ai more think less critically about its output." data-section="2 · risk 1: automation bias — review is the only gate, and bias erodes it" data-why="shows why product review lacks a deterministic backstop and how automation bias erodes the only gate that remains.">
-  <div class="gallery-preview g-card-64"><svg viewBox="0 0 860 330" role="img" aria-label="Automation bias: why the product layer is exposed, and the measured evidence">
+  <div class="gallery-preview g-card-64" tabindex="0"><svg viewBox="0 0 860 330" role="img" aria-label="Automation bias: why the product layer is exposed, and the measured evidence">
         <defs><marker id="g-64-ahP4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="26" class="tg">WHY THE PRODUCT LAYER IS EXPOSED — HUMAN REVIEW IS THE ONLY GATE THERE IS</text>
         <rect x="20" y="38" width="200" height="52" rx="8" class="bxC"/><text x="30" y="59" class="ts">engineering layer (E4)</text><text x="30" y="73" class="ts">lazy review is backstopped by</text><text x="30" y="85" class="ts">deterministic tests + CI</text>
@@ -2966,7 +2974,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="left: the engineering ladder earns each rung through deterministic verification. right: the product ladder rests on human judgment — it caps below p5, where the only verifier would be removed. the box lists the three independent reasons the cap is real: the decision-task meta-analysis, the automation-bias literature (p4), and the regulatory floor." data-section="2 · the structural difference — verification asymmetry" data-why="contrasts the engineering and product ladders so the team accepts that product assistance caps below fully autonomous decisions.">
-  <div class="gallery-preview g-card-65"><svg viewBox="0 0 860 320" role="img" aria-label="Two autonomy ladders: engineering earns height through deterministic verification, product caps earlier">
+  <div class="gallery-preview g-card-65" tabindex="0"><svg viewBox="0 0 860 320" role="img" aria-label="Two autonomy ladders: engineering earns height through deterministic verification, product caps earlier">
         <defs><marker id="g-65-ahP5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <text x="20" y="26" class="tg">TWO LADDERS, ONE DIFFERENCE — WHAT STANDS BEHIND EACH RUNG</text>
         <text x="40" y="52" class="ts">engineering (E6)</text>
@@ -3000,7 +3008,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the journey the m9 module walks. pb1 produces the assessment report, the delivery baseline, and the f0 entry decision; pb2–pb5 build on its findings in order." data-section="1 · how to run it" data-why="maps the m9 assessment journey so pb1 produces the baseline report and f0 entry decision that later runbooks build on.">
-  <div class="gallery-preview g-card-66"><svg viewBox="0 0 900 150" role="img" aria-label="The five-runbook engagement journey, PB1 highlighted">
+  <div class="gallery-preview g-card-66" tabindex="0"><svg viewBox="0 0 900 150" role="img" aria-label="The five-runbook engagement journey, PB1 highlighted">
   <defs><marker id="g-66-ahPB1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
   <text x="30" y="30" class="tg">THE ENGAGEMENT JOURNEY</text>
   <rect x="24" y="48" width="150" height="52" rx="10" class="bxC"/><text x="40" y="70" class="tt">PB1 Assess</text><text x="40" y="88" class="ts">you are here</text>
@@ -3022,7 +3030,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="b1&#x27;s dependency chain (top) and where pb2&#x27;s phases land on it (bottom). pb2 ends at the f0→f2 gate; agents.md and scoped writes are pb3&#x27;s territory, opened only if the gate says go." data-section="1 · how to run it" data-why="places pb2&#x27;s phases onto b1&#x27;s dependency chain so the team sees where the f0→f2 gate sits and what it unlocks.">
-  <div class="gallery-preview g-card-67"><svg viewBox="0 0 900 250" role="img" aria-label="B1's five-step dependency chain mapped onto PB2's phases A to D">
+  <div class="gallery-preview g-card-67" tabindex="0"><svg viewBox="0 0 900 250" role="img" aria-label="B1's five-step dependency chain mapped onto PB2's phases A to D">
   <defs><marker id="g-67-ahPB2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
   <text x="30" y="28" class="tg">B1 SAFE ORDERING — EACH STEP IS A PRECONDITION OF THE NEXT</text>
   <rect x="24" y="44" width="150" height="52" rx="10" class="bxC"/><text x="38" y="66" class="ti">Read-only</text><text x="38" y="82" class="ts">comprehension (F0)</text>
@@ -3054,7 +3062,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the harness pb3 installs, as a write experiences it: advisory context steers the call (dashed — read, not enforced); permission rules and the pretooluse hook gate it at session time; the ci gate, secret scan and platform rules bind it — and every other writer — at merge time. phase d probes every layer deliberately before autonomy is granted." data-section="1 · how to run it" data-why="shows the harness from a write&#x27;s perspective so advisory context, session gates, and merge-time controls are probed before autonomy is granted.">
-  <div class="gallery-preview g-card-68"><svg viewBox="0 0 900 275" role="img" aria-label="The harness PB3 installs: advisory context steers the agent; permission rules and the PreToolUse hook gate every tool call at session time; the CI gate, secret scan and platform rules bind every writer at merge time">
+  <div class="gallery-preview g-card-68" tabindex="0"><svg viewBox="0 0 900 275" role="img" aria-label="The harness PB3 installs: advisory context steers the agent; permission rules and the PreToolUse hook gate every tool call at session time; the CI gate, secret scan and platform rules bind every writer at merge time">
   <defs><marker id="g-68-ahPB3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
   <text x="24" y="28" class="tg">SESSION TIME — EVERY TOOL CALL (PHASES A + B)</text>
   <rect x="24" y="44" width="122" height="52" rx="10" class="bxA"/><text x="36" y="66" class="ti">CLAUDE.md</text><text x="36" y="82" class="ts">advisory — steers</text>
@@ -3089,7 +3097,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the two halves pb4 installs: the forward chain that delegates through a contract and proves delivery with green acceptance tests, and the return loop that turns mid-task ambiguity and drift into artifact changes instead of silent guesses." data-section="1 · how to run it" data-why="depicts the handoff runbook as both forward delivery and feedback loops so ambiguity and drift become artifact changes instead of silent guesses.">
-  <div class="gallery-preview g-card-69"><svg viewBox="0 0 900 290" role="img" aria-label="The two halves PB4 installs: a forward chain that delegates through a contract and proves delivery with green acceptance tests, and a return loop that turns ambiguity and drift into artifact changes">
+  <div class="gallery-preview g-card-69" tabindex="0"><svg viewBox="0 0 900 290" role="img" aria-label="The two halves PB4 installs: a forward chain that delegates through a contract and proves delivery with green acceptance tests, and a return loop that turns ambiguity and drift into artifact changes">
   <defs><marker id="g-69-ahPB4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
   <text x="24" y="28" class="tg">FORWARD — THE CONTRACT DELEGATES (PHASES A + B + D)</text>
   <rect x="24" y="44" width="138" height="52" rx="10" class="bxA"/><text x="36" y="66" class="ti">Contract</text><text x="36" y="82" class="ts">REQ-NNN · T2</text>
@@ -3123,7 +3131,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the pilot pb5 runs: a frozen baseline and a pre-registered bar in front, a protected two-arm window in the middle, and a three-exit gate at the end — with back-triggers acting automatically while the window runs." data-section="1 · how to run it" data-why="outlines the pilot structure so a protected two-arm window runs against a frozen baseline and a pre-registered bar, ending in one of three exits.">
-  <div class="gallery-preview g-card-70"><svg viewBox="0 0 900 300" role="img" aria-label="The pilot PB5 runs: a frozen baseline and a pre-registered bar feed a protected two-arm window, read with identical queries into a three-exit gate, while back-triggers act automatically during the window">
+  <div class="gallery-preview g-card-70" tabindex="0"><svg viewBox="0 0 900 300" role="img" aria-label="The pilot PB5 runs: a frozen baseline and a pre-registered bar feed a protected two-arm window, read with identical queries into a three-exit gate, while back-triggers act automatically during the window">
   <defs><marker id="g-70-ahPB5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
   <text x="24" y="28" class="tg">THE PILOT — B6'S F2 PHASE RUN AS AN EXPERIMENT (PHASES A + B + C)</text>
   <rect x="24" y="44" width="124" height="52" rx="10" class="bxG"/><text x="36" y="66" class="ti">PB1 baseline</text><text x="36" y="82" class="ts">frozen · §3 + cost</text>
@@ -3155,7 +3163,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="why injection works. trusted instructions (system prompt, user task) and untrusted content (tickets, web pages, tool output, tool descriptions) are glued into a single token stream; the model — which only ever predicts the next token — cannot mark a boundary between them, and whatever it decides next drives privileged tools: shell, file write, network, credentials. there is no perimeter inside the stream." data-section="1 · the root cause: one token stream, no trust separation" data-why="explains why injection is possible: trusted and untrusted content share one token stream with no internal perimeter before privileged tools.">
-  <div class="gallery-preview g-card-71"><svg viewBox="0 0 860 352" role="img" aria-label="Trusted instructions and untrusted content merge into one token stream that feeds the model and its privileged tools">
+  <div class="gallery-preview g-card-71" tabindex="0"><svg viewBox="0 0 860 352" role="img" aria-label="Trusted instructions and untrusted content merge into one token stream that feeds the model and its privileged tools">
         <defs><marker id="g-71-ahS1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="20" y="36" width="230" height="56" rx="10" class="bxC"/><text x="34" y="60" class="ti">System prompt</text><text x="34" y="78" class="ts">trusted · operator intent</text>
         <rect x="20" y="108" width="230" height="56" rx="10" class="bxC"/><text x="34" y="132" class="ti">User task</text><text x="34" y="150" class="ts">trusted · this session's goal</text>
@@ -3183,7 +3191,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the blast-radius funnel. prevention is a wall: one breach and the attacker holds everything the agent holds. the funnel assumes the breach — each deterministic layer (least privilege, os sandbox, egress allowlist, human gate, audit &amp; rotate) shrinks what an injected instruction can still reach, until the residual damage is small, logged and reversible. the same layers bound non-adversarial error (kiro, §0)." data-section="3 · the posture: assume breach, reduce the blast radius" data-why="replaces a single prevention wall with layered blast-radius controls so a breach causes small, logged, reversible damage.">
-  <div class="gallery-preview g-card-72"><svg viewBox="0 0 860 510" role="img" aria-label="Blast-radius funnel: each deterministic layer shrinks the damage an injected instruction can reach"><defs><marker id="g-72-ahS1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-72" tabindex="0"><svg viewBox="0 0 860 510" role="img" aria-label="Blast-radius funnel: each deterministic layer shrinks the damage an injected instruction can reach"><defs><marker id="g-72-ahS1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="330" y="12" width="200" height="46" rx="10" class="bx" style="stroke:#B3362B;stroke-width:1.6"/>
         <text x="430" y="31" class="ti" text-anchor="middle">injected instruction</text><text x="430" y="47" class="ts" text-anchor="middle">attacker-controlled tokens</text>
         <line x1="430" y1="58" x2="430" y2="78" class="edS1"/>
@@ -3214,7 +3222,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the universal stages. notice they map onto the components we&#x27;ve studied — this is the same &quot;where it sits in the sdlc&quot; line from each e-topic, gathered in one place. a process model is just a route through this spine: once (waterfall), in widening loops (iterative/spiral), in tight repeated loops (agile), or continuously (devops)." data-section="1 · the universal stages — the spine" data-why="collects the universal sdlc stages in one spine so every process model can be understood as a different route through the same components.">
-  <div class="gallery-preview g-card-73"><svg viewBox="0 0 860 150" role="img" aria-label="The universal SDLC stages">
+  <div class="gallery-preview g-card-73" tabindex="0"><svg viewBox="0 0 860 150" role="img" aria-label="The universal SDLC stages">
         <defs><marker id="g-73-ahSa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="12" y="52" width="122" height="46" rx="9" class="bxA"/><text x="24" y="76" class="ti">Requirements</text><text x="24" y="91" class="ts">what &amp; why</text>
         <rect x="156" y="52" width="112" height="46" rx="9" class="bxC"/><text x="168" y="76" class="ti">Design</text><text x="168" y="91" class="ts">how</text>
@@ -3234,7 +3242,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the lethal trifecta as a venn of session properties. access to private data, exposure to untrusted content, and the ability to communicate externally are each legitimate capabilities — the danger is purely combinatorial. where all three overlap, an attacker who can write text the agent reads can make it read your data and send it out. note the properties describe a session, not a product: the same tool is safe in one configuration and exploitable in another." data-section="1 · the three legs: willison&#x27;s lethal trifecta" data-why="shows the exploit condition as pure overlap: three legitimate session properties become a breach path only where all three meet.">
-  <div class="gallery-preview g-card-74"><svg viewBox="0 0 860 430" role="img" aria-label="Venn diagram of the lethal trifecta: private data, untrusted content and external communication overlap in an exploitable center">
+  <div class="gallery-preview g-card-74" tabindex="0"><svg viewBox="0 0 860 430" role="img" aria-label="Venn diagram of the lethal trifecta: private data, untrusted content and external communication overlap in an exploitable center">
         <circle cx="340" cy="185" r="125" fill="#4A63C8" fill-opacity="0.14" stroke="#4A63C8" stroke-width="1.6"/>
         <circle cx="520" cy="185" r="125" fill="#C98A2B" fill-opacity="0.16" stroke="#C98A2B" stroke-width="1.6"/>
         <circle cx="430" cy="300" r="125" fill="#B3362B" fill-opacity="0.13" stroke="#B3362B" stroke-width="1.6"/>
@@ -3265,7 +3273,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the rule of two as a configuration menu. each permitted pair maps to a recognizable, useful agent shape — meta&#x27;s own examples — so compliance is a design choice, not a capability freeze. the all-three session is not forbidden; it is demoted from &quot;autonomous&quot; to &quot;supervised&quot;, which moves the burden to the quality of the gate (§7 — the weakest option on the menu)." data-section="2 · from observation to rule: meta&#x27;s agents rule of two" data-why="turns the trifecta into a configuration menu: each permitted two-leg pair maps to a recognizable agent shape, while all-three sessions drop from autonomous to supervised.">
-  <div class="gallery-preview g-card-75"><svg viewBox="0 0 860 372" role="img" aria-label="The Rule of Two: three permitted two-leg combinations with Meta's example agents, and the all-three case requiring supervision">
+  <div class="gallery-preview g-card-75" tabindex="0"><svg viewBox="0 0 860 372" role="img" aria-label="The Rule of Two: three permitted two-leg combinations with Meta's example agents, and the all-three case requiring supervision">
         <defs><marker id="g-75-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="24" y="40" width="254" height="180" rx="12" class="bxK"/>
         <text x="40" y="66" class="tg">PERMITTED</text><text x="40" y="90" class="ti">[B]+[C] — drop untrusted input</text>
@@ -3293,7 +3301,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="the control map per leg. [a] is severed architecturally (quarantine, constrained patterns); [b] by shrinking reach (scoped tokens, sandbox, capabilities); [c] at the infrastructure layer — egress control, read-only modes, method restriction — which is why it is the highest-leverage cut: it is enforceable deterministically, outside the model, without redesigning the agent. all three are e5 mechanisms; none is advisory text." data-section="5 · severing a leg: the control map, with 2026&#x27;s honesty" data-why="maps each trifecta leg to the control family that severs it, marking leg c (egress) as the highest-leverage cut because it is enforceable deterministically, outside the model.">
-  <div class="gallery-preview g-card-76"><svg viewBox="0 0 860 420" role="img" aria-label="Control map: which control family severs which trifecta leg, with egress control highlighted as highest leverage"><defs><marker id="g-76-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-76" tabindex="0"><svg viewBox="0 0 860 420" role="img" aria-label="Control map: which control family severs which trifecta leg, with egress control highlighted as highest leverage"><defs><marker id="g-76-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="24" y="30" width="254" height="52" rx="10" class="bxA"/><text x="40" y="52" class="ti">[A] untrusted input</text><text x="40" y="70" class="ts">quarantine / restructure</text>
         <rect x="303" y="30" width="254" height="52" rx="10" class="bxC"/><text x="319" y="52" class="ti">[B] sensitive access</text><text x="319" y="70" class="ts">shrink what is reachable</text>
         <rect x="582" y="30" width="254" height="52" rx="10" class="bx" style="stroke:#B3362B;stroke-width:1.8"/><text x="598" y="52" class="ti">[C] state change / egress</text><text x="598" y="70" class="ts">highest leverage — sever first</text>
@@ -3325,7 +3333,7 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   </div>
 </article>
 <article class="gallery-card" data-title="why node-level compliance is not cluster-level compliance. three agents, each satisfying the rule of two, share memory and hand each other summaries; an injected instruction crosses the handoffs as data and the cluster as a whole holds [a]+[b]+[c]. score the orchestration graph as one trust boundary — and design handoff formats to carry data, not instructions (the same &quot;tainted until proven otherwise&quot; posture as e2)." data-section="6 · multi-agent systems: digital gossiping reassembles the trifecta" data-why="shows why per-agent compliance fails: three individually compliant agents sharing memory and handoffs reassemble the full trifecta inside one cluster trust boundary.">
-  <div class="gallery-preview g-card-77"><svg viewBox="0 0 860 330" role="img" aria-label="Digital gossiping: three agents each holding two legs share context, so the cluster reassembles the full trifecta inside one trust boundary"><defs><marker id="g-77-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+  <div class="gallery-preview g-card-77" tabindex="0"><svg viewBox="0 0 860 330" role="img" aria-label="Digital gossiping: three agents each holding two legs share context, so the cluster reassembles the full trifecta inside one trust boundary"><defs><marker id="g-77-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
         <rect x="60" y="46" width="740" height="238" rx="16" fill="none" stroke="#B3362B" stroke-width="1.6" stroke-dasharray="6 5"/>
         <text x="84" y="38" class="tg" style="fill:#B3362B">ONE TRUST BOUNDARY — THE CLUSTER, NOT THE NODE</text>
         <rect x="110" y="80" width="190" height="84" rx="10" class="bxK"/><text x="126" y="104" class="ti">web agent</text><text x="126" y="124" class="ts">[A]+[C] compliant</text><text x="126" y="142" class="ts">reads hostile pages, can post</text>
@@ -3354,6 +3362,13 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
   Gallery is generated from <code>gallery-registry.json</code>; update the registry when adding diagrams.
 </footer>
 
+<div class="gallery-modal" role="dialog" aria-modal="true" aria-label="Enlarged diagram" hidden>
+  <div class="gallery-modal-box">
+    <button class="gallery-modal-close" type="button" aria-label="Close">&times;</button>
+    <div class="gallery-modal-body"></div>
+  </div>
+</div>
+
 <script>
 (function(){
   var input = document.querySelector('.gallery-filter');
@@ -3370,6 +3385,66 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
       if (match) visible++;
     });
     empty.classList.toggle('show', visible === 0);
+  });
+})();
+
+// Diagram lightbox: click (or Enter/Space on) a preview opens a modal with a
+// full-size clone of that card's SVG. Cloned ids stay unique enough to render:
+// every card's ids are prefixed (g-<n>-...) and the clone's defs are identical
+// to the original's, so url(#...) resolution is correct either way.
+(function(){
+  var modal = document.querySelector('.gallery-modal');
+  var grid = document.querySelector('.gallery-grid');
+  if (!modal || !grid) return;
+  var body = modal.querySelector('.gallery-modal-body');
+  var box = modal.querySelector('.gallery-modal-box');
+  var closeBtn = modal.querySelector('.gallery-modal-close');
+  var lastTrigger = null;
+
+  function open(preview){
+    var svg = preview.querySelector('svg');
+    if (!svg) return;
+    // The card's SVG CSS is scoped to its g-card-N class; carry that class
+    // onto the modal box so the clone renders with the original styling.
+    var cardClass = (preview.className.match(/g-card-\d+/) || [''])[0];
+    box.className = 'gallery-modal-box' + (cardClass ? ' ' + cardClass : '');
+    body.innerHTML = '';
+    body.appendChild(svg.cloneNode(true));
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    lastTrigger = preview;
+    closeBtn.focus();
+  }
+
+  function close(){
+    if (modal.hidden) return;
+    modal.hidden = true;
+    body.innerHTML = '';
+    document.body.style.overflow = '';
+    if (lastTrigger) {
+      lastTrigger.focus();
+      lastTrigger = null;
+    }
+  }
+
+  grid.addEventListener('click', function(e){
+    var preview = e.target.closest('.gallery-preview');
+    if (preview) open(preview);
+  });
+  grid.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var preview = e.target.closest('.gallery-preview');
+    if (preview) {
+      e.preventDefault();
+      open(preview);
+    }
+  });
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', function(e){
+    if (e.target === modal) close();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') close();
   });
 })();
 </script>
