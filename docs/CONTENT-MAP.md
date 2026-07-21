@@ -1,7 +1,7 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.59):
-9 modules, 60 topics, 6 research reports, 2 inline map sections, 47 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.61):
+9 modules, 60 topics, 6 research reports, 2 inline map sections, 48 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -86,7 +86,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | Topic | id | Deep dive |
 |---|---|---|
 | S1 Security is cross-cutting: prompt injection & blast-radius reduction | `sec-crosscut` | ✅ (v1.59) |
-| S2 The lethal trifecta & the Rule of Two | `sec-trifecta` |
+| S2 The lethal trifecta & the Rule of Two | `sec-trifecta` | ✅ (v1.61) |
 | S3 Advisory vs deterministic controls; the rules-file backdoor | `sec-advisory` |
 | S4 MCP / tools: the richest attack surface | `sec-mcp` |
 | S5 Loop / auto-run: self-modification, YOLO & sandbox escapes | `sec-loop` |
@@ -124,7 +124,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (47)
+## Deep-dive companions (48)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
@@ -142,17 +142,17 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `D2-design-tokens-dtcg` · `D3-how-agents-consume-design-context` ·
 `D4-governance-ssot-design-world` · `D5-design-harness-verification-guardrails` ·
 `D6-design-scale-curator` · `D7-design-archaeology-f0-f4-rollout` ·
-`S1-security-crosscutting` · `PB1-assess-runbook` ·
+`S1-security-crosscutting` · `S2-lethal-trifecta-rule-of-two` · `PB1-assess-runbook` ·
 `PB2-bootstrap-runbook` · `PB3-harness-runbook` · `PB4-handoff-runbook` ·
 `PB5-pilot-runbook`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
-`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive` … `#d7-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#s1-deepdive`, `#pb1-deepdive` … `#pb5-deepdive` (each appears
+`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive` … `#d7-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#s1-deepdive`, `#s2-deepdive`, `#pb1-deepdive` … `#pb5-deepdive` (each appears
 exactly twice: the "Go deeper" link + the JS open handler).
 
 ## Gallery
 
-- `gallery.html` — browsable grid of all 74 diagrams from the deep-dive companions,
+- `gallery.html` — browsable grid of all 78 diagrams from the deep-dive companions,
   with section context, "why" summaries, and links back to each deep dive.
 - `gallery-registry.json` — curated metadata; validated by `scripts/validate.py`.
 - `scripts/generate-gallery.py` — generates `gallery.html` from the registry.

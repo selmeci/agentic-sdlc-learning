@@ -130,6 +130,10 @@ a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
 .g-card-71 svg .edS1 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-71-ahS1a) }
 .g-card-72 svg .edS1 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-72-ahS1a) }
 .g-card-73 svg .edS { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-73-ahSa) }
+.g-card-75 svg .edS2 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-75-ahS2a) }
+.g-card-76 svg .edS2 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-76-ahS2a) }
+.g-card-77 svg .edD { stroke-dasharray:5 4 }
+.g-card-77 svg .edS2 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-77-ahS2a) }
 footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
 @media (max-width:860px){.hdr .bc{display:none}}
 </style>
@@ -2727,6 +2731,117 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
     <div class="gallery-section">1 · The universal stages — the spine</div>
     <p class="gallery-why">Collects the universal SDLC stages in one spine so every process model can be understood as a different route through the same components.</p>
     <a class="gallery-link" href="deep-dives/SDLC-foundations-deepdive.html#s1">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the lethal trifecta as a venn of session properties. access to private data, exposure to untrusted content, and the ability to communicate externally are each legitimate capabilities — the danger is purely combinatorial. where all three overlap, an attacker who can write text the agent reads can make it read your data and send it out. note the properties describe a session, not a product: the same tool is safe in one configuration and exploitable in another." data-section="1 · the three legs: willison&#x27;s lethal trifecta" data-why="shows the exploit condition as pure overlap: three legitimate session properties become a breach path only where all three meet.">
+  <div class="gallery-preview g-card-74"><svg viewBox="0 0 860 430" role="img" aria-label="Venn diagram of the lethal trifecta: private data, untrusted content and external communication overlap in an exploitable center">
+        <circle cx="340" cy="185" r="125" fill="#4A63C8" fill-opacity="0.14" stroke="#4A63C8" stroke-width="1.6"/>
+        <circle cx="520" cy="185" r="125" fill="#C98A2B" fill-opacity="0.16" stroke="#C98A2B" stroke-width="1.6"/>
+        <circle cx="430" cy="300" r="125" fill="#B3362B" fill-opacity="0.13" stroke="#B3362B" stroke-width="1.6"/>
+        <text x="268" y="120" class="ti">private data</text>
+        <text x="268" y="138" class="ts">secrets · repos · email</text>
+        <text x="508" y="120" class="ti">untrusted content</text>
+        <text x="508" y="138" class="ts">tickets · web · tool output</text>
+        <text x="352" y="415" class="ti">external communication</text>
+        <text x="372" y="431" class="ts">exfiltration channel</text>
+        <text x="430" y="238" class="tt" text-anchor="middle" style="fill:#B3362B">exploitable</text>
+        <text x="430" y="256" class="ts" text-anchor="middle">trick it into reading B</text>
+        <text x="430" y="270" class="ts" text-anchor="middle">and sending it out</text>
+        <text x="430" y="44" class="ts" text-anchor="middle">any two = lower risk · all three = the exploit path (Willison, 16 Jun 2025)</text>
+        <rect x="686" y="150" width="150" height="150" rx="10" class="bxG"/>
+        <text x="698" y="172" class="tg">READING THE VENN</text>
+        <text x="698" y="196" class="ts">the labels are</text>
+        <text x="698" y="211" class="ts">session properties,</text>
+        <text x="698" y="226" class="ts">not components —</text>
+        <text x="698" y="246" class="ts">one workflow can</text>
+        <text x="698" y="261" class="ts">enter and leave the</text>
+        <text x="698" y="276" class="ts">center mid-task</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The lethal trifecta as a Venn of session properties. Access to private data, exposure to untrusted content, and the ability to communicate externally are each legitimate capabilities — the danger is purely combinatorial. Where all three overlap, an attacker who can write text the agent reads can make it read your data and send it out. Note the properties describe a session, not a product: the same tool is safe in one configuration and exploitable in another.</div>
+    <div class="gallery-section">1 · The three legs: Willison&#x27;s lethal trifecta</div>
+    <p class="gallery-why">Shows the exploit condition as pure overlap: three legitimate session properties become a breach path only where all three meet.</p>
+    <a class="gallery-link" href="deep-dives/S2-lethal-trifecta-rule-of-two-deepdive.html#s1">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the rule of two as a configuration menu. each permitted pair maps to a recognizable, useful agent shape — meta&#x27;s own examples — so compliance is a design choice, not a capability freeze. the all-three session is not forbidden; it is demoted from &quot;autonomous&quot; to &quot;supervised&quot;, which moves the burden to the quality of the gate (§7 — the weakest option on the menu)." data-section="2 · from observation to rule: meta&#x27;s agents rule of two" data-why="turns the trifecta into a configuration menu: each permitted two-leg pair maps to a recognizable agent shape, while all-three sessions drop from autonomous to supervised.">
+  <div class="gallery-preview g-card-75"><svg viewBox="0 0 860 372" role="img" aria-label="The Rule of Two: three permitted two-leg combinations with Meta's example agents, and the all-three case requiring supervision">
+        <defs><marker id="g-75-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="24" y="40" width="254" height="180" rx="12" class="bxK"/>
+        <text x="40" y="66" class="tg">PERMITTED</text><text x="40" y="90" class="ti">[B]+[C] — drop untrusted input</text>
+        <text x="40" y="114" class="ts">sensitive access + state change,</text><text x="40" y="129" class="ts">but every input has verified</text><text x="40" y="144" class="ts">"author-lineage"</text>
+        <text x="40" y="172" class="ts">Meta's example:</text><text x="40" y="188" class="ti">High-Velocity Internal Coder</text><text x="40" y="204" class="ts">production writes, trusted sources only</text>
+        <rect x="303" y="40" width="254" height="180" rx="12" class="bxK"/>
+        <text x="319" y="66" class="tg">PERMITTED</text><text x="319" y="90" class="ti">[A]+[C] — drop sensitive access</text>
+        <text x="319" y="114" class="ts">reads the hostile web, can act,</text><text x="319" y="129" class="ts">but holds nothing worth stealing:</text><text x="319" y="144" class="ts">sandbox, no session data</text>
+        <text x="319" y="172" class="ts">Meta's example:</text><text x="319" y="188" class="ti">Web Browsing Research Assistant</text><text x="319" y="204" class="ts">throwaway environment, no tokens</text>
+        <rect x="582" y="40" width="254" height="180" rx="12" class="bxK"/>
+        <text x="598" y="66" class="tg">PERMITTED</text><text x="598" y="90" class="ti">[A]+[B] — drop state change</text>
+        <text x="598" y="114" class="ts">reads untrusted content against</text><text x="598" y="129" class="ts">private data, but output goes only</text><text x="598" y="144" class="ts">to trusted recipients / a human</text>
+        <text x="598" y="172" class="ts">Meta's example:</text><text x="598" y="188" class="ti">Travel Agent Assistant</text><text x="598" y="204" class="ts">human confirms every action</text>
+        <line x1="430" y1="220" x2="430" y2="252" class="edS2"/>
+        <rect x="190" y="252" width="480" height="88" rx="12" class="bx" style="stroke:#B3362B;stroke-width:1.6"/>
+        <text x="430" y="278" class="ti" text-anchor="middle">[A]+[B]+[C] needed? no autonomous operation</text>
+        <text x="430" y="298" class="ts" text-anchor="middle">fresh session with two legs, or minimum human-in-the-loop</text>
+        <text x="430" y="316" class="ts" text-anchor="middle">supervision "or another reliable means of validation" (§7)</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The Rule of Two as a configuration menu. Each permitted pair maps to a recognizable, useful agent shape — Meta&#x27;s own examples — so compliance is a design choice, not a capability freeze. The all-three session is not forbidden; it is demoted from &quot;autonomous&quot; to &quot;supervised&quot;, which moves the burden to the quality of the gate (§7 — the weakest option on the menu).</div>
+    <div class="gallery-section">2 · From observation to rule: Meta&#x27;s Agents Rule of Two</div>
+    <p class="gallery-why">Turns the trifecta into a configuration menu: each permitted two-leg pair maps to a recognizable agent shape, while all-three sessions drop from autonomous to supervised.</p>
+    <a class="gallery-link" href="deep-dives/S2-lethal-trifecta-rule-of-two-deepdive.html#s2">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the control map per leg. [a] is severed architecturally (quarantine, constrained patterns); [b] by shrinking reach (scoped tokens, sandbox, capabilities); [c] at the infrastructure layer — egress control, read-only modes, method restriction — which is why it is the highest-leverage cut: it is enforceable deterministically, outside the model, without redesigning the agent. all three are e5 mechanisms; none is advisory text." data-section="5 · severing a leg: the control map, with 2026&#x27;s honesty" data-why="maps each trifecta leg to the control family that severs it, marking leg c (egress) as the highest-leverage cut because it is enforceable deterministically, outside the model.">
+  <div class="gallery-preview g-card-76"><svg viewBox="0 0 860 420" role="img" aria-label="Control map: which control family severs which trifecta leg, with egress control highlighted as highest leverage"><defs><marker id="g-76-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="24" y="30" width="254" height="52" rx="10" class="bxA"/><text x="40" y="52" class="ti">[A] untrusted input</text><text x="40" y="70" class="ts">quarantine / restructure</text>
+        <rect x="303" y="30" width="254" height="52" rx="10" class="bxC"/><text x="319" y="52" class="ti">[B] sensitive access</text><text x="319" y="70" class="ts">shrink what is reachable</text>
+        <rect x="582" y="30" width="254" height="52" rx="10" class="bx" style="stroke:#B3362B;stroke-width:1.8"/><text x="598" y="52" class="ti">[C] state change / egress</text><text x="598" y="70" class="ts">highest leverage — sever first</text>
+        <rect x="24" y="100" width="254" height="196" rx="10" class="bx"/>
+        <text x="40" y="124" class="ts">Dual-LLM quarantine (2023):</text><text x="40" y="139" class="ts">privileged LLM never sees</text><text x="40" y="154" class="ts">untrusted text ($VAR1)</text>
+        <text x="40" y="182" class="ts">design patterns (arXiv 2506.08837):</text><text x="40" y="197" class="ts">action-selector, plan-then-</text><text x="40" y="212" class="ts">execute, map-reduce isolation</text>
+        <text x="40" y="240" class="ts">summarize/wrap fetched content</text><text x="40" y="255" class="ts">(E2); strip hidden layers (S7)</text>
+        <text x="40" y="283" class="ts">cost: utility, complexity</text>
+        <rect x="303" y="100" width="254" height="196" rx="10" class="bx"/>
+        <text x="319" y="124" class="ts">least-privilege scoped tokens</text><text x="319" y="139" class="ts">(never service_role — §4)</text>
+        <text x="319" y="167" class="ts">filesystem sandbox boundary</text><text x="319" y="182" class="ts">(Seatbelt / bubblewrap)</text>
+        <text x="319" y="210" class="ts">CaMeL capabilities (2503.18813):</text><text x="319" y="225" class="ts">policy-checked data flows,</text><text x="319" y="240" class="ts">77% vs 84% utility on AgentDojo</text>
+        <text x="319" y="268" class="ts">cost: access friction;</text><text x="319" y="283" class="ts">residual: argument manipulation</text>
+        <rect x="582" y="100" width="254" height="196" rx="10" class="bx" style="stroke:#B3362B"/>
+        <text x="598" y="124" class="ts">network egress allowlist — the</text><text x="598" y="139" class="ts">"easiest leg to remove" (Willison)</text>
+        <text x="598" y="167" class="ts">read-only / dry-run tool modes;</text><text x="598" y="182" class="ts">HTTP-method restriction</text><text x="598" y="197" class="ts">(GET/HEAD only — POST is the</text><text x="598" y="212" class="ts">exfil verb: Codex Cloud)</text>
+        <text x="598" y="240" class="ts">human gate on consequential</text><text x="598" y="255" class="ts">actions (weakest — §7)</text>
+        <text x="598" y="283" class="ts">cost: vendor features are young</text><text x="598" y="298" class="ts">and have shipped holes (below)</text>
+        <line x1="151" y1="296" x2="151" y2="330" class="edS2"/><line x1="430" y1="296" x2="430" y2="330" class="edS2"/><line x1="709" y1="296" x2="709" y2="330" class="edS2"/>
+        <rect x="120" y="330" width="620" height="66" rx="10" class="bxK"/>
+        <text x="430" y="354" class="ti" text-anchor="middle">any one leg fully severed = Rule of Two satisfied</text>
+        <text x="430" y="374" class="ts" text-anchor="middle">in practice: sever C at the infrastructure layer, shrink B with least privilege, contain A where the harness supports it</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The control map per leg. [A] is severed architecturally (quarantine, constrained patterns); [B] by shrinking reach (scoped tokens, sandbox, capabilities); [C] at the infrastructure layer — egress control, read-only modes, method restriction — which is why it is the highest-leverage cut: it is enforceable deterministically, outside the model, without redesigning the agent. All three are E5 mechanisms; none is advisory text.</div>
+    <div class="gallery-section">5 · Severing a leg: the control map, with 2026&#x27;s honesty</div>
+    <p class="gallery-why">Maps each trifecta leg to the control family that severs it, marking leg C (egress) as the highest-leverage cut because it is enforceable deterministically, outside the model.</p>
+    <a class="gallery-link" href="deep-dives/S2-lethal-trifecta-rule-of-two-deepdive.html#s5">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="why node-level compliance is not cluster-level compliance. three agents, each satisfying the rule of two, share memory and hand each other summaries; an injected instruction crosses the handoffs as data and the cluster as a whole holds [a]+[b]+[c]. score the orchestration graph as one trust boundary — and design handoff formats to carry data, not instructions (the same &quot;tainted until proven otherwise&quot; posture as e2)." data-section="6 · multi-agent systems: digital gossiping reassembles the trifecta" data-why="shows why per-agent compliance fails: three individually compliant agents sharing memory and handoffs reassemble the full trifecta inside one cluster trust boundary.">
+  <div class="gallery-preview g-card-77"><svg viewBox="0 0 860 330" role="img" aria-label="Digital gossiping: three agents each holding two legs share context, so the cluster reassembles the full trifecta inside one trust boundary"><defs><marker id="g-77-ahS2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <rect x="60" y="46" width="740" height="238" rx="16" fill="none" stroke="#B3362B" stroke-width="1.6" stroke-dasharray="6 5"/>
+        <text x="84" y="38" class="tg" style="fill:#B3362B">ONE TRUST BOUNDARY — THE CLUSTER, NOT THE NODE</text>
+        <rect x="110" y="80" width="190" height="84" rx="10" class="bxK"/><text x="126" y="104" class="ti">web agent</text><text x="126" y="124" class="ts">[A]+[C] compliant</text><text x="126" y="142" class="ts">reads hostile pages, can post</text>
+        <rect x="335" y="80" width="190" height="84" rx="10" class="bxK"/><text x="351" y="104" class="ti">data agent</text><text x="351" y="124" class="ts">[B] holds the secrets</text><text x="351" y="142" class="ts">repos · tokens · db</text>
+        <rect x="560" y="80" width="190" height="84" rx="10" class="bxK"/><text x="576" y="104" class="ti">comms agent</text><text x="576" y="124" class="ts">[C] external reach</text><text x="576" y="142" class="ts">PRs · comments · email</text>
+        <line x1="300" y1="110" x2="335" y2="110" class="edS2 edD"/><line x1="525" y1="110" x2="560" y2="110" class="edS2 edD"/>
+        <line x1="410" y1="164" x2="240" y2="226" class="edS2 edD"/><line x1="460" y1="164" x2="630" y2="226" class="edS2 edD"/>
+        <rect x="220" y="206" width="420" height="52" rx="10" class="bxA"/>
+        <text x="430" y="228" class="ti" text-anchor="middle">shared memory · inter-agent messages · handoff summaries</text>
+        <text x="430" y="246" class="ts" text-anchor="middle">the payload travels as ordinary "digital gossip" — untrusted at every hop</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">Why node-level compliance is not cluster-level compliance. Three agents, each satisfying the Rule of Two, share memory and hand each other summaries; an injected instruction crosses the handoffs as data and the cluster as a whole holds [A]+[B]+[C]. Score the orchestration graph as one trust boundary — and design handoff formats to carry data, not instructions (the same &quot;tainted until proven otherwise&quot; posture as E2).</div>
+    <div class="gallery-section">6 · Multi-agent systems: digital gossiping reassembles the trifecta</div>
+    <p class="gallery-why">Shows why per-agent compliance fails: three individually compliant agents sharing memory and handoffs reassemble the full trifecta inside one cluster trust boundary.</p>
+    <a class="gallery-link" href="deep-dives/S2-lethal-trifecta-rule-of-two-deepdive.html#s6">Open in deep dive →</a>
   </div>
 </article>
 

@@ -3,6 +3,10 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.61 · 2026-07-21
+
+Added the S2 deep-dive companion (The Lethal Trifecta & the Rule of Two) — second M7 companion. Willison's three legs verbatim (16 Jun 2025) with the [A]/[B]/[C] lettering correctly attributed to Meta, Meta's Agents Rule of Two (31 Oct 2025) with the widened [C] leg, session-scoped transitions and the "safe" → "lower risk" correction Willison prompted, four trifecta incidents as one A→B→C shape (GitHub MCP, EchoLeak CVE-2025-32711, Supabase MCP, GitLost), the per-leg control map with 2026's egress honesty (CVE-2025-66479, the null-byte parser differential, "allowlist = capability grant, not destination filter"), Oso's digital gossiping applied to the orchestration graph, persistent memory as carried-forward leg A, and the human gate's documented failure modes (93% approval fatigue, Lies-in-the-Loop, Unicode TAG concealment, 0/8 rug-pull re-approval). Four SVGs (trifecta Venn, Rule-of-Two menu, per-leg control map, gossiping cluster). Topic fact fixes: the Meta src entry is now dated and linked (31 Oct 2025), "digital gossiping" is attributed to Oso (Dec 2025), and the egress-allowlist overclaim is softened to defense-in-depth.
+
 ## v1.60 · 2026-07-21
 
 NEW DIAGRAM GALLERY — browsable grid of all 74 figures from the deep-dive companions. Added `gallery.html`, `gallery-registry.json`, and `scripts/generate-gallery.py`; registered every deep-dive figure; updated `CLAUDE.md` golden rule 3 with a site-level navigation exemption and added the gallery registration step to the typical next-task recipe; gitignored `gallery-registry-draft.json`.

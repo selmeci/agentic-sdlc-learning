@@ -591,6 +591,38 @@
       "section": "1 · The universal stages — the spine",
       "sectionAnchor": "s1",
       "why": "Collects the universal SDLC stages in one spine so every process model can be understood as a different route through the same components."
+    },
+    {
+      "deepDive": "S2-lethal-trifecta-rule-of-two-deepdive",
+      "figureIndex": 0,
+      "title": "The lethal trifecta as a Venn of session properties. Access to private data, exposure to untrusted content, and the ability to communicate externally are each legitimate capabilities — the danger is purely combinatorial. Where all three overlap, an attacker who can write text the agent reads can make it read your data and send it out. Note the properties describe a session, not a product: the same tool is safe in one configuration and exploitable in another.",
+      "section": "1 · The three legs: Willison's lethal trifecta",
+      "sectionAnchor": "s1",
+      "why": "Shows the exploit condition as pure overlap: three legitimate session properties become a breach path only where all three meet."
+    },
+    {
+      "deepDive": "S2-lethal-trifecta-rule-of-two-deepdive",
+      "figureIndex": 1,
+      "title": "The Rule of Two as a configuration menu. Each permitted pair maps to a recognizable, useful agent shape — Meta's own examples — so compliance is a design choice, not a capability freeze. The all-three session is not forbidden; it is demoted from \"autonomous\" to \"supervised\", which moves the burden to the quality of the gate (§7 — the weakest option on the menu).",
+      "section": "2 · From observation to rule: Meta's Agents Rule of Two",
+      "sectionAnchor": "s2",
+      "why": "Turns the trifecta into a configuration menu: each permitted two-leg pair maps to a recognizable agent shape, while all-three sessions drop from autonomous to supervised."
+    },
+    {
+      "deepDive": "S2-lethal-trifecta-rule-of-two-deepdive",
+      "figureIndex": 2,
+      "title": "The control map per leg. [A] is severed architecturally (quarantine, constrained patterns); [B] by shrinking reach (scoped tokens, sandbox, capabilities); [C] at the infrastructure layer — egress control, read-only modes, method restriction — which is why it is the highest-leverage cut: it is enforceable deterministically, outside the model, without redesigning the agent. All three are E5 mechanisms; none is advisory text.",
+      "section": "5 · Severing a leg: the control map, with 2026's honesty",
+      "sectionAnchor": "s5",
+      "why": "Maps each trifecta leg to the control family that severs it, marking leg C (egress) as the highest-leverage cut because it is enforceable deterministically, outside the model."
+    },
+    {
+      "deepDive": "S2-lethal-trifecta-rule-of-two-deepdive",
+      "figureIndex": 3,
+      "title": "Why node-level compliance is not cluster-level compliance. Three agents, each satisfying the Rule of Two, share memory and hand each other summaries; an injected instruction crosses the handoffs as data and the cluster as a whole holds [A]+[B]+[C]. Score the orchestration graph as one trust boundary — and design handoff formats to carry data, not instructions (the same \"tainted until proven otherwise\" posture as E2).",
+      "section": "6 · Multi-agent systems: digital gossiping reassembles the trifecta",
+      "sectionAnchor": "s6",
+      "why": "Shows why per-agent compliance fails: three individually compliant agents sharing memory and handoffs reassemble the full trifecta inside one cluster trust boundary."
     }
   ]
 }
