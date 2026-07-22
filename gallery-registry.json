@@ -679,6 +679,30 @@
       "section": "6 · The defense stack, MCP-specific: what actually binds",
       "sectionAnchor": "s6",
       "why": "Stacks the five defense layers against the three attack classes and visually quarantines advisory defenses in the dashed band, so the client checklist lands on deterministic controls only."
+    },
+    {
+      "deepDive": "S5-loop-autorun-selfmod-sandbox-deepdive",
+      "figureIndex": 0,
+      "title": "The self-escalation cycle. Every entry in the ledger is the same four steps: untrusted content injects an instruction; the agent — using the write tools that are its selling point — edits its own execution context; the next iteration runs with privileges it was never granted; and the cycle repeats with the new privilege as the baseline. Each CVE is pinned to the context it edits, and the amber write-gate (§5) is the control class that severs the cycle rather than slowing it.",
+      "section": "1 · Self-escalation: one class, a ledger of CVEs",
+      "sectionAnchor": "s1",
+      "why": "Shows the four-step self-escalation cycle — injected content, the agent editing its own execution context, the next iteration running escalated — with each ledger CVE pinned to the context it edits, so the team sees why write-gating the enforcement config is the only control that severs the loop rather than slowing it."
+    },
+    {
+      "deepDive": "S5-loop-autorun-selfmod-sandbox-deepdive",
+      "figureIndex": 1,
+      "title": "The gate spectrum. Moving right removes assurance in kind, not just degree: a human gate fails softly (fatigue, hollow dialogs, one-Enter trust), a model gate fails probabilistically (S3's litmus — classifiers are advisory, and the classifier reads the same injected content), and full YOLO leaves nothing between injection and execution but the sandbox. That is why the vendors' own documentation couples every bypass flag to isolation, and why §3's escape record is the price list for the right-hand column.",
+      "section": "2 · YOLO / auto-approve: removing the gate, then hollowing it",
+      "sectionAnchor": "s2",
+      "why": "Maps the three gate positions (human, classifier, none) against what actually stands between injection and execution at each, making the case that YOLO-class modes are acceptable only inside a hardened, network-isolated, credential-free sandbox — and that classifier-gated auto still fails S3's determinism litmus."
+    },
+    {
+      "deepDive": "S5-loop-autorun-selfmod-sandbox-deepdive",
+      "figureIndex": 2,
+      "title": "The containment stack as shipped in mid-2026, with the six documented escape classes pinned at the seams they cross. No layer is a hard boundary — Anthropic says so verbatim — but the record is specific rather than vibes: each class has named CVEs or researcher write-ups, and SandboxEscapeBench measures the practical meaning of \"configured correctly\": frontier agents escape default setups about half the time using only known techniques, while correctly configured sandboxes held at difficulty 4–5 against every technique the benchmark knows. The Cowork annotation marks the architectural contrast: a boundary with no outer process holding an escape-hatch key.",
+      "section": "3 · The sandbox: the containment answer and its escape record",
+      "sectionAnchor": "s3",
+      "why": "Stacks the containment layers as shipped in mid-2026 and pins the six documented escape classes at the seams they cross, so a client can name their sandbox's status against each class instead of trusting 'sandboxed' as a blanket claim."
     }
   ]
 }

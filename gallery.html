@@ -689,6 +689,33 @@ a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
 .g-card-84 svg .ti { font:400 11.5px var(--disp);fill:var(--ink) }
 .g-card-84 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
 .g-card-84 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-85 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-85 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-85 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-85 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-85 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-85 svg .edS5 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-85-ahS5a) }
+.g-card-85 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-85 svg .ti { font:400 11.5px var(--disp);fill:var(--ink) }
+.g-card-85 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-85 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-86 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-86 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-86 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-86 svg .edS5 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-86-ahS5a) }
+.g-card-86 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-86 svg .ti { font:400 11.5px var(--disp);fill:var(--ink) }
+.g-card-86 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-86 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-87 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-87 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-87 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-87 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-87 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-87 svg .edS5 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-87-ahS5a) }
+.g-card-87 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-87 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-87 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
 footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
 @media (max-width:860px){.hdr .bc{display:none}}
 </style>
@@ -3740,6 +3767,158 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
     <div class="gallery-section">6 · The defense stack, MCP-specific: what actually binds</div>
     <p class="gallery-why">Stacks the five defense layers against the three attack classes and visually quarantines advisory defenses in the dashed band, so the client checklist lands on deterministic controls only.</p>
     <a class="gallery-link" href="deep-dives/S4-mcp-tools-attack-surface-deepdive.html#s6">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the self-escalation cycle. every entry in the ledger is the same four steps: untrusted content injects an instruction; the agent — using the write tools that are its selling point — edits its own execution context; the next iteration runs with privileges it was never granted; and the cycle repeats with the new privilege as the baseline. each cve is pinned to the context it edits, and the amber write-gate (§5) is the control class that severs the cycle rather than slowing it." data-section="1 · self-escalation: one class, a ledger of cves" data-module="s5-loop-autorun-selfmod-sandbox-deepdive" data-why="shows the four-step self-escalation cycle — injected content, the agent editing its own execution context, the next iteration running escalated — with each ledger cve pinned to the context it edits, so the team sees why write-gating the enforcement config is the only control that severs the loop rather than slowing it.">
+  <div class="gallery-caption">S5-loop-autorun-selfmod-sandbox-deepdive · 1 · Self-escalation: one class, a ledger of CVEs</div>
+  <div class="gallery-preview g-card-85"><svg viewBox="0 0 860 520" role="img" aria-label="The self-escalation cycle: untrusted content injects an instruction, the agent edits its own execution context, and the next iteration runs with privileges it was never granted; CVE entry points pin to the self-edit step and a write-gate severs the cycle.">
+        <defs><marker id="g-85-ahS5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE SELF-ESCALATION CYCLE — ONE CLASS, EVERY LEDGER ENTRY BELOW</text>
+        <rect x="330" y="44" width="200" height="92" rx="9" class="bxA"/>
+        <text x="344" y="68" class="tt">1 · Untrusted content</text>
+        <text x="344" y="88" class="ti">issue · ticket · repo file</text><text x="344" y="103" class="ti">MCP result · web page</text>
+        <text x="344" y="124" class="ts">S1's root cause, S4's channels</text>
+        <rect x="620" y="184" width="200" height="96" rx="9" class="bx"/>
+        <text x="634" y="208" class="tt">2 · Injection steers</text>
+        <text x="634" y="226" class="tt">the model</text>
+        <text x="634" y="250" class="ts">content reads as command (S1)</text>
+        <text x="634" y="264" class="ts">no gate at all in YOLO mode (§2)</text>
+        <rect x="315" y="336" width="240" height="100" rx="9" class="bxC"/>
+        <text x="329" y="360" class="tt">3 · Agent edits its own</text>
+        <text x="329" y="378" class="tt">execution context</text>
+        <text x="329" y="402" class="ts">settings.json · hooks · allowlist</text>
+        <text x="329" y="416" class="ts">env vars · sandbox root · .git/config</text>
+        <rect x="40" y="184" width="200" height="96" rx="9" class="bxK"/>
+        <text x="54" y="208" class="tt">4 · Next iteration runs</text>
+        <text x="54" y="226" class="tt">escalated</text>
+        <text x="54" y="250" class="ts">auto-approve on · env poisoned</text>
+        <text x="54" y="264" class="ts">jail redrawn · hooks planted</text>
+        <path d="M530 90 L684 176" class="edS5"/>
+        <text x="640" y="118" class="ts" text-anchor="middle">injection</text>
+        <path d="M718 280 L556 344" class="edS5"/>
+        <text x="690" y="326" class="ts" text-anchor="middle">write tools — the feature</text>
+        <path d="M150 184 L358 128" class="edS5"/>
+        <text x="216" y="140" class="ts" text-anchor="middle">cycle repeats — effects compound</text>
+        <path d="M322 380 L296 348" class="edS5"/>
+        <rect x="150" y="290" width="150" height="46" rx="8" class="bxA" stroke-width="2.5"/>
+        <text x="164" y="309" class="tt">✕ WRITE-GATE (§5)</text>
+        <text x="164" y="326" class="ts">severs the cycle here</text>
+        <text x="430" y="452" class="ts" text-anchor="middle">when the gate holds, step 4 never inherits new privileges — the loop stays at the privilege it was granted</text>
+        <rect x="40" y="464" width="780" height="48" rx="8" class="bxG"/>
+        <text x="54" y="480" class="ts">entry points into step 3 — settings/auto-approve: CVE-2025-53773 (Copilot) · CVE-2026-25725 + TrustFall 21852/33068 (Claude Code)</text>
+        <text x="54" y="494" class="ts">env past allowlist: CVE-2026-22708 (Cursor) · sandbox root: CVE-2025-59532 (Codex)</text>
+        <text x="54" y="508" class="ts">hooks/.git: CVE-2026-48124 · CVE-2026-26268 (Cursor) · in the wild: Mini Shai-Hulud (SessionStart hook + tasks.json folderOpen)</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The self-escalation cycle. Every entry in the ledger is the same four steps: untrusted content injects an instruction; the agent — using the write tools that are its selling point — edits its own execution context; the next iteration runs with privileges it was never granted; and the cycle repeats with the new privilege as the baseline. Each CVE is pinned to the context it edits, and the amber write-gate (§5) is the control class that severs the cycle rather than slowing it.</div>
+    <div class="gallery-section">1 · Self-escalation: one class, a ledger of CVEs</div>
+    <p class="gallery-why">Shows the four-step self-escalation cycle — injected content, the agent editing its own execution context, the next iteration running escalated — with each ledger CVE pinned to the context it edits, so the team sees why write-gating the enforcement config is the only control that severs the loop rather than slowing it.</p>
+    <a class="gallery-link" href="deep-dives/S5-loop-autorun-selfmod-sandbox-deepdive.html#s1">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the gate spectrum. moving right removes assurance in kind, not just degree: a human gate fails softly (fatigue, hollow dialogs, one-enter trust), a model gate fails probabilistically (s3&#x27;s litmus — classifiers are advisory, and the classifier reads the same injected content), and full yolo leaves nothing between injection and execution but the sandbox. that is why the vendors&#x27; own documentation couples every bypass flag to isolation, and why §3&#x27;s escape record is the price list for the right-hand column." data-section="2 · yolo / auto-approve: removing the gate, then hollowing it" data-module="s5-loop-autorun-selfmod-sandbox-deepdive" data-why="maps the three gate positions (human, classifier, none) against what actually stands between injection and execution at each, making the case that yolo-class modes are acceptable only inside a hardened, network-isolated, credential-free sandbox — and that classifier-gated auto still fails s3&#x27;s determinism litmus.">
+  <div class="gallery-caption">S5-loop-autorun-selfmod-sandbox-deepdive · 2 · YOLO / auto-approve: removing the gate, then hollowing it</div>
+  <div class="gallery-preview g-card-86"><svg viewBox="0 0 860 408" role="img" aria-label="The gate spectrum: from a human gate that prompts everything, through a classifier-gated model gate, to full YOLO where nothing stands between injection and execution but the sandbox."><defs><marker id="g-86-ahS5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE GATE SPECTRUM — WHAT STANDS BETWEEN INJECTED CONTENT AND EXECUTION</text>
+        <rect x="40" y="52" width="240" height="226" rx="10" class="bxK"/>
+        <text x="56" y="78" class="tt">HUMAN GATE</text>
+        <text x="56" y="96" class="ti">prompt everything</text>
+        <text x="56" y="120" class="ts">Claude Code default · Cursor</text>
+        <text x="56" y="134" class="ts">Ask Every Time · plan mode</text>
+        <text x="56" y="162" class="ti">stands: a human reading the</text>
+        <text x="56" y="177" class="ti">actual command</text>
+        <text x="56" y="206" class="ts">fails: fatigue (93%, S2) · hollow</text>
+        <text x="56" y="220" class="ts">dialogs (GhostApproval) · one-Enter</text>
+        <text x="56" y="234" class="ts">trust dialogs (TrustFall)</text>
+        <rect x="315" y="52" width="240" height="226" rx="10" class="bxC"/>
+        <text x="331" y="78" class="tt">MODEL GATE</text>
+        <text x="331" y="96" class="ti">classifier-gated auto (2026)</text>
+        <text x="331" y="120" class="ts">Claude auto · Codex auto_review</text>
+        <text x="331" y="134" class="ts">VS Code Autopilot · Cursor Auto-review</text>
+        <text x="331" y="162" class="ti">stands: another model's judgment</text>
+        <text x="331" y="206" class="ts">fails: S3's litmus — probabilistic,</text>
+        <text x="331" y="220" class="ts">not deterministic; and the gate reads</text>
+        <text x="331" y="234" class="ts">the same injected content</text>
+        <rect x="590" y="52" width="240" height="226" rx="10" class="bxA"/>
+        <text x="606" y="78" class="tt">NO GATE</text>
+        <text x="606" y="96" class="ti">full YOLO / auto-approve</text>
+        <text x="606" y="120" class="ts">--dangerously-skip-permissions · --yolo</text>
+        <text x="606" y="134" class="ts">(4 vendors) · Cursor Run Everything</text>
+        <text x="606" y="162" class="ti">stands: nothing but the sandbox</text>
+        <text x="606" y="206" class="ts">rule: only inside a hardened,</text>
+        <text x="606" y="220" class="ts">network-isolated, credential-free</text>
+        <text x="606" y="234" class="ts">sandbox (§3)</text>
+        <path d="M160 322 L700 322" class="edS5"/>
+        <text x="430" y="310" class="ts" text-anchor="middle">path from injection to execution shrinks →</text>
+        <text x="430" y="356" class="ts" text-anchor="middle">vendor honesty, verbatim — Claude Code docs: bypassPermissions "offers no protection against prompt injection"</text>
+        <text x="430" y="374" class="ts" text-anchor="middle">Cursor: "Never use 'Run Everything' mode, which skips all safety checks" · Microsoft: autoApprove "disables critical security protections"</text>
+        <text x="430" y="392" class="ts" text-anchor="middle">posture contrast worth copying: Gemini CLI auto-enables its sandbox under --yolo — the bypass coupled to containment</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The gate spectrum. Moving right removes assurance in kind, not just degree: a human gate fails softly (fatigue, hollow dialogs, one-Enter trust), a model gate fails probabilistically (S3&#x27;s litmus — classifiers are advisory, and the classifier reads the same injected content), and full YOLO leaves nothing between injection and execution but the sandbox. That is why the vendors&#x27; own documentation couples every bypass flag to isolation, and why §3&#x27;s escape record is the price list for the right-hand column.</div>
+    <div class="gallery-section">2 · YOLO / auto-approve: removing the gate, then hollowing it</div>
+    <p class="gallery-why">Maps the three gate positions (human, classifier, none) against what actually stands between injection and execution at each, making the case that YOLO-class modes are acceptable only inside a hardened, network-isolated, credential-free sandbox — and that classifier-gated auto still fails S3&#x27;s determinism litmus.</p>
+    <a class="gallery-link" href="deep-dives/S5-loop-autorun-selfmod-sandbox-deepdive.html#s2">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the containment stack as shipped in mid-2026, with the six documented escape classes pinned at the seams they cross. no layer is a hard boundary — anthropic says so verbatim — but the record is specific rather than vibes: each class has named cves or researcher write-ups, and sandboxescapebench measures the practical meaning of &quot;configured correctly&quot;: frontier agents escape default setups about half the time using only known techniques, while correctly configured sandboxes held at difficulty 4–5 against every technique the benchmark knows. the cowork annotation marks the architectural contrast: a boundary with no outer process holding an escape-hatch key." data-section="3 · the sandbox: the containment answer and its escape record" data-module="s5-loop-autorun-selfmod-sandbox-deepdive" data-why="stacks the containment layers as shipped in mid-2026 and pins the six documented escape classes at the seams they cross, so a client can name their sandbox&#x27;s status against each class instead of trusting &#x27;sandboxed&#x27; as a blanket claim.">
+  <div class="gallery-caption">S5-loop-autorun-selfmod-sandbox-deepdive · 3 · The sandbox: the containment answer and its escape record</div>
+  <div class="gallery-preview g-card-87"><svg viewBox="0 0 860 480" role="img" aria-label="The containment stack: the agent process inside an OS sandbox inside a container inside a microVM or VM on the host, with six documented escape classes pinned at the seams they cross."><defs><marker id="g-87-ahS5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="330" y="24" class="tg" text-anchor="middle">THE CONTAINMENT STACK, MID-2026 — AND THE SEAMS WHERE IT HAS FAILED</text>
+        <rect x="40" y="44" width="560" height="380" rx="12" class="bxG"/>
+        <text x="56" y="66" class="tt">HOST</text>
+        <text x="56" y="82" class="ts">your files · credentials · network · production</text>
+        <rect x="70" y="96" width="500" height="296" rx="10" class="bxK"/>
+        <text x="86" y="118" class="tt">microVM / VM</text>
+        <text x="86" y="134" class="ts">Docker Sandboxes (own kernel) · gVisor · Firecracker · Cowork full VM</text>
+        <rect x="100" y="146" width="440" height="218" rx="10" class="bx"/>
+        <text x="116" y="168" class="tt">container</text>
+        <text x="116" y="184" class="ts">Codex cloud per-task · internet off in agent phase · secrets removed</text>
+        <rect x="130" y="196" width="380" height="140" rx="10" class="bxC"/>
+        <text x="146" y="218" class="tt">OS sandbox</text>
+        <text x="146" y="234" class="ts">Seatbelt · bubblewrap · Landlock+seccomp (srt) · blocks AF_UNIX</text>
+        <rect x="160" y="246" width="320" height="58" rx="9" class="bxA"/>
+        <text x="176" y="269" class="tt">AGENT PROCESS</text>
+        <text x="176" y="287" class="ts">the loop runs here — unattended, YOLO or not</text>
+        <text x="146" y="320" class="ts">"Sandboxing reduces risk but is not a</text>
+        <text x="146" y="332" class="ts">complete isolation boundary." — Anthropic</text>
+        <text x="86" y="382" class="ts">contrast — Cowork: "no outer process holding an escape-hatch key"</text>
+        <rect x="640" y="44" width="190" height="62" rx="8" class="bx"/>
+        <text x="652" y="63" class="tt">1 · config write-through</text>
+        <text x="652" y="81" class="ts">a trusted outside tool runs it</text>
+        <text x="652" y="95" class="ts">Pillar week ×7 · GHSA-v4xv</text>
+        <path d="M640 82 L516 252" class="edS5"/>
+        <rect x="640" y="116" width="190" height="62" rx="8" class="bx"/>
+        <text x="652" y="135" class="tt">2 · symlink</text>
+        <text x="652" y="153" class="ts">unsandboxed side follows it out</text>
+        <text x="652" y="167" class="ts">CVE-2026-39861 · DuneSlide</text>
+        <path d="M640 152 L516 266" class="edS5"/>
+        <rect x="640" y="188" width="190" height="62" rx="8" class="bx"/>
+        <text x="652" y="207" class="tt">3 · unix-domain sockets</text>
+        <text x="652" y="225" class="ts">UDS → dbus → systemd-run --user</text>
+        <text x="652" y="239" class="ts">CVE-2026-47128 (nono)</text>
+        <path d="M640 224 L516 280" class="edS5"/>
+        <rect x="640" y="260" width="190" height="62" rx="8" class="bx"/>
+        <text x="652" y="279" class="tt">4 · parser differential</text>
+        <text x="652" y="297" class="ts">null-byte past egress allowlist</text>
+        <text x="652" y="311" class="ts">Guan: ~130 versions, silent fix</text>
+        <path d="M640 296 L546 200" class="edS5"/>
+        <rect x="640" y="332" width="190" height="62" rx="8" class="bx"/>
+        <text x="652" y="351" class="tt">5 · credentials in</text>
+        <text x="652" y="369" class="ts">creds in = the prize (24/25)</text>
+        <text x="652" y="383" class="ts">fix: Docker label · keychain</text>
+        <path d="M640 368 L606 120" class="edS5"/>
+        <rect x="640" y="404" width="190" height="62" rx="8" class="bx"/>
+        <text x="652" y="423" class="tt">6 · agent-reasoned</text>
+        <text x="652" y="441" class="ts">disables its own sandbox (Ona)</text>
+        <text x="652" y="455" class="ts">ld-linux past execve gating</text>
+        <path d="M640 438 L486 292" class="edS5"/>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The containment stack as shipped in mid-2026, with the six documented escape classes pinned at the seams they cross. No layer is a hard boundary — Anthropic says so verbatim — but the record is specific rather than vibes: each class has named CVEs or researcher write-ups, and SandboxEscapeBench measures the practical meaning of &quot;configured correctly&quot;: frontier agents escape default setups about half the time using only known techniques, while correctly configured sandboxes held at difficulty 4–5 against every technique the benchmark knows. The Cowork annotation marks the architectural contrast: a boundary with no outer process holding an escape-hatch key.</div>
+    <div class="gallery-section">3 · The sandbox: the containment answer and its escape record</div>
+    <p class="gallery-why">Stacks the containment layers as shipped in mid-2026 and pins the six documented escape classes at the seams they cross, so a client can name their sandbox&#x27;s status against each class instead of trusting &#x27;sandboxed&#x27; as a blanket claim.</p>
+    <a class="gallery-link" href="deep-dives/S5-loop-autorun-selfmod-sandbox-deepdive.html#s3">Open in deep dive →</a>
   </div>
 </article>
 
