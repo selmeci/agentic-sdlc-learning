@@ -623,6 +623,62 @@
       "section": "6 · Multi-agent systems: digital gossiping reassembles the trifecta",
       "sectionAnchor": "s6",
       "why": "Shows why per-agent compliance fails: three individually compliant agents sharing memory and handoffs reassemble the full trifecta inside one cluster trust boundary."
+    },
+    {
+      "deepDive": "S3-advisory-vs-deterministic-rules-backdoor-deepdive",
+      "figureIndex": 0,
+      "title": "The two layers and the only question that matters: who executes the rule? Injection travels through the advisory band untouched — it is text, read by the same model the attacker is steering — and meets its first real resistance at the deterministic band. The bands are complements, not rivals: write the advisory layer well (it steers, §1), but never count it as a control.",
+      "section": "1 · The advisory layer, mechanically: steering that works — until it matters",
+      "sectionAnchor": "s1",
+      "why": "It draws the chapter's one test as a picture — injection sails through the advisory band and stops only at the deterministic band — so 'who executes the rule?' becomes a thing you can point at, not just assert."
+    },
+    {
+      "deepDive": "S3-advisory-vs-deterministic-rules-backdoor-deepdive",
+      "figureIndex": 1,
+      "title": "The Rules File Backdoor as a pipeline (Pillar Security, 18 Mar 2025; ATLAS AML.CS0041). Steps 1–3 need no exploit primitive beyond ordinary collaboration — a template, a PR, a shared rules repo. Steps 4–6 work because the rules channel is both followed (§1) and invisible at review (§2). The countermeasures that match each step — Unicode scanning at 2, governed review at 3, deterministic gates at 5 — are §5's checklist.",
+      "section": "2 · The Rules File Backdoor: the advisory layer turns attack surface",
+      "sectionAnchor": "s2",
+      "why": "The backdoor as a six-step pipeline shows that every step rides an ordinary trusted channel, which is exactly why no filter trips — the diagram is what turns the attack from anecdote into an auditable checklist."
+    },
+    {
+      "deepDive": "S3-advisory-vs-deterministic-rules-backdoor-deepdive",
+      "figureIndex": 2,
+      "title": "The litmus from E5, now with security stakes. Everything in the left column is executed by something that does not read prompts; everything in the right column is read by something that can be talked out of it. Most real rules files mix the two — the migration path is mechanical: grep your CLAUDE.md for \"never\" / \"must not\" / \"do not\", and for each hit either build the deterministic gate or consciously accept the residual risk.",
+      "section": "4 · The deterministic stack: what actually enforces, with 2026's fine print",
+      "sectionAnchor": "s4",
+      "why": "The E5 litmus rendered as a sorting rule (never-happens left, should-know right) is the engagement tool itself: grep your rules file for 'never' and migrate each hit — the figure makes the migration mechanical."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 0,
+      "title": "The seam in one picture. Both directions are trust relationships, and S2's trifecta legs map onto them: IN supplies leg A (untrusted content), OUT supplies legs B and C (private data access, external action). A single server can therefore be the whole trifecta — which is why the GitHub MCP incident needed no vulnerability at all.",
+      "section": "1 · MCP mechanically: what the protocol actually trusts",
+      "sectionAnchor": "s1",
+      "why": "Shows that one MCP tool call crosses the trust boundary twice — content in, privileges out — and maps S2's trifecta legs onto each direction, so the team sees why a single server can be the whole trifecta."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 1,
+      "title": "The GitHub MCP toxic flow (Invariant Labs, 26 May 2025) as a six-step chain. Every arrow is a legitimate feature; the attack is their composition. Supabase's PoC is the same shape with a support ticket as step 1, a service_role key as step 5, and a ticket INSERT as step 6 — which is why the fixes that matter (curate the content, narrow the token, gate the write) are leg removals, not better prompting.",
+      "section": "2 · Class 1 — injection through tool results: content arrives with a privileged microphone",
+      "sectionAnchor": "s2",
+      "why": "Walks the GitHub MCP toxic flow as six composable steps so reviewers can point at the exact leg to sever (curate content, narrow the token, gate the write) instead of arguing about prompts."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 2,
+      "title": "The class map for §2–§4. Class 1 needs a hostile data producer; class 2 a hostile server operator; class 3 just a buggy one. The controls differ per class — there is no single \"MCP security\" fix, and §6's defense stack is organized by exactly this split.",
+      "section": "3 · Class 2 — the server itself is the attacker",
+      "sectionAnchor": "s3",
+      "why": "Organizes the incident zoo into three attack classes by hostile party (data producer, server operator, buggy implementation), making clear why no single 'MCP security' fix exists and why controls must be matched per class."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 3,
+      "title": "The defense stack, organized by the class map. Layers 1–2 answer class 2 (who is this server, and is it the one we approved?); layer 3 answers class 3 (when it breaks, what can it reach?); layer 4 answers class 1 (when the content lies, what can the lie make happen?); layer 5 is the backstop for everything. The dashed band is where 2025's failed defenses lived — Supabase's result-wrapping, MCP-TDP's \"Firewall Fallacy\" — useful as signals, fatal as boundaries.",
+      "section": "6 · The defense stack, MCP-specific: what actually binds",
+      "sectionAnchor": "s6",
+      "why": "Stacks the five defense layers against the three attack classes and visually quarantines advisory defenses in the dashed band, so the client checklist lands on deterministic controls only."
     }
   ]
 }
