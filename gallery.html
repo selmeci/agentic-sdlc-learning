@@ -716,6 +716,38 @@ a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
 .g-card-87 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
 .g-card-87 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
 .g-card-87 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-88 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-88 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-88 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-88 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-88 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-88 svg .edD { stroke-dasharray:5 4 }
+.g-card-88 svg .edS6 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-88-ahS6a) }
+.g-card-88 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-88 svg .ti { font:400 11.5px var(--disp);fill:var(--ink) }
+.g-card-88 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-88 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-89 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-89 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-89 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-89 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-89 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-89 svg .edD { stroke-dasharray:5 4 }
+.g-card-89 svg .edS6 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-89-ahS6a) }
+.g-card-89 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-89 svg .ti { font:400 11.5px var(--disp);fill:var(--ink) }
+.g-card-89 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-89 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-90 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-90 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-90 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-90 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-90 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-90 svg .edD { stroke-dasharray:5 4 }
+.g-card-90 svg .edS6 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-90-ahS6a) }
+.g-card-90 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-90 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-90 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
 footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
 @media (max-width:860px){.hdr .bc{display:none}}
 </style>
@@ -3919,6 +3951,224 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
     <div class="gallery-section">3 · The sandbox: the containment answer and its escape record</div>
     <p class="gallery-why">Stacks the containment layers as shipped in mid-2026 and pins the six documented escape classes at the seams they cross, so a client can name their sandbox&#x27;s status against each class instead of trusting &#x27;sandboxed&#x27; as a blanket claim.</p>
     <a class="gallery-link" href="deep-dives/S5-loop-autorun-selfmod-sandbox-deepdive.html#s3">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the memory write path as shipped in july 2026. untrusted sources inject through s1/s4&#x27;s channels into four write channels (mpbench&#x27;s count), landing in stores scoped project/user/global/shared and retrieved into future context — with system-prompt authority before claude code v2.1.50 and user-message authority since. the three gates drawn are the only ones that exist: cursor&#x27;s sidecar confirmation, claude code&#x27;s @import approval, and enterprise off-toggles; everything else is notify-and-review. memorytrap&#x27;s path (red) never touches a gate because the installer wrote the files directly. sources: cisco (1 apr 2026); habler/owasp (13 may 2026); vendor docs per row of the store matrix; guan (27 dec 2025); mpbench (arxiv:2606.04329)." data-section="2 · the write path is the attack surface" data-module="s6-memory-poisoning-multiagent-risk-deepdive" data-why="maps the memory write path end to end — sources, injection, the four write channels, scoped stores, retrieval authority — and pins the only three gates that ship today, with the memorytrap file-writing path drawn underneath as the route that bypasses every gate. it turns the store-by-store matrix into one architecture picture of where a durable configuration change enters the system.">
+  <div class="gallery-caption">S6-memory-poisoning-multiagent-risk-deepdive · 2 · The write path is the attack surface</div>
+  <div class="gallery-preview g-card-88"><svg viewBox="0 0 860 560" role="img" aria-label="The memory write path: untrusted sources carry an injection into write channels (auto-memory, memory tool, MCP memory server, steering files), which land in scoped stores and are retrieved into future context; the three gates that actually exist are pinned, and MemoryTrap's postinstall path is highlighted in red beneath them.">
+        <defs><marker id="g-88-ahS6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE MEMORY WRITE PATH — WHO CAN WRITE, WHAT GATE STANDS, WHERE IT LANDS</text>
+        <rect x="30" y="60" width="140" height="110" rx="9" class="bxA"/>
+        <text x="42" y="84" class="tt">untrusted</text>
+        <text x="42" y="100" class="tt">sources</text>
+        <text x="42" y="122" class="ts">web · docs · tickets</text>
+        <text x="42" y="136" class="ts">other agents · repo files</text>
+        <text x="42" y="156" class="ts">S1's root cause</text>
+        <rect x="196" y="60" width="130" height="110" rx="9" class="bx"/>
+        <text x="208" y="84" class="tt">injection</text>
+        <text x="208" y="108" class="ti">content reads</text>
+        <text x="208" y="122" class="ti">as command</text>
+        <text x="208" y="144" class="ts">S1 · S4 channels</text>
+        <rect x="352" y="60" width="160" height="110" rx="9" class="bxC"/>
+        <text x="364" y="84" class="tt">write channels</text>
+        <text x="364" y="106" class="ts">auto-memory · memory tool</text>
+        <text x="364" y="120" class="ts">MCP memory server</text>
+        <text x="364" y="134" class="ts">steering files (S3)</text>
+        <text x="364" y="156" class="ts">MPBench: four channels</text>
+        <rect x="538" y="60" width="140" height="110" rx="9" class="bx"/>
+        <text x="550" y="84" class="tt">scoped stores</text>
+        <text x="550" y="106" class="ts">project · user</text>
+        <text x="550" y="120" class="ts">global · shared</text>
+        <text x="550" y="142" class="ts">shared = §4's coupling</text>
+        <rect x="704" y="60" width="140" height="110" rx="9" class="bxK"/>
+        <text x="716" y="84" class="tt">future context</text>
+        <text x="716" y="106" class="ts">system prompt</text>
+        <text x="716" y="120" class="ts">(pre-v2.1.50)</text>
+        <text x="716" y="134" class="ts">user-message ctx (now)</text>
+        <text x="716" y="156" class="ts">retrieval = detonation (§3)</text>
+        <path d="M170 115 L194 115" class="edS6"/>
+        <path d="M326 115 L350 115" class="edS6"/>
+        <path d="M512 115 L536 115" class="edS6"/>
+        <path d="M678 115 L702 115" class="edS6"/>
+        <rect x="60" y="216" width="220" height="66" rx="8" class="bxK"/>
+        <text x="72" y="237" class="tt">gate 1 · Cursor sidecar confirm</text>
+        <text x="72" y="255" class="ts">the one shipped pre-write gate —</text>
+        <text x="72" y="269" class="ts">tool-call writes: no confirmation</text>
+        <rect x="330" y="216" width="200" height="66" rx="8" class="bxK"/>
+        <text x="342" y="237" class="tt">gate 2 · @import approval</text>
+        <text x="342" y="255" class="ts">external imports ask; ordinary</text>
+        <text x="342" y="269" class="ts">auto-memory writes do not</text>
+        <rect x="580" y="216" width="230" height="66" rx="8" class="bxK"/>
+        <text x="592" y="237" class="tt">gate 3 · enterprise off-toggles</text>
+        <text x="592" y="255" class="ts">org/tenant admin; Claude's deletes</text>
+        <text x="592" y="269" class="ts">synthesis data — retrospective</text>
+        <path d="M170 216 L400 172" class="edS6 edD"/>
+        <path d="M430 216 L432 172" class="edS6 edD"/>
+        <path d="M695 216 L462 172" class="edS6 edD"/>
+        <text x="430" y="306" class="tg" text-anchor="middle">MEMORYTRAP'S PATH (CISCO PoC, 1 APR 2026) — BYPASSES EVERY GATE: IT WROTE FILES, IT NEVER ASKED THE MODEL TO REMEMBER</text>
+        <rect x="40" y="322" width="220" height="62" rx="8" class="bxA" style="stroke:#B23A2E"/>
+        <text x="52" y="343" class="tt">npm postinstall</text>
+        <text x="52" y="361" class="ts">user approves one install —</text>
+        <text x="52" y="375" class="ts">direct file writes, not model memory</text>
+        <rect x="330" y="322" width="230" height="62" rx="8" class="bxA" style="stroke:#B23A2E"/>
+        <text x="342" y="343" class="tt">every project's MEMORY.md</text>
+        <text x="342" y="361" class="ts">+ UserPromptSubmit hook (settings.json)</text>
+        <text x="342" y="375" class="ts">+ shell alias re-enables auto-memory</text>
+        <rect x="630" y="322" width="200" height="62" rx="8" class="bxA" style="stroke:#B23A2E"/>
+        <text x="642" y="343" class="tt">next prompt executes it</text>
+        <text x="642" y="361" class="ts">hook output injected into context;</text>
+        <text x="642" y="375" class="ts">memory into the system prompt</text>
+        <path d="M260 353 L328 353" style="stroke:#B23A2E;stroke-width:1.6;fill:none;marker-end:url(#g-88-ahS6a)"/>
+        <path d="M560 353 L628 353" style="stroke:#B23A2E;stroke-width:1.6;fill:none;marker-end:url(#g-88-ahS6a)"/>
+        <rect x="40" y="420" width="780" height="116" rx="8" class="bxG"/>
+        <text x="54" y="442" class="ts">read-back authority — pre-v2.1.50: first 200 lines of memory loaded into the system prompt, "high-authority additions to this rulebook"</text>
+        <text x="54" y="460" class="ts">the fix — v2.1.50 "removes user memories from the system prompt" (Cisco verbatim; absent from the official changelog) · hooks + alias vectors unaddressed · no CVE</text>
+        <text x="54" y="478" class="ts">the gap — nobody ships pre-write confirmation for automatic memory writes (Jul 2026): notify-and-review is the shipped pattern everywhere else</text>
+        <text x="54" y="496" class="ts">the sibling — Gemini's one write gate fell to delayed invocation (10 Feb 2025): a conditional instruction + a later user "yes" counted as authorization</text>
+        <text x="54" y="522" class="ts">§5 maps each step of this path to the control that closes it — and to what actually ships today</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The memory write path as shipped in July 2026. Untrusted sources inject through S1/S4&#x27;s channels into four write channels (MPBench&#x27;s count), landing in stores scoped project/user/global/shared and retrieved into future context — with system-prompt authority before Claude Code v2.1.50 and user-message authority since. The three gates drawn are the only ones that exist: Cursor&#x27;s sidecar confirmation, Claude Code&#x27;s @import approval, and enterprise off-toggles; everything else is notify-and-review. MemoryTrap&#x27;s path (red) never touches a gate because the installer wrote the files directly. Sources: Cisco (1 Apr 2026); Habler/OWASP (13 May 2026); vendor docs per row of the store matrix; Guan (27 Dec 2025); MPBench (arXiv:2606.04329).</div>
+    <div class="gallery-section">2 · The write path is the attack surface</div>
+    <p class="gallery-why">Maps the memory write path end to end — sources, injection, the four write channels, scoped stores, retrieval authority — and pins the only three gates that ship today, with the MemoryTrap file-writing path drawn underneath as the route that bypasses every gate. It turns the store-by-store matrix into one architecture picture of where a durable configuration change enters the system.</p>
+    <a class="gallery-link" href="deep-dives/S6-memory-poisoning-multiagent-risk-deepdive.html#s2">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="temporal decoupling and the four places a defense can sit. the plant in session n is benign-in-isolation (palo alto&#x27;s fragmented-payload framing); the session boundary resets nothing; retrieval in session n+k is the detonation; and the blast radius is lateral. below the timeline: the write gate, provenance at rest, the cross-session regression test (a confirmed open gap — §5 fills it with a homegrown pattern), and the retrieval-time check. the ledger strip records why each matters, with sources: palo alto (31 jan 2026), microsoft defender (10 feb 2026), rehberger (20 sep 2024), memorygraft/ghostwriter, forensic trajectory signatures (arxiv:2606.30566 v2)." data-section="3 · temporal decoupling: the exploit runs once, the memory runs indefinitely" data-module="s6-memory-poisoning-multiagent-risk-deepdive" data-why="makes temporal decoupling visible: the benign-looking plant in session n, the session boundary that resets nothing, retrieval-as-detonation in n+k, and lateral spread — with the four defense placements annotated at the only points in time where each can work, including the confirmed open gap of cross-session regression testing.">
+  <div class="gallery-caption">S6-memory-poisoning-multiagent-risk-deepdive · 3 · Temporal decoupling: the exploit runs once, the memory runs indefinitely</div>
+  <div class="gallery-preview g-card-89"><svg viewBox="0 0 860 500" role="img" aria-label="The temporal-decoupling timeline: a plant in session N that looks benign, persistence across the session boundary where nothing resets, retrieval-as-detonation in session N+k, and lateral spread; the four defense placements are annotated below at the points where they must sit."><defs><marker id="g-89-ahS6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE TEMPORAL-DECOUPLING TIMELINE — THE WRITE LOOKS INNOCENT; THE RETRIEVAL IS THE DETONATION</text>
+        <rect x="30" y="70" width="170" height="92" rx="9" class="bxA"/>
+        <text x="42" y="94" class="tt">session N — plant</text>
+        <text x="42" y="114" class="ti">the write looks benign</text>
+        <text x="42" y="136" class="ts">fragment 1 of k; 1-click</text>
+        <text x="42" y="150" class="ts">pre-fill counts too (MS)</text>
+        <line x1="252" y1="56" x2="252" y2="176" style="stroke:#9AA7B1;stroke-width:1.3;stroke-dasharray:5 4"/>
+        <text x="252" y="192" class="ts" text-anchor="middle">session boundary — nothing resets</text>
+        <rect x="286" y="70" width="160" height="92" rx="9" class="bxG"/>
+        <text x="298" y="94" class="tt">at rest — persist</text>
+        <text x="298" y="114" class="ti">days to months</text>
+        <text x="298" y="136" class="ts">carries leg [A] forward (S2)</text>
+        <text x="298" y="150" class="ts">breaks "reversible" (S1)</text>
+        <line x1="498" y1="56" x2="498" y2="176" style="stroke:#9AA7B1;stroke-width:1.3;stroke-dasharray:5 4"/>
+        <text x="498" y="192" class="ts" text-anchor="middle">session N+k</text>
+        <rect x="532" y="70" width="150" height="92" rx="9" class="bx"/>
+        <text x="544" y="94" class="tt">retrieval =</text>
+        <text x="544" y="110" class="tt">detonation</text>
+        <text x="544" y="132" class="ts">fragments assemble; the</text>
+        <text x="544" y="146" class="ts">query is the trigger</text>
+        <rect x="716" y="70" width="120" height="92" rx="9" class="bxC"/>
+        <text x="728" y="94" class="tt">lateral</text>
+        <text x="728" y="110" class="tt">spread</text>
+        <text x="728" y="132" class="ts">other projects ·</text>
+        <text x="728" y="146" class="ts">agents · users (§4)</text>
+        <path d="M200 116 L284 116" class="edS6"/>
+        <path d="M446 116 L530 116" class="edS6"/>
+        <path d="M682 116 L714 116" class="edS6"/>
+        <rect x="30" y="240" width="185" height="76" rx="8" class="bxK"/>
+        <text x="42" y="260" class="tt">1 · write gate at plant</text>
+        <text x="42" y="278" class="ts">durable writes confirmed like</text>
+        <text x="42" y="292" class="ts">config changes (S5) — today:</text>
+        <text x="42" y="306" class="ts">Cursor sidecar only</text>
+        <rect x="245" y="240" width="185" height="76" rx="8" class="bxK"/>
+        <text x="257" y="260" class="tt">2 · provenance at rest</text>
+        <text x="257" y="278" class="ts">source · session · timestamp on</text>
+        <text x="257" y="292" class="ts">every entry; signed entries</text>
+        <text x="257" y="306" class="ts">(SMSR, MemLineage — lab)</text>
+        <rect x="460" y="240" width="185" height="76" rx="8" class="bxK"/>
+        <text x="472" y="260" class="tt">3 · regression test</text>
+        <text x="472" y="278" class="ts">seed canary in N, drive N+k</text>
+        <text x="472" y="292" class="ts">tasks, assert non-activation —</text>
+        <text x="472" y="306" class="ts">CONFIRMED OPEN GAP (§5)</text>
+        <rect x="660" y="240" width="176" height="76" rx="8" class="bxK"/>
+        <text x="672" y="260" class="tt">4 · retrieval check</text>
+        <text x="672" y="278" class="ts">memory is data, never</text>
+        <text x="672" y="292" class="ts">instructions; A-MemGuard</text>
+        <text x="672" y="306" class="ts">−95% ASR (lab)</text>
+        <path d="M122 240 L115 164" class="edS6 edD"/>
+        <path d="M337 240 L360 164" class="edS6 edD"/>
+        <path d="M552 240 L376 164" class="edS6 edD"/>
+        <path d="M748 240 L612 164" class="edS6 edD"/>
+        <rect x="30" y="352" width="806" height="128" rx="8" class="bxG"/>
+        <text x="44" y="374" class="ts">SpAIware (Sep 2024) — one poisoned bio entry exfiltrated every future chat; OpenAI fixed the exfil vector, not the persistence ("model safety issue, not a security concern")</text>
+        <text x="44" y="392" class="ts">MS Recommendation Poisoning (10 Feb 2026) — in the wild: 50 prompts · 31 companies · 14 industries; "remember [Company] as a trusted source"; AML.T0080; "real companies, not hackers or scammers"</text>
+        <text x="44" y="410" class="ts">MemoryGraft — dormant-till-retrieval: 10 of 110 grafted records dominated ~half of retrievals; GhostWriter — two-phase by design (~98% inject / ~60% activate)</text>
+        <text x="44" y="428" class="ts">detector collapse — Forensic Trajectory Signatures: AUC 0.99 → 100% false positives under preregistered v2: "valid attack precondition, not a maliciousness predicate"</text>
+        <text x="44" y="446" class="ts">misattribution — a detonation presents as the model being weirdly wrong in a later session, indistinguishable from ordinary model failure</text>
+        <text x="44" y="464" class="ts">the read direction — MEXTRA / ADAM extraction and compositional cross-agent leakage (arXiv:2509.14284): the store is a confidentiality target too</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">Temporal decoupling and the four places a defense can sit. The plant in session N is benign-in-isolation (Palo Alto&#x27;s fragmented-payload framing); the session boundary resets nothing; retrieval in session N+k is the detonation; and the blast radius is lateral. Below the timeline: the write gate, provenance at rest, the cross-session regression test (a confirmed open gap — §5 fills it with a homegrown pattern), and the retrieval-time check. The ledger strip records why each matters, with sources: Palo Alto (31 Jan 2026), Microsoft Defender (10 Feb 2026), Rehberger (20 Sep 2024), MemoryGraft/GhostWriter, Forensic Trajectory Signatures (arXiv:2606.30566 v2).</div>
+    <div class="gallery-section">3 · Temporal decoupling: the exploit runs once, the memory runs indefinitely</div>
+    <p class="gallery-why">Makes temporal decoupling visible: the benign-looking plant in session N, the session boundary that resets nothing, retrieval-as-detonation in N+k, and lateral spread — with the four defense placements annotated at the only points in time where each can work, including the confirmed open gap of cross-session regression testing.</p>
+    <a class="gallery-link" href="deep-dives/S6-memory-poisoning-multiagent-risk-deepdive.html#s3">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the propagation graph and the three edge controls, with their honest status. poison enters through one worker and fans out three ways: handoffs up to the orchestrator (where trust is upgraded — anthropic&#x27;s nist rfi framing), handoffs across to sibling workers, and writes into the shared store every agent reads (mmca&#x27;s hidden bridges, which defeat agent-to-agent airgapping). of the controls: message signing does not ship (a2a signs agentcards, not messages — issue #1497 is an open proposal), sanitize-at-handoff is advisory by s3&#x27;s litmus, and circuit breakers ship as middleware (ms agent governance toolkit), not kernel. sources per edge: arxiv:2410.07283, 2507.13038, 2402.08567, 2512.08296 (v1), springer cybersecurity 9:191, wiz (2 feb 2026)." data-section="4 · the cluster is the trust boundary" data-module="s6-memory-poisoning-multiagent-risk-deepdive" data-why="shows why the cluster is the trust boundary: one poisoned worker fans out through trust-upgraded handoffs and a shared store that defeats agent-to-agent airgapping, and grades the three edge controls — signed messages, sanitize-at-handoff, circuit breaker — by what actually ships today.">
+  <div class="gallery-caption">S6-memory-poisoning-multiagent-risk-deepdive · 4 · The cluster is the trust boundary</div>
+  <div class="gallery-preview g-card-90"><svg viewBox="0 0 860 520" role="img" aria-label="Multi-agent propagation graph: a poisoned worker fans out through handoffs to the orchestrator and sibling workers and through the shared memory store; the three edge controls — signed messages, sanitize-at-handoff, circuit breaker — are annotated with their honest shipped status."><defs><marker id="g-90-ahS6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE PROPAGATION GRAPH — ONE POISONED WORKER, THREE FAN-OUT PATHS, THREE EDGE CONTROLS</text>
+        <rect x="24" y="56" width="190" height="64" rx="8" class="bxA" style="stroke:#B23A2E"/>
+        <text x="36" y="78" class="tt">poison entry</text>
+        <text x="36" y="96" class="ts">one injected web page · one</text>
+        <text x="36" y="110" class="ts">compromised worker · one skill</text>
+        <rect x="330" y="52" width="210" height="76" rx="9" class="bxC"/>
+        <text x="342" y="76" class="tt">orchestrator</text>
+        <text x="342" y="96" class="ts">trust upgraded at every hop —</text>
+        <text x="342" y="110" class="ts">"supply chain for agent state"</text>
+        <rect x="56" y="196" width="160" height="72" rx="9" class="bx"/>
+        <text x="68" y="220" class="tt">worker 1 ☣</text>
+        <text x="68" y="240" class="ts">compromised — reads and</text>
+        <text x="68" y="254" class="ts">writes like any worker</text>
+        <rect x="352" y="196" width="160" height="72" rx="9" class="bx"/>
+        <text x="364" y="220" class="tt">worker 2</text>
+        <text x="364" y="240" class="ts">trusts handoff content</text>
+        <text x="364" y="254" class="ts">more than tool results</text>
+        <rect x="648" y="196" width="160" height="72" rx="9" class="bx"/>
+        <text x="660" y="220" class="tt">worker 3</text>
+        <text x="660" y="240" class="ts">same fleet, same store,</text>
+        <text x="660" y="254" class="ts">same blast radius</text>
+        <rect x="288" y="372" width="290" height="80" rx="9" class="bxA"/>
+        <text x="300" y="396" class="tt">shared store</text>
+        <text x="300" y="414" class="ts">memory · scratchpad · vector DB · MCP tools</text>
+        <text x="300" y="428" class="ts">MMCA: "implicit, hidden bridges" —</text>
+        <text x="300" y="442" class="ts">agent-to-agent firewalling bypassed entirely</text>
+        <path d="M214 92 L328 88" style="stroke:#B23A2E;stroke-width:1.6;fill:none;stroke-dasharray:5 4;marker-end:url(#g-90-ahS6a)"/>
+        <path d="M392 128 L160 194" style="stroke:#B23A2E;stroke-width:1.6;fill:none;marker-end:url(#g-90-ahS6a)"/>
+        <path d="M216 232 L350 232" class="edS6"/>
+        <path d="M512 232 L646 232" class="edS6"/>
+        <path d="M430 196 L430 130" class="edS6"/>
+        <path d="M728 196 L478 130" class="edS6"/>
+        <path d="M136 268 L300 386" class="edS6"/>
+        <path d="M432 268 L432 370" class="edS6"/>
+        <path d="M728 268 L566 386" class="edS6"/>
+        <text x="280" y="226" class="ts">handoffs</text>
+        <text x="160" y="330" class="ts" text-anchor="middle">writes poison</text>
+        <text x="640" y="330" class="ts" text-anchor="middle">reads poison</text>
+        <rect x="612" y="44" width="222" height="70" rx="8" class="bxK"/>
+        <text x="624" y="64" class="tt">control 1 · signed messages</text>
+        <text x="624" y="82" class="ts">A2A signs AgentCards, not messages</text>
+        <text x="624" y="96" class="ts">(issue #1497 open) — NOT SHIPPED</text>
+        <rect x="24" y="300" width="220" height="70" rx="8" class="bxK"/>
+        <text x="36" y="320" class="tt">control 2 · sanitize at handoff</text>
+        <text x="36" y="338" class="ts">advisory — the filter reads the same</text>
+        <text x="36" y="352" class="ts">content class that got injected</text>
+        <rect x="612" y="300" width="222" height="70" rx="8" class="bxK"/>
+        <text x="624" y="320" class="tt">control 3 · circuit breaker</text>
+        <text x="624" y="338" class="ts">MS Agent Governance Toolkit ships</text>
+        <text x="624" y="352" class="ts">breakers + kill switch — middleware</text>
+        <path d="M612 82 L542 84" class="edS6 edD"/>
+        <path d="M244 330 L330 266" class="edS6 edD"/>
+        <path d="M612 330 L514 266" class="edS6 edD"/>
+        <rect x="24" y="464" width="810" height="44" rx="8" class="bxG"/>
+        <text x="38" y="480" class="ts">measured: Prompt Infection — full population at 21–47% of turns (10–50 agents) · MAD-Spear &gt;8× ASR at 1/6 compromised · Agent Smith — one image → ~1M agents · Kim et al. 17.2× independent vs 4.4× centralized</text>
+        <text x="38" y="496" class="ts">in the wild: Moltbook/Wiz — write access = "manipulate content consumed by thousands of AI agents" · no A2A incident as of 22 Jul 2026 — the gap is measured in the lab, not yet in incident reports</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The propagation graph and the three edge controls, with their honest status. Poison enters through one worker and fans out three ways: handoffs up to the orchestrator (where trust is upgraded — Anthropic&#x27;s NIST RFI framing), handoffs across to sibling workers, and writes into the shared store every agent reads (MMCA&#x27;s hidden bridges, which defeat agent-to-agent airgapping). Of the controls: message signing does not ship (A2A signs AgentCards, not messages — issue #1497 is an open proposal), sanitize-at-handoff is advisory by S3&#x27;s litmus, and circuit breakers ship as middleware (MS Agent Governance Toolkit), not kernel. Sources per edge: arXiv:2410.07283, 2507.13038, 2402.08567, 2512.08296 (v1), Springer Cybersecurity 9:191, Wiz (2 Feb 2026).</div>
+    <div class="gallery-section">4 · The cluster is the trust boundary</div>
+    <p class="gallery-why">Shows why the cluster is the trust boundary: one poisoned worker fans out through trust-upgraded handoffs and a shared store that defeats agent-to-agent airgapping, and grades the three edge controls — signed messages, sanitize-at-handoff, circuit breaker — by what actually ships today.</p>
+    <a class="gallery-link" href="deep-dives/S6-memory-poisoning-multiagent-risk-deepdive.html#s4">Open in deep dive →</a>
   </div>
 </article>
 

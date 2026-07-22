@@ -1,7 +1,7 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.61):
-9 modules, 60 topics, 6 research reports, 2 inline map sections, 51 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.65):
+9 modules, 60 topics, 6 research reports, 2 inline map sections, 52 deep-dive companions.
 
 > Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
@@ -90,7 +90,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | S3 Advisory vs deterministic controls; the rules-file backdoor | `sec-advisory` | ✅ (v1.62) |
 | S4 MCP / tools: the richest attack surface | `sec-mcp` | ✅ (v1.63) |
 | S5 Loop / auto-run: self-modification, YOLO & sandbox escapes | `sec-loop` | ✅ (v1.64) |
-| S6 Memory poisoning & multi-agent risk | `sec-memory` |
+| S6 Memory poisoning & multi-agent risk | `sec-memory` | ✅ (v1.65) |
 | S7 Contract & brownfield surfaces; the secrets problem | `sec-surfaces` |
 | S8 Configuring rules for maximum practical safety | `sec-config` |
 
@@ -124,7 +124,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 6. **Report 6** — Security as the cross-cutting dimension; prompt injection; lethal trifecta;
    per-component threat map with real 2025–26 incidents/CVEs.
 
-## Deep-dive companions (51)
+## Deep-dive companions (52)
 
 Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/`:
 
@@ -143,17 +143,17 @@ Embedded as in-page overlays **and** shipped as standalone files in `deep-dives/
 `D4-governance-ssot-design-world` · `D5-design-harness-verification-guardrails` ·
 `D6-design-scale-curator` · `D7-design-archaeology-f0-f4-rollout` ·
 `S1-security-crosscutting` · `S2-lethal-trifecta-rule-of-two` ·
-`S3-advisory-vs-deterministic-rules-backdoor` · `S4-mcp-tools-attack-surface` · `S5-loop-autorun-selfmod-sandbox` · `PB1-assess-runbook` ·
+`S3-advisory-vs-deterministic-rules-backdoor` · `S4-mcp-tools-attack-surface` · `S5-loop-autorun-selfmod-sandbox` · `S6-memory-poisoning-multiagent-risk` · `PB1-assess-runbook` ·
 `PB2-bootstrap-runbook` · `PB3-harness-runbook` · `PB4-handoff-runbook` ·
 `PB5-pilot-runbook`
 
 Overlay anchors wired in the workbook: `#sdlc-deepdive`, `#e1-deepdive` … `#e11-deepdive`,
-`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive` … `#d7-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#s1-deepdive`, `#s2-deepdive`, `#s3-deepdive`, `#s4-deepdive`, `#s5-deepdive`, `#pb1-deepdive` … `#pb5-deepdive` (each appears
+`#p1-deepdive` … `#p5-deepdive`, `#d1-deepdive` … `#d7-deepdive`, `#h1-deepdive` … `#h4-deepdive`, `#i1-deepdive` … `#i7-deepdive`, `#b1-deepdive` … `#b6-deepdive`, `#s1-deepdive`, `#s2-deepdive`, `#s3-deepdive`, `#s4-deepdive`, `#s5-deepdive`, `#s6-deepdive`, `#pb1-deepdive` … `#pb5-deepdive` (each appears
 exactly twice: the "Go deeper" link + the JS open handler).
 
 ## Gallery
 
-- `gallery.html` — browsable grid of all 88 diagrams from the deep-dive companions,
+- `gallery.html` — browsable grid of all 91 diagrams from the deep-dive companions,
   with section context, "why" summaries, and links back to each deep dive.
 - `gallery-registry.json` — curated metadata; validated by `scripts/validate.py`.
 - `scripts/generate-gallery.py` — generates `gallery.html` from the registry.
