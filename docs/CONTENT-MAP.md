@@ -1,9 +1,9 @@
 # Content map
 
-The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.65):
-9 modules, 60 topics, 6 research reports, 2 inline map sections, 52 deep-dive companions.
+The complete catalog of the workbook (`workbook/agentic-development-study.html`, v1.68):
+10 modules, 66 topics, 6 research reports, 2 inline map sections, 52 deep-dive companions.
 
-> Module **display code** (M1…M8) differs from the internal **data id** in a couple of cases
+> Module **display code** (M1…M10) differs from the internal **data id** in a couple of cases
 > for historical reasons — the ids are frozen to preserve user progress. Both are listed.
 
 ## Inline map sections (top of the workbook, before the modules)
@@ -14,7 +14,7 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
   V2 DDD context map, V3 operating loop with gates, V4 lethal trifecta & defense-in-depth,
   V5 per-component threat map.
 
-## Modules & topics (60)
+## Modules & topics (66)
 
 ### M1 · Engineering harness (id `m1`) — Report 1; 6 research-note sections
 | Topic | id | Deep dive |
@@ -113,6 +113,18 @@ The complete catalog of the workbook (`workbook/agentic-development-study.html`,
 | PB3 Harness: stand up the engineering harness | `pb-harness` | PB3-harness-runbook.html + overlay |
 | PB4 Handoff: run the contract end-to-end | `pb-handoff` | PB4-handoff-runbook.html + overlay |
 | PB5 Pilot: measure, gate, decide | `pb-pilot` | PB5-pilot-runbook.html + overlay |
+
+### M10 · Greenfield — the harness without a legacy (id `m10`) — adaptation layer, no research notes
+> **The greenfield re-cuts (authorship checklist, F-ladder without F0) are our synthesis — flag them wherever they appear.**
+
+| Topic | id | Deep dive |
+|---|---|---|
+| GF1 The greenfield inversion: authorship risk replaces archaeology risk | `gf-inversion` | — (planned) |
+| GF2 Frame & constitute: spec clarity before the first commit | `gf-constitution` | — (planned) |
+| GF3 Harness before feature #1: authored, not extracted | `gf-harness-first` | — (planned) |
+| GF4 The forward verification loop: specify, don't pin | `gf-forward-loop` | — (planned) |
+| GF5 Design system before the first screen | `gf-design-first` | — (planned) |
+| GF6 Measure without a baseline & converge to steady state | `gf-measure` | — (planned) |
 
 ## The six research reports (embedded, rendered from Markdown)
 

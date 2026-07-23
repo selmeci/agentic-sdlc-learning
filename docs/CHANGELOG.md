@@ -3,6 +3,41 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.68 · 2026-07-23
+
+**NEW MODULE M10 — Greenfield: the harness without a legacy.** The applicability layer the
+workbook was missing: M5 and M9 describe the brownfield road; M10 maps the same theory onto a
+start where no code exists yet. Six `gf-` topics, journey-ordered, each naming where the M9
+playbook applies verbatim, where it inverts, and where it disappears:
+
+- **GF1 `gf-inversion`** — the inversion thesis: authorship risk replaces archaeology risk;
+  the benchmark double edge (SWE-bench's fail-to-pass selection vs SWE-EVO's 72.80% → 25% on
+  long-horizon evolution tasks, arXiv:2512.18470); the author-oracle advantage (B4, Corbi 1989);
+  Sharma's D³ "Beyond Greenfield" (arXiv:2512.01155) weighed and rejected as the honest analogue.
+- **GF2 `gf-constitution`** — frame & constitute: PB1 re-cut from a maturity score to an
+  authorship checklist — constitution.md, ADR-0001 and the durable/derived/disposable taxonomy
+  (I1/I2) before the first commit; E8's verdict that greenfield is SDD's home turf.
+- **GF3 `gf-harness-first`** — PB3 inverted: conventions authored, not extracted — or the
+  model's defaults become the de-facto conventions (D3's generator lesson at the code level);
+  the PB3 starter kit minus the extraction step; overbuild countermeasures split advisory vs
+  deterministic per the E5 litmus.
+- **GF4 `gf-forward-loop`** — the forward verification loop: EARS/Gherkin (H2) specify forward
+  where characterization (B2) pins backward; the acceptance suite is the golden master from
+  birth; the mutation gate (B3) kept and weighted up against tautological co-generated tests;
+  a walking-skeleton first slice replaces B5's heatmap.
+- **GF5 `gf-design-first`** — design system before the first screen: DTCG tokens and the
+  component contract authored before the first generated screen, or the vendor default
+  (v0/Lovable/Bolt → shadcn/Tailwind) is your design system; D7 archaeology skipped.
+- **GF6 `gf-measure`** — measurement without a baseline: pre-registered absolute metrics from
+  commit one (no retroactive DORA baseline, no before/after arm); METR's self-report ban and
+  B6's STOP criteria survive unchanged; the F-ladder re-cut without F0; the convergence claim —
+  a well-run greenfield never re-enters PB1–PB2 and converges to PB4/PB5 steady state.
+
+All greenfield re-cuts are flagged as our synthesis, not an industry standard. Topics only in
+this version — deep-dive companions follow in later versions. Validator extended: `gf-` prefix
+recognised in the topic-id regexes, expected topic count 60 → 66. `docs/CONTENT-MAP.md` and
+`docs/ROADMAP.md` updated. No changes to existing topic ids.
+
 ## v1.67 · 2026-07-23
 
 English-only fix and enforcement. Removed stray non-English (Slovak) text from the PB1–PB5

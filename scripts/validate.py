@@ -327,7 +327,7 @@ def check_workbook_id_uniqueness(s, label):
     dup_h2 = duplicates(h2_ids)
     if dup_h2:
         note(False, f"{label}: duplicate overlay h2 ids across workbook: {dup_h2[:10]}")
-    topic_ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb)-[a-z0-9-]*)"', s)
+    topic_ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb|gf)-[a-z0-9-]*)"', s)
     module_ids = re.findall(r'{id:"(m\d+)"', s)
     combined = h2_ids + topic_ids + module_ids
     dup_combined = duplicates(combined)
@@ -414,18 +414,18 @@ def check_workbook():
              else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected {exp} total, 1 handler)")
 
     # topic count
-    ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb)-[a-z0-9-]*)"', s)
+    ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb|gf)-[a-z0-9-]*)"', s)
     dups = set(duplicates(ids))
     note(len(set(ids)) == len(ids), f"topic ids unique ({len(ids)} topics)"
          if not dups else f"DUPLICATE topic ids: {dups}")
-    print(f"  ->  topic count = {len(ids)} (expected 60 unless intentionally changed)")
+    print(f"  ->  topic count = {len(ids)} (expected 66 unless intentionally changed)")
 
     # CONTENT-MAP.md must list exactly the workbook's topic ids (ids are frozen
     # progress keys — a wrong id in the docs invites a progress-wiping "fix")
     cmap = os.path.join(ROOT, "docs", "CONTENT-MAP.md")
     if os.path.exists(cmap):
         doc = open(cmap, encoding="utf-8").read()
-        doc_ids = set(re.findall(r"`((?:eng|prod|hand|ia|brown|traj|des|sec|pb)-[a-z0-9-]+)`", doc))
+        doc_ids = set(re.findall(r"`((?:eng|prod|hand|ia|brown|traj|des|sec|pb|gf)-[a-z0-9-]+)`", doc))
         wb_ids = set(ids)
         extra, missing = sorted(doc_ids - wb_ids), sorted(wb_ids - doc_ids)
         note(not extra and not missing, "CONTENT-MAP.md topic ids match the workbook"

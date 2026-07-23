@@ -291,6 +291,23 @@ these runbooks later — no separate repo.
     across a Sudo team at a client would need shared state. Deferred: adding it would
     reopen the rejected "engagement mode" app-creep.
 
+### M10 — Greenfield module (the applicability layer)
+Added 2026-07-23 (v1.68): six `gf-` topics mapping the brownfield-framed material onto a
+greenfield start — where the M9 playbook applies verbatim, where it inverts (conventions
+authored not extracted, EARS/Gherkin specify forward instead of characterization pinning
+backward, design system before the first screen), and where it disappears (B2, B4, B5, D7,
+the F0 read-only phase). The greenfield re-cuts (authorship checklist entry gate, F-ladder
+without F0, no-baseline measurement) are our synthesis — keep them flagged.
+- ~~Module skeleton: six `gf-` topics with full know/concepts/checks~~ — **done (v1.68)**.
+- **GF deep-dive companions** — one per version, per the repo's rhythm. Suggested order:
+  GF3 harness-first (the most actionable inversion; can reuse PB3's starter-kit templates
+  minus extraction) → GF4 forward loop → GF2 constitute → GF6 measurement → GF5 design-first
+  → GF1 inversion (synthesis piece, benefits from the others existing first).
+- Open question to resolve before the first companion: are GF companions **deep dives**
+  (theory shape) or **runbooks** (M9 shape)? GF2/GF3 lean runbook; GF1 leans deep dive.
+- Converges with T2 (pilot design) on the no-baseline measurement problem — research once,
+  cite twice.
+
 ### 4. Trajectory research (M8, the backlog) — turn T-topics into real modules
 These are the client-facing deliverables; each needs a research pass before a deep dive.
 - **T2 Measurement & pilot design** — highest priority: the DORA + METR method from E7 becomes
