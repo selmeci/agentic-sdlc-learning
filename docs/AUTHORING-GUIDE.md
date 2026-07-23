@@ -28,7 +28,7 @@ Reuse E1's `<head>` verbatim, then:
 - retitle `<title>` and the header `<h1>`/tag;
 - append to the `<style>`: `.closingnote{…}` and `svg .edP2{…marker-end:url(#ahP2a)}`;
 - add a `<nav class="toc">` listing `#s0…#sn`;
-- give each `<h2>` an `id="sN"` (loop, high→low so `1` doesn't match inside `10`).
+- give each `<h2>` an `id="sN"` (loop, high→low so `1` doesn't match inside `10`). **These IDs become public deep links — preserve them when editing; never rename an existing section id, because external links point at it.**
 Write to `deep-dives/P2-…-deepdive.html`.
 
 ## Step 3 — build + insert the overlay
@@ -44,6 +44,8 @@ Wrap the **same body** in:
   </div>
 </div>
 ```
+Because the overlay body is identical to the standalone file, its `<h2>` ids are already stable and match the public deep links. Do not override them.
+
 Insert into the workbook immediately **before** `<footer>`.
 
 ## Step 4 — wire the 3 remaining hooks
