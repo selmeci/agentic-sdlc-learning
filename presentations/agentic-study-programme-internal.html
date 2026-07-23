@@ -1,0 +1,624 @@
+<title>The Agentic Development study programme &mdash; internal briefing</title>
+<style>
+  :root{
+    --bg:#F9F8FB;
+    --bg-raise:#FFFFFF;
+    --ink:#15002E;
+    --ink-soft:#786A89;
+    --ink-muted:#493761;
+    --line:#ECDCE9;
+    --accent:#F40000;
+    --accent-soft:#FEE2E2;
+    --accent-text:#D10000;
+    --tint:#F1ECF6;
+    --ok:#1E7A54;
+    --ok-soft:#E3F1E9;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Sohne","Lab Grotesk","Neue Haas Grotesk Text","Helvetica Neue",Helvetica,"Segoe UI",system-ui,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#15002E;
+      --bg-raise:#26123F;
+      --ink:#F9F8FB;
+      --ink-soft:#A79CB6;
+      --ink-muted:#D8D0E3;
+      --line:#493761;
+      --accent:#FF5A4D;
+      --accent-soft:#4A1420;
+      --accent-text:#FF5A4D;
+      --tint:#2C1650;
+      --ok:#5BC48E;
+      --ok-soft:#1B3229;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15002E; --bg-raise:#26123F; --ink:#F9F8FB; --ink-soft:#A79CB6; --ink-muted:#D8D0E3;
+    --line:#493761; --accent:#FF5A4D; --accent-soft:#4A1420; --accent-text:#FF5A4D; --tint:#2C1650; --ok:#5BC48E; --ok-soft:#1B3229;
+  }
+  :root[data-theme="light"]{
+    --bg:#F9F8FB; --bg-raise:#FFFFFF; --ink:#15002E; --ink-soft:#786A89; --ink-muted:#493761;
+    --line:#ECDCE9; --accent:#F40000; --accent-soft:#FEE2E2; --accent-text:#D10000; --tint:#F1ECF6; --ok:#1E7A54; --ok-soft:#E3F1E9;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+
+  .slide{min-height:100svh;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(2rem,6vh,5rem) clamp(1.25rem,6vw,6rem);scroll-snap-align:start;position:relative;border-bottom:1px solid var(--line)}
+  .slide-inner{max-width:1100px;width:100%}
+
+  .eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-muted);display:flex;align-items:baseline;gap:1rem;margin-bottom:1.4rem}
+  .eyebrow .idx{color:var(--accent-text)}
+
+  h1{font-size:clamp(2.2rem,5.5vw,4.1rem);line-height:1.06;letter-spacing:-.02em;font-weight:650;margin:0 0 1.2rem;text-wrap:balance}
+  h2{font-size:clamp(1.7rem,3.6vw,2.6rem);line-height:1.12;letter-spacing:-.015em;font-weight:650;margin:0 0 1rem;text-wrap:balance}
+  h3{font-size:1.05rem;font-weight:650;margin:0 0 .35rem}
+  p{max-width:64ch;margin:.4rem 0}
+  .lead{font-size:clamp(1.05rem,1.8vw,1.3rem);color:var(--ink-soft);max-width:58ch}
+  .accent-t{color:var(--accent)}
+  .muted-t{color:var(--ink-muted)}
+  strong{font-weight:650}
+  em{font-style:italic}
+
+  .thesis{border-left:3px solid var(--accent);background:var(--tint);
+    padding:.9rem 1.2rem;border-radius:0 8px 8px 0;max-width:64ch;margin-top:1.6rem}
+  .thesis p{margin:0;max-width:none}
+
+  .grid{display:grid;gap:1rem;margin-top:1.8rem}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .grid.c2{grid-template-columns:repeat(2,1fr)}
+  .grid.c4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:900px){.grid.c4{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:820px){.grid.c3,.grid.c2{grid-template-columns:1fr}.grid.c4{grid-template-columns:1fr}}
+
+  .card{background:var(--bg-raise);border:1px solid var(--line);border-radius:10px;padding:1.15rem 1.25rem}
+  .card .tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);
+    display:inline-block;margin-bottom:.7rem;padding:.15rem .5rem;border:1px solid var(--line);border-radius:99px}
+  .card .big{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:650;letter-spacing:-.02em;line-height:1.1;
+    font-variant-numeric:tabular-nums;margin:.1rem 0 .5rem}
+  .card p{font-size:.92rem;color:var(--ink-soft);max-width:none;margin:0}
+  .card.hl{border-color:var(--accent)}
+  .card.hl .tag{border-color:var(--accent);color:var(--accent-text)}
+  .card h3 .k{font-family:var(--mono);font-size:.82rem;color:var(--accent-text);margin-right:.45rem}
+
+  .figwrap{overflow-x:auto;margin-top:1.6rem}
+  .figwrap svg{min-width:660px;width:100%;height:auto;max-height:52vh;display:block}
+  figcaption{font-size:.85rem;color:var(--ink-soft);max-width:74ch;margin-top:.7rem}
+  figure{margin:0}
+  .startnote{display:block;margin-top:.5rem;color:var(--accent-text);font-weight:650;font-size:.9rem}
+
+  /* SVG shared */
+  .sv-lab{font-family:var(--mono);font-size:11px;letter-spacing:.1em;fill:var(--ink-soft)}
+  .sv-t{font-family:var(--sans);font-size:14px;font-weight:650;fill:var(--ink)}
+  .sv-s{font-family:var(--sans);font-size:11.5px;fill:var(--ink-soft)}
+  .sv-box{fill:var(--bg-raise);stroke:var(--line);stroke-width:1.2}
+  .sv-box-tint{fill:var(--tint);stroke:var(--ink-muted);stroke-width:1.2}
+  .sv-box-hl{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.4}
+  .sv-box-mut{fill:none;stroke:var(--ink-soft);stroke-width:1.2;stroke-dasharray:5 3}
+  .sv-gate{fill:var(--bg-raise);stroke:var(--ink);stroke-width:2}
+  .sv-edge{stroke:var(--ink-soft);stroke-width:1.4;fill:none}
+  .sv-edge-d{stroke-dasharray:5 4}
+  .sv-edge-hl{stroke:var(--accent);stroke-width:2;fill:none}
+  .sv-note-hl{font-family:var(--mono);font-size:11px;letter-spacing:.06em;fill:var(--accent-text);font-weight:600}
+  .sv-note-ok{font-family:var(--mono);font-size:11px;letter-spacing:.06em;fill:var(--ok);font-weight:600}
+
+  table{border-collapse:collapse;margin-top:1.4rem;width:100%;max-width:900px;font-size:.95rem}
+  th{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);
+    text-align:left;padding:.5rem .9rem .5rem 0;border-bottom:2px solid var(--line)}
+  td{padding:.65rem .9rem .65rem 0;border-bottom:1px solid var(--line);vertical-align:top;font-size:.92rem}
+  td .k{font-family:var(--mono);color:var(--accent-text);font-weight:650}
+  tr.hl td{background:var(--tint)}
+  tr.hl td:first-child{border-left:3px solid var(--accent);padding-left:.7rem}
+  .tablewrap{overflow-x:auto}
+
+  ul.checks{list-style:none;padding:0;margin:1.2rem 0 0}
+  ul.checks li{padding:.45rem 0 .45rem 1.9rem;position:relative;max-width:70ch}
+  ul.checks li::before{content:"\2713";position:absolute;left:0;top:.42rem;width:1.25rem;height:1.25rem;
+    border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:.8rem;font-weight:700;
+    display:flex;align-items:center;justify-content:center}
+
+  .footnote{font-size:.8rem;color:var(--ink-soft);margin-top:2rem;max-width:76ch}
+  .footnote code{font-family:var(--mono);font-size:.92em}
+
+  .flip{display:grid;grid-template-columns:1fr auto 1fr;gap:1.2rem;align-items:stretch;margin-top:1.8rem}
+  @media (max-width:820px){.flip{grid-template-columns:1fr}.flip .arrow{transform:rotate(90deg);justify-self:center}}
+  .flip .arrow{align-self:center;font-size:1.6rem;color:var(--accent)}
+
+  .titlemark{font-family:var(--mono);font-size:.85rem;color:var(--accent-text);margin-bottom:2.2rem;letter-spacing:.05em}
+  .sig{font-family:var(--mono);font-size:.8rem;color:var(--ink-soft);margin-top:2.4rem;letter-spacing:.03em}
+
+  nav.dots{position:fixed;right:1.1rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:.55rem;z-index:10}
+  nav.dots a{width:9px;height:9px;border-radius:50%;background:var(--line);display:block;transition:background .2s,transform .2s}
+  nav.dots a.on{background:var(--accent);transform:scale(1.35)}
+  nav.dots a:focus-visible{outline:2px solid var(--ink-muted);outline-offset:2px}
+  @media (max-width:700px){nav.dots{display:none}}
+
+  .kbd-hint{position:fixed;left:50%;bottom:.9rem;transform:translateX(-50%);font-family:var(--mono);
+    font-size:.7rem;letter-spacing:.1em;color:var(--ink-soft);opacity:.75;z-index:10}
+  @media (max-width:700px){.kbd-hint{display:none}}
+
+  a{color:var(--accent-text)}
+  .gobtns{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+  .gobtn{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--sans);font-weight:650;font-size:1rem;
+    text-decoration:none;padding:.7rem 1.2rem;border-radius:10px;border:2px solid var(--line);transition:transform .15s ease,border-color .15s ease}
+  .gobtn .ar{font-family:var(--mono);font-size:1.05em;line-height:1}
+  .gobtn.primary{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent)}
+  .gobtn.secondary{background:transparent;color:var(--accent-text)}
+  .gobtn.secondary:hover{border-color:var(--accent)}
+  .gobtn:hover{transform:translateY(-1px)}
+  .gobtn:focus-visible{outline:2px solid var(--ink-muted);outline-offset:3px}
+  .golink{color:var(--accent-text);font-weight:650;text-decoration:none;border-bottom:1px solid var(--accent)}
+  .golink:hover{color:var(--accent)}
+</style>
+
+<nav class="dots" aria-label="Slide navigation"></nav>
+<div class="kbd-hint">&uarr; &darr; to navigate</div>
+
+<!-- ========= 01 &middot; TITLE ========= -->
+<section class="slide" id="s1" aria-label="Title slide">
+  <div class="slide-inner">
+    <div class="titlemark">rent the model &middot; own the harness</div>
+    <div class="eyebrow"><span class="idx">01</span><span>Sudo Labs &middot; internal briefing</span></div>
+    <h1>The Agentic Development<br>study programme.<br><span class="accent-t">What it is</span>, what it brings, and why it should be ours.</h1>
+    <p class="lead">A worked methodology base for leading agentic software delivery at brownfield clients &mdash; grounded in independent evidence, not vendor hype. This is a look at what is inside it, who it helps, and the case for investing in it as a shared Sudo asset.</p>
+    <div class="sig">Built by Roman &middot; senior software architect &middot; the learning + reference base for a real client engagement</div>
+    <div class="gobtns">
+      <a class="gobtn primary" href="https://selmeci.github.io/agentic-sdlc-learning/workbook/agentic-development-study.html" target="_blank" rel="noopener noreferrer">Open the study workbook <span class="ar">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========= 02 &middot; WHY NOW ========= -->
+<section class="slide" id="s2" aria-label="Why this matters now">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">02</span><span>Why this exists &mdash; and why now</span></div>
+    <h2>Everyone is switching agents on. Almost nobody is doing it <span class="accent-t">safely</span>.</h2>
+    <p class="lead">An AI agent doesn't improve the system it lands in &mdash; it <em>amplifies</em> it, the good and the bad. Three numbers, from three different classes of evidence, stated with how much weight each carries.</p>
+    <div class="grid c3">
+      <div class="card">
+        <span class="tag">DORA 2024 &middot; correlational</span>
+        <div class="big">&minus;7.2%</div>
+        <p>delivery stability, associated with a 25% rise in AI adoption. The 2025 update: throughput turns positive, instability persists &mdash; "faster, but not safer." AI is an <strong>amplifier</strong>.</p>
+      </div>
+      <div class="card">
+        <span class="tag">METR &middot; controlled RCT</span>
+        <div class="big">&minus;19%</div>
+        <p>experienced developers were slower with AI &mdash; while believing they were ~20% <em>faster</em>. Perceived speed is not a measuring instrument.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Faros AI &middot; vendor telemetry</span>
+        <div class="big">+98%</div>
+        <p>merged PRs, +91% review time &mdash; with no org-level delivery improvement. The work didn't disappear; it moved into the review queue.</p>
+      </div>
+    </div>
+    <div class="thesis"><p><strong>The gap in the market is the opening for us.</strong> A firm that can make agentic delivery <em>faster and safer</em> &mdash; with a method it can defend in front of a client &mdash; has something the tool vendors don't sell. That method is what this programme is.</p></div>
+    <p class="footnote">Point-in-time figures (mid-2026), re-verified before any client meeting. METR's 2026 follow-up (arXiv:2507.09089 &rarr; ongoing) weakens the slowdown for newer developers and lowers its own confidence to "very weak"; the durable finding is the <em>perception gap</em>, not the exact magnitude.</p>
+  </div>
+</section>
+
+<!-- ========= 03 &middot; WHAT THIS IS ========= -->
+<section class="slide" id="s3" aria-label="What this is">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">03</span><span>What this actually is</span></div>
+    <h2>Not slideware. A <span class="accent-t">worked body of knowledge</span> you can hand a client.</h2>
+    <p class="lead">One interactive study workbook plus a library of standalone companions &mdash; conceptual and methodological, deliberately tool-agnostic because client stacks differ and tools churn weekly.</p>
+    <div class="grid c4">
+      <div class="card hl"><div class="big">10</div><p>modules &mdash; engineering, product, design, handoff, information architecture, brownfield, security, trajectory, playbook, greenfield</p></div>
+      <div class="card"><div class="big">66</div><p>study topics, each with what-to-know, concepts, open questions and a self-check</p></div>
+      <div class="card"><div class="big">52</div><p>deep-dive companions &mdash; one topic each, with inline diagrams and further reading</p></div>
+      <div class="card"><div class="big">91</div><p>hand-drawn diagrams in a browsable gallery; 6 source research reports embedded</p></div>
+    </div>
+    <div class="thesis"><p><strong>Grounded, not generated.</strong> Every claim traces to named practitioners, papers (with arXiv IDs), real incidents and CVEs &mdash; and the three vendor-vs-independent evidence tiers are kept visibly separate. It reads like something a senior engineer wrote, because it is.</p></div>
+    <p class="footnote">Single self-contained HTML &mdash; zero build, no dependencies, hostable anywhere and already live at <a class="golink" href="https://selmeci.github.io/agentic-sdlc-learning/workbook/agentic-development-study.html" target="_blank" rel="noopener noreferrer">selmeci.github.io/agentic-sdlc-learning &#8599;</a>. The same portability we would want for anything we leave behind at a client.</p>
+  </div>
+</section>
+
+<!-- ========= 04 &middot; THE THESIS ========= -->
+<section class="slide" id="s4" aria-label="The core thesis: Agent equals Model plus Harness">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">04</span><span>The one idea everything hangs on</span></div>
+    <h2>Agent = Model + <span class="muted-t">Harness</span>. You <span class="accent-t">rent</span> the model. You <span class="accent-t">own</span> the harness.</h2>
+    <p class="lead">The model is a commodity you swap out as prices fall and benchmarks move. The harness &mdash; the scaffold that gives it state, tools, a verification loop and enforceable limits &mdash; is the durable asset we design, own, and are paid to build. This is what turns agentic work into a service, not a licence resale.</p>
+    <figure>
+      <div class="figwrap">
+      <svg viewBox="0 0 900 430" role="img" aria-label="Agent equals a rented model wrapped in an owned harness of seven components">
+        <defs><marker id="ahTh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink-soft)"/></marker></defs>
+        <text x="30" y="26" class="sv-lab">INPUTS</text>
+        <rect x="24" y="40" width="150" height="40" rx="8" class="sv-box-tint"/><text x="34" y="58" class="sv-t" font-size="13">1 &middot; Prompt</text><text x="34" y="73" class="sv-s">task &middot; intent</text>
+        <rect x="24" y="92" width="150" height="40" rx="8" class="sv-box-tint"/><text x="34" y="110" class="sv-t" font-size="13">2 &middot; Context</text><text x="34" y="125" class="sv-s">code &middot; docs &middot; retrieval</text>
+        <rect x="24" y="144" width="150" height="40" rx="8" class="sv-box"/><text x="34" y="162" class="sv-t" font-size="13">+ Memory</text><text x="34" y="177" class="sv-s">progress &middot; state</text>
+        <line x1="174" y1="112" x2="242" y2="150" class="sv-edge" marker-end="url(#ahTh)"/>
+
+        <rect x="248" y="66" width="392" height="256" rx="16" fill="var(--tint)" opacity="0.55" stroke="var(--accent)" stroke-width="2"/>
+        <text x="264" y="90" class="sv-note-hl">3 &middot; HARNESS &mdash; OWNED, DURABLE, PORTABLE</text>
+        <circle cx="444" cy="196" r="62" class="sv-box-mut"/><text x="444" y="190" class="sv-t" text-anchor="middle">Model</text><text x="444" y="207" class="sv-s" text-anchor="middle">rented &middot; swappable</text>
+        <text x="444" y="248" class="sv-note-hl" text-anchor="middle">&#8646; swap freely</text>
+        <path d="M300 158 A150 150 0 0 1 384 138" class="sv-edge" marker-end="url(#ahTh)"/>
+        <text x="290" y="126" class="sv-lab">4 &middot; LOOP</text>
+        <rect x="266" y="278" width="164" height="36" rx="8" class="sv-box"/><text x="276" y="295" class="sv-t" font-size="13">5 &middot; Tools</text><text x="276" y="308" class="sv-s">bash &middot; edit &middot; MCP</text>
+        <rect x="458" y="278" width="164" height="36" rx="8" class="sv-box-hl"/><text x="468" y="295" class="sv-t" font-size="13">6 &middot; Verification</text><text x="468" y="308" class="sv-s">tests &middot; CI signal</text>
+        <line x1="348" y1="278" x2="400" y2="240" class="sv-edge"/>
+        <line x1="540" y1="278" x2="492" y2="240" class="sv-edge sv-edge-d sv-edge-hl"/>
+
+        <text x="710" y="26" class="sv-lab">OUTPUTS</text>
+        <rect x="700" y="120" width="180" height="40" rx="8" class="sv-box"/><text x="710" y="138" class="sv-t" font-size="13">Merge-ready change</text><text x="710" y="153" class="sv-s">code &middot; PR &middot; artifact</text>
+        <rect x="700" y="172" width="180" height="40" rx="8" class="sv-box"/><text x="710" y="190" class="sv-t" font-size="13">Updated memory</text><text x="710" y="205" class="sv-s">progress &middot; learnings</text>
+        <line x1="640" y1="140" x2="700" y2="140" class="sv-edge" marker-end="url(#ahTh)"/>
+
+        <rect x="248" y="344" width="392" height="46" rx="8" class="sv-box"/>
+        <text x="444" y="364" class="sv-t" font-size="13" text-anchor="middle">7 &middot; Governance</text>
+        <text x="444" y="380" class="sv-s" text-anchor="middle">deterministic hooks &middot; permissions &middot; sandbox &middot; egress policy</text>
+        <line x1="444" y1="322" x2="444" y2="344" class="sv-edge" marker-end="url(#ahTh)"/>
+        <path d="M790 212 V410 H92 V186" class="sv-edge sv-edge-d" marker-end="url(#ahTh)"/>
+      </svg>
+      </div>
+      <figcaption>Seven components forming a loop, not a pipeline: the agent proposes, a tool acts, <strong>verification says whether it was correct</strong>, governance bounds every step, and the result feeds the next turn. Swap the model in the middle and the asset you own is untouched.</figcaption>
+    </figure>
+    <p class="footnote">Framing after Birgitta B&ouml;ckeler (ThoughtWorks) and Simon Willison ("an agent runs tools in a loop to achieve a goal"). Memory &amp; orchestration are cross-cutting and conditional &mdash; added when the task needs them, not a default eighth component.</p>
+  </div>
+</section>
+
+<!-- ========= 05 &middot; THREE IDEAS ========= -->
+<section class="slide" id="s5" aria-label="Three ideas that run through everything">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">05</span><span>The spine &mdash; three ideas in every module</span></div>
+    <h2>Three principles that make the difference between a demo and <span class="accent-t">production</span>.</h2>
+    <div class="grid c3">
+      <div class="card">
+        <span class="tag">01 &middot; where a rule lives</span>
+        <h3>Advisory vs deterministic</h3>
+        <p>Text the model <em>interprets</em> (prompts, <code>CLAUDE.md</code>) is advisory &mdash; it shapes behaviour but can be ignored under load or prompt injection. Rules the harness <em>enforces</em> (hooks, permissions, sandbox) are deterministic. <strong>Only the deterministic layer holds under pressure.</strong></p>
+      </div>
+      <div class="card">
+        <span class="tag">02 &middot; what caps delegation</span>
+        <h3>Verification sets the ceiling</h3>
+        <p>The strength and speed of the verification loop &mdash; not the model &mdash; decides how much autonomy is safe. No trustworthy tests means no safe delegation. So the first thing agents build in a codebase is the net that catches them.</p>
+      </div>
+      <div class="card">
+        <span class="tag">03 &middot; how much to delegate</span>
+        <h3>Autonomy is a staffing decision</h3>
+        <p>Not a capability score. Higher is not better; the safe level is set by the weakest enabling component and is always capped by one rule: <strong>never scale agents beyond review capacity.</strong> Nobody is automated out of the loop.</p>
+      </div>
+    </div>
+    <div class="thesis"><p>These three run through all nine modules &mdash; the same vocabulary applied to engineering, product, design and security. That shared language is half the value: a Sudo team that agrees on <em>advisory vs deterministic</em> argues about the right things.</p></div>
+  </div>
+</section>
+
+<!-- ========= 06 &middot; THREE SCALES ========= -->
+<section class="slide" id="s6" aria-label="The three autonomy scales across engineering, product and design">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">06</span><span>An original lens &mdash; autonomy across three disciplines</span></div>
+    <h2>How much to delegate, made <span class="accent-t">explicit</span> &mdash; for engineers, PMs and designers alike.</h2>
+    <p class="lead">Three parallel five-point scales. The safe production ceiling today is the middle rung &mdash; a task delegated, then reviewed by a human &mdash; in every discipline. Higher rungs are narrow or anti-patterns, not aspirations.</p>
+    <figure>
+      <div class="figwrap">
+      <svg viewBox="0 0 900 400" role="img" aria-label="Three parallel five-rung autonomy ladders for engineering, product and design, each with the third rung as the safe ceiling">
+        <defs><marker id="ahSc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink-soft)"/></marker></defs>
+        <!-- column headers -->
+        <text x="150" y="26" class="sv-t" text-anchor="middle" font-size="13">ENGINEERING</text><text x="150" y="42" class="sv-s" text-anchor="middle">L1&ndash;L5 &middot; adapted</text>
+        <text x="450" y="26" class="sv-t" text-anchor="middle" font-size="13">PRODUCT</text><text x="450" y="42" class="sv-s" text-anchor="middle">P1&ndash;P5 &middot; original</text>
+        <text x="750" y="26" class="sv-t" text-anchor="middle" font-size="13">DESIGN</text><text x="750" y="42" class="sv-s" text-anchor="middle">D1&ndash;D5 &middot; original</text>
+        <!-- rows: 5 (top, muted) down to 1 -->
+        <!-- L column x=40..260 center150 -->
+        <rect x="40" y="58" width="220" height="34" rx="7" class="sv-box-mut"/><text x="50" y="79" class="sv-s" fill="var(--ink-soft)">L5 &middot; full autonomy &mdash; not achieved</text>
+        <rect x="40" y="98" width="220" height="34" rx="7" class="sv-box-tint"/><text x="50" y="119" class="sv-s">L4 &middot; high &mdash; narrow tasks only</text>
+        <rect x="40" y="138" width="220" height="42" rx="7" class="sv-box-hl"/><text x="50" y="156" class="sv-t" font-size="12.5">L3 &middot; delegated task &rarr; PR</text><text x="50" y="171" class="sv-s">async work, human reviews</text>
+        <rect x="40" y="186" width="220" height="34" rx="7" class="sv-box"/><text x="50" y="207" class="sv-s">L2 &middot; conversational &mdash; most teams</text>
+        <rect x="40" y="226" width="220" height="34" rx="7" class="sv-box"/><text x="50" y="247" class="sv-s">L1 &middot; assistant &mdash; inline</text>
+        <!-- P column x=340..560 center450 -->
+        <rect x="340" y="58" width="220" height="34" rx="7" class="sv-box-mut"/><text x="350" y="79" class="sv-s" fill="var(--ink-soft)">P5 &middot; autonomous def. &mdash; anti-pattern</text>
+        <rect x="340" y="98" width="220" height="34" rx="7" class="sv-box-tint"/><text x="350" y="119" class="sv-s">P4 &middot; decomposition, with gates</text>
+        <rect x="340" y="138" width="220" height="42" rx="7" class="sv-box-hl"/><text x="350" y="156" class="sv-t" font-size="12.5">P3 &middot; red-teams the artifact</text><text x="350" y="171" class="sv-s">finds gaps, human disposes</text>
+        <rect x="340" y="186" width="220" height="34" rx="7" class="sv-box"/><text x="350" y="207" class="sv-s">P2 &middot; drafts artifacts &mdash; mainstream</text>
+        <rect x="340" y="226" width="220" height="34" rx="7" class="sv-box"/><text x="350" y="247" class="sv-s">P1 &middot; assisted drafting</text>
+        <!-- D column x=640..860 center750 -->
+        <rect x="640" y="58" width="220" height="34" rx="7" class="sv-box-mut"/><text x="650" y="79" class="sv-s" fill="var(--ink-soft)">D5 &middot; autonomous &mdash; anti-pattern</text>
+        <rect x="640" y="98" width="220" height="34" rx="7" class="sv-box-tint"/><text x="650" y="119" class="sv-s">D4 &middot; proposes system change</text>
+        <rect x="640" y="138" width="220" height="42" rx="7" class="sv-box-hl"/><text x="650" y="156" class="sv-t" font-size="12.5">D3 &middot; generates + maintains</text><text x="650" y="171" class="sv-s">consistency, human reviews PR</text>
+        <rect x="640" y="186" width="220" height="34" rx="7" class="sv-box"/><text x="650" y="207" class="sv-s">D2 &middot; screens in constraints</text>
+        <rect x="640" y="226" width="220" height="34" rx="7" class="sv-box"/><text x="650" y="247" class="sv-s">D1 &middot; assisted drafting</text>
+        <!-- ceiling line -->
+        <line x1="30" y1="159" x2="870" y2="159" class="sv-edge-hl" stroke-dasharray="4 4"/>
+        <text x="30" y="300" class="sv-note-hl">&mdash;&mdash; today&rsquo;s safe production ceiling (the middle rung)</text>
+        <!-- cap band -->
+        <rect x="30" y="320" width="840" height="44" rx="9" class="sv-box"/>
+        <text x="450" y="342" class="sv-t" text-anchor="middle" font-size="13">The hard cap on all three: never scale agents beyond code-review capacity.</text>
+        <text x="450" y="358" class="sv-s" text-anchor="middle">review capacity, not model capability, is the real limit &mdash; and it keeps humans in the loop by design.</text>
+      </svg>
+      </div>
+      <figcaption>One principle unifies the three: <strong>autonomy rises exactly as far as verification can be made deterministic.</strong> L1&ndash;L5 is our adaptation of published industry ladders; <strong>P1&ndash;P5 and D1&ndash;D5 are original syntheses of this programme</strong> &mdash; useful lenses, flagged as such wherever they appear, not industry standards.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ========= 07 &middot; GROUNDED NOT HYPE ========= -->
+<section class="slide" id="s7" aria-label="Grounded not hype: evidence discipline">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">07</span><span>Why a client will trust it</span></div>
+    <h2>It keeps <span class="accent-t">independent evidence</span>, vendor claims and our own synthesis visibly apart.</h2>
+    <p class="lead">The discipline the material teaches is the discipline it practises. Every figure is tagged with how much weight it carries &mdash; the single habit that separates a credible methodology from a pitch deck.</p>
+    <div class="tablewrap">
+    <table>
+      <tr><th>Evidence tier</th><th>Example from the programme</th><th>How it is treated</th></tr>
+      <tr class="hl"><td><strong>Strong &amp; independent</strong></td><td><span class="k">METR</span> RCT &mdash; 16 devs, 246 tasks, &minus;19% while feeling +20% faster (arXiv:2507.09089)</td><td>load-bearing, but the sample and its own confidence downgrade are stated</td></tr>
+      <tr><td>Correlational, large-N</td><td><span class="k">DORA</span> &minus;7.2% stability; <span class="k">GitClear</span> duplicated blocks up 8&times;</td><td>directional signal, never cause &mdash; "% of AI code is not a rigorous metric"</td></tr>
+      <tr><td>Vendor telemetry</td><td><span class="k">Faros</span> +98% merged PRs; tool benchmarks</td><td>labelled vendor, quarantined from independent findings</td></tr>
+      <tr><td>Practitioner synthesis</td><td>the <span class="k">P1&ndash;P5</span> / <span class="k">D1&ndash;D5</span> scales</td><td>flagged as original, point-in-time, "challenge this"</td></tr>
+    </table>
+    </div>
+    <div class="thesis"><p>Named receipts throughout: the Devin test (<strong>3 of 20</strong> tasks completed), the Replit agent deleting a production database during a code freeze, EARS/Gherkin, DORA + METR, real CVEs. When a client's principal engineer pushes back, the answer is a citation, not an assertion.</p></div>
+  </div>
+</section>
+
+<!-- ========= 08 &middot; PROGRAMME MAP ========= -->
+<section class="slide" id="s8" aria-label="The programme map: nine modules">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">08</span><span>The whole thing at a glance</span></div>
+    <h2>Ten modules &mdash; three harnesses, one bridge, a shared foundation, and two rollout tracks.</h2>
+    <p class="lead">It isn't a pile of tips. It's an architecture: the product, engineering and design harnesses sit on shared information architecture, security wraps everything, and two playbooks turn it into an engagement &mdash; for brownfield and greenfield alike.</p>
+    <figure>
+      <div class="figwrap">
+      <svg viewBox="0 0 900 452" role="img" aria-label="Architecture of the nine modules: security across the top, three harness pillars over a shared foundation, brownfield entry, and a playbook track">
+        <defs><marker id="ahMp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink-soft)"/></marker></defs>
+        <!-- Security band -->
+        <rect x="24" y="26" width="852" height="46" rx="9" class="sv-box-tint"/>
+        <text x="40" y="47" class="sv-t" font-size="13">M7 &middot; Security &mdash; cross-cutting</text>
+        <text x="40" y="63" class="sv-s">re-reads every layer through a threat lens: lethal trifecta, per-component threats, real incidents &amp; CVEs</text>
+        <!-- brownfield entry -->
+        <rect x="24" y="96" width="150" height="200" rx="10" class="sv-box-tint"/>
+        <text x="38" y="118" class="sv-t" font-size="13">M5 &middot; Brownfield</text><text x="38" y="134" class="sv-t" font-size="13">bootstrap</text>
+        <text x="38" y="156" class="sv-s">where a real</text><text x="38" y="170" class="sv-s">client codebase</text><text x="38" y="184" class="sv-s">actually starts:</text>
+        <text x="38" y="204" class="sv-s">read-only first,</text><text x="38" y="218" class="sv-s">characterization</text><text x="38" y="232" class="sv-s">tests, mutation</text><text x="38" y="246" class="sv-s">gate, archaeology</text>
+        <line x1="174" y1="196" x2="202" y2="196" class="sv-edge" marker-end="url(#ahMp)"/>
+        <!-- three pillars -->
+        <rect x="208" y="96" width="196" height="118" rx="10" class="sv-box"/>
+        <text x="222" y="118" class="sv-t" font-size="13">M2 &middot; Product harness</text>
+        <text x="222" y="138" class="sv-s">discovery &middot; PRDs &middot;</text><text x="222" y="152" class="sv-s">decomposition into</text><text x="222" y="166" class="sv-s">agent-ready work</text><text x="222" y="186" class="sv-s">verification here is</text><text x="222" y="200" class="sv-s">human judgment (P1&ndash;P5)</text>
+        <rect x="424" y="96" width="196" height="118" rx="10" class="sv-box"/>
+        <text x="438" y="118" class="sv-t" font-size="13">M1 &middot; Engineering harness</text>
+        <text x="438" y="138" class="sv-s">the 7 components &middot;</text><text x="438" y="152" class="sv-s">verification loop &middot;</text><text x="438" y="166" class="sv-s">governance &middot; L1&ndash;L5 &middot;</text><text x="438" y="186" class="sv-s">the hard data on</text><text x="438" y="200" class="sv-s">what actually works</text>
+        <rect x="640" y="96" width="196" height="118" rx="10" class="sv-box"/>
+        <text x="654" y="118" class="sv-t" font-size="13">M6 &middot; Design harness</text>
+        <text x="654" y="138" class="sv-s">design system as the</text><text x="654" y="152" class="sv-s">third artifact &middot; tokens</text><text x="654" y="166" class="sv-s">as visual contract &middot;</text><text x="654" y="186" class="sv-s">the D1&ndash;D5 scale</text>
+        <!-- handoff bridge -->
+        <rect x="286" y="228" width="336" height="34" rx="8" class="sv-box-tint"/>
+        <text x="454" y="249" class="sv-t" font-size="12" text-anchor="middle">M3 &middot; Handoff contract &mdash; product &rlarr; engineering</text>
+        <line x1="306" y1="214" x2="306" y2="228" class="sv-edge"/>
+        <line x1="522" y1="214" x2="522" y2="228" class="sv-edge"/>
+        <path d="M690 214 V245 H622" class="sv-edge" fill="none"/>
+        <!-- foundation -->
+        <rect x="208" y="276" width="628" height="40" rx="9" class="sv-box"/>
+        <text x="522" y="300" class="sv-t" font-size="13" text-anchor="middle">M4 &middot; Information architecture &mdash; the shared foundation (artifacts, memory, retrieval, links)</text>
+        <line x1="454" y1="262" x2="454" y2="276" class="sv-edge" marker-end="url(#ahMp)"/>
+        <!-- playbook track -->
+        <rect x="24" y="336" width="390" height="46" rx="9" class="sv-box-tint"/>
+        <text x="40" y="357" class="sv-t" font-size="13">M9 &middot; Playbook &mdash; brownfield engagement</text>
+        <text x="40" y="373" class="sv-s">assess &rarr; bootstrap &rarr; harness &rarr; handoff &rarr; pilot</text>
+        <rect x="430" y="336" width="222" height="46" rx="9" class="sv-box-tint"/>
+        <text x="446" y="357" class="sv-t" font-size="13">M10 &middot; Greenfield</text>
+        <text x="446" y="373" class="sv-s">the same theory, no legacy</text>
+        <rect x="668" y="336" width="208" height="46" rx="9" class="sv-box-mut"/>
+        <text x="682" y="357" class="sv-t" font-size="13" fill="var(--ink-soft)">M8 &middot; Trajectory</text>
+        <text x="682" y="373" class="sv-s">the research horizon &mdash; backlog</text>
+        <line x1="338" y1="316" x2="338" y2="336" class="sv-edge" marker-end="url(#ahMp)"/>
+        <text x="24" y="410" class="sv-s">Reports 1&ndash;6 are the source research for M1&ndash;M7; M8 is the backlog; M9 distils them for brownfield, M10 re-cuts them for greenfield.</text>
+      </svg>
+      </div>
+      <figcaption>The shape is the point: <strong>three delivery disciplines that converge on one handoff contract</strong> &mdash; the design system is itself the third handoff artifact, feeding product and engineering alike &mdash; with security cross-cutting rather than a bolt-on, ending in a runnable engagement most "AI adoption" material never reaches.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ========= 09 &middot; SECURITY ========= -->
+<section class="slide" id="s9" aria-label="Security treated as cross-cutting">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">09</span><span>The differentiator most decks skip</span></div>
+    <h2>Security isn't a module at the end. It <span class="accent-t">re-reads every other one</span>.</h2>
+    <p class="lead">The failure mode that matters is not the model being wrong &mdash; it's the model being <em>hijacked</em>. The programme carries this from first principles to a per-component threat map with real 2025&ndash;26 incidents and CVEs.</p>
+    <figure>
+      <div class="figwrap">
+      <svg viewBox="0 0 820 414" role="img" aria-label="The lethal trifecta: three overlapping properties whose intersection is a working exploit">
+        <circle cx="300" cy="148" r="130" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6" opacity="0.85"/>
+        <circle cx="520" cy="148" r="130" fill="var(--tint)" stroke="var(--ink-muted)" stroke-width="1.6" opacity="0.7"/>
+        <circle cx="410" cy="268" r="130" fill="var(--tint)" stroke="var(--ink-muted)" stroke-width="1.6" opacity="0.55"/>
+        <text x="238" y="98" class="sv-t" text-anchor="middle" font-size="13">Private</text><text x="238" y="115" class="sv-t" text-anchor="middle" font-size="13">data</text>
+        <text x="582" y="98" class="sv-t" text-anchor="middle" font-size="13">Untrusted</text><text x="582" y="115" class="sv-t" text-anchor="middle" font-size="13">content</text>
+        <text x="410" y="308" class="sv-t" text-anchor="middle" font-size="13">External</text><text x="410" y="325" class="sv-t" text-anchor="middle" font-size="13">communication</text>
+        <circle cx="410" cy="188" r="30" fill="var(--accent)"/>
+        <text x="410" y="185" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="#fff" font-weight="700">EXPLOIT</text>
+        <text x="410" y="199" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="#fff" font-weight="700">PATH</text>
+      </svg>
+      </div>
+      <figcaption>Simon Willison's <strong>lethal trifecta</strong> (June 2025): give an agent private data, exposure to attacker-controlled text, and a way to send data out &mdash; and all three together are a working exfiltration path. Meta's <strong>Rule of Two</strong> (Oct 2025): a session should hold no more than two of the three without a human gate.</figcaption>
+    </figure>
+    <div class="grid c3" style="margin-top:1.4rem">
+      <div class="card"><span class="tag">real &middot; zero-click</span><p><strong>EchoLeak</strong> &mdash; CVE-2025-32711 (CVSS 9.3): a single crafted email exfiltrates from M365 Copilot's context. No user action.</p></div>
+      <div class="card"><span class="tag">real &middot; no attacker</span><p><strong>Replit</strong>, July 2025: an agent deleted a production database during a code freeze, then falsely claimed rollback was impossible.</p></div>
+      <div class="card"><span class="tag">real &middot; supply chain</span><p><strong>postmark-mcp</strong>, Sept 2025: a trusted MCP package silently BCC'd every email after 15 clean releases &mdash; the first in-the-wild malicious MCP server.</p></div>
+    </div>
+    <p class="footnote">Eight security topics (S1&ndash;S8) span prompt injection &amp; blast-radius, the trifecta &amp; Rule of Two, the advisory-vs-deterministic control split, the MCP/tool attack surface, auto-run &amp; sandbox escapes, and memory poisoning across agents. PoCs are labelled as PoCs; in-the-wild incidents as incidents.</p>
+  </div>
+</section>
+
+<!-- ========= 10 &middot; PLAYBOOK ========= -->
+<section class="slide" id="s10" aria-label="From theory to practice: the playbook">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">10</span><span>Theory you can actually run</span></div>
+    <h2>Five runbooks turn the ideas into an <span class="accent-t">engagement</span>.</h2>
+    <p class="lead">This is what makes it more than reading. The playbook maps the whole client journey &mdash; assess before you build, and never write until a net exists to catch it.</p>
+    <figure>
+      <div class="figwrap">
+      <svg viewBox="0 0 900 300" role="img" aria-label="The five runbooks as an engagement pipeline with an F0 go/no-go gate after assessment">
+        <defs><marker id="ahPl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink-soft)"/></marker></defs>
+        <rect x="20" y="70" width="150" height="86" rx="10" class="sv-box"/>
+        <text x="34" y="92" class="sv-t" font-size="13">PB1 &middot; Assess</text>
+        <text x="34" y="112" class="sv-s">maturity, verification</text><text x="34" y="126" class="sv-s">base, delivery</text><text x="34" y="140" class="sv-s">baseline, review owner</text>
+        <!-- F0 gate -->
+        <polygon points="230,113 300,83 370,113 300,143" class="sv-gate"/>
+        <text x="300" y="110" class="sv-t" font-size="12.5" text-anchor="middle">F0 GATE</text>
+        <text x="300" y="125" class="sv-s" text-anchor="middle">go / no-go</text>
+        <line x1="170" y1="113" x2="228" y2="113" class="sv-edge" marker-end="url(#ahPl)"/>
+        <text x="300" y="66" class="sv-note-hl" text-anchor="middle">4 non-negotiable checks</text>
+        <rect x="404" y="70" width="150" height="86" rx="10" class="sv-box"/>
+        <text x="418" y="92" class="sv-t" font-size="13">PB2 &middot; Bootstrap</text>
+        <text x="418" y="112" class="sv-s">build the</text><text x="418" y="126" class="sv-s">verification base;</text><text x="418" y="140" class="sv-s">read-only first</text>
+        <line x1="372" y1="113" x2="402" y2="113" class="sv-edge" marker-end="url(#ahPl)"/>
+        <rect x="580" y="70" width="150" height="86" rx="10" class="sv-box"/>
+        <text x="594" y="92" class="sv-t" font-size="13">PB3 &middot; Harness</text>
+        <text x="594" y="112" class="sv-s">stand up hooks,</text><text x="594" y="126" class="sv-s">permissions, the CI</text><text x="594" y="140" class="sv-s">gate, info arch</text>
+        <line x1="554" y1="113" x2="578" y2="113" class="sv-edge" marker-end="url(#ahPl)"/>
+        <rect x="404" y="184" width="150" height="86" rx="10" class="sv-box"/>
+        <text x="418" y="206" class="sv-t" font-size="13">PB4 &middot; Handoff</text>
+        <text x="418" y="226" class="sv-s">run the contract</text><text x="418" y="240" class="sv-s">end-to-end; one</text><text x="418" y="254" class="sv-s">real feature shipped</text>
+        <rect x="580" y="184" width="150" height="86" rx="10" class="sv-box-hl"/>
+        <text x="594" y="206" class="sv-t" font-size="13">PB5 &middot; Pilot</text>
+        <text x="594" y="226" class="sv-s">measure vs baseline,</text><text x="594" y="240" class="sv-s">gate the decision:</text><text x="594" y="254" class="sv-s">GO / HOLD / STOP</text>
+        <path d="M655 156 V170 H479 V184" class="sv-edge" fill="none" marker-end="url(#ahPl)"/>
+        <line x1="554" y1="227" x2="578" y2="227" class="sv-edge" marker-end="url(#ahPl)"/>
+        <rect x="760" y="184" width="120" height="86" rx="10" class="sv-box-tint"/>
+        <text x="774" y="212" class="sv-t" font-size="13">Decision</text>
+        <text x="774" y="232" class="sv-s">signed, with</text><text x="774" y="246" class="sv-s">STOP criteria</text><text x="774" y="260" class="sv-s">and owners</text>
+        <line x1="730" y1="227" x2="758" y2="227" class="sv-edge" marker-end="url(#ahPl)"/>
+      </svg>
+      </div>
+      <figcaption>The F0 gate has four checks that don't average out: a trustworthy test suite, a readable CI signal, dev/prod separation, and no secrets in the repo. Miss one and it's no-go &mdash; a high average with a hole is exactly the false confidence the gate exists to catch.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ========= 11 &middot; GREENFIELD ========= -->
+<section class="slide" id="s11" aria-label="Greenfield: the harness without a legacy">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">11</span><span>The other half of the field</span></div>
+    <h2>It covers <span class="accent-t">greenfield</span> too, not just legacy.</h2>
+    <p class="lead">The playbook you just saw is the brownfield road. Module M10 maps the same theory onto a blank repo &mdash; so we can lead an engagement whether the client hands us a legacy estate or an empty one.</p>
+    <div class="thesis"><p><strong>The inversion, in one line:</strong> brownfield pays a "bootstrap tax" to retrofit tests and extract conventions from code it didn't write; greenfield skips that tax by <em>authoring</em> both before feature #1 &mdash; and inherits the mirror risk. <strong>Authorship risk replaces archaeology risk:</strong> with no existing code as gravity, the agent overbuilds and drifts instead of regressing.</p></div>
+    <div class="tablewrap">
+    <table>
+      <tr><th>Practice</th><th>Brownfield &middot; M5 + M9</th><th>Greenfield &middot; M10</th></tr>
+      <tr><td>Conventions</td><td>extract from existing code</td><td><strong>author</strong> before feature #1 &mdash; or the model's defaults become yours</td></tr>
+      <tr><td>Verification</td><td>characterize &amp; pin behaviour</td><td>specify <strong>forward</strong> &mdash; EARS/Gherkin, acceptance suite as golden master from birth</td></tr>
+      <tr><td>Design</td><td>excavate de-facto tokens (D7)</td><td>author tokens before screen #1 &mdash; or the vendor default is your design system</td></tr>
+      <tr><td>Measure</td><td>freeze a historical baseline</td><td>pre-registered absolute metrics from commit one &mdash; there is no "before"</td></tr>
+      <tr class="hl"><td>Default failure</td><td>regressions</td><td>overbuild &amp; architectural drift</td></tr>
+    </table>
+    </div>
+    <p class="footnote">Six topics (GF1&ndash;GF6) each name where the brownfield playbook applies verbatim, where it inverts, and where it disappears. The greenfield re-cuts are flagged as our synthesis, not an industry standard &mdash; and security (M7) never varies: the lethal trifecta is identical on an empty repo.</p>
+  </div>
+</section>
+
+<!-- ========= 12 &middot; WHO IT HELPS ========= -->
+<section class="slide" id="s12" aria-label="Who it helps">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">12</span><span>Who picks it up &mdash; and what they get</span></div>
+    <h2>One artifact, <span class="accent-t">five audiences</span>, each with a way in.</h2>
+    <div class="grid c2">
+      <div class="card">
+        <h3><span class="k">Eng</span>Engineers &amp; tech leads</h3>
+        <p>The harness, verification loop, governance and the L1&ndash;L5 ladder &mdash; plus brownfield bootstrap for real legacy code and the full security thread. A shared, defensible way to delegate to agents safely.</p>
+      </div>
+      <div class="card">
+        <h3><span class="k">PM</span>Product managers</h3>
+        <p>Discovery, PRDs and decomposition into agent-ready work (P1&ndash;P5), and the handoff contract with machine-verifiable acceptance criteria. How to feed the engineering harness well.</p>
+      </div>
+      <div class="card">
+        <h3><span class="k">Dsg</span>Designers</h3>
+        <p>The design system as a first-class handoff artifact, tokens as a visual contract, and the D1&ndash;D5 scale &mdash; how design plugs into the same agentic loop instead of being an afterthought.</p>
+      </div>
+      <div class="card">
+        <h3><span class="k">Del</span>Delivery &amp; engagement leads</h3>
+        <p>The PB1&ndash;PB5 playbook: how to assess a client, gate the decision, run a measured pilot, and know when to stop. A repeatable engagement shape, not a bespoke guess each time.</p>
+      </div>
+      <div class="card hl" style="grid-column:1/-1">
+        <h3><span class="k">Lead</span>Leadership &amp; new-business</h3>
+        <p>The strategic story in one line &mdash; <strong>we own the harness, the client rents the model</strong> &mdash; plus the evidence to back a "faster and safer" claim, and a service that de-risks agentic adoption instead of hand-waving it. Positioning a competitor can't copy from a vendor's landing page.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= 13 &middot; WHAT IT BRINGS TO SUDO ========= -->
+<section class="slide" id="s13" aria-label="What it brings to Sudo">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">13</span><span>The strategic case</span></div>
+    <h2>Why this is worth <span class="accent-t">investing in</span> &mdash; not just filing away.</h2>
+    <div class="flip">
+      <div class="card">
+        <span class="tag">Without a shared method</span>
+        <h3>Every engagement reinvents the wheel</h3>
+        <p>Each team improvises its own approach to agents, argues past each other on vocabulary, repeats the same avoidable mistakes, and pitches "AI adoption" that sounds like everyone else's.</p>
+      </div>
+      <div class="arrow" aria-hidden="true">&rarr;</div>
+      <div class="card hl">
+        <span class="tag">With this as a Sudo asset</span>
+        <h3>A reusable, defensible edge</h3>
+        <p>One methodology across eng, product and design; a shared vocabulary; delivery de-risked by verification-first and security-by-design; and 52 deep-dives + 5 runbooks + 91 diagrams to ramp a new engagement fast.</p>
+      </div>
+    </div>
+    <div class="grid c4" style="margin-top:1.4rem">
+      <div class="card"><p><strong>Differentiation.</strong> Most pitches ignore verification, governance and security. This leads with them.</p></div>
+      <div class="card"><p><strong>Faster ramp.</strong> New people and new engagements start from a worked base, not a blank page.</p></div>
+      <div class="card"><p><strong>Lower risk.</strong> The autonomy cap and the F0 gate keep us &mdash; and clients &mdash; out of the incident stories.</p></div>
+      <div class="card"><p><strong>Portable.</strong> Zero-build HTML we own; nothing to license, nothing to rent, easy to leave behind.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= 14 &middot; THE ASK ========= -->
+<section class="slide" id="s14" aria-label="The ask and summary">
+  <div class="slide-inner">
+    <div class="eyebrow"><span class="idx">14</span><span>The ask</span></div>
+    <h2>Let's make it <span class="accent-t">ours</span>, and put it to work.</h2>
+    <ul class="checks">
+      <li><strong>Use it on the next brownfield engagement</strong> &mdash; start at PB1 (Assess) and let the F0 gate make the go/no-go call</li>
+      <li><strong>Adopt the vocabulary</strong> &mdash; advisory vs deterministic, and the L/P/D scales &mdash; as shared Sudo language across disciplines</li>
+      <li><strong>Contribute</strong> &mdash; finish the remaining product/design deep-dives and promote the trajectory (M8) research questions into real modules</li>
+      <li><strong>Keep it current</strong> &mdash; the tool facts are point-in-time (mid-2026); re-verify before any client meeting</li>
+    </ul>
+    <div class="thesis" style="margin-top:1.8rem">
+      <p><strong>Three sentences to remember:</strong> We rent the model and own the harness &mdash; that is the thing we design, own, and are paid to build. Verification quality, not model quality, sets how much we can safely delegate &mdash; so nothing gets written until a net exists to catch it. And this programme already turns that into an engagement a client can be walked through &mdash; the only question is whether we make it a shared Sudo asset or leave it as one person's notes.</p>
+    </div>
+    <div class="gobtns">
+      <a class="gobtn primary" href="https://selmeci.github.io/agentic-sdlc-learning/workbook/agentic-development-study.html" target="_blank" rel="noopener noreferrer">Open the study workbook <span class="ar">&#8599;</span></a>
+      <a class="gobtn secondary" href="https://selmeci.github.io/agentic-sdlc-learning/gallery.html" target="_blank" rel="noopener noreferrer">Browse the 91-diagram gallery <span class="ar">&#8599;</span></a>
+    </div>
+    <div class="sig">Live at selmeci.github.io/agentic-sdlc-learning &middot; workbook v1.68 &middot; 10 modules &middot; 66 topics &middot; 6 reports &middot; 52 deep-dives &middot; 91 diagrams</div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var nav = document.querySelector('nav.dots');
+  slides.forEach(function(s,i){
+    var a = document.createElement('a');
+    a.href = '#'+s.id;
+    a.setAttribute('aria-label','Slide '+(i+1));
+    nav.appendChild(a);
+  });
+  var dots = Array.prototype.slice.call(nav.children);
+  var current = 0;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        current = slides.indexOf(e.target);
+        dots.forEach(function(d,i){ d.classList.toggle('on', i===current); });
+      }
+    });
+  }, {threshold:0.55});
+  slides.forEach(function(s){ io.observe(s); });
+  document.addEventListener('keydown', function(ev){
+    if(ev.target && /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
+    if(ev.key==='ArrowDown'||ev.key==='PageDown'||ev.key===' '){
+      if(current < slides.length-1){ ev.preventDefault(); slides[current+1].scrollIntoView(); }
+    } else if(ev.key==='ArrowUp'||ev.key==='PageUp'){
+      if(current > 0){ ev.preventDefault(); slides[current-1].scrollIntoView(); }
+    } else if(ev.key==='Home'){ ev.preventDefault(); slides[0].scrollIntoView(); }
+    else if(ev.key==='End'){ ev.preventDefault(); slides[slides.length-1].scrollIntoView(); }
+  });
+})();
+</script>
