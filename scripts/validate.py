@@ -163,6 +163,100 @@ def check_diagram_lightbox(s, label):
     note(len(problems) == before, f"{label}: diagram lightbox present, figures zoomable")
 
 
+# --- application layer (deep-dive application scaffold) ---------------------
+# Study deep dives carry a decision frame + Applying-it section (AUTHORING-GUIDE
+# Step 1b). PB runbooks ARE the application layer and are exempt. APP_PENDING lists
+# files not yet converted; it only ever shrinks. New deep dives must comply
+# immediately — never add to this set.
+APP_EXEMPT_PREFIXES = ("PB1-", "PB2-", "PB3-", "PB4-", "PB5-")
+APP_PENDING = {
+    "B1-bootstrap-paradox-deepdive.html",
+    "B2-characterization-golden-master-deepdive.html",
+    "B3-mutation-testing-gate-deepdive.html",
+    "B4-agent-archaeology-deepdive.html",
+    "B5-strangler-heatmap-deepdive.html",
+    "B6-roadmap-f0-f3-deepdive.html",
+    "D1-design-system-artifact-deepdive.html",
+    "D2-design-tokens-dtcg-deepdive.html",
+    "D3-how-agents-consume-design-context-deepdive.html",
+    "D4-governance-ssot-design-world-deepdive.html",
+    "D5-design-harness-verification-guardrails-deepdive.html",
+    "D6-design-scale-curator-deepdive.html",
+    "D7-design-archaeology-f0-f4-rollout-deepdive.html",
+    "E1-agent-model-harness-deepdive.html",
+    "E2-context-engineering-deepdive.html",
+    "E3-harness-in-practice-deepdive.html",
+    "E4-verification-first-deepdive.html",
+    "E5-governance-deepdive.html",
+    "E6-autonomy-levels-deepdive.html",
+    "E7-metrics-anti-patterns-deepdive.html",
+    "E8-spec-driven-development-deepdive.html",
+    "E9-harness-tuning-deepdive.html",
+    "E10-background-agents-deepdive.html",
+    "E11-formal-methods-deepdive.html",
+    "H1-handoff-contract-anatomy-deepdive.html",
+    "H2-ears-gherkin-deepdive.html",
+    "H3-traceability-spec-modes-deepdive.html",
+    "H4-feedback-anti-patterns-deepdive.html",
+    "I1-artifact-taxonomy-deepdive.html",
+    "I2-lifecycle-write-permissions-deepdive.html",
+    "I3-consistency-drift-deepdive.html",
+    "I4-memory-systems-deepdive.html",
+    "I5-progressive-disclosure-deepdive.html",
+    "I6-retrieval-deepdive.html",
+    "I7-linking-product-engineering-deepdive.html",
+    "P1-ai-assisted-discovery-deepdive.html",
+    "P2-prds-with-ai-deepdive.html",
+    "P3-decomposition-deepdive.html",
+    "P4-pm-role-deepdive.html",
+    "P5-assistance-scale-deepdive.html",
+    "S1-security-crosscutting-deepdive.html",
+    "S2-lethal-trifecta-rule-of-two-deepdive.html",
+    "S3-advisory-vs-deterministic-rules-backdoor-deepdive.html",
+    "S4-mcp-tools-attack-surface-deepdive.html",
+    "S5-loop-autorun-selfmod-sandbox-deepdive.html",
+    "S6-memory-poisoning-multiagent-risk-deepdive.html",
+    "S7-contract-brownfield-surfaces-secrets-deepdive.html",
+    "SDLC-foundations-deepdive.html",
+}
+app_stubs = []  # (label, count) — informational
+
+def check_application_section(s, label):
+    fn = label.split(":")[0]
+    if fn.startswith(APP_EXEMPT_PREFIXES):
+        return
+    if fn in APP_PENDING:
+        return
+    before = len(problems)
+    frames = len(re.findall(r"data-app-frame\b", s))
+    if frames != 1:
+        note(False, f"{label}: expected exactly 1 data-app-frame, found {frames}")
+    if not re.search(r"data-app-frame[^>]*>.*?<(li|tr)\b", s, flags=re.S):
+        note(False, f"{label}: data-app-frame box has no <li>/<tr> row")
+    apps = len(re.findall(r"<div data-app>", s))
+    if apps != 1:
+        note(False, f"{label}: expected exactly 1 <div data-app>, found {apps}")
+    m = re.search(r"<div data-app>.*?</details>", s, flags=re.S)
+    body = m.group(0) if m else ""
+    if 'class="decis"' not in body:
+        note(False, f"{label}: data-app container missing .decis block")
+    if 'class="apptest"' not in body:
+        note(False, f"{label}: data-app container missing .apptest self-test")
+    if not re.search(r'href="#pb[1-5]-deepdive"', s):
+        note(False, f"{label}: missing PB bridge link (#pb[1-5]-deepdive)")
+    stubs = len(re.findall(r"data-app-stub\b", s))
+    if stubs:
+        app_stubs.append((label, stubs))
+    note(len(problems) == before, f"{label}: application layer present")
+
+def app_stub_report():
+    if app_stubs:
+        print(f"  info application-layer stubs awaiting enrichment in "
+              f"{len(app_stubs)} copies: "
+              + ", ".join(f"{l}({c})" for l, c in sorted(app_stubs)[:10])
+              + (" …" if len(app_stubs) > 10 else ""))
+
+
 def check_gallery_registry():
     print("gallery registry")
     before = len(problems)
@@ -426,6 +520,20 @@ def check_workbook():
     check_workbook_id_uniqueness(s, "workbook")
     check_fragment_reachability(s, "workbook")
 
+    # application layer per overlay: map overlay token -> standalone filename
+    TOKEN_FIXUPS = {}
+    dd_files = {f.split("-")[0].lower(): f for f in os.listdir(DEEPDIR)
+                if f.endswith(".html")}
+    for tok, fn in sorted(dd_files.items()):
+        tok = TOKEN_FIXUPS.get(tok, tok)
+        ovid = f'id="{tok}ov"'
+        i = s.find(ovid)
+        if i < 0:
+            continue  # not embedded (should not happen; other checks catch it)
+        j = s.find('<div class="e1ov"', i + 1)
+        seg = s[i:j] if j > 0 else s[i:s.find("<footer")]
+        check_application_section(seg, f"{fn}: overlay {tok}ov")
+
     # deep-dive anchors wired: link(s) + exactly one JS handler.
     # sdlc has two entry links (intro + section) + 1 handler = 3; others have 1 link + 1 handler = 2.
     tokens = sorted(set(re.findall(r"#([a-z0-9]+)-deepdive", s)))
@@ -513,6 +621,7 @@ def check_deepdives():
         check_language_english(s, fn)
         check_h2_anchors(s, fn)
         check_standalone_anchor_affordance(s, fn)
+        check_application_section(s, fn)
         anc = set(re.findall(r'href="#([\w-]+)"', s))
         ids = set(re.findall(r'id="([\w-]+)"', s))
         missing = {a for a in anc if a.startswith("s") and a[1:].isdigit()} - ids
@@ -529,6 +638,8 @@ if __name__ == "__main__":
     check_svg_id_uniqueness()
     print()
     check_gallery_freshness()
+    print()
+    app_stub_report()
     print()
     if problems:
         print(f"RESULT: {len(problems)} problem(s) — fix before committing.")
