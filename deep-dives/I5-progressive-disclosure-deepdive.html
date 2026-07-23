@@ -131,6 +131,11 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
   table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
 }
 @media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+main h2{position:relative}
+main h2 .anch{opacity:0;position:absolute;left:-22px;top:2px;padding:0 6px;text-decoration:none;color:var(--soft);font-family:var(--mono);font-size:.85em;transition:opacity .15s}
+main h2 .anch:hover,main h2 .anch:focus{color:var(--cobalt-deep)}
+main h2:hover .anch,main h2:focus-within .anch{opacity:1}
+@media (max-width:900px){main h2 .anch{position:static;margin-left:.35em}}
 </style>
 </head><body>
 <header class="hdr">
@@ -313,5 +318,27 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
       <p class="closingnote">This deep dive is also available as a standalone downloadable file (I5-progressive-disclosure-deepdive.html). Its natural neighbours in the workbook are E2 (the context window this discipline protects), I1 (cores and maps as owned durables, repo maps as derived artifacts), I2 (the write-gates on what disclosure loads), I3 (freshness — the map first), I4 (MEMORY.md as the pattern applied to memory), I6 (retrieval — the search sibling), E5 (advisory budgets vs enforced caps), and H1 (the contract that points instead of inlining). M4 closes its file-architecture arc here; I6 turns to how the agent finds what no map anticipated.</p>
 </main>
 </div>
+<script>
+(function(){
+  function $(s){return document.querySelector(s);}
+  function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+  $$('main h2[id]').forEach(function(h){
+    if(h.querySelector('.anch'))return;
+    var a=document.createElement('a');
+    a.className='anch';
+    a.href='#'+h.id;
+    a.setAttribute('aria-label','Copy link to this section');
+    a.textContent='#';
+    a.addEventListener('click',function(){
+      var url=(location.href.split('#')[0])+'#'+h.id;
+      function ok(){clearTimeout(a._tid);a.textContent='copied';a._tid=setTimeout(function(){a.textContent='#';},1200);}
+      function fail(){clearTimeout(a._tid);a.textContent='copy failed';a._tid=setTimeout(function(){a.textContent='#';},2000);}
+      function fb(){var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();var done=false;try{done=document.execCommand('copy');}catch(err){}document.body.removeChild(ta);if(done)ok();else fail();}
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(ok,fb);}else{fb();}
+    });
+    h.appendChild(a);
+  });
+})();
+</script>
 </body>
 </html>

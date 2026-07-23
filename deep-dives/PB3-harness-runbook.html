@@ -145,6 +145,11 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
 .pbnote{font-family:var(--mono);font-size:11.5px;color:var(--soft)}
 .closingnote{font-family:var(--mono);font-size:11.5px;color:var(--soft);border-top:1px solid var(--line);padding-top:14px;margin-top:26px;line-height:1.7}
 svg .edPB3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahPB3a)}
+main h2{position:relative}
+main h2 .anch{opacity:0;position:absolute;left:-22px;top:2px;padding:0 6px;text-decoration:none;color:var(--soft);font-family:var(--mono);font-size:.85em;transition:opacity .15s}
+main h2 .anch:hover,main h2 .anch:focus{color:var(--cobalt-deep)}
+main h2:hover .anch,main h2:focus-within .anch{opacity:1}
+@media (max-width:900px){main h2 .anch{position:static;margin-left:.35em}}
 </style>
 </head>
 <body>
@@ -715,6 +720,28 @@ Signatories: ____________   Date: ____________
     function ok(){b2.textContent="copied ✓";setTimeout(function(){b2.textContent="copy";},1400);}
     function fb(){var ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok();}catch(err){}document.body.removeChild(ta);}
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}
+  });
+})();
+</script>
+<script>
+(function(){
+  function $(s){return document.querySelector(s);}
+  function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+  $$('main h2[id]').forEach(function(h){
+    if(h.querySelector('.anch'))return;
+    var a=document.createElement('a');
+    a.className='anch';
+    a.href='#'+h.id;
+    a.setAttribute('aria-label','Copy link to this section');
+    a.textContent='#';
+    a.addEventListener('click',function(){
+      var url=(location.href.split('#')[0])+'#'+h.id;
+      function ok(){clearTimeout(a._tid);a.textContent='copied';a._tid=setTimeout(function(){a.textContent='#';},1200);}
+      function fail(){clearTimeout(a._tid);a.textContent='copy failed';a._tid=setTimeout(function(){a.textContent='#';},2000);}
+      function fb(){var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();var done=false;try{done=document.execCommand('copy');}catch(err){}document.body.removeChild(ta);if(done)ok();else fail();}
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(ok,fb);}else{fb();}
+    });
+    h.appendChild(a);
   });
 })();
 </script>
