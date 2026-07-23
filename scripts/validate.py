@@ -231,7 +231,11 @@ def check_application_section(s, label):
     frames = len(re.findall(r"data-app-frame\b", s))
     if frames != 1:
         note(False, f"{label}: expected exactly 1 data-app-frame, found {frames}")
-    if not re.search(r"data-app-frame[^>]*>.*?<(li|tr)\b", s, flags=re.S):
+    # By convention the frame box (<div class="callout callframe" data-app-frame>…</div>)
+    # never nests another <div>, so its region ends at the first </div> after the marker;
+    # scope the row check to that region instead of matching any later <li>/<tr> in the doc.
+    fm = re.search(r"data-app-frame.*?</div>", s, flags=re.S)
+    if fm and not re.search(r"<(li|tr)\b", fm.group(0)):
         note(False, f"{label}: data-app-frame box has no <li>/<tr> row")
     apps = len(re.findall(r"<div data-app>", s))
     if apps != 1:
