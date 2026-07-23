@@ -246,7 +246,7 @@ GALLERY_CSS = """
 .gallery-filter{width:100%;max-width:420px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;font-family:var(--body);font-size:15px;margin-bottom:24px;background:var(--card)}
 .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
 .gallery-card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.gallery-preview{padding:14px;border-bottom:1px solid var(--line);background:#fff}
+.gallery-preview{padding:14px;border-bottom:1px solid var(--line);background:#fff;cursor:zoom-in}
 .gallery-preview svg{width:100%;height:auto;max-height:180px;display:block}
 .gallery-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
 .gallery-title{font-family:var(--disp);font-weight:700;font-size:16px;line-height:1.3}
@@ -258,6 +258,13 @@ GALLERY_CSS = """
 .gallery-empty{display:none;padding:30px 0;color:var(--soft)}
 .gallery-empty.show{display:block}
 @media (max-width:760px){.gallery-grid{grid-template-columns:1fr}}
+.gallery-preview:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.gallery-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:3vh 3vw;background:rgba(26,36,48,.72)}
+.gallery-modal[hidden]{display:none}
+.gallery-modal-box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:min(1100px,94vw);max-height:90vh;overflow:auto;padding:26px;box-shadow:0 18px 60px rgba(26,36,48,.35)}
+.gallery-modal-body svg{width:100%;height:auto;display:block}
+.gallery-modal-close{position:absolute;top:10px;right:10px;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:16px;line-height:1;cursor:pointer}
+.gallery-modal-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
 """.strip()
 
 
@@ -301,7 +308,7 @@ def render_card(entry, svg, file_stem, card_index, svg_styles, file_markers):
         f'data-module="{escape_html(module.lower())}" '
         f'data-why="{escape_html(why.lower())}">\n'
         f'  <div class="gallery-caption">{escape_html(caption)}</div>\n'
-        f'  <div class="gallery-preview {card_class}">{svg}</div>\n'
+        f'  <div class="gallery-preview {card_class}" tabindex="0">{svg}</div>\n'
         f'  <div class="gallery-body">\n'
         f'    <div class="gallery-title">{escape_html(title)}</div>\n'
         f'    <div class="gallery-section">{escape_html(section)}</div>\n'
@@ -412,6 +419,13 @@ footer{{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px sol
   Gallery is generated from <code>gallery-registry.json</code>; update the registry when adding diagrams.
 </footer>
 
+<div class="gallery-modal" role="dialog" aria-modal="true" aria-label="Enlarged diagram" hidden>
+  <div class="gallery-modal-box">
+    <button class="gallery-modal-close" type="button" aria-label="Close">&times;</button>
+    <div class="gallery-modal-body"></div>
+  </div>
+</div>
+
 <script>
 (function(){{
   var input = document.querySelector('.gallery-filter');
@@ -428,6 +442,65 @@ footer{{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px sol
       if (match) visible++;
     }});
     empty.classList.toggle('show', visible === 0);
+  }});
+}})();
+
+// Diagram lightbox: click (or Enter/Space on) a preview opens a modal with a
+// full-size clone of that card's SVG. Cloned ids stay unique enough to render:
+// every card's ids are prefixed (g-<n>-...) and the clone's defs are identical
+// to the original's, so url(#...) resolution is correct either way.
+(function(){{
+  var modal = document.querySelector('.gallery-modal');
+  var grid = document.querySelector('.gallery-grid');
+  if (!modal || !grid) return;
+  var body = modal.querySelector('.gallery-modal-body');
+  var box = modal.querySelector('.gallery-modal-box');
+  var closeBtn = modal.querySelector('.gallery-modal-close');
+  var lastTrigger = null;
+
+  function open(preview){{
+    var svg = preview.querySelector('svg');
+    if (!svg) return;
+    // The card's SVG CSS is scoped to its g-card-N class; carry that class
+    // onto the modal box so the clone renders with the original styling.
+    var m = preview.className.match(/g-card-\\d+/);
+    box.className = 'gallery-modal-box' + (m ? ' ' + m[0] : '');
+    body.replaceChildren(svg.cloneNode(true));
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    lastTrigger = preview;
+    closeBtn.focus();
+  }}
+
+  function close(){{
+    if (modal.hidden) return;
+    modal.hidden = true;
+    body.replaceChildren();
+    document.body.style.overflow = '';
+    if (lastTrigger) {{
+      lastTrigger.focus();
+      lastTrigger = null;
+    }}
+  }}
+
+  grid.addEventListener('click', function(e){{
+    var preview = e.target.closest('.gallery-preview');
+    if (preview) open(preview);
+  }});
+  grid.addEventListener('keydown', function(e){{
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var preview = e.target.closest('.gallery-preview');
+    if (preview) {{
+      e.preventDefault();
+      open(preview);
+    }}
+  }});
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', function(e){{
+    if (e.target === modal) close();
+  }});
+  document.addEventListener('keydown', function(e){{
+    if (e.key === 'Escape') close();
   }});
 }})();
 </script>
