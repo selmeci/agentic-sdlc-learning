@@ -439,10 +439,15 @@ def transform(s, h2_id_prefix, is_standalone, fn):
     m = h2re.search(s)
     if not m:
         raise SystemExit(f"{fn}: takeaways h2 not found (prefix={h2_id_prefix!r})")
-    # 2. section body = up to next <h2
-    end = s.find("<h2", m.end())
-    if end < 0:
-        raise SystemExit(f"{fn}: no following <h2> after takeaways")
+    # 2. section body = up to the next <h2>, or (S1-S3 shape, found during
+    # implementation) an un-numbered <h3>Further reading — whichever comes first
+    end_h2 = s.find("<h2", m.end())
+    fr = re.search(r"<h3\b[^>]*>\s*Further reading", s[m.end():])
+    end_h3 = m.end() + fr.start() if fr else -1
+    candidates = [e for e in (end_h2, end_h3) if e >= 0]
+    if not candidates:
+        raise SystemExit(f"{fn}: no <h2> or <h3>Further reading after takeaways")
+    end = min(candidates)
     body = s[m.end():end]
     new = (s[:m.start()]
            + m.group(0).replace(HEAD, NEWHEAD)
