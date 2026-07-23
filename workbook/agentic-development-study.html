@@ -1046,8 +1046,9 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
       <h2 id="e1ov-takeaways"><span class="n">4</span>Applying it — introducing a harness</h2>
 <div data-app>
 <div class="decis">
-      <div class="io"><div class="box"><div class="lab">Assess before you build (feeds E6)</div><ul><li>Is there a fast, trustworthy test suite? (verification)</li><li>Can CI return signal an agent can read?</li><li>Are source-of-truth artifacts retrievable? (context)</li><li>Do dev/prod separation, RBAC, secrets hygiene exist? (governance)</li></ul></div>
-      <div class="box"><div class="lab">Build in this order (feeds E7)</div><ul><li>make the repo agent-ready (harness + governance skeleton)</li><li>establish the verification loop before write autonomy</li><li>start at L1–L2, prove the base, then move to L3</li><li>prune harness components as the model improves</li></ul></div></div>
+      <p>Distilled to what we act on:</p>
+      <div class="io"><div class="box"><div class="lab">Assess before you build (feeds E6)</div><ul><li>Is there a fast, trustworthy test suite? (verification)</li><li>Can CI return signal an agent can read?</li><li>Are source-of-truth artifacts retrievable? (context)</li><li>Do dev/prod separation, RBAC and secrets hygiene exist? (governance)</li></ul></div>
+      <div class="box"><div class="lab">Build in this order (feeds E7)</div><ul><li>make the repo agent-ready (harness + governance skeleton)</li><li>establish the verification loop before granting write autonomy</li><li>start at L1–L2, prove the base, then move to L3</li><li>prune harness components as the model improves</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember E1 by</div><p>An agent is a model plus a harness; the harness is where our engineering value and the client's risk both live. Some components are advisory (prompt, context) and some must be deterministic (governance, verification) — never confuse the two. Build the loop, verify with external truth, bound the blast radius, and remove scaffolding as the model grows.</p></div>
 </div>
 <div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
@@ -5679,7 +5680,7 @@ mark.hl-note.flash{animation:hlflash 1.3s ease-out}
 <p><b>3 · The team reports 71% — measured on the same mutants that drove their fix loop. Do you pass the gate?</b><br>
 <em>No. That is the practice sheet graded as the exam. Survivors the agent trained against (§4) are precisely the mutants it has overfit to; regenerate fresh, held-out mutants (different seed/operator set) for the gate run. SpecBench's visible-vs-held-out gap is the measured reason the two numbers diverge (§8).</em></p>
 </details>
-<div class="callout pbbridge"><b>Where this becomes procedure:</b> this becomes procedure in <a href="#pb1-deepdive">PB1 Assess</a> (coverage/flake reality + pseudo-tested demo) and gates in <a href="#pb3-deepdive">PB3 Harness</a> (CI wiring).</div>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB1 Assess</a> (coverage/flake reality + pseudo-tested demo) and gates in <a href="#pb3-deepdive">PB3 Harness</a> (CI wiring).</div>
 </div>
 <h2 id="b3ov-s11"><span class="n">11</span>Further reading</h2>
       <div class="reading">

@@ -228,7 +228,7 @@ in `docs/AUTHORING-GUIDE.md` Step 1b. Follow both.
 In `CLAUDE.md`, "House style for content" list, append one bullet after the "Each deep dive follows a fixed shape" bullet:
 
 ```markdown
-- **Every study deep dive carries the application layer** (v1.71 shape): the §0
+- **Every study deep dive carries the application layer**: the §0
   "call you're making" frame (`data-app-frame`) and the "Applying it — decision guide"
   section (`data-app`) with Meridian worked example, self-test, and PB-runbook bridge.
   Recipe: AUTHORING-GUIDE Step 1b; contract: AGENTS.md; enforced by

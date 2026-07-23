@@ -50,7 +50,7 @@ Content in English (English technical terms preserved); prose is dense and conci
 - Each deep dive follows a fixed shape: `§0 why it matters → … → takeaways → further reading`,
   with `.io` input/output/SDLC cards, `.comp` component cards, `.callout` boxes, one or more
   inline SVG figures, and a closing `.closingnote`. Match the existing files exactly.
-- **Every study deep dive carries the application layer** (v1.71 shape): the §0
+- **Every study deep dive carries the application layer**: the §0
   "call you're making" frame (`data-app-frame`) and the "Applying it — decision guide"
   section (`data-app`) with Meridian worked example, self-test, and PB-runbook bridge.
   Recipe: AUTHORING-GUIDE Step 1b; contract: AGENTS.md; enforced by
