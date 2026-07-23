@@ -273,6 +273,7 @@ footer li::before{content:"·";position:absolute;left:2px}
 .e1ov .body{padding:26px 40px 64px;--rd:82ch}
 .e1ov .body h2{font-family:var(--disp);font-size:clamp(18px,4.6vw,22px);font-weight:700;letter-spacing:-.02em;margin:34px 0 6px;text-wrap:balance}
 .e1ov .body h2:first-child{margin-top:0}
+.e1ov .body h2[id]{scroll-margin-top:80px}
 .e1ov .body h2 .n{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--cobalt-deep);margin-right:9px}
 .e1ov .body h3{font-family:var(--disp);font-size:17px;font-weight:600;margin:0}
 .e1ov .body p{margin:0 0 12px;max-width:var(--rd);font-size:15.5px;line-height:1.6}
@@ -12276,12 +12277,8 @@ function routeFragment(){
   if(ov){
     closeAllOverlays(ov);
     openOverlay(ov);
-    const panel=ov.querySelector('.panel');
-    if(!panel)return;
-    const bar=ov.querySelector('.bar');
     requestAnimationFrame(function(){
-      const barH=bar?bar.offsetHeight:0;
-      panel.scrollTop=Math.max(0,headingOffset(panel,target,barH));
+      target.scrollIntoView({behavior:'auto',block:'start'});
     });
     return;
   }
