@@ -28,7 +28,7 @@ Reuse E1's `<head>` verbatim, then:
 - retitle `<title>` and the header `<h1>`/tag;
 - append to the `<style>`: `.closingnote{…}` and `svg .edP2{…marker-end:url(#ahP2a)}`;
 - add a `<nav class="toc">` listing `#s0…#sn`;
-- give each `<h2>` an `id="sN"` (loop, high→low so `1` doesn't match inside `10`).
+- give each `<h2>` an `id="sN"` (loop, high→low so `1` doesn't match inside `10`). **These IDs become public deep links — preserve them when editing; never rename an existing section id, because external links point at it.**
 Write to `deep-dives/P2-…-deepdive.html`.
 
 ## Step 3 — build + insert the overlay
@@ -44,6 +44,8 @@ Wrap the **same body** in:
   </div>
 </div>
 ```
+Because the whole workbook page is one DOM, overlay `<h2>` ids must be unique across all overlays. Prefix each id with the overlay token in the wrapper (`<ov.id>-<standalone-id>`, e.g. `p2ov-s3`). The public workbook fragment for section 3 is therefore `#p2ov-s3`, while the standalone file keeps `#s3`. Never rename an existing id; preserve both the standalone and prefixed forms so external links keep working.
+
 Insert into the workbook immediately **before** `<footer>`.
 
 ## Step 4 — wire the 3 remaining hooks

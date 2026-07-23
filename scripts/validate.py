@@ -29,6 +29,7 @@ import json
 import os, re, sys, subprocess, shutil, tempfile
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
+from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORKBOOK = os.path.join(ROOT, "workbook", "agentic-development-study.html")
@@ -55,6 +56,10 @@ def note(ok, msg):
     print(("  ok  " if ok else " FAIL ") + msg)
     if not ok:
         problems.append(msg)
+
+def duplicates(seq):
+    counts = Counter(seq)
+    return sorted([x for x, c in counts.items() if c > 1])
 
 class Balancer(HTMLParser):
     def __init__(self):
@@ -192,6 +197,123 @@ def check_gallery_registry():
          else "gallery-registry.json has problems (see above)")
 
 
+def h2_anchors(s):
+    h2s = []
+    for m in re.finditer(r'(<h2\b[^>]*>)(.*?)</h2>', s, flags=re.S):
+        attr = m.group(1)
+        content = m.group(2)
+        idm = re.search(r'id="([^"]+)"', attr)
+        h2s.append({
+            'id': idm.group(1) if idm else None,
+            'text': re.sub(r'<[^>]+>', '', content).strip()[:60]
+        })
+    ids = [h['id'] for h in h2s if h['id']]
+    missing = [h for h in h2s if not h['id']]
+    dup_ids = duplicates(ids)
+    return h2s, missing, dup_ids
+
+
+def check_h2_anchors(s, label, overlay_mode=False):
+    before = len(problems)
+    if overlay_mode:
+        starts = [(m.start(), m.group(1)) for m in re.finditer(r'<div class="e1ov" id="([a-z0-9]+ov)" role="dialog"[^>]*>', s)]
+        starts.append((len(s), None))
+        all_missing = []
+        all_dups = []
+        for i, (start, ov_id) in enumerate(starts[:-1]):
+            end = starts[i+1][0]
+            block = s[start:end]
+            body_open = re.search(r'<div class="body">', block)
+            if not body_open:
+                continue
+            depth = 1
+            body_end = None
+            for m in re.finditer(r'<(/?)div\b[^>]*>', block[body_open.end():]):
+                if m.group(1) == '':
+                    depth += 1
+                else:
+                    depth -= 1
+                    if depth == 0:
+                        body_end = body_open.end() + m.start()
+                        break
+            if body_end is None:
+                continue
+            body = block[body_open.end():body_end]
+            h2s, missing, dup_ids = h2_anchors(body)
+            all_missing.extend([(ov_id, h) for h in missing])
+            all_dups.extend([(ov_id, d) for d in dup_ids])
+        if all_missing:
+            note(False, f"{label}: overlay h2 missing id: " +
+                 ", ".join(f"{ov}: {h['text'][:40]}" for ov, h in all_missing[:5]))
+        if all_dups:
+            note(False, f"{label}: duplicate overlay h2 ids: {all_dups[:10]}")
+    else:
+        h2s, missing, dup_ids = h2_anchors(s)
+        if missing:
+            note(False, f"{label}: h2 missing id: " +
+                 ", ".join(h['text'][:40] for h in missing[:5]))
+        if dup_ids:
+            note(False, f"{label}: duplicate h2 ids: {dup_ids[:10]}")
+    note(len(problems) == before,
+         f"{label}: all h2 anchors stable and unique")
+
+
+def overlay_body_ids(s):
+    """Return list of (ov_id, h2_id) for every overlay body h2 in the workbook."""
+    out = []
+    starts = [(m.start(), m.group(1)) for m in re.finditer(r'<div class="e1ov" id="([a-z0-9]+ov)" role="dialog"[^>]*>', s)]
+    starts.append((len(s), None))
+    for i, (start, ov_id) in enumerate(starts[:-1]):
+        end = starts[i+1][0]
+        block = s[start:end]
+        body_open = re.search(r'<div class="body">', block)
+        if not body_open:
+            continue
+        depth = 1
+        body_end = None
+        for m in re.finditer(r'<(/?)div\b[^>]*>', block[body_open.end():]):
+            if m.group(1) == '':
+                depth += 1
+            else:
+                depth -= 1
+                if depth == 0:
+                    body_end = body_open.end() + m.start()
+                    break
+        if body_end is None:
+            continue
+        body = block[body_open.end():body_end]
+        for m in re.finditer(r'<h2\b[^>]*id="([^"]+)"', body):
+            out.append((ov_id, m.group(1)))
+    return out
+
+
+def check_workbook_id_uniqueness(s, label):
+    before = len(problems)
+    ov_ids = overlay_body_ids(s)
+    h2_ids = [h[1] for h in ov_ids]
+    dup_h2 = duplicates(h2_ids)
+    if dup_h2:
+        note(False, f"{label}: duplicate overlay h2 ids across workbook: {dup_h2[:10]}")
+    topic_ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb)-[a-z0-9-]*)"', s)
+    module_ids = re.findall(r'{id:"(m\d+)"', s)
+    combined = h2_ids + topic_ids + module_ids
+    dup_combined = duplicates(combined)
+    if dup_combined:
+        note(False, f"{label}: id collision between overlay h2 and module/topic ids: {dup_combined[:10]}")
+    note(len(problems) == before,
+         f"{label}: overlay/module/topic ids globally unique")
+
+
+def check_fragment_reachability(s, label):
+    before = len(problems)
+    if 'sec.id=m.id' not in s:
+        note(False, f"{label}: module ids not assigned to section elements")
+    if 'a.id=t.id' not in s:
+        note(False, f"{label}: topic ids not assigned to article elements")
+    note(len(problems) == before,
+         f"{label}: module/topic ids assigned as DOM ids")
+
+
 def check_svg_id_uniqueness():
     print("svg id uniqueness")
     ids_by_file = {}
@@ -242,6 +364,9 @@ def check_workbook():
     check_html_balance(s, "workbook")
     check_svgs(s, "workbook")
     check_css_class_coverage(s, "workbook")
+    check_h2_anchors(s, "workbook", overlay_mode=True)
+    check_workbook_id_uniqueness(s, "workbook")
+    check_fragment_reachability(s, "workbook")
 
     # deep-dive anchors wired: link(s) + exactly one JS handler.
     # sdlc has two entry links (intro + section) + 1 handler = 3; others have 1 link + 1 handler = 2.
@@ -256,7 +381,7 @@ def check_workbook():
 
     # topic count
     ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb)-[a-z0-9-]*)"', s)
-    dups = {i for i in ids if ids.count(i) > 1}
+    dups = set(duplicates(ids))
     note(len(set(ids)) == len(ids), f"topic ids unique ({len(ids)} topics)"
          if not dups else f"DUPLICATE topic ids: {dups}")
     print(f"  ->  topic count = {len(ids)} (expected 60 unless intentionally changed)")
@@ -276,7 +401,7 @@ def check_workbook():
     # playbook checklist step ids are frozen progress keys - duplicates would
     # silently merge two steps' saved state
     steps = re.findall(r'data-step="([\w-]+)"', s)
-    dup_steps = sorted({x for x in steps if steps.count(x) > 1})
+    dup_steps = duplicates(steps)
     note(not dup_steps, f"playbook step ids unique ({len(steps)} step(s))"
          if not dup_steps else f"DUPLICATE playbook step ids: {dup_steps}")
 
@@ -305,6 +430,16 @@ def check_gallery_freshness():
         os.unlink(tmp_path)
 
 
+def check_standalone_anchor_affordance(s, fn):
+    before = len(problems)
+    if 'main h2 .anch' not in s:
+        note(False, f"{fn}: anchor-link CSS not scoped to main h2")
+    if "location.href.split('#')[0]" not in s:
+        note(False, f"{fn}: anchor link does not build file://-safe URL")
+    note(len(problems) == before,
+         f"{fn}: anchor-link affordance present")
+
+
 def check_deepdives():
     print("deep-dives/")
     if not os.path.isdir(DEEPDIR):
@@ -316,6 +451,8 @@ def check_deepdives():
         check_html_balance(s, fn)
         check_svgs(s, fn)
         check_css_class_coverage(s, fn)
+        check_h2_anchors(s, fn)
+        check_standalone_anchor_affordance(s, fn)
         anc = set(re.findall(r'href="#([\w-]+)"', s))
         ids = set(re.findall(r'id="([\w-]+)"', s))
         missing = {a for a in anc if a.startswith("s") and a[1:].isdigit()} - ids

@@ -3,6 +3,14 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.66 · 2026-07-23
+
+Added deep-link anchors: every H2 section in the deep-dive companions and every numbered
+list item inside them now exposes a stable URL fragment, so external links land directly on
+the referenced section or paragraph. Anchors are derived from existing section ids and newly
+injected item ids, preserved across reloads, and covered by the validator. No content or
+topic-id changes.
+
 ## v1.65 · 2026-07-22
 
 Added the S6 deep-dive companion (Memory Poisoning & Multi-Agent Risk) — sixth M7 companion, verified by a 9-agent verification + discovery swarm and a 5-agent spot-verify round. Why memory changes the security model (persistence, temporal decoupling, contagion — nothing resets at session end); the potency record with qualifiers attached (MINJA 98.2% injection / 76.8% attack success query-only; AgentPoison's nested 81.2/59.4/62.6 with the retrieval qualifier and one-token 79%; PoisonedRAG 90%; the 2026 wave — MemPoison, GhostWriter, MCFA, MemMorph, MemoryGraft) and the honesty layer (ASB's 84.30% is the Mixed Attack average — memory poisoning alone averages 7.92%; realistic pre-existing memory degrades attacks); the write path as the attack surface (store × who-can-write × gate matrix; MemoryTrap's full postinstall chain with the v2.1.50 retrieval-authority fix and no CVE; SpAIware, Gemini delayed invocation, Unit 42 Bedrock; the MCP/framework CVE ledger — mem0 family, Graphiti, Spring AI); temporal decoupling with Microsoft's in-the-wild Recommendation Poisoning and the Forensic Trajectory Signatures detector collapse (AUC 0.99 → 100% FP under preregistration); the cluster as trust boundary (A2A signs AgentCards not messages, Kim et al. 17.2× vs 4.4×, Moltbook/Wiz end-to-end, MMCA's hidden bridges); and the defense layer with the no-pre-write-gate gap plus a homegrown cross-session regression test. Three SVGs (write-path anatomy, temporal-decoupling timeline, propagation graph) + two tables (research ledger, store matrix). Topic enrichment: sec-memory's know bullets and concepts rewritten to the verified fact set (ASB correction, MemoryTrap details, MINJA/AgentPoison numbers, the defense gap). Fact fix elsewhere: S2's prompt-infection citation corrected — Lee & Tiwari's primary is arXiv:2410.07283; arXiv:2507.13169 is "Prompt Injection 2.0" (McHugh et al.) — in both copies.
