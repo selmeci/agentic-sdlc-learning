@@ -3,6 +3,40 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.70 · 2026-07-23
+
+**NEW DEEP DIVE S7 — Contract & Brownfield Surfaces; the Secrets Problem.** Seventh M7
+companion (`S7-contract-brownfield-surfaces-secrets-deepdive.html` + workbook overlay),
+verified by a 10-agent verification+discovery swarm and a 9-agent spot-verify round. The four
+text channels and whose-tickets gating; Clinejection end-to-end (with the corrected timeline —
+no primary download count, GHSA severity LOW); the vendor response layer measured (GitHub MCP
+default sanitization + opt-in lockdown + CVE-2026-48529; gh-aw's v0.82.9 visibility default);
+design channel corrected (#303 payload api.evil.com/v2, hidden-layer channels, wontfix,
+visible-flag filter predates it); the estate argument (ReadSecBench 85%/0.91/0%-detection,
+AIShellJack 41–84%, Miasma's repo-open trigger in the wild, secrets recoverable after history
+rewrite); the GitGuardian 2026 numbers with every qualifier (28.65M, AI-service +81%, 3.2% vs
+1.5% converging to baseline by Dec 2025, 24,008 MCP-config secrets, >64% validity, internal
+6×); slopsquatting corrected and current (react-codeshift = defensive registration via an
+unreviewed skills commit; 127 model-agnostic names; cooldown defaults shipped); the trace
+store (CCS 2026 audit with the framing fix, Langfuse stored-key GHSA, OTel
+content-off-by-default, redact-at-collector discipline). Three SVGs (surface inventory,
+secrets lifecycle, slopsquatting chain) + three tables (surface×control matrix, secrets
+ledger, defense matrix). Topic enrichment: `sec-surfaces` know bullets, concepts and checks
+rewritten to the verified fact set.
+
+## v1.69 · 2026-07-23
+
+Diagram lightbox and Domain-map V4 fix. Every figure diagram is now click-to-enlarge across the
+whole system. A shared modal lightbox opens a full-viewport clone of any `role="img"` SVG — click,
+Enter or Space to open; Esc, the backdrop or ✕ to close — in the workbook (the home SDLC & MAP
+sections and every in-page deep-dive overlay) and in all 52 standalone deep dives, mirroring the
+affordance already in `gallery.html`. Section-scoped SVG CSS and its arrow markers are preserved on
+the clone via a `display:contents` scope wrapper (`.dmap` / `#sdlc-sec` / `.e1ov`), so styling and
+arrowheads render identically when enlarged. Also fixed the Domain map V4 figure (lethal trifecta &
+defense): the trifecta Venn circles no longer overlap the Rule-of-Two and architectural-defenses
+boxes, and the defense-in-depth ladder was re-spaced so the between-band progression arrows are
+visible. No topic-id or content-meaning changes.
+
 ## v1.68 · 2026-07-23
 
 **NEW MODULE M10 — Greenfield: the harness without a legacy.** The applicability layer the

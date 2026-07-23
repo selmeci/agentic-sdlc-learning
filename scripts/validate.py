@@ -140,6 +140,29 @@ def check_language_english(s, label):
     note(len(problems) == before, f"{label}: text is English (no stray non-English words)")
 
 
+# --- Diagram lightbox: every figure must be click-to-enlarge --------------------
+# Since v1.69 every diagram is zoomable via a shared modal lightbox (the .dlb block
+# + its script, mirroring gallery.html). Two invariants keep that promise as new
+# deep dives are added: (1) the file ships the lightbox block, and (2) every
+# <figure> SVG carries role="img" — the selector the lightbox and screen readers
+# use. A new deep dive that forgets either would silently ship non-zoomable
+# figures. See AUTHORING-GUIDE Step 2.
+def check_diagram_lightbox(s, label):
+    before = len(problems)
+    if 'class="dlb"' not in s:
+        note(False, f'{label}: diagram lightbox missing — add the .dlb modal + script so figures '
+                    f'are click-to-enlarge (see AUTHORING-GUIDE Step 2)')
+    norole = []
+    for fig in re.findall(r"<figure\b.*?</figure>", s, flags=re.S):
+        for svg in re.findall(r"<svg\b[^>]*>", fig):
+            if 'role="img"' not in svg:
+                norole.append(svg[:50])
+    if norole:
+        note(False, f'{label}: {len(norole)} figure <svg> without role="img" '
+                    f'(required for the lightbox + a11y): {norole[:3]}')
+    note(len(problems) == before, f"{label}: diagram lightbox present, figures zoomable")
+
+
 def check_gallery_registry():
     print("gallery registry")
     before = len(problems)
@@ -398,6 +421,7 @@ def check_workbook():
     check_svgs(s, "workbook")
     check_css_class_coverage(s, "workbook")
     check_language_english(s, "workbook")
+    check_diagram_lightbox(s, "workbook")
     check_h2_anchors(s, "workbook", overlay_mode=True)
     check_workbook_id_uniqueness(s, "workbook")
     check_fragment_reachability(s, "workbook")
@@ -485,6 +509,7 @@ def check_deepdives():
         check_html_balance(s, fn)
         check_svgs(s, fn)
         check_css_class_coverage(s, fn)
+        check_diagram_lightbox(s, fn)
         check_language_english(s, fn)
         check_h2_anchors(s, fn)
         check_standalone_anchor_affordance(s, fn)

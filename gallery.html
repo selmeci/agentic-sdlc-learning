@@ -756,6 +756,35 @@ a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
 .g-card-90 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
 .g-card-90 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
 .g-card-90 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-91 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-91 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-91 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-91 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-91 svg .edS7 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-91-ahS7a) }
+.g-card-91 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-91 svg .ti { font:400 11.5px var(--disp);fill:var(--ink) }
+.g-card-91 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-91 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-92 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-92 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-92 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-92 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-92 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-92 svg .edD { stroke-dasharray:5 4 }
+.g-card-92 svg .edS7 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-92-ahS7a) }
+.g-card-92 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-92 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-92 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
+.g-card-93 svg .bx { fill:#FBFCFD;stroke:#57656F;stroke-width:1.1 }
+.g-card-93 svg .bxA { fill:#FBF1E1;stroke:#C98A2B }
+.g-card-93 svg .bxC { fill:#EBEFFA;stroke:#4A63C8 }
+.g-card-93 svg .bxG { fill:#EDF1F4;stroke:#9AA7B1 }
+.g-card-93 svg .bxK { fill:#E5F3EB;stroke:#3C8A63 }
+.g-card-93 svg .edD { stroke-dasharray:5 4 }
+.g-card-93 svg .edS7 { stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#g-93-ahS7a) }
+.g-card-93 svg .tg { font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em }
+.g-card-93 svg .ts { font:500 9.5px var(--mono);fill:var(--soft) }
+.g-card-93 svg .tt { font:600 13px var(--disp);fill:var(--ink) }
 footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
 @media (max-width:860px){.hdr .bc{display:none}}
 </style>
@@ -4177,6 +4206,184 @@ footer{max-width:1200px;margin:0 auto;padding:24px 22px 60px;border-top:1px soli
     <div class="gallery-section">4 · The cluster is the trust boundary</div>
     <p class="gallery-why">Shows why the cluster is the trust boundary: one poisoned worker fans out through trust-upgraded handoffs and a shared store that defeats agent-to-agent airgapping, and grades the three edge controls — signed messages, sanitize-at-handoff, circuit breaker — by what actually ships today.</p>
     <a class="gallery-link" href="deep-dives/S6-memory-poisoning-multiagent-risk-deepdive.html#s4">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the four text channels into the agent&#x27;s context, with the writer of each named. the ticket channel is the one with shipped controls — sanitization by default, author-gating as an option — and also the one with the in-the-wild record: clinejection&#x27;s path (red) needed no sanitizer bypass at all, only an open whose-tickets gate and a privileged token in the runner. sources: khan/ghsa-9ppg-jx86-fqw7; github-mcp-server changelog (10 dec 2025) and releases; gh-aw v0.82.9; noma (6 jul 2026); tenet security and arxiv:2604.15368 for the machine-text rows." data-section="1 · the ticket channel: anyone who can file an issue writes to your agent" data-module="s7-contract-brownfield-surfaces-secrets-deepdive" data-why="draws the four text channels into the agent&#x27;s context as submission boxes — who can write each one, what ships at each boundary (github mcp&#x27;s default-on sanitization and opt-in lockdown on the ticket channel; nothing on the design channel), and clinejection&#x27;s red path end to end, which needed no sanitizer bypass at all, only an open whose-tickets gate and a privileged token in the runner.">
+  <div class="gallery-caption">S7-contract-brownfield-surfaces-secrets-deepdive · 1 · The ticket channel: anyone who can file an issue writes to your agent</div>
+  <div class="gallery-preview g-card-91" tabindex="0"><svg viewBox="0 0 860 560" role="img" aria-label="The contract surfaces: four text channels — tickets, design files, repo content, and machine-generated operational text — flow into the agent's context, where they mix with trusted instructions; on the other side sits the privileged reach (private repos, secrets, CI tokens). Shipped controls are annotated per channel, and Clinejection's path from one issue title to the npm supply chain is drawn in red.">
+        <defs><marker id="g-91-ahS7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE CONTRACT SURFACES — EVERY ARTIFACT THE AGENT READS IS A SUBMISSION BOX</text>
+        <rect x="30" y="64" width="215" height="86" rx="9" class="bxA"/>
+        <text x="42" y="86" class="tt">tickets · issues · PRs</text>
+        <text x="42" y="104" class="ts">who writes: anyone, on a public tracker</text>
+        <text x="42" y="120" class="ts">GitHub MCP · Jira MCP · triage actions</text>
+        <text x="42" y="138" class="ts" style="fill:#B23A2E">Clinejection: one title → npm token (wild)</text>
+        <rect x="30" y="166" width="215" height="86" rx="9" class="bxA"/>
+        <text x="42" y="188" class="tt">design-file text</text>
+        <text x="42" y="206" class="ts">who writes: any collaborator in a</text>
+        <text x="42" y="220" class="ts">shared Figma file · hidden layers</text>
+        <text x="42" y="238" class="ts">Figma-Context-MCP #303 (§2)</text>
+        <rect x="30" y="268" width="215" height="86" rx="9" class="bxA"/>
+        <text x="42" y="290" class="tt">repo content (the estate)</text>
+        <text x="42" y="308" class="ts">who writes: any past committer</text>
+        <text x="42" y="324" class="ts">READMEs · docs · comments · history</text>
+        <text x="42" y="342" class="ts">Miasma: repo-open as trigger (§3)</text>
+        <rect x="30" y="370" width="215" height="86" rx="9" class="bxA"/>
+        <text x="42" y="392" class="tt">machine-generated text</text>
+        <text x="42" y="410" class="ts">who writes: anyone who can trigger</text>
+        <text x="42" y="424" class="ts">an error event (public DSN)</text>
+        <text x="42" y="442" class="ts">Agentjacking 85% · LogJack 86.2% (§1)</text>
+        <rect x="320" y="180" width="200" height="130" rx="9" class="bx"/>
+        <text x="332" y="204" class="tt">the agent's context</text>
+        <text x="332" y="226" class="ti">untrusted content concatenated</text>
+        <text x="332" y="240" class="ti">with trusted instructions</text>
+        <text x="332" y="262" class="ts">S1's root cause — no separator</text>
+        <text x="332" y="284" class="ts">"trust label, not trust assumption" (S4)</text>
+        <rect x="600" y="180" width="230" height="130" rx="9" class="bxK"/>
+        <text x="612" y="204" class="tt">the privileged reach</text>
+        <text x="612" y="226" class="ts">private repos · .env · CI/CD tokens</text>
+        <text x="612" y="242" class="ts">npm publish · OIDC · GITHUB_TOKEN</text>
+        <text x="612" y="264" class="ts">legs B + C of S2's trifecta</text>
+        <text x="612" y="286" class="ts">secrets = §4 · why the surface matters</text>
+        <path d="M245 107 L318 190" class="edS7"/>
+        <path d="M245 209 L318 232" class="edS7"/>
+        <path d="M245 311 L318 268" class="edS7"/>
+        <path d="M245 413 L330 312" class="edS7"/>
+        <path d="M520 245 L598 245" class="edS7"/>
+        <path d="M245 80 C 380 56, 560 92, 688 178" style="stroke:#B23A2E;stroke-width:1.6;fill:none;stroke-dasharray:6 4;marker-end:url(#g-91-ahS7a)"/>
+        <text x="430" y="52" class="ts" text-anchor="middle" style="fill:#B23A2E">Clinejection (Feb 2026, in the wild): crafted issue title → triage agent with allowed_non_write_users:"*" → poisoned Actions cache → npm publish token → cline@2.3.0</text>
+        <rect x="30" y="478" width="800" height="66" rx="8" class="bxG"/>
+        <text x="44" y="498" class="ts">shipped controls (Jul 2026) — tickets: GitHub MCP sanitization default-on + lockdown opt-in (CVE-2026-48529 already patched); gh-aw visibility default; Copilot hidden-char filtering (bypassed Apr 2026)</text>
+        <text x="44" y="516" class="ts">design: none beyond the visibility flag · estate: read-only-first + full-history scan before writes (B6); .env deny-lists (opt-in, buggy) · machine text: nothing — Sentry: "technically not defensible"</text>
+        <text x="44" y="534" class="ts">the litmus (S3): gates and defaults are deterministic; every sanitizer is advisory-adjacent friction — LogJack's 1/32 and 0/32 are what content-scanning buys in-context</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The four text channels into the agent&#x27;s context, with the writer of each named. The ticket channel is the one with shipped controls — sanitization by default, author-gating as an option — and also the one with the in-the-wild record: Clinejection&#x27;s path (red) needed no sanitizer bypass at all, only an open whose-tickets gate and a privileged token in the runner. Sources: Khan/GHSA-9ppg-jx86-fqw7; github-mcp-server changelog (10 Dec 2025) and releases; gh-aw v0.82.9; Noma (6 Jul 2026); Tenet Security and arXiv:2604.15368 for the machine-text rows.</div>
+    <div class="gallery-section">1 · The ticket channel: anyone who can file an issue writes to your agent</div>
+    <p class="gallery-why">Draws the four text channels into the agent&#x27;s context as submission boxes — who can write each one, what ships at each boundary (GitHub MCP&#x27;s default-on sanitization and opt-in lockdown on the ticket channel; nothing on the design channel), and Clinejection&#x27;s red path end to end, which needed no sanitizer bypass at all, only an open whose-tickets gate and a privileged token in the runner.</p>
+    <a class="gallery-link" href="deep-dives/S7-contract-brownfield-surfaces-secrets-deepdive.html#s1">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the secrets lifecycle with its four gates. history is the persistence layer — recoverable after rewrites, mostly valid years later; the agent touches the secret on the way in (estate reads, .env auto-load) and on the way out (generated commits, config files). rotation is the only gate that closes the past; the others bound the future. sources: gitguardian 2026; meli et al. (ndss 2019); knostic (dec 2025); github changelog (31 mar 2026); microsoft ti (5 jun 2026); truffle security." data-section="4 · the secrets problem: the data that makes every surface worth attacking" data-module="s7-contract-brownfield-surfaces-secrets-deepdive" data-why="the secrets lifecycle with its four gates: history as the persistence layer (recoverable after rewrites, mostly valid years later), the agent touching secrets on the way in (estate reads, .env auto-load) and on the way out (generated commits, config files) — and rotation as the only gate that closes the past while the others bound the future.">
+  <div class="gallery-caption">S7-contract-brownfield-surfaces-secrets-deepdive · 4 · The secrets problem: the data that makes every surface worth attacking</div>
+  <div class="gallery-preview g-card-92" tabindex="0"><svg viewBox="0 0 860 500" role="img" aria-label="The secrets lifecycle: a pasted credential enters git history, where it persists recoverable even after history rewrites and mostly valid years later; the agent reads the estate into context, and the generation side leaks again through commits and config files; the gates are pinned where they must sit — deny-lists, pre-ingest scan, push protection, and rotation as the only fix for the past."><defs><marker id="g-92-ahS7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE SECRETS LIFECYCLE — WHERE IT PERSISTS, WHERE THE AGENT TOUCHES IT, WHERE THE GATES SIT</text>
+        <rect x="30" y="60" width="150" height="96" rx="9" class="bxA"/>
+        <text x="42" y="82" class="tt">the paste</text>
+        <text x="42" y="102" class="ts">28.65M new in 2025</text>
+        <text x="42" y="116" class="ts">(+34% YoY)</text>
+        <text x="42" y="136" class="ts">AI-service +81%</text>
+        <rect x="206" y="60" width="160" height="96" rx="9" class="bx"/>
+        <text x="218" y="82" class="tt">git history</text>
+        <text x="218" y="102" class="ts">recoverable even after</text>
+        <text x="218" y="116" class="ts">history rewrite (Meli '19)</text>
+        <text x="218" y="136" class="ts">&gt;64% valid 4 years on</text>
+        <rect x="392" y="60" width="160" height="96" rx="9" class="bxC"/>
+        <text x="404" y="82" class="tt">the agent reads it</text>
+        <text x="404" y="102" class="ts">.env auto-load into context</text>
+        <text x="404" y="116" class="ts">(undocumented, Knostic)</text>
+        <text x="404" y="136" class="ts">estate ingested wholesale</text>
+        <rect x="578" y="60" width="160" height="96" rx="9" class="bxC"/>
+        <text x="590" y="82" class="tt">generation side</text>
+        <text x="590" y="102" class="ts">3.2% vs 1.5% leak rate</text>
+        <text x="590" y="116" class="ts">(→ baseline by Dec 2025)</text>
+        <text x="590" y="136" class="ts">MCP configs: 24,008</text>
+        <rect x="392" y="200" width="346" height="72" rx="9" class="bxA" style="stroke:#B23A2E"/>
+        <text x="404" y="222" class="tt">the blast radius</text>
+        <text x="404" y="240" class="ts">exfiltrate via the §1 channels · pivot with what the key unlocks</text>
+        <text x="404" y="256" class="ts">training-data memorization outlives rotation (HKU; Common Crawl)</text>
+        <path d="M180 108 L204 108" class="edS7"/>
+        <path d="M366 108 L390 108" class="edS7"/>
+        <path d="M552 108 L576 108" class="edS7"/>
+        <path d="M658 156 L640 198" class="edS7"/>
+        <path d="M472 156 L490 198" class="edS7"/>
+        <rect x="40" y="316" width="180" height="66" rx="8" class="bxK"/>
+        <text x="52" y="337" class="tt">gate 1 · deny-lists</text>
+        <text x="52" y="355" class="ts">Read(.env) denies — opt-in,</text>
+        <text x="52" y="369" class="ts">with shipped enforcement bugs</text>
+        <rect x="250" y="316" width="190" height="66" rx="8" class="bxK"/>
+        <text x="262" y="337" class="tt">gate 2 · scan before ingest</text>
+        <text x="262" y="355" class="ts">full-history scan before writes;</text>
+        <text x="262" y="369" class="ts">active credential = STOP (B6)</text>
+        <rect x="470" y="316" width="180" height="66" rx="8" class="bxK"/>
+        <text x="482" y="337" class="tt">gate 3 · push protection</text>
+        <text x="482" y="355" class="ts">blocks the push; 9 new detectors</text>
+        <text x="482" y="369" class="ts">+ validity checks (Mar 2026)</text>
+        <rect x="680" y="316" width="150" height="66" rx="8" class="bxK"/>
+        <text x="692" y="337" class="tt">gate 4 · rotation</text>
+        <text x="692" y="355" class="ts">the only fix for the past;</text>
+        <text x="692" y="369" class="ts">74% never revoked (Truffle)</text>
+        <path d="M130 316 L105 158" class="edS7 edD"/>
+        <path d="M345 316 L286 158" class="edS7 edD"/>
+        <path d="M560 316 L658 158" class="edS7 edD"/>
+        <path d="M755 316 L700 158" class="edS7 edD"/>
+        <rect x="30" y="418" width="800" height="60" rx="8" class="bxG"/>
+        <text x="44" y="438" class="ts">S1's caveat rides on top: output scanning loses to laundering — "cut the first 7 characters" defeated GitHub Secret Scanning in the wild (Microsoft TI, Jun 2026) — so prevent exposure and prove egress, don't trust detection</text>
+        <text x="44" y="458" class="ts">the estate half of this loop is B6's day-0 discipline: scan before the agent's context ever ingests history; everything here is why that ordering is non-negotiable</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The secrets lifecycle with its four gates. History is the persistence layer — recoverable after rewrites, mostly valid years later; the agent touches the secret on the way in (estate reads, .env auto-load) and on the way out (generated commits, config files). Rotation is the only gate that closes the past; the others bound the future. Sources: GitGuardian 2026; Meli et al. (NDSS 2019); Knostic (Dec 2025); GitHub changelog (31 Mar 2026); Microsoft TI (5 Jun 2026); Truffle Security.</div>
+    <div class="gallery-section">4 · The secrets problem: the data that makes every surface worth attacking</div>
+    <p class="gallery-why">The secrets lifecycle with its four gates: history as the persistence layer (recoverable after rewrites, mostly valid years later), the agent touching secrets on the way in (estate reads, .env auto-load) and on the way out (generated commits, config files) — and rotation as the only gate that closes the past while the others bound the future.</p>
+    <a class="gallery-link" href="deep-dives/S7-contract-brownfield-surfaces-secrets-deepdive.html#s4">Open in deep dive →</a>
+  </div>
+</article>
+<article class="gallery-card" data-title="the slopsquatting chain and its gates. the attacker&#x27;s work is one registration; the reach comes from the model&#x27;s repeatability and the skill-file distribution channel. cooldowns and lockfiles are deterministic and shipped; name-existence checking lives only in third-party wrappers; offline-by-default execution is the strongest shipped agent posture. sources: spracklen et al. (usenix sec 2025); arxiv:2605.17062, 2607.12340, 2607.07433; aikido (21 jan 2026); pnpm/npm/github changelogs." data-section="5 · slopsquatting: the hallucinated dependency" data-module="s7-contract-brownfield-surfaces-secrets-deepdive" data-why="the slopsquatting chain from hallucination to install: the attacker&#x27;s work is one registration, the reach comes from the model&#x27;s repeatability (127 names shared across all frontier models) and the skill-file distribution channel — with the four gates graded by what actually ships, and the nobody-checks-the-name gap (name-existence checking lives only in third-party wrappers) drawn as the open seam.">
+  <div class="gallery-caption">S7-contract-brownfield-surfaces-secrets-deepdive · 5 · Slopsquatting: the hallucinated dependency</div>
+  <div class="gallery-preview g-card-93" tabindex="0"><svg viewBox="0 0 860 480" role="img" aria-label="The slopsquatting chain: the model hallucinates a plausible package name, an attacker pre-registers it, a skill file or the agent itself instructs the install, auto-approval defeats the confirmation prompt, and the payload runs; the four gates — cooldown, lockfile pinning, allowlist or offline execution, and registry hardening — are drawn where they break the chain."><defs><marker id="g-93-ahS7a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="430" y="24" class="tg" text-anchor="middle">THE SLOPSQUATTING CHAIN — FOUR LINKS, FOUR GATES</text>
+        <rect x="30" y="64" width="150" height="92" rx="9" class="bxA"/>
+        <text x="42" y="86" class="tt">1 · hallucination</text>
+        <text x="42" y="106" class="ts">19.7% overall; 4.6–6.1%</text>
+        <text x="42" y="120" class="ts">on the 2026 frontier</text>
+        <text x="42" y="140" class="ts">43% perfectly repeatable</text>
+        <rect x="216" y="64" width="150" height="92" rx="9" class="bx"/>
+        <text x="228" y="86" class="tt">2 · pre-registration</text>
+        <text x="228" y="106" class="ts">127 universal names;</text>
+        <text x="228" y="120" class="ts">53 still registrable</text>
+        <text x="228" y="140" class="ts">attacker waits, no targeting</text>
+        <rect x="402" y="64" width="160" height="92" rx="9" class="bxC"/>
+        <text x="414" y="86" class="tt">3 · the instruction</text>
+        <text x="414" y="106" class="ts">skill files: 36–43% hallucinated</text>
+        <text x="414" y="120" class="ts">react-codeshift: 237 repos</text>
+        <text x="414" y="140" class="ts">via one unreviewed commit</text>
+        <rect x="598" y="64" width="150" height="92" rx="9" class="bxC"/>
+        <text x="610" y="86" class="tt">4 · the install</text>
+        <text x="610" y="106" class="ts">agent auto-approval beats</text>
+        <text x="610" y="120" class="ts">npx's "Ok to proceed?"</text>
+        <text x="610" y="140" class="ts">→ postinstall payload (S5)</text>
+        <path d="M180 110 L214 110" class="edS7"/>
+        <path d="M366 110 L400 110" class="edS7"/>
+        <path d="M562 110 L596 110" class="edS7"/>
+        <rect x="52" y="200" width="170" height="66" rx="8" class="bxK"/>
+        <text x="64" y="221" class="tt">gate · cooldown</text>
+        <text x="64" y="239" class="ts">pnpm 11: 24h default;</text>
+        <text x="64" y="253" class="ts">Dependabot: 3-day default</text>
+        <rect x="252" y="200" width="170" height="66" rx="8" class="bxK"/>
+        <text x="264" y="221" class="tt">gate · lockfile + hash</text>
+        <text x="264" y="239" class="ts">committed lockfiles,</text>
+        <text x="264" y="253" class="ts">frozen CI installs</text>
+        <rect x="452" y="200" width="170" height="66" rx="8" class="bxK"/>
+        <text x="464" y="221" class="tt">gate · allowlist / offline</text>
+        <text x="464" y="239" class="ts">Codex cloud offline by default;</text>
+        <text x="464" y="253" class="ts">install wrappers check the name</text>
+        <rect x="652" y="200" width="170" height="66" rx="8" class="bxK"/>
+        <text x="664" y="221" class="tt">gate · registry hardening</text>
+        <text x="664" y="239" class="ts">tokens 90-day max, WebAuthn,</text>
+        <text x="664" y="253" class="ts">trusted publishing (npm 2025)</text>
+        <path d="M137 200 L105 158" class="edS7 edD"/>
+        <path d="M337 200 L291 158" class="edS7 edD"/>
+        <path d="M537 200 L482 158" class="edS7 edD"/>
+        <path d="M737 200 L673 158" class="edS7 edD"/>
+        <rect x="30" y="310" width="800" height="60" rx="8" class="bxG"/>
+        <text x="44" y="330" class="ts">honest status (Jul 2026): mechanism measured end-to-end; one confirmed malicious look-alike (unused-imports, intent unproven); no documented mass compromise — yet</text>
+        <text x="44" y="350" class="ts">the gap: no agent vendor verifies a name's existence or age before installing; until the harness checks, the install is a write — gate it like one (E5)</text>
+      </svg></div>
+  <div class="gallery-body">
+    <div class="gallery-title">The slopsquatting chain and its gates. The attacker&#x27;s work is one registration; the reach comes from the model&#x27;s repeatability and the skill-file distribution channel. Cooldowns and lockfiles are deterministic and shipped; name-existence checking lives only in third-party wrappers; offline-by-default execution is the strongest shipped agent posture. Sources: Spracklen et al. (USENIX Sec 2025); arXiv:2605.17062, 2607.12340, 2607.07433; Aikido (21 Jan 2026); pnpm/npm/GitHub changelogs.</div>
+    <div class="gallery-section">5 · Slopsquatting: the hallucinated dependency</div>
+    <p class="gallery-why">The slopsquatting chain from hallucination to install: the attacker&#x27;s work is one registration, the reach comes from the model&#x27;s repeatability (127 names shared across all frontier models) and the skill-file distribution channel — with the four gates graded by what actually ships, and the nobody-checks-the-name gap (name-existence checking lives only in third-party wrappers) drawn as the open seam.</p>
+    <a class="gallery-link" href="deep-dives/S7-contract-brownfield-surfaces-secrets-deepdive.html#s5">Open in deep dive →</a>
   </div>
 </article>
 

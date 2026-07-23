@@ -136,6 +136,16 @@ main h2 .anch{opacity:0;position:absolute;left:-22px;top:2px;padding:0 6px;text-
 main h2 .anch:hover,main h2 .anch:focus{color:var(--cobalt-deep)}
 main h2:hover .anch,main h2:focus-within .anch{opacity:1}
 @media (max-width:900px){main h2 .anch{position:static;margin-left:.35em}}
+/* diagram lightbox — click/enter any figure SVG to enlarge it (mirrors gallery.html) */
+svg[role="img"]{cursor:zoom-in}
+svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px}
+.dlb{position:fixed;inset:0;z-index:320;display:flex;align-items:center;justify-content:center;padding:2vh 2vw;background:rgba(26,36,48,.72)}
+.dlb[hidden]{display:none}
+.dlb-box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;width:96vw;height:96vh;display:flex;flex-direction:column;overflow:auto;padding:26px 26px 20px;box-shadow:0 24px 70px rgba(20,30,45,.4)}
+.dlb-body{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
+.dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
+.dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
 </style>
 </head>
 <body>
@@ -333,6 +343,42 @@ main h2:hover .anch,main h2:focus-within .anch{opacity:1}
     });
     h.appendChild(a);
   });
+})();
+</script>
+<!-- diagram lightbox: shared modal that shows an enlarged clone of any figure SVG -->
+<div class="dlb" hidden role="dialog" aria-modal="true" aria-label="Enlarged diagram"><div class="dlb-box"><button class="dlb-close" type="button" aria-label="Close enlarged diagram">&times;</button><div class="dlb-body"></div></div></div>
+<script>
+/* Diagram lightbox: click (or Enter/Space on) any figure SVG to open an enlarged
+   clone in a shared modal. role="img" selects diagram figures and skips small icons.
+   The clone sits in a display:contents wrapper carrying its scope root (.dmap /
+   #sdlc-sec / .e1ov) when present, so section-scoped SVG CSS still resolves. */
+(function(){
+  var modal=document.querySelector('.dlb'); if(!modal) return;
+  var body=modal.querySelector('.dlb-body'), closeBtn=modal.querySelector('.dlb-close');
+  var lastTrigger=null, prevOverflow='';
+  document.querySelectorAll('svg[role="img"]').forEach(function(svg){ if(!svg.closest('.dlb')) svg.setAttribute('tabindex','0'); });
+  function openSvg(svg){
+    var root=svg.closest('.dmap,#sdlc-sec,.e1ov');
+    var wrap=document.createElement('div'); wrap.style.display='contents';
+    if(root){ if(root.className) wrap.className=root.className; if(root.id) wrap.id=root.id; }
+    wrap.appendChild(svg.cloneNode(true));
+    body.replaceChildren(wrap);
+    modal.hidden=false; prevOverflow=document.body.style.overflow; document.body.style.overflow='hidden';
+    lastTrigger=svg; closeBtn.focus();
+  }
+  function closeLb(){
+    if(modal.hidden) return;
+    modal.hidden=true; body.replaceChildren(); document.body.style.overflow=prevOverflow;
+    if(lastTrigger){ try{ lastTrigger.focus(); }catch(e){} lastTrigger=null; }
+  }
+  function figFrom(t){ if(!t||typeof t.closest!=='function') return null; var s=t.closest('svg[role="img"]'); return (s && !s.closest('.dlb'))?s:null; }
+  document.addEventListener('click',function(e){ if(!modal.hidden) return; var s=figFrom(e.target); if(s) openSvg(s); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){ if(!modal.hidden){ e.stopPropagation(); closeLb(); } return; }
+    if((e.key==='Enter'||e.key===' ') && modal.hidden){ var s=figFrom(e.target); if(s){ e.preventDefault(); openSvg(s); } }
+  },true);
+  closeBtn.addEventListener('click',function(e){ e.stopPropagation(); closeLb(); });
+  modal.addEventListener('click',function(e){ if(e.target===modal) closeLb(); });
 })();
 </script>
 </body>

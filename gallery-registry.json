@@ -727,6 +727,30 @@
       "section": "4 · The cluster is the trust boundary",
       "sectionAnchor": "s4",
       "why": "Shows why the cluster is the trust boundary: one poisoned worker fans out through trust-upgraded handoffs and a shared store that defeats agent-to-agent airgapping, and grades the three edge controls — signed messages, sanitize-at-handoff, circuit breaker — by what actually ships today."
+    },
+    {
+      "deepDive": "S7-contract-brownfield-surfaces-secrets-deepdive",
+      "figureIndex": 0,
+      "title": "The four text channels into the agent's context, with the writer of each named. The ticket channel is the one with shipped controls — sanitization by default, author-gating as an option — and also the one with the in-the-wild record: Clinejection's path (red) needed no sanitizer bypass at all, only an open whose-tickets gate and a privileged token in the runner. Sources: Khan/GHSA-9ppg-jx86-fqw7; github-mcp-server changelog (10 Dec 2025) and releases; gh-aw v0.82.9; Noma (6 Jul 2026); Tenet Security and arXiv:2604.15368 for the machine-text rows.",
+      "section": "1 · The ticket channel: anyone who can file an issue writes to your agent",
+      "sectionAnchor": "s1",
+      "why": "Draws the four text channels into the agent's context as submission boxes — who can write each one, what ships at each boundary (GitHub MCP's default-on sanitization and opt-in lockdown on the ticket channel; nothing on the design channel), and Clinejection's red path end to end, which needed no sanitizer bypass at all, only an open whose-tickets gate and a privileged token in the runner."
+    },
+    {
+      "deepDive": "S7-contract-brownfield-surfaces-secrets-deepdive",
+      "figureIndex": 1,
+      "title": "The secrets lifecycle with its four gates. History is the persistence layer — recoverable after rewrites, mostly valid years later; the agent touches the secret on the way in (estate reads, .env auto-load) and on the way out (generated commits, config files). Rotation is the only gate that closes the past; the others bound the future. Sources: GitGuardian 2026; Meli et al. (NDSS 2019); Knostic (Dec 2025); GitHub changelog (31 Mar 2026); Microsoft TI (5 Jun 2026); Truffle Security.",
+      "section": "4 · The secrets problem: the data that makes every surface worth attacking",
+      "sectionAnchor": "s4",
+      "why": "The secrets lifecycle with its four gates: history as the persistence layer (recoverable after rewrites, mostly valid years later), the agent touching secrets on the way in (estate reads, .env auto-load) and on the way out (generated commits, config files) — and rotation as the only gate that closes the past while the others bound the future."
+    },
+    {
+      "deepDive": "S7-contract-brownfield-surfaces-secrets-deepdive",
+      "figureIndex": 2,
+      "title": "The slopsquatting chain and its gates. The attacker's work is one registration; the reach comes from the model's repeatability and the skill-file distribution channel. Cooldowns and lockfiles are deterministic and shipped; name-existence checking lives only in third-party wrappers; offline-by-default execution is the strongest shipped agent posture. Sources: Spracklen et al. (USENIX Sec 2025); arXiv:2605.17062, 2607.12340, 2607.07433; Aikido (21 Jan 2026); pnpm/npm/GitHub changelogs.",
+      "section": "5 · Slopsquatting: the hallucinated dependency",
+      "sectionAnchor": "s5",
+      "why": "The slopsquatting chain from hallucination to install: the attacker's work is one registration, the reach comes from the model's repeatability (127 names shared across all frontier models) and the skill-file distribution channel — with the four gates graded by what actually ships, and the nobody-checks-the-name gap (name-existence checking lives only in third-party wrappers) drawn as the open seam."
     }
   ]
 }

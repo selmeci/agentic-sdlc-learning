@@ -16,7 +16,10 @@ Create `/tmp/p2body.html`: the section content only (no `<html>/<head>`). Fixed 
 `§0 why it matters` → content sections with `.io` / `.comp` / `.callout` / `figure` (SVG) /
 `table.map` → `§n takeaways` (three-sentences callout) → further reading (`.reading`) →
 final `<p class="closingnote">…</p>`. Number sections `<h2><span class="n">0</span>…`.
-SVGs: one `<defs>` with a **unique** marker `id="ahP2a"`; arrows use `class="edP2"`
+SVGs: wrap each figure in `<figure>`, and the `<svg>` **must** carry `role="img"` + a
+descriptive `aria-label`. That is the exact selector the diagram lightbox and screen readers
+use — a figure SVG without `role="img"` silently ships non-zoomable, and the validator fails
+it. One `<defs>` with a **unique** marker `id="ahP2a"`; arrows use `class="edP2"`
 (or inline `style="marker-end:url(#ahP2a)"`).
 
 House rules: dense English prose; tie back to the framework (name the E/P/D topics & reports
@@ -29,6 +32,11 @@ Reuse E1's `<head>` verbatim, then:
 - append to the `<style>`: `.closingnote{…}` and `svg .edP2{…marker-end:url(#ahP2a)}`;
 - add a `<nav class="toc">` listing `#s0…#sn`;
 - give each `<h2>` an `id="sN"` (loop, high→low so `1` doesn't match inside `10`). **These IDs become public deep links — preserve them when editing; never rename an existing section id, because external links point at it.**
+- **keep the diagram lightbox** (since v1.69, every figure is click-to-enlarge). The reused
+  `<head>` already carries the `.dlb` CSS; every standalone file also ends with the `.dlb`
+  modal `<div>` + its `<script>` right before `</body>` — copy that block verbatim from any
+  existing deep dive. This plus the figure `role="img"` (Step 1) is what makes diagrams
+  zoomable; `scripts/validate.py` (`check_diagram_lightbox`) fails the build if either is missing.
 Write to `deep-dives/P2-…-deepdive.html`.
 
 ## Step 3 — build + insert the overlay
