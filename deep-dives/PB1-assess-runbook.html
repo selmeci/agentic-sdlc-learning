@@ -218,10 +218,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <input type="checkbox" class="pbck" id="pb1-s1" data-pb="pb-assess" data-step="pb1-s1">
   <div class="pbtxt">
     <label class="pbwhat" for="pb1-s1">A1 · Baseline the test suite</label>
-    <p class="pbwhy">Run the full suite three times from a clean checkout. Record: one-command invocation, wall-clock runtime, pass rate, whether it finishes under ~15 min, and the list of flaky tests. Why: the suite is the external truth the whole loop stands on — without a trusted, fast signal there is nothing for an agent to converge on (<a href="E4-verification-first-deepdive.html">E4 Verification-first</a>, <a href="B1-bootstrap-paradox-deepdive.html">B1 Safe ordering</a>).</p>
+    <p class="pbwhy">Run the full suite three times from a clean checkout. Record: one-command invocation, wall-clock runtime, pass rate, whether it finishes under ~15 min, and the list of flaky tests. Why: the suite is the external truth the whole loop stands on — without a trusted, fast signal there is nothing for an agent to converge on (<a href="E4-verification-first-deepdive.html">E4 Verification-first</a>, <a href="B1-bootstrap-paradox-deepdive.html">B1 Safe ordering</a>). Why: see <a href="#b3-deepdive">B3</a> — coverage vs mutation score.</p>
     <div class="pbdone">DONE = runtime, pass rate, under-15-min status and flaky list recorded in report §2; headless one-command status recorded as a fact (feeds questionnaire A2).</div>
   </div>
 </div>
+
+<div class="pbtpl"><button class="pbcopy" type="button" data-copy="pb1-tpl-coverage">copy</button><pre id="pb1-tpl-coverage">
+Talk track — the coverage conversation (3 minutes)
+1. "Coverage proves the code ran; a mutation score proves the tests would notice it
+   being wrong."
+2. Show THEIR pseudo-tested inventory (extreme mutation, ~1h run): "these N methods
+   are executed by tests that fail to notice any behavior change."
+3. Offer the no-KPI path: survivors-in-review on agent diffs only, advisory, two weeks.
+   Decision we ask for today: pick the pilot module.
+</pre></div>
 
 <div class="pbstep">
   <input type="checkbox" class="pbck" id="pb1-s2" data-pb="pb-assess" data-step="pb1-s2">
