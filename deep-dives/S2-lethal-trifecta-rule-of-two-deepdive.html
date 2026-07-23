@@ -131,11 +131,11 @@ h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
   table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
 }
 @media (prefers-reduced-motion:reduce){.backtop{transition:none}}
-h2{position:relative}
-h2 .anch{opacity:0;position:absolute;left:-22px;top:2px;padding:0 6px;text-decoration:none;color:var(--soft);font-family:var(--mono);font-size:.85em;transition:opacity .15s}
-h2 .anch:hover,h2 .anch:focus{color:var(--cobalt-deep)}
-h2:hover .anch,h2:focus-within .anch{opacity:1}
-@media (max-width:900px){h2 .anch{position:static;margin-left:.35em}}
+main h2{position:relative}
+main h2 .anch{opacity:0;position:absolute;left:-22px;top:2px;padding:0 6px;text-decoration:none;color:var(--soft);font-family:var(--mono);font-size:.85em;transition:opacity .15s}
+main h2 .anch:hover,main h2 .anch:focus{color:var(--cobalt-deep)}
+main h2:hover .anch,main h2:focus-within .anch{opacity:1}
+@media (max-width:900px){main h2 .anch{position:static;margin-left:.35em}}
 </style>
 </head>
 <body>
@@ -347,21 +347,19 @@ h2:hover .anch,h2:focus-within .anch{opacity:1}
 (function(){
   function $(s){return document.querySelector(s);}
   function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
-  $$('h2[id]').forEach(function(h){
+  $$('main h2[id]').forEach(function(h){
+    if(h.querySelector('.anch'))return;
     var a=document.createElement('a');
     a.className='anch';
     a.href='#'+h.id;
     a.setAttribute('aria-label','Copy link to this section');
     a.textContent='#';
-    a.addEventListener('click',function(e){
-      e.preventDefault();
-      var url=location.origin+location.pathname+'#'+h.id;
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(url).catch(function(){});
-      }
-      location.hash=h.id;
-      a.textContent='copied';
-      setTimeout(function(){a.textContent='#';},1200);
+    a.addEventListener('click',function(){
+      var url=(location.href.split('#')[0])+'#'+h.id;
+      function ok(){clearTimeout(a._tid);a.textContent='copied';a._tid=setTimeout(function(){a.textContent='#';},1200);}
+      function fail(){clearTimeout(a._tid);a.textContent='copy failed';a._tid=setTimeout(function(){a.textContent='#';},2000);}
+      function fb(){var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();var done=false;try{done=document.execCommand('copy');}catch(err){}document.body.removeChild(ta);if(done)ok();else fail();}
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(ok,fb);}else{fb();}
     });
     h.appendChild(a);
   });

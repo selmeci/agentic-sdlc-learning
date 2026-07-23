@@ -44,7 +44,7 @@ Wrap the **same body** in:
   </div>
 </div>
 ```
-Because the overlay body is identical to the standalone file, its `<h2>` ids are already stable and match the public deep links. Do not override them.
+Because the whole workbook page is one DOM, overlay `<h2>` ids must be unique across all overlays. Prefix each id with the overlay token in the wrapper (`<ov.id>-<standalone-id>`, e.g. `p2ov-s3`). The public workbook fragment for section 3 is therefore `#p2ov-s3`, while the standalone file keeps `#s3`. Never rename an existing id; preserve both the standalone and prefixed forms so external links keep working.
 
 Insert into the workbook immediately **before** `<footer>`.
 
