@@ -499,18 +499,23 @@ def check_workbook():
 
     # deep-dive anchors wired: link(s) + exactly one JS handler.
     # sdlc has two entry links (intro + section) + 1 handler = 3; others have 1 link + 1 handler = 2.
-    # pb1 is additionally the fixed "PB bridge" target of every application-layer skeleton
-    # (one extra <a href="#pb1-deepdive"> per transformed deep dive, by design), so its count
-    # grows past the baseline; >= (not ==) keeps the check meaningful (still catches a missing
-    # link or a missing/duplicated handler) without re-capping an intentionally-growing total.
+    # pb1-pb5 are additionally the fixed "PB bridge" target that every application-layer
+    # skeleton links to (one extra <a href="#pbN-deepdive"> per transformed deep dive that
+    # bridges to that runbook, by design), so their counts legitimately grow past the
+    # baseline; only these five tokens use >= (still catches a missing link or a
+    # missing/duplicated handler). Every other token is not expected to accumulate extra
+    # links, so it goes back to an exact c == exp match.
     tokens = sorted(set(re.findall(r"#([a-z0-9]+)-deepdive", s)))
     for tok in tokens:
         c = s.count(f"#{tok}-deepdive")
         handlers = s.count(f'a[href="#{tok}-deepdive"]')
         exp = 3 if tok == "sdlc" else 2
-        ok = (c >= exp and handlers == 1)
+        if tok in ("pb1", "pb2", "pb3", "pb4", "pb5"):
+            ok = (c >= exp and handlers == 1)
+        else:
+            ok = (c == exp and handlers == 1)
         note(ok, f"#{tok}-deepdive wired x{c} (+1 handler)" if ok
-             else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected >= {exp} total, 1 handler)")
+             else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected {'>= ' if tok in ('pb1','pb2','pb3','pb4','pb5') else ''}{exp} total, 1 handler)")
 
     # topic count
     ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb|gf)-[a-z0-9-]*)"', s)
