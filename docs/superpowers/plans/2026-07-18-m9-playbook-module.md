@@ -313,7 +313,7 @@ The body has sections §0–§7, numbered `<h2><span class="n">N</span>Title</h2
 
 **§0 Why this runbook exists** — `.lead` paragraph: PB1 is the entry point of every engagement; you assess the surrounding system before building anything on it, because AI amplifies that system (DORA 2024: +25% AI adoption associated with −7.2% delivery stability; METR RCT: experienced devs 19% slower while believing ~20% faster). One `.callout amber` "What this is not": not an audit for the client's benefit alone — the output decides *our* entry decision at the F0 gate. Cross-link topics E7, B1 by overlay links.
 
-**§1 How to run it** — prose: one person, 2–4 focused days, read access to repo + CI + one team interview; every step below has ČO (the action), PREČO (the theory link), and DONE (the exit criterion); check steps off as you go. Include the progress chip + note:
+**§1 How to run it** — prose: one person, 2–4 focused days, read access to repo + CI + one team interview; every step below has WHAT (the action), WHY (the theory link), and DONE (the exit criterion); check steps off as you go. Include the progress chip + note:
 
 ```html
 <p><span class="pbprog" data-pbprog="pb-assess"></span></p>
@@ -364,7 +364,7 @@ Each step uses exactly this markup pattern (shown filled for A1; repeat for all 
 
 - [ ] **Step 2: Fill the nine steps with this content**
 
-| Step | Label + action | PREČO links | DONE criterion |
+| Step | Label + action | WHY links | DONE criterion |
 |---|---|---|---|
 | `pb1-s1` | A1 · Baseline the test suite (runtime, pass rate, flaky list; 3 clean runs) | `#e4-deepdive`, `#b1-deepdive` | numbers in report §2; one-command headless run documented |
 | `pb1-s2` | A2 · Verify CI emits agent-readable signal (a deliberately broken test produces a machine-readable failure: exit code + parseable log/status) | `#e4-deepdive`, `#e7-deepdive` | broken-test experiment run; failure artifact linked in report §2 |

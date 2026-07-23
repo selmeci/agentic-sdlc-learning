@@ -61,10 +61,10 @@ Fixed shape, parallel to the deep-dive shape, to be documented in `docs/AUTHORIN
 
 Each numbered step has four parts:
 
-- **ČO / What** — a concrete action, imperative, executable in a day or two.
-- **PREČO / Why** — 2–3 sentences plus an overlay link to the theory topic holding the
+- **What** — a concrete action, imperative, executable in a day or two.
+- **Why** — 2–3 sentences plus an overlay link to the theory topic holding the
   reasoning and evidence. The runbook never restates theory; it links it.
-- **ŠABLÓNA / Template** — a copy-paste block with a Copy button (questionnaire, report
+- **Template** — a copy-paste block with a Copy button (questionnaire, report
   skeleton, config snippet). Where the underlying theory is deterministic, the template is
   the **real runnable artifact, not prose about it** (E5 litmus: "what must never happen" is
   deterministic — hook/permission, not advice): hook scripts, permission baselines, CI gate

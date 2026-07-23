@@ -36,12 +36,25 @@ Content in English (English technical terms preserved); prose is dense and conci
 7. **Advisory vs deterministic, honestly applied.** Keep safety/consistency-critical rules in
    the validator (deterministic), not just in prose here (advisory) — the same principle the
    content teaches (E5).
+8. **English only — no exceptions.** All authored text (workbook, deep dives, runbooks,
+   presentations, docs, commit messages) is **strictly English**. Never use the author's or
+   client's native language, not even for a label or mnemonic — write `WHAT`/`WHY`/`Template`,
+   not `ČO`/`PREČO`/`ŠABLÓNA`. English technical terms and cited proper names (which may carry
+   diacritics, e.g. *Pavlič*, *Böckeler*) are fine. This rule binds **every** agent, Claude or
+   otherwise — see `AGENTS.md`. It is enforced deterministically by `check_language_english` in
+   `scripts/validate.py` (a red result blocks the change). The `archive/` folder holds the
+   legacy Slovak original and is exempt from this rule and from the validator.
 
 ## House style for content
 
 - Each deep dive follows a fixed shape: `§0 why it matters → … → takeaways → further reading`,
   with `.io` input/output/SDLC cards, `.comp` component cards, `.callout` boxes, one or more
   inline SVG figures, and a closing `.closingnote`. Match the existing files exactly.
+- **Every `<figure>` SVG carries `role="img"` + a descriptive `aria-label`.** Since v1.69 every
+  figure is **click-to-enlarge** via the shared lightbox (the `.dlb` modal + script, mirroring
+  `gallery.html`); `role="img"` is the exact selector it and screen readers use. New standalone
+  deep dives must include the `.dlb` block (see AUTHORING-GUIDE Step 2). Keep small inline icons
+  role-less so they are not treated as zoomable figures. Enforced by `check_diagram_lightbox`.
 - Every topic ties back to the framework: name the E-/P-/D- topics and reports it connects to.
 - Separate **strong independent evidence** from **vendor claims** from **practitioner synthesis**.
 - Preserve hard data points (percentages, arXiv IDs, named practitioners, dates, CVEs).

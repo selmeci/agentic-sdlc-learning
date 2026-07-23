@@ -26,7 +26,7 @@ Checks:
       matches) — catches drift like `.rt` markup vs `.ti` stylesheet
 """
 import json
-import os, re, sys, subprocess, shutil, tempfile
+import os, re, sys, subprocess, shutil, tempfile, html as htmllib
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from collections import Counter
@@ -106,6 +106,39 @@ def check_css_class_coverage(s, label):
     missing = sorted(used - covered)
     note(not missing, f"{label}: all {len(used)} markup classes covered by CSS/JS"
          if not missing else f"{label}: classes used but never styled/referenced: {missing}")
+
+# --- Language purity: content must be strictly English -----------------------
+# The workbook and deep dives are English-only by house rule (CLAUDE.md /
+# AGENTS.md). This gate makes that deterministic rather than advisory, after a
+# regression shipped Slovak labels (ČO / PREČO / ŠABLÓNA) into the PB runbooks.
+# Strategy: proper names carry diacritics too (Pavlič, Böckeler, Gáspár…), so we
+# do NOT flag diacritics wholesale. We flag (a) the specific non-English label
+# tokens that regressed, and (b) any *lowercase* word bearing a Latin diacritic
+# that is not a whitelisted English loanword — Slovak prose is lowercase and
+# unwhitelisted; cited surnames are capitalised and pass untouched.
+NON_ENGLISH_LABELS = re.compile(r"\b(ČO|PREČO|ŠABLÓNA|ŠABLONA)\b")
+LOANWORDS = {  # legitimate lowercase diacritic words in English usage
+    "naïve", "naïveté", "café", "résumé", "cliché", "déjà", "fiancé",
+    "façade", "protégé", "señor", "vis-à-vis", "à",
+}
+_DIACRITIC = re.compile(r"[À-ɏ]")  # Latin-1 Supplement + Latin Extended-A/B
+
+def check_language_english(s, label):
+    before = len(problems)
+    text = re.sub(r"<(script|style)\b.*?</\1>", " ", s, flags=re.S | re.I)
+    text = htmllib.unescape(re.sub(r"<[^>]+>", " ", text))
+    labels = sorted(set(NON_ENGLISH_LABELS.findall(text)))
+    if labels:
+        note(False, f"{label}: non-English label(s) present (use English, e.g. WHAT/WHY/Template): {labels}")
+    suspects = sorted({
+        tok for tok in re.findall(r"[^\W\d_]+", text, flags=re.UNICODE)
+        if _DIACRITIC.search(tok) and tok == tok.lower() and tok not in LOANWORDS
+    })
+    if suspects:
+        note(False, f"{label}: non-English lowercase word(s) — translate to English "
+                    f"(add to LOANWORDS only if a legitimate English loanword): {suspects[:12]}")
+    note(len(problems) == before, f"{label}: text is English (no stray non-English words)")
+
 
 def check_gallery_registry():
     print("gallery registry")
@@ -364,6 +397,7 @@ def check_workbook():
     check_html_balance(s, "workbook")
     check_svgs(s, "workbook")
     check_css_class_coverage(s, "workbook")
+    check_language_english(s, "workbook")
     check_h2_anchors(s, "workbook", overlay_mode=True)
     check_workbook_id_uniqueness(s, "workbook")
     check_fragment_reachability(s, "workbook")
@@ -451,6 +485,7 @@ def check_deepdives():
         check_html_balance(s, fn)
         check_svgs(s, fn)
         check_css_class_coverage(s, fn)
+        check_language_english(s, fn)
         check_h2_anchors(s, fn)
         check_standalone_anchor_affordance(s, fn)
         anc = set(re.findall(r'href="#([\w-]+)"', s))

@@ -3,6 +3,21 @@
 Version history of the workbook (`workbook/agentic-development-study.html`). Mirrors the
 in-app version-history modal (top-bar button). Dates are when the work was done in-session.
 
+## v1.67 · 2026-07-23
+
+English-only fix and enforcement. Removed stray non-English (Slovak) text from the PB1–PB5
+runbooks: the step-format mnemonic in every runbook intro used Slovak words for *what* and *why* —
+corrected to `WHAT` / `WHY` in both copies (standalone deep-dive files and the embedded workbook
+overlays). The same fix was applied to the internal design/plan docs that seeded the convention
+(`docs/superpowers/…`: the Slovak what / why / template labels → English). Also fixed a stray
+non-ASCII letter that had broken the Hyrum's Law URL (now `hyrumslaw.com`) in the B5 deep dive and
+workbook. Added golden rule 8 (English only) to `CLAUDE.md`; added a cross-tool `AGENTS.md` so
+non-Claude agents (Cursor, Copilot, Codex, Gemini, …) inherit the same rule; and added a
+deterministic guard `check_language_english` to `scripts/validate.py` that fails the build on
+non-English text, while allowing cited proper names and English loanwords. The legacy Slovak
+original under `archive/` is exempt by design.
+No topic-id or content-meaning changes.
+
 ## v1.66 · 2026-07-23
 
 Added deep-link anchors: every H2 section in the deep-dive companions and every numbered
