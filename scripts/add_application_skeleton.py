@@ -73,10 +73,14 @@ def transform(s, h2_id_prefix, is_standalone, fn):
         raise SystemExit(f"{fn}: <h2 id={h2_id_prefix}s1> not found for frame insert")
     new = new[:s1] + FRAME + new[s1:]
     # 4. TOC label (standalone only). TOC labels are abbreviated (e.g.
-    # '<a href="#s10"><b>10</b> &middot; Takeaways</a>') so they never contain HEAD
-    # verbatim — locate the anchor by the section's own id instead, and assert the
-    # replacement actually happened exactly once (a silent no-op here is the bug
-    # this replaced).
+    # '<a href="#s10"><b>10</b> &middot; Takeaways</a>' or, in most base files,
+    # the raw Unicode middle dot '<b>10</b> · Takeaways</a>') so they never
+    # contain HEAD verbatim — locate the anchor by the section's own id instead.
+    # The separator varies (entity, raw '·', or none at all) depending on the
+    # file's history, so match it generically: keep '<b>N</b>', drop whatever
+    # separator+label follows, and always emit the entity form. Assert the
+    # replacement actually happened exactly once (a silent no-op here is the
+    # bug this replaced).
     if is_standalone:
         sec_id = h2_id_prefix + m.group(1)  # e.g. "s10"
         toc_a_re = re.compile(
@@ -89,7 +93,7 @@ def transform(s, h2_id_prefix, is_standalone, fn):
             )
         before = new
         new = toc_a_re.sub(
-            lambda mm: re.sub(r'(<b>\d+</b>)(?:\s*&middot;\s*\S.*)?$',
+            lambda mm: re.sub(r'(<b>\d+</b>)(?:\s*(?:&middot;|·)\s*\S.*)?$',
                                r'\1 &middot; Applying it', mm.group(1)) + "</a>",
             new, count=1,
         )
@@ -97,6 +101,8 @@ def transform(s, h2_id_prefix, is_standalone, fn):
             raise SystemExit(f"{fn}: TOC label replace was a no-op for #{sec_id}")
         # 5. CSS before the first closing </style>
         i = new.find("</style>")
+        if i < 0:
+            raise SystemExit(f"{fn}: </style> not found for CSS injection")
         new = new[:i] + CSS + new[i:]
     return new
 
