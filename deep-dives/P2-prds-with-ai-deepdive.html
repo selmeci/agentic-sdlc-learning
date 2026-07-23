@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -175,7 +184,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>It is also where AI assistance is at its most seductive. Nothing looks more like PM work than a well-formatted PRD, and nothing is easier for an LLM to produce than a plausible one. P2 is about telling those two apart: what AI genuinely does well in requirements work, what it systematically fails at, and how to structure the collaboration so you get the first without the second.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Marty Cagan's rule: use AI to <strong>amplify your thinking, not abdicate it</strong>. The productive frame is AI as the <em>best junior PM you have ever had</em> — tireless at drafting, structuring, consistency and edge cases, but with no product judgment of its own. A junior's draft is a starting point a senior edits; the moment the draft ships unedited, the senior has abdicated.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>What works — the junior-PM jobs</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>What works — the junior-PM jobs</h2>
       <p>The 2025–2026 practitioner consensus (Cagan/SVPG, Torres, Anthropic internal teams — practitioner synthesis, not controlled studies) is consistent about where AI drafting genuinely helps. The common thread: every job on this list is either <em>expansion</em> (more edge cases, more structure, more consistency from the same input) or <em>challenge</em> (find what is wrong with this) — never <em>judgment</em> (decide what to build).</p>
       <div class="io"><div class="box"><div class="lab">What AI does well in PRD work</div><ul><li>drafting from rough input — notes, a call transcript, a whiteboard photo</li><li>structuring and consistency across a long document</li><li>generating edge cases the author did not think of</li><li>red-teaming a draft before stakeholder review (§4)</li><li>generating acceptance criteria from stories (feeds M3)</li></ul></div>
       <div class="box"><div class="lab">What must stay human</div><ul><li>the <strong>why</strong> — rationale is exactly where LLMs fail hardest (§2)</li><li>the kill/keep decision on an idea (§3)</li><li>trade-offs between users, stakeholders, strategy</li><li>final ownership of every sentence that reaches engineering</li></ul></div></div>
@@ -231,12 +243,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The PRD is not the terminal artifact; the handoff contract is. The practical flow at a client: discovery insight (P1, two-perspectives) → PRD drafted by AI from grounded context — company context, user research, a PRD template — and edited by the PM with kill/keep applied (§3) → red-team gate (§4) → decomposition into agent-ready work items (P3) → each item gets machine-verifiable acceptance criteria, context links, and requirement traceability (M3). Every stage hands the next one exactly what it cannot generate for itself: the why survives because a human wrote it and the contract carries it.</p>
       <p>This ordering also fixes the measurement. The tempting metric for AI-assisted PRD work is drafting speed; the meaningful one is downstream: <strong>the share of tasks the engineering harness completes without follow-up questions</strong>. A PRD process that doubles drafting speed but leaves engineering agents guessing at intent has optimised the wrong end of the pipe — the same lesson E7 teaches about output metrics generally.</p>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>are PRDs AI-drafted, and does a real human edit pass follow?</li><li>do stories carry rationale, or form without a why?</li><li>what is the proposal kill rate — does paper ever die?</li><li>is there any adversarial review of requirements today?</li></ul></div>
       <div class="box"><div class="lab">Build</div><ul><li>institute draft-and-challenge: AI drafts + edges, PM edits + owns the why</li><li>add the red-team gate to backlog refinement (P3 — the quick win)</li><li>adopt the PR/FAQ frame: cheap drafts exist to kill ideas faster</li><li>measure handoff quality (no-follow-up-questions rate), not drafting speed</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember P2 by</div><p>AI is the best junior PM you have ever had — excellent at drafting, structure, edge cases and red-teaming — but the evidence (Quattrocchi: 63–77% rejection, Rationale Clarity 1.54 vs human ~2.7) shows it systematically fails at the why, which is the first component of the handoff contract. Use cheap drafting to kill bad ideas faster (PR/FAQ), not to produce more unkilled ones, and put the model in the critic's chair where the evidence is strongest (red-teaming: +20.2% ambiguity detection). Amplify your thinking, don't abdicate it — the PM edits, owns, and supplies the rationale; the measure of success is downstream handoff quality, not drafting speed.</p></div>
 
-      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s7"><span class="n">7</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Quattrocchi et al. — LLM-generated user stories under the QUS framework</div><div class="mt">arXiv:2507.15157</div><p>The strongest independent evidence in this topic: 13,958 generated stories, triple-annotated sample, the rejection rates and the Rationale Clarity gap. The paper behind §2.</p></div>
       <div class="item"><div class="rt">Marty Cagan / SVPG — AI in product management</div><div class="mt">svpg.com · talks 2025–2026</div><p>The "amplify, don't abdicate" frame, the junior-PM analogy, and the empowered-PM argument that P4 builds on. Practitioner synthesis, consistently sober.</p></div>

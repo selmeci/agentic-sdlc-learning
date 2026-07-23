@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -174,7 +183,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The one distinction to hold onto up front: people say "SDLC" to mean two different things. There are the <strong>stages</strong> every piece of software passes through (requirements, design, build, test, release, operate) — roughly universal. And there is the <strong>process model</strong> — <em>how</em> you sequence and iterate through those stages (Waterfall, Agile, DevOps, and so on). The stages barely change; the process model is a genuine choice, and it is the choice that reshapes where agents plug in and what can go wrong.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Agentic development does not replace the SDLC — it <em>instruments</em> it with a fast inner loop. But the process model you're operating in decides how much that loop helps: models with fast, cheap iteration and strong verification (Agile, DevOps) amplify agents; models with slow, gated, document-heavy phases (strict Waterfall) blunt them — unless the gates are exactly what a regulated context requires. So "which SDLC model?" is upstream of "how do we roll out agents?"</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The universal stages — the spine</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The universal stages — the spine</h2>
       <p>Whatever the model, the same activities recur. This is the spine every process model traverses, once or many times:</p>
       <figure>
       <svg viewBox="0 0 860 150" role="img" aria-label="The universal SDLC stages">
@@ -248,12 +260,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">The shifts</div><ul><li><strong>The loop tightens.</strong> Verification moves from a late stage to an inner, per-turn signal — the SDLC gains a fast feedback loop inside implementation (E4).</li><li><strong>The bottleneck moves.</strong> From writing to reviewing (E7); the constraint is now human review capacity, not typing speed (E6).</li><li><strong>The spec returns.</strong> After years of "working software over documentation," explicit specs matter again — because the agent needs them as input (E8/SDD).</li></ul></div>
       <div class="box"><div class="lab">What stays true</div><ul><li>the stages don't disappear — they're instrumented, not removed</li><li>a weak surrounding system is exposed, not fixed, by speed (DORA)</li><li>human judgment stays at the gates: intent, architecture, merge</li><li>the safe autonomy level is still set by verification strength, not the model</li></ul></div></div>
 
-      <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
+      <h2 id="s5"><span class="n">5</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess the client's model first</div><ul><li>which process model are they actually running (vs claiming)?</li><li>how fast &amp; trustworthy is their feedback loop today?</li><li>regulated/safety constraints that mandate gates?</li><li>review capacity relative to expected agent output?</li></ul></div>
       <div class="box"><div class="lab">Then position agents accordingly</div><ul><li>gated models → agents inside the gates; spec-driven (E8)</li><li>iterative/Agile → agent task→PR at L3; watch the review cap</li><li>mature DevOps → narrow L4 for repetitive, verifiable slices</li><li>always: build verification + governance before raising autonomy</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember this block by</div><p>"SDLC" means both the universal stages (requirements→operate) and the process model that routes through them (Waterfall→DevOps) — and the model is the real choice. Agentic development doesn't replace the life cycle, it instruments it with a fast inner loop, which pays off most in faster-feedback models (Agile/DevOps) but only once the verification and governance base exists — otherwise speed just surfaces weakness faster. Choose the model by the problem's shape (fixed vs evolving requirements, risk, regulation, maturity), then position agents inside it: in the gates where gates are required, at task→PR where feedback is fast, and at narrow high autonomy only where automation is mature.</p></div>
 
-      <h2 id="s6"><span class="n">6</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s6"><span class="n">6</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Royce (1970) &amp; the origins of Waterfall / iterative critique</div><div class="mt">"Managing the Development of Large Software Systems"</div><p>The paper usually (mis)cited as inventing Waterfall — it actually argued for iteration. Useful context for why the sequential model persists and where it fails.</p></div>
       <div class="item"><div class="rt">Boehm — the Spiral model</div><div class="mt">Barry Boehm, "A Spiral Model of Software Development and Enhancement" (1988)</div><p>The primary source for risk-driven iteration; the framing behind treating agent prototypes as risk-retirement.</p></div>

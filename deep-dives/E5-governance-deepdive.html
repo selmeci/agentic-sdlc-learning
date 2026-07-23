@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -174,7 +183,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>For our engagement this is the component that converts autonomy from a liability into a bounded, insurable activity. A client will (rightly) ask "what stops it from doing something catastrophic?" The honest answer is never "the prompt tells it not to" — it is the deterministic governance layer described here. This document draws the single most important line in the whole framework: <strong>advisory vs deterministic</strong>.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>An instruction the model <em>interprets</em> is advisory; a rule the harness <em>enforces</em> is deterministic. Under normal conditions both seem to work. Under pressure, ambiguity, or injection, only the deterministic layer holds. Governance is the discipline of putting every safety- or consistency-critical rule on the deterministic side of that line.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The defining distinction: advisory vs deterministic</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The defining distinction: advisory vs deterministic</h2>
       <p>This is the concept E5 exists to teach. Two mechanisms look similar in a demo and could not be more different in production:</p>
       <div class="io"><div class="box"><div class="lab">Advisory — the model decides</div><ul><li>text in context: CLAUDE.md / AGENTS.md, system prompt, rules files</li><li>the model reads it and <em>usually</em> complies</li><li>can be ignored under load, ambiguity, or injection</li><li>is itself an attack surface (rules-file backdoor, M7)</li></ul></div>
       <div class="box"><div class="lab">Deterministic — the harness decides</div><ul><li>permission rules, pre/post-tool hooks, OS sandbox, network policy</li><li>executed by the harness, not interpreted by the model</li><li>holds regardless of what the model "wants"</li><li>the actual security &amp; consistency boundary</li></ul></div>
@@ -263,12 +275,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>Review / merge</td><td>human "ask" gates</td><td>a person approves intent where all three trifecta legs would combine</td></tr>
       <tr><td>Operate / audit</td><td>PostToolUse log</td><td>every consequential action recorded; rollback possible; OpenTelemetry export</td></tr></table></div>
 
-      <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
+      <h2 id="s5"><span class="n">5</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Do dev/prod separation, RBAC and secrets hygiene exist at all?</li><li>Is there a place to enforce hooks (or only advisory config)?</li><li>Can we set an egress allowlist / sandbox in their environment?</li><li>Is there an audit trail before anything touches production?</li></ul></div>
       <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>enterprise managed permission baseline (deny secrets + destructive)</li><li>PreToolUse hooks for protected paths; Stop hook for the suite</li><li>OS sandbox + network egress allowlist (highest leverage)</li><li>PostToolUse audit log; human "ask" gates on the trifecta</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember E5 by</div><p>Governance is the deterministic layer — permission rules, hooks, sandbox, egress — that the harness enforces regardless of what the model decides, and it is the only thing still standing when the model is compromised. The litmus test for every rule: "what the model should know" is advisory (prompt); "what must never happen" is deterministic (hook/permission). It exists to answer the lethal trifecta, so its job is to remove a leg or re-insert a human, and thereby keep the blast radius bounded, observable and reversible.</p></div>
 
-      <h2 id="s6"><span class="n">6</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s6"><span class="n">6</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Claude Code — hooks guide &amp; secure deployment</div><div class="mt">code.claude.com/docs — hooks-guide &amp; agent-sdk/secure-deployment</div><p>The primary reference for permission rules, PreToolUse/PostToolUse/Stop hooks, the settings hierarchy, sandboxing and the "hooks override rules" gotcha. Start here.</p></div>
       <div class="item"><div class="rt">The lethal trifecta &amp; prompt-injection series</div><div class="mt">Simon Willison · simonwillison.net/series/prompt-injection</div><p>Why governance exists — the trifecta framing that every deterministic control is designed to break.</p></div>

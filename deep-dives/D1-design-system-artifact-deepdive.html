@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -176,7 +185,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>Positioning, stated plainly and with the same flag as the D1–D5 scale: <strong>"the design system as the third handoff artifact" is Report 5's synthesis — our framing, not an industry term</strong>. What is not synthesis is the movement underneath it. Brad Frost — who named atomic design — wrote in December 2025 that design systems must "evolve into machine-readable infrastructure—or risk becoming artifacts of a bygone era," and had already called AI "a natural design system consumer" back in February 2023. The industry exhibits in §1 show Meta, Indeed and the open-source default all converging on the same conclusion from three different directions. The framing is ours; the direction of travel is not.</p>
       <div class="callout amber"><div class="t">The delegation test</div><p>A UI task delegated without the third artifact fails in one of two ways: the agent invents the visual answers itself — §2 measures what that convergence looks like — or it interrupts a human for every choice, which is not delegation. The design system is what makes visual work <em>delegable at all</em>: it plays for the look of the product the role the test suite plays for its logic (E4). No suite, no delegation; no system, no visual delegation.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>From human library to machine-readable infrastructure</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>From human library to machine-readable infrastructure</h2>
       <p>The classical design system was built for people: a component library, a documentation site, a Figma library, and the shared understanding that grows around them. Its economics were justified by human reuse — fewer redesigns of the same button, faster onboarding, brand consistency across teams. Agents change the audience. In the Storybook/Chromatic webinar <em>Agentic Design Systems in 2026</em> (December 12, 2025 — spoken remarks, not a written paper), Frost and Chromatic co-founder Dominic Nguyen reduced agentic success to two pillars: <strong>Coverage</strong> — giving agents clear examples, states and constraints they can reuse — and <strong>Validation</strong> — tests plus human sign-off guaranteeing that what an agent generated is correct and safe to ship. Note what those two pillars are: Coverage is <em>context engineering</em> (E2) and Validation is <em>the verification loop</em> (E4), applied to the visual layer. The design system stops being a library with documentation and becomes the same kind of thing the engineering harness is — infrastructure that constrains and verifies a generator.</p>
       <div class="io">
         <div class="box"><div class="lab">Built for humans (before)</div><ul>
@@ -286,11 +298,19 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         </ul></div>
       </div>
 
-      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <h2 id="s7"><span class="n">7</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <p>The tie-backs, compactly: the third artifact enters the SDLC at the same gate as the handoff contract (H1) and verifies in the same place as the test suite (E4); its prose layers are advisory and its gate layers deterministic (E5); it is what lets the D-scale exist at all — every level above assisted drafting presumes it (D6); and on brownfield it is bootstrapped by archaeology, not decree (D7, Report 4). Its detailed layers are the rest of this module: tokens (D2), consumption (D3), governance (D4), the harness (D5).</p>
       <div class="callout"><div class="t">Three sentences to remember D1 by</div><p>Agent handoff runs on three artifacts — the contract says <em>what</em>, the codebase-plus-harness says <em>how and prove it</em>, and the design system says <em>what it must look like</em> — but the third only works as machine-readable infrastructure with deterministic gates, a framing that is Report 5's synthesis even though Frost, Meta, Indeed and shadcn are all converging on it independently. Without it, generation converges to the training-data mean — measurably: 22% heavy slop and only 46% clean across 1,590 audited pages — and no prompt fixes that, because prompts are advisory and defaults are baked into the tools. The system is a contract for <strong>conformance</strong> (tokens, APIs, mappings, coverage — all machine-checkable), never for <strong>judgment</strong> — taste stays behind a designer gate, which is exactly what makes the rest safely delegable.</p></div>
 
-      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s8"><span class="n">8</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Brad Frost — Design systems in the time of AI · Agentic Design Systems in 2026</div><div class="mt">bradfrost.com · Feb 2023 / Dec 2025 · webinar with Dominic Nguyen (Chromatic), Dec 12, 2025</div><p>The arc in primary sources: "AI is a natural design system consumer" (2023) to "machine-readable infrastructure—or risk becoming artifacts of a bygone era" (2025), and the Coverage/Validation pillars — spoken remarks from the webinar, cite as such.</p></div>
       <div class="item"><div class="rt">Adrian Krebs — The rise of design slop</div><div class="mt">adriankrebs.ch · Apr 20, 2026</div><p>The audit behind §2: 1,590 Show HN pages, Playwright, 16 deterministic patterns, 22/32/46. Method published; the numbers this module quotes are verified against it.</p></div>

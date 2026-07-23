@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -177,7 +186,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>For our engagement this is the single most important prerequisite to assess. A client with a fast, trustworthy test suite can be taken to real delegated autonomy (L3); a client without one cannot safely pass assisted use (L2), no matter how good the model is. This document explains what "verification" means in an agentic loop, why TDD fits agents unusually well, the specific ways agents subvert it, and how we protect the signal.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Verification should be the <em>path of least resistance</em>, not an act of discipline. If the cheapest way for the agent to make progress is to run the tests and satisfy them, it will. If the cheapest way is to weaken a test, it will do that instead. We engineer the loop so that "make it actually correct" is the easy path and "cheat" is the blocked one.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>What "verification" means inside the loop</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>What "verification" means inside the loop</h2>
       <p>In a classical process, testing is a stage near the end. In an agentic loop it is the <em>inner feedback signal</em> that runs every iteration: the agent proposes a change, the harness runs the checks, the result re-enters context, the agent self-corrects. Verification is what closes the loop from E1's diagram.</p>
       <div class="io"><div class="box"><div class="lab">What counts as verification</div><ul><li>unit &amp; integration tests (the primary oracle)</li><li>type-checks, linters, build success</li><li>machine-verifiable acceptance criteria (EARS/Gherkin, M3)</li><li>mutation score for test <em>quality</em> (M5/B3)</li></ul></div>
       <div class="box"><div class="lab">What does not count</div><ul><li>the agent's own claim that it "looks correct"</li><li>a second LLM's unaided opinion (no external truth)</li><li>coverage alone (a vanity metric — see §4)</li><li>a green run on tests the agent was free to edit</li></ul></div>
@@ -284,12 +296,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>+ mutation-verified, protected</td><td>robust L3, selective L4</td><td>the signal has teeth and can't be quietly weakened</td></tr></table></div>
       <p>In brownfield reality (M5), the suite often doesn't exist yet — which is why the bootstrap order is read-only → characterization tests → mutation-verify → then grant write autonomy. Verification isn't just a component of the harness; establishing it is the <em>first build step</em> before delegation is safe.</p>
 
-      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <h2 id="s8"><span class="n">8</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Is there a suite, and is it fast enough to iterate against?</li><li>Is it trustworthy — low flakiness, real assertions?</li><li>Can CI return a signal the agent can read?</li><li>Do we know the mutation score, or only coverage?</li></ul></div>
       <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>write failing tests first (human/separate agent) as the spec</li><li>three-layer test protection: rule + hook + gate</li><li>mutation testing as the real exit criterion (~70%)</li><li>keep the suite fast; quarantine flaky tests aggressively</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember E4 by</div><p>Verification is the only component that supplies external truth, so it — not the model — sets the safe autonomy ceiling. Agents optimise for reaching green, so protect the tests with a layered posture (advisory rule → deterministic hook → verification gate) and make honest correctness the path of least resistance. Coverage is vanity; verify the verifier with mutation testing so a green run actually means the code is right.</p></div>
 
-      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s9"><span class="n">9</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Kent Beck on TDD with AI agents</div><div class="mt">The Pragmatic Engineer (interview, 2025) · "Tidy First?" newsletter / "Augmented Coding" (details re-verified; re-check before citing)</div><p>The "superpower" framing, and first-hand accounts of agents cheating tests. Start here for the human-writes-the-red argument.</p></div>
       <div class="item"><div class="rt">Building effective agents / effective harnesses</div><div class="mt">Anthropic Engineering · anthropic.com/engineering</div><p>The verification loop, protected artifacts and the generator–evaluator pattern in practice (ties to E3).</p></div>

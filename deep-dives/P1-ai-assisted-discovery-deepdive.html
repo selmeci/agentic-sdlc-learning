@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -182,7 +191,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       </tbody></table></div>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>AI in discovery is a <em>second perspective</em>, not a replacement for the first. The value is never the AI's summary on its own — it is the <strong>delta</strong> between the PM's own synthesis and the AI's. If the PM stops synthesising and just reads AI summaries, discovery has been deleted, not accelerated.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>What discovery is — and what agents change</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>What discovery is — and what agents change</h2>
       <p>Discovery, in Teresa Torres's continuous sense, is the ongoing habit of talking to users weekly, mapping the opportunity space, and letting evidence — not opinion — drive what gets built. It is deliberately human-heavy: empathy, context, and the ability to notice the thing nobody said out loud are the point.</p>
       <p>Agents change the <em>economics</em> of discovery without changing its purpose. They make it cheap to transcribe, cluster, and re-synthesise large volumes of interview and feedback data — work that used to bottleneck a PM. The risk is precisely that cheapness: when synthesis becomes a button, the temptation is to press it and move on, which is where the detail (and the empathy) leaks out.</p>
       <div class="io"><div class="box"><div class="lab">What agents genuinely help with</div><ul><li>transcription &amp; first-pass clustering of many interviews</li><li>surfacing patterns across a large corpus a PM can't hold in their head</li><li>a fast parallel synthesis to compare against your own</li><li>drafting eval criteria for "did we learn what we needed?"</li></ul></div>
@@ -234,12 +246,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="box"><div class="lab">Secondary — the tools (swappable)</div><ul><li>Dovetail, Notion AI, transcription services</li><li>useful, but not the thing that makes discovery good</li><li>chosen to fit the methodology, never the reverse</li></ul></div></div>
       <p><strong>For our rollout:</strong> we sell the methodology, not a tool stack. A client who adopts Dovetail but keeps doing lazy synthesis has gained nothing; a client who adopts the two-perspectives habit with any tool has improved discovery. This keeps us vendor-neutral and durable against the weekly tool churn.</p>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>is the PM doing continuous discovery at all, or ad-hoc?</li><li>has "lazy AI synthesis" already crept in?</li><li>is there any eval of synthesis quality today?</li><li>are tools driving the process, or the methodology?</li></ul></div>
       <div class="box"><div class="lab">Build</div><ul><li>institute two-perspectives synthesis as the default habit</li><li>make the compare step cheap (templates / side-by-side)</li><li>add lightweight AI evals + raw-interview spot-checks</li><li>frame agents as assist-only — set up the P1–P5 scale (P5 = anti-pattern)</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember P1 by</div><p>Discovery decides the right task, so it is where the product harness begins — and where AI is a second perspective, never a replacement for the PM's own synthesis. The anti-pattern is lazy AI synthesis (transcript → summary → move on), which by Torres's estimate loses 20–40% of detail and captures ~5% of the value; the fix is the two-perspectives method, where the value is the delta between the PM's synthesis and the AI's. AI evals are the product-layer analogue of the verification loop — weaker than tests because the oracle is human judgment, which is exactly why the product scale caps lower than engineering's.</p></div>
 
-      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s7"><span class="n">7</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Teresa Torres — Continuous Discovery Habits</div><div class="mt">Product Talk · producttalk.org</div><p>The canonical source for continuous discovery, the opportunity solution tree, and weekly touchpoints — and Torres's positions on where AI helps and where it erodes discovery. Start here.</p></div>
       <div class="item"><div class="rt">Report 2 — the product harness &amp; P1–P5 (this workbook)</div><div class="mt">module M2, discovery section</div><p>The full research behind this topic and the assistance scale it feeds into; read alongside P2 (PRDs) and P5 (the scale itself).</p></div>

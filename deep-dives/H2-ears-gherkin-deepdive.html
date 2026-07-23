@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -175,7 +184,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The reason this matters more for agents than it ever did for humans is the same amnesia argument P3 made for decomposition. A human developer resolves an ambiguous criterion by leaning over to ask; an agent resolves it by <strong>guessing with confidence</strong> — Report 2 calls this intent hallucination, and it is invisible at exactly the moment it happens, because the agent's guess compiles, passes its own improvised tests, and reads plausibly in the diff. The defence is not more prose. It is criteria structured enough that ambiguity has nowhere to hide (EARS) and concrete enough that the claim "done" is a program output, not an opinion (Gherkin).</p>
       <div class="callout"><div class="t">The oracle, in one line</div><p>Every delegation needs an oracle — the thing that decides pass or fail. A prose criterion makes the <em>reviewer</em> the oracle (expensive, inconsistent, unavailable at 2 a.m. when the agent finishes); an executable criterion makes the <em>harness</em> the oracle. H2 is the craft of moving criteria from the first category to the second, and of knowing when the move is not worth it (§4).</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The verification gap</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The verification gap</h2>
       <p>Put a typical brownfield ticket criterion next to what a machine can evaluate and the gap is obvious. "The system should handle errors gracefully" names no trigger, no observable response, no boundary — it cannot fail, therefore it cannot pass. The INVEST checklist already demanded <em>testable</em> stories a decade before agents; the workbook's M3 overview sharpened the T for the agentic setting: testable is no longer enough, the bar is <strong>machine-verifiable</strong>, because the whole economic argument for delegation (E6's autonomy levels) collapses if a human must hand-inspect every completion anyway.</p>
       <p>The gap has two distinct failure directions, and the two formats of this topic attack one each. Direction one is <strong>ambiguity in</strong>: the criterion under-specifies, the agent fills the void with priors, and you get the wrong right-looking thing — H1's intent problem at criterion granularity. Direction two is <strong>unverifiability out</strong>: the criterion may even be clear, but nothing can execute it, so "finished" reverts to opinion and the PR review inherits the entire proof burden — at densities arXiv:2603.15911 measured at 29.6 review tokens per changed line for AI-authored work, that burden is precisely what the contract was supposed to amortize. EARS narrows direction one; Gherkin closes direction two.</p>
       <p>One warning before the formats: an executable criterion is only as strong as its oracle. The SWE-Bench+ audit (arXiv:2410.06992, cited at length in H1 §2C) found roughly a third of claimed benchmark passes tainted by solution leakage and another third passing only because tests were weak. Translating a vague rule into a weak scenario produces confident false greens — worse than prose, because it <em>looks</em> machine-verified. The craft sections (§5) and B3's mutation gate exist for exactly this reason.</p>
@@ -290,10 +302,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <tr><td><strong>B2 / B3</strong> brownfield</td><td>characterization tests are Gherkin's brownfield cousin (pin current behaviour before change); B3's mutation gate is how you audit scenario strength</td></tr>
       </table></div>
 
-      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <h2 id="s8"><span class="n">8</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences to keep</div><p>Acceptance criteria are the only part of the handoff contract a machine can enforce, so their format decides whether the spec review gate is real or theatre: EARS forces the rule to name its trigger, state and observable response; Gherkin binds the rule to concrete falsifiable examples; the failing tests are the handoff. The formats are cheap and old — the 2009 aerospace syntax and the 2004 conversation pattern — and the agentic turn fixes their historical cost problem, because step definitions and candidate scenarios are exactly the mechanical work agents draft well, while ratifying rules and choosing the examples that matter stays human at the gate. The trap is organizational, not technical: if Gherkin becomes QA's test syntax instead of the team's shared criteria language, you have rebuilt 2015-era BDD failure with more expensive tooling — keep the three amigos, add the agent as the fourth who drafts but never ratifies.</p></div>
 
-      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s9"><span class="n">9</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Mavin, Wilkinson, Harwood &amp; Novak — Easy Approach to Requirements Syntax (EARS)</div><div class="mt">IEEE RE'09 · DOI 10.1109/RE.2009.9 · templates at alistairmavin.com/ears</div><p>The original paper, born from Rolls-Royce airworthiness analysis. The site carries the canonical templates and the adopter list — the latter self-reported by the author, cite accordingly.</p></div>
       <div class="item"><div class="rt">Dan North — Introducing BDD</div><div class="mt">Better Software magazine, March 2006 · dannorth.net/introducing-bdd</div><p>The canonical essay; Given–When–Then itself dates to ~2004, worked out with business analyst Chris Matts — the format was a conversation pattern before it was a test syntax, which is the whole point of §5's trap.</p></div>

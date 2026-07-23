@@ -147,6 +147,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -176,7 +185,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the tunable surface: what a harness is made of, from two verified reference architectures to six runtime responsibilities (§1)</li><li>the evidence that the harness moves measured outcomes — with the two Terminal-Bench stories properly disentangled (§2)</li><li>the authoring discipline: the Ratchet, working backwards from behaviour, "success is silent, failures are verbose" (§3)</li><li>eval-driven harness tuning: the loop, the cost ladder, and the boundary where the harness ends and the model begins (§4)</li><li>model–harness co-evolution: why models overfit their training harness and what that does to your tool choice (§5)</li><li>a week-one plan for a brownfield client (§6)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>E1 — the equation and the seven components; this chapter is what you do <em>to</em> them</li><li>E2 — context engineering: the discipline this practice sits inside</li><li>E3 — harness responsibilities and Anthropic patterns; E9 adds the measurement loop</li><li>E7 — DORA/METR measure the team; E9's evals measure the agent</li><li>I5 — progressive disclosure is one family of harness levers</li><li>T5/T6 — the harness as internal product; vendor strategy once harnesses couple to models</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>The tunable surface — anatomy of the thing you tune</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The tunable surface — anatomy of the thing you tune</h2>
       <p>You cannot tune what you cannot name. Two independent source-level analyses, published within weeks of each other, give the field its two reference architectures — and they disagree in an instructive way. The first (arXiv:2604.14228, "Dive into Claude Code," Apr 2026) dissects Claude Code and finds deliberate simplicity: <em>"the core of the system is a simple while-loop that calls the model, runs tools, and repeats"</em> — a single ReAct loop with a single state object, explicitly contrasted with graph-based orchestration, delegating to subagents by re-entering the same loop. The second (arXiv:2603.05344, "Building Effective AI Coding Agents for the Terminal," Mar 2026) describes OpenDev, an open-source terminal agent built as the opposite: a <em>compound AI system</em> — "not a single monolithic LLM, but a structured ensemble of agents and workflows," a four-level Session → Agent → Workflow → LLM hierarchy with five separately assignable model roles (execution, thinking, self-critique, vision, fallback). Both are non-peer-reviewed preprints, and OpenDev's description is its builder's own; but together they bound the design space our client will actually choose from: <strong>one loop, many levers</strong> versus <strong>many loops, many models</strong>.</p>
       <p>Across both designs, the June 2026 survey that treats the harness as a first-class research object (arXiv:2606.20683) decomposes the execution harness into <strong>six runtime responsibilities</strong> — a useful checklist because every one of them is a place where configuration, not model choice, decides behaviour:</p>
       <div class="comp"><div class="chead"><span class="cid">SURFACE 1–2</span><h3>Observation &amp; context</h3><span class="role">what the model sees</span></div>
@@ -298,10 +310,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>I5 · disclosure / I3 · provenance</td><td>context files are harness levers with measured two-way effects; the Ratchet gives every core line a failure as provenance</td></tr>
       <tr><td>T5/T6 · platform &amp; vendor</td><td>the harness as internal product; co-evolution moves switching costs into the harness layer</td></tr></table>
 
-      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <h2 id="s8"><span class="n">8</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout"><div class="t">Three sentences to keep</div><p>An agentic benchmark score is a property of model <em>plus</em> harness — demand the harness column before believing any number, because measured harness-induced variance can exceed model-induced variance several-fold. Tune the harness the way you refactor code: one change at a time, against an eval suite built from your own failures, keeping only wins that repeat — and read a category that stays flat as a model limit, not a configuration one. Give every always-loaded rule a failure as its birth certificate, and promote the rules that matter from prose to deterministic checks.</p></div>
 
-      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s9"><span class="n">9</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Stop Comparing LLM Agents Without Disclosing the Harness</div><div class="mt">arXiv:2605.23950 · May 2026 · independent position paper (preprint)</div><p>The evidence backbone: 7.80× harness-vs-model variance in a controlled factorial; 34–48-point scaffold swings; the disclosure demand for leaderboards.</p></div>
       <div class="item"><div class="rt">From Question Answering to Task Completion: A Survey on Agent System and Harness Design</div><div class="mt">arXiv:2606.20683 · June 2026 · independent survey</div><p>The harness as a first-class research object; the six runtime responsibilities taxonomy §1 borrows.</p></div>

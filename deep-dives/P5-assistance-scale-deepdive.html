@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -175,7 +184,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>Positioning, stated plainly: <strong>P1–P5 is our synthesis</strong>, like the D1–D5 design scale — as of mid-2026 we found no published equivalent that grades AI assistance across product-definition work. It has honest intellectual ancestors: Parasuraman, Sheridan &amp; Wickens's classic ten-level automation model (2000), Feng, McDonald &amp; Zhang's five human-role levels for AI agents (Operator → Observer, arXiv:2506.12469), and Mitchell et al.'s Hugging Face position paper arguing the fully-autonomous top level should not be built at all (arXiv:2502.02649). The nearest SDLC-space neighbour (ASDLC.io's L1–L5) explicitly scopes itself to the engineering layer. Notably, the challenger rung — our P3 — appears in none of them.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Andrej Karpathy compressed the whole argument into one line at YC's AI Startup School (June 2025): build <strong>autonomy sliders</strong> and keep AI "on a leash," because <em>generation is cheap and verification is expensive</em> — the human verification loop is the bottleneck. The P-scale is that slider for the product layer, calibrated to the only verifier the layer has: human judgment. Set the slider by what you can verify, not by what the model can generate.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The five levels</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The five levels</h2>
       <div class="figscroll"><table class="map">
         <tr><th>Level</th><th>What the AI does</th><th>What the human does</th><th>Where it stands</th></tr>
         <tr><td>P1</td><td>assisted drafting — completions, rewording, structure on demand</td><td>authors; AI is stationery</td><td>universal, uncontroversial</td></tr>
@@ -233,12 +245,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The deployment rule mirrors E6: <strong>start where verification exists, and move one rung at a time</strong>. In practice: interview synthesis runs at P2–P3 with mandatory spot-checks against raw material (P1, P4 §4); PRD drafting runs at P2 with the kill/keep review (P2 §3); backlog refinement adds the P3 red-team gate — the single best quick win, because it is the evidence-strongest rung and only one step beyond mainstream practice; decomposition runs at P4 with approval gates on the task list (P3 §5). Machine-verifiable acceptance criteria (H2) are the bridge rung: the one place a product artifact crosses into deterministic verification — which is why the contract invests there.</p>
       <p>And because the failure mode is drift rather than decision (P4), every level assignment needs its <strong>downshift triggers</strong> — the degeneration signals watched per artifact type: kill rate falling toward zero, dispositions turning into "ok", review time collapsing while volume grows, PMs unable to recount a recent user conversation. Any of them fires: drop the artifact one rung and rebuild the review habit before climbing again. The scale is a dial, not a ratchet.</p>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>which level does each artifact type actually run at today — and who decided?</li><li>where is the client's verification real (human review with teeth) vs theatre?</li><li>do they have any eval practice, or plans for one?</li><li>any artifact already drifting toward P5 by rubber-stamp (check the signals)?</li></ul></div>
       <div class="box"><div class="lab">Build</div><ul><li>set levels per artifact type, explicitly, with the P-scale as shared vocabulary</li><li>deploy P3 red-teaming in refinement first — evidence-strongest, one step up</li><li>gate P4 decomposition on human-approved task lists (SDD mechanics, P3 §5)</li><li>wire the downshift triggers into the same ceremony; treat the scale as a dial</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember P5 by</div><p>The product layer needs its own autonomy scale because its verification is human judgment, not deterministic tests — so autonomy caps earlier, and the ladder (P1 drafting → P2 draft+edit → P3 red-team → P4 decomposition-with-gates → P5 autonomous definition) is our synthesis, with ancestors in Parasuraman/Sheridan/Wickens and Feng et al. but no published product-layer equivalent as of mid-2026. The evidence rates the rungs: P3 is strongest (+20.2% ambiguity detection), P4 works only as a gated hybrid (100% preference), and P5 has no evidence, a meta-analytic warning (human+AI underperforms on decision tasks, g=−0.23), a named failure (Klarna's 2025 reversal), and a regulatory floor against it (EU AI Act Art. 14, Aug 2026). Set the slider by what you can verify, per artifact, with downshift triggers — generation is cheap, verification is expensive, and the dial must move both ways.</p></div>
 
-      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s7"><span class="n">7</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Vaccaro, Almaatouq &amp; Malone — When combinations of humans and AI are useful</div><div class="mt">Nature Human Behaviour 8:2293–2303 · Oct 2024 · arXiv:2405.06087</div><p>The meta-analysis behind §2: 106 studies, 370 effect sizes — human–AI combos underperform the best alone on decision tasks (g = −0.23), outperform on creation. The strongest independent argument for designing who-verifies-whom.</p></div>
       <div class="item"><div class="rt">Feng, McDonald &amp; Zhang — Levels of autonomy for AI agents · Mitchell et al. — Fully autonomous AI agents should not be developed</div><div class="mt">arXiv:2506.12469 (Knight Institute) · arXiv:2502.02649 (Hugging Face) · 2025</div><p>The two closest published ladders: five human-role levels (Operator → Observer), and the argument that the top level should not exist — the published precedent for P5-as-anti-pattern.</p></div>

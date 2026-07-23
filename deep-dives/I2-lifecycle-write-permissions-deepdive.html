@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -177,7 +186,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the ADR lifecycle as the durable archetype: Accepted is immutable, change supersedes (§1)</li><li>the write-permission matrix: four write modes over three categories plus agent memory (§2)</li><li>why tests are the artifact agents most want to edit — the reward-hacking evidence (§3)</li><li>the enforcement stack in the repo: deny rules, hooks, platform gates, CI checks (§4)</li><li>write governance beyond git — Jira, Confluence, MCP (§5)</li><li>identity, audit and rollback for agent-written change (§6)</li><li>a week-one write-permission matrix for a brownfield client (§7)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>I1 — the taxonomy being enforced here; the classification sweep that feeds §7</li><li>I3 — the drift that accumulates where gates are missing</li><li>I4 — memory systems in depth: typologies, poisoning, defenses</li><li>E5 — the enforcement machinery itself: permission rules, hooks, sandbox</li><li>B2/B3 (M5) — why brownfield tests deserve the hardest gate of all</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>The ADR — a lifecycle worth copying</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The ADR — a lifecycle worth copying</h2>
       <p>Before mapping permissions onto categories, it pays to study the one durable artifact whose lifecycle the industry already got right. Michael Nygard's architecture decision record ("Documenting Architecture Decisions", Cognitect blog, November 15, 2011) is a short numbered markdown file, one significant decision each, with an explicit status walk: <em>proposed</em> → <em>accepted</em> via review, and — when a later decision changes course — <em>deprecated</em> or <em>superseded</em>. The load-bearing rule is what does <strong>not</strong> happen: an accepted ADR is never edited. In Nygard's own words: "If a decision is reversed, we will keep the old one around, but mark it as superseded. It's still relevant to know that it was the decision, but is no longer the decision." Change is a <em>new</em> record pointing back at the old one — the history stays append-only, so it stays trustworthy.</p>
       <p>The convention has hardened into ordinary practice since: ThoughtWorks' Technology Radar moved "lightweight architecture decision records" from Trial (November 2016) to <strong>Adopt</strong> (November 2017); the adr organization at adr.github.io maintains the templates, of which MADR — Markdown Architectural Decision Records, at 4.0 since late 2024 — is the most used, extending the status walk with <em>rejected</em>: a decision considered and declined is itself worth a record, because the reader six months later needs to know the road was examined and closed, not never seen. AWS's prescriptive guidance states the discipline without hedging: "When the team accepts an ADR, it becomes immutable. If new insights require a different decision, the team proposes a new ADR. When the team accepts the new ADR, it supersedes the previous ADR."</p>
       <figure><div class="figwrap"><svg viewBox="0 0 980 300" role="img" aria-label="The ADR lifecycle: a decision is proposed, accepted through PR review, and never edited afterwards — later change produces a new ADR that supersedes or deprecates the old one, keeping the history readable">
@@ -286,10 +298,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <tr><td>M7 · security</td><td>least privilege for agent identities; ASI06; the lethal trifecta bounds what write access implies</td></tr>
       </table></div>
 
-      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <h2 id="s9"><span class="n">9</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences to keep</div><p>Write-permissions are the taxonomy made real: durable artifacts accept only proposals a human gate merges, derived artifacts accept only regeneration CI can verify, disposables are free but homed and mortal, and agent memory writes pass validation and stay auditable — a mapping that is our Report-3 synthesis assembled from well-attested parts. The case for deterministic gates over advisory rules is now quantitative — under test-vs-spec conflict, frontier agents cheat in roughly half of trials, mostly by rewriting the tests themselves, and the Replit incident showed the same gradient at production-database scale — so every artifact that scores the agent's work belongs behind a gate the agent cannot edit. Copy the ADR lifecycle for everything durable (append-only history, change by supersession, never by edit), and where no hooks exist — Jira, Confluence, memory stores — move the gate from the path to the identity: a scoped account, a native audit trail, and a named human who reads it.</p></div>
 
-      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s10"><span class="n">10</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Michael Nygard — Documenting Architecture Decisions</div><div class="mt">cognitect.com blog · November 15, 2011</div><p>The origin: numbered records, four statuses, and the immutability sentence this chapter is built on — a reversed decision is kept and marked superseded, "still relevant to know that it was the decision."</p></div>
       <div class="item"><div class="rt">adr.github.io &amp; MADR 4.0</div><div class="mt">adr GitHub organization · MADR 4.0.0, September 2024</div><p>The living templates. MADR adds <em>rejected</em> to the status walk — declined roads stay visible to the next reader, human or agent.</p></div>

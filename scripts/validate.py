@@ -172,52 +172,11 @@ APP_EXEMPT_PREFIXES = ("PB1-", "PB2-", "PB3-", "PB4-", "PB5-")
 APP_PENDING = {
     "B1-bootstrap-paradox-deepdive.html",
     "B2-characterization-golden-master-deepdive.html",
-    "B3-mutation-testing-gate-deepdive.html",
-    "B4-agent-archaeology-deepdive.html",
-    "B5-strangler-heatmap-deepdive.html",
-    "B6-roadmap-f0-f3-deepdive.html",
-    "D1-design-system-artifact-deepdive.html",
-    "D2-design-tokens-dtcg-deepdive.html",
-    "D3-how-agents-consume-design-context-deepdive.html",
-    "D4-governance-ssot-design-world-deepdive.html",
-    "D5-design-harness-verification-guardrails-deepdive.html",
-    "D6-design-scale-curator-deepdive.html",
-    "D7-design-archaeology-f0-f4-rollout-deepdive.html",
     "E1-agent-model-harness-deepdive.html",
-    "E2-context-engineering-deepdive.html",
-    "E3-harness-in-practice-deepdive.html",
-    "E4-verification-first-deepdive.html",
-    "E5-governance-deepdive.html",
-    "E6-autonomy-levels-deepdive.html",
-    "E7-metrics-anti-patterns-deepdive.html",
-    "E8-spec-driven-development-deepdive.html",
-    "E9-harness-tuning-deepdive.html",
-    "E10-background-agents-deepdive.html",
-    "E11-formal-methods-deepdive.html",
-    "H1-handoff-contract-anatomy-deepdive.html",
-    "H2-ears-gherkin-deepdive.html",
-    "H3-traceability-spec-modes-deepdive.html",
-    "H4-feedback-anti-patterns-deepdive.html",
-    "I1-artifact-taxonomy-deepdive.html",
-    "I2-lifecycle-write-permissions-deepdive.html",
-    "I3-consistency-drift-deepdive.html",
-    "I4-memory-systems-deepdive.html",
-    "I5-progressive-disclosure-deepdive.html",
-    "I6-retrieval-deepdive.html",
-    "I7-linking-product-engineering-deepdive.html",
-    "P1-ai-assisted-discovery-deepdive.html",
-    "P2-prds-with-ai-deepdive.html",
-    "P3-decomposition-deepdive.html",
-    "P4-pm-role-deepdive.html",
-    "P5-assistance-scale-deepdive.html",
-    "S1-security-crosscutting-deepdive.html",
-    "S2-lethal-trifecta-rule-of-two-deepdive.html",
-    "S3-advisory-vs-deterministic-rules-backdoor-deepdive.html",
     "S4-mcp-tools-attack-surface-deepdive.html",
     "S5-loop-autorun-selfmod-sandbox-deepdive.html",
     "S6-memory-poisoning-multiagent-risk-deepdive.html",
     "S7-contract-brownfield-surfaces-secrets-deepdive.html",
-    "SDLC-foundations-deepdive.html",
 }
 app_stubs = []  # (label, count) — informational
 
@@ -540,14 +499,18 @@ def check_workbook():
 
     # deep-dive anchors wired: link(s) + exactly one JS handler.
     # sdlc has two entry links (intro + section) + 1 handler = 3; others have 1 link + 1 handler = 2.
+    # pb1 is additionally the fixed "PB bridge" target of every application-layer skeleton
+    # (one extra <a href="#pb1-deepdive"> per transformed deep dive, by design), so its count
+    # grows past the baseline; >= (not ==) keeps the check meaningful (still catches a missing
+    # link or a missing/duplicated handler) without re-capping an intentionally-growing total.
     tokens = sorted(set(re.findall(r"#([a-z0-9]+)-deepdive", s)))
     for tok in tokens:
         c = s.count(f"#{tok}-deepdive")
         handlers = s.count(f'a[href="#{tok}-deepdive"]')
         exp = 3 if tok == "sdlc" else 2
-        ok = (c == exp and handlers == 1)
+        ok = (c >= exp and handlers == 1)
         note(ok, f"#{tok}-deepdive wired x{c} (+1 handler)" if ok
-             else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected {exp} total, 1 handler)")
+             else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected >= {exp} total, 1 handler)")
 
     # topic count
     ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb|gf)-[a-z0-9-]*)"', s)

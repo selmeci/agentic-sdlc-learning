@@ -148,6 +148,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -178,7 +187,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the background-agent execution model, and why every vendor converged on sandbox → work → PR (§1)</li><li>the long-horizon evidence, honestly cut: METR's curve up, LHTB's completion rates down (§2)</li><li>the persistence mechanics that actually work: Ralph loops, initializer/coding-agent splits, session-as-event-log (§3)</li><li>verification at a distance: evaluator ≠ generator, delegated approval, and the approval-fatigue numbers (§4)</li><li>governance: guardrails at the infrastructure layer, cost as a failure mode, the run as the audit record (§5)</li><li>the adoption path — maturity model, first use cases, traps — with every vendor number flagged as such (§6)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>E6 — the autonomy scale this chapter extends with execution axes</li><li>E9 — the harness being tuned is, increasingly, this async harness</li><li>E4/E7 — verification and measurement carry the whole model</li><li>S-module — sandboxing and the lethal trifecta become non-negotiable here</li><li>I4 — memory systems are the persistence layer's other half</li><li>T1/T2 — build-vs-buy economics and the pilot that proves any of it</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>The execution axis — what a background agent is</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The execution axis — what a background agent is</h2>
       <p>Ona's definition is the cleanest on record: <em>"Background agents run in their own development environment in the cloud, with a full toolchain, test suite, and access to internal systems, completely decoupled from your device."</em> The contrast class is the laptop assistant — Claude Code or Cursor in a terminal, synchronous, watched. The background agent inverts every default: it gets an ephemeral, isolated environment provisioned per task; it works asynchronously (you review the result, not the process); and increasingly it is <strong>event-initiated</strong> — a PR comment, a Slack message, a Linear ticket, a webhook, a published CVE. That last inversion is the conceptually new one for our framework: E6's levels grade how much an agent may decide, but they quietly assume a human pressed enter. Event-driven initiation removes that assumption, which is why §5's governance cannot live in the prompt.</p>
       <p>The industry convergence is striking and verifiable from primary launch materials, whatever one thinks of any vendor's numbers: OpenAI's Codex cloud (research preview May 16, 2025) runs each task in its own cloud sandbox preloaded with your repo, works many tasks in parallel, and proposes PRs; Cursor's background agents (v0.50 May 2025, GA in 1.0 on June 4, 2025) spin up an isolated Ubuntu VM, clone the repo, work on a dedicated branch and open a PR — extended in February 2026 to full desktop-and-browser "computer use" per agent; Google's Jules is an async coding agent with a CLI and public API (October 2025) for embedding in native workflows; GitHub's Copilot coding agent picks up issues and works them in an Actions-based sandbox into a PR. Five independent product teams, one shape: <strong>sandbox → work → verifiable artifact (PR) → human review</strong>. The shape is the finding — it encodes the assumption that agents at this autonomy level must be contained (S-module), must leave an auditable trail (§5), and must terminate in the one artifact engineering organizations already know how to gate: a pull request.</p>
       <p>Addy Osmani's companion essay ("Long-Running Agents," April 28, 2026 — high-quality practitioner synthesis, our tiering) contributes the taxonomy this chapter uses throughout, separating three things vendors blur: <strong>long-horizon reasoning</strong> (planning across many dependent steps), <strong>long-running execution</strong> (a process that survives hours or days and thousands of model calls), and <strong>persistent agency</strong> (identity and memory outliving any single task — I4's territory, and the only one of the three that raises S6-style poisoning stakes). A background agent needs the second; it benefits from the first; it does not require the third — and conflating them is how pilots end up buying persistent memory infrastructure to solve what was actually a checkpointing problem.</p>
@@ -279,10 +291,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>H3/T4 · provenance &amp; compliance</td><td>the append-only run record is both the recovery mechanism and the audit trail regulation will ask for</td></tr>
       <tr><td>T1/T2 · economics &amp; pilot</td><td>build-vs-buy timelines (vendor-estimated), cost-per-merged-change as the pilot metric, the false-summit argument for measuring org throughput</td></tr></table>
 
-      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <h2 id="s9"><span class="n">9</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout"><div class="t">Three sentences to keep</div><p>Background agents change the axes, not just the amount, of autonomy — where the agent runs, when, and who initiates — so governance must move from the approval dialog (93% approved, effectively unread) into the infrastructure: sandbox, scoped credentials, budgets, and the PR as the only exit. The frontier task horizon is doubling every ~4 months and sits near 12 hours at 50% success, but purpose-built long-horizon benchmarks show even the best models completing ~15% at strict thresholds — delegate toil with mechanical verification, and treat fire-and-forget as unearned. The unit of persistence, recovery and audit is the append-only run record, not the agent process — design for replay, and the same log serves the pilot's measurement and compliance for free.</p></div>
 
-      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s10"><span class="n">10</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Ona — The Background Agents Guide</div><div class="mt">ona.com/guides/background-agents · mid-2026 · vendor (ex-Gitpod; OpenAI acquisition agreed June 2026) — HIGH bias, all case numbers summit self-reports</div><p>The definition, the maturity model, the trap list, and the infra-layer guardrail line. Read for the frame; tier every number.</p></div>
       <div class="item"><div class="rt">Addy Osmani — Long-Running Agents</div><div class="mt">addyosmani.com · April 28, 2026 · practitioner synthesis</div><p>The three-way taxonomy, the three walls, five production patterns, and the honest limitations list — cost, credentials, memory drift, auditing a 24-hour run.</p></div>

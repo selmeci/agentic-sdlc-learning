@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -175,7 +184,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>For our engagement this is the spine that ties the other components together. Each level demands specific components be in place (verification for L3, governance for L4), so "what level is this client ready for?" is really "which components do they actually have?" — which makes E6 the bridge from the framework (E1–E5) to the assessment (checklist) and the phased rollout (E7).</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Higher is not better. L5 is not the goal and L1 is not failure. The right level is the one the client's ecosystem can support safely — usually L2 today, with robust L3 as the ambitious target. Selling "full autonomy" is how engagements fail; selling "the highest level your verification and governance can back" is how they succeed.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The five levels</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The five levels</h2>
       <p>Each level is defined by how work is initiated, how far the agent runs unattended, and — the real differentiator — which harness components must be in place to make it safe. Read the ladder as increasing delegation of <em>judgment</em>, not increasing model capability.</p>
       <figure>
       <svg viewBox="0 0 860 360" role="img" aria-label="The L1 to L5 autonomy ladder">
@@ -241,12 +253,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>Dependency bumps, flaky-test repair</td><td>L4</td><td>narrow, repeated, deterministically verifiable; bounded blast radius</td></tr>
       <tr><td>Anything safety-critical / high blast radius</td><td>≤ L2</td><td>the cost of a wrong autonomous action is unacceptable regardless of model skill</td></tr></table></div>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess (the level question)</div><ul><li>which enabling components are genuinely in place (E3/E4/E5)?</li><li>the level is set by the weakest one, not the model</li><li>is there review capacity for the volume the level produces?</li><li>which narrow slices could run at L4 while the rest stays L3?</li></ul></div>
       <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>start L1–L2, prove the verification + governance base</li><li>move to L3 only once E4 and E5 are real</li><li>pick L4 candidates by task shape, not team seniority</li><li>set exit criteria per level; bring the level down if review saturates</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember E6 by</div><p>L1–L5 is a staffing decision about delegated judgment, not a measure of model capability — and higher is not better, with robust L3 the realistic target and L5 unreached. Each rung is unlocked by specific components (L3 needs verification + governance; L4 needs a narrow deterministic oracle), so the safe level is set by the weakest enabling component, never the strongest. Level is per-workflow, capped always by the rule "never scale agents beyond review capacity."</p></div>
 
-      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s7"><span class="n">7</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Five levels of AI agent autonomy</div><div class="mt">Swarmia / Tessl · swarmia.com/blog/five-levels-ai-agent-autonomy</div><p>A clear articulation of the L1–L5 ladder and the "staffing decision" framing. Start here.</p></div>
       <div class="item"><div class="rt">Building effective agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering/building-effective-agents</div><p>Where the component prerequisites for higher autonomy (harness, verification, governance) are laid out in practice.</p></div>

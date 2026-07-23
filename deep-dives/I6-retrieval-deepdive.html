@@ -146,6 +146,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -176,7 +185,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the four retrieval lanes — agentic search, embedding index, symbol index, knowledge graph — as engineering trade-offs, not religions (§1)</li><li>what production agents actually shipped, with the primary quotes: the no-index camp, the hybrid, the retreat, the counterexamples (§2)</li><li>the independent evidence — and the folklore correction about BM25 vs embeddings on code (§3)</li><li>the index tax: staleness, embedding inversion, and the cost curve (§4)</li><li>knowledge graphs over code: what is measured, what is self-reported, what has shipped (§5)</li><li>an escalation ladder with measurable triggers — our synthesis (§6)</li><li>a week-one retrieval audit for a brownfield client (§7)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>I5 — disclosure: the map layer makes search cheap; retrieval finds what the map missed</li><li>I1/I3 — every index is a derived artifact that can drift</li><li>I4 — memory: the same retrieval question over the agent's own notes</li><li>E2 — context engineering: search results are context; loops cost tokens</li><li>E7 — metrics discipline: every number in §2 is a vendor number</li><li>M7 — security: embeddings are recoverable; the vector store is an asset</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>The four retrieval lanes</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The four retrieval lanes</h2>
       <p>Strip the marketing and there are four ways an agent can find things in a codebase. They differ on one axis that matters more than any other: <strong>how much is precomputed</strong> — because everything precomputed must be stored, synced, secured and paid for, and everything computed live must be paid for in tokens and turns instead.</p>
       <div class="comp"><div class="chead"><span class="cid">LANE A</span><h3>Agentic search</h3><span class="role">nothing precomputed · the model drives</span></div>
       <p>The model composes searches itself — find files by name pattern, grep file contents, read what looks promising — inspects the results, and refines. Claude Code's tool tier is cost-ordered exactly this way: <span class="mono">Glob</span> returns paths for near-zero tokens, <span class="mono">Grep</span> (ripgrep underneath) returns matches, <span class="mono">Read</span> pays hundreds to thousands of tokens per file — so a competent loop spends cheaply before it spends dearly. Search-relevance veteran Doug Turnbull's diagnosis of <em>why</em> this suddenly works is worth keeping: the win is not grep, it is the loop around grep — an agent that reacts to what it finds, backtracks, and is checked by an outer validation loop. His caveat travels too: "feedback that's not actionable doesn't help an agent" — a tool that returns 4,000 unranked matches has not helped. Zero build cost, zero sync, structurally fresh (it searches the working tree as it is <em>right now</em>); the price is per-query tokens and latency measured in seconds.</p></div>
@@ -358,10 +370,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>M5</td><td>Brownfield archaeology is retrieval under the worst conditions — undocumented code is exactly where the map is missing and search must carry everything.</td></tr>
       <tr><td>M7</td><td>The vector store is an asset class: embedding inversion makes it recoverable source; agentic search inherits the agent's file permissions (I2) instead.</td></tr></table>
 
-      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <h2 id="s9"><span class="n">9</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences</div><p>Production coding agents mostly answered the retrieval question against the 2023 folklore — no index, model-driven grep/glob/read — and the stated reasons are systems reasons (simplicity, freshness, privacy, reliability), not retrieval-quality reasons: on quality alone, dense code-trained embedders often beat lexical search, and the agent's iteration is what closes the gap. An index is a second copy of the code with three taxes — it drifts (I3), it is recoverable source (Vec2Text, M7), and it bills for build, sync and serving — so it must be bought by a measured trigger (scale, low-overlap queries, millisecond latency, corpus breadth), never by default. Our ladder — L0 search+map, L1 derived structure, L2 governed hybrid, L3 KG-watchlist — is this workbook's synthesis; the twenty-query bench on the client's own code is what moves anyone up a rung.</p></div>
 
-      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s10"><span class="n">10</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Boris Cherny — on Claude Code's retrieval (HN thread; later restatement)</div><div class="mt">news.ycombinator.com item 43164253 · February 2025 · first-person vendor</div><p>The primary quotes: "agentic search out-performed RAG for the kinds of things people use Code for," and the restated history — early RAG + local vector DB dropped for security, privacy, staleness, reliability.</p></div>
       <div class="item"><div class="rt">The Pragmatic Engineer — Building Claude Code with Boris Cherny</div><div class="mt">newsletter.pragmaticengineer.com · March 4, 2026</div><p>The fuller story: local vector DBs and recursive model-based indexing tried and beaten by model-driven glob/grep; stale indexes and permission complexity named as the failure modes.</p></div>
