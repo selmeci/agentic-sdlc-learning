@@ -144,6 +144,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -170,7 +179,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#c-gov" class="sub">Governance</a>
   <a href="#c-mem" class="sub">Memory · Orchestration</a>
   <a href="#sdlc"><b>3</b> · Mapping to the SDLC</a>
-  <a href="#takeaways"><b>4</b> · Takeaways for rollout</a>
+  <a href="#takeaways"><b>4</b> · Applying it</a>
   <a href="#reading"><b>5</b> · Further reading</a>
 </nav>
 
@@ -187,7 +196,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 </section>
 
 <section>
-  <h2 id="eq"><span class="n">1</span>The core equation: Agent = Model + Harness</h2>
+  <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="eq"><span class="n">1</span>The core equation: Agent = Model + Harness</h2>
   <p>The framing comes from Birgitta Böckeler (ThoughtWorks) and is echoed in Anthropic's engineering writing: an <strong>agent</strong> is a language <strong>model</strong> wrapped in a <strong>harness</strong> that gives it state, tool execution, feedback loops, and enforceable constraints. Simon Willison's compact definition of the runtime pattern completes it: an agent "runs tools in a loop to achieve a goal."</p>
   <p>The practical consequence is where the discipline's centre of gravity has moved. Two years ago the leverage was in <em>prompt engineering</em> — phrasing the request well. Today the leverage is in <strong>context engineering</strong> (curating what the model sees at each step) and <strong>harness engineering</strong> (designing the scaffolding around it). The model is increasingly a commodity you swap out; the harness is the durable asset you build and own.</p>
   <div class="callout">
@@ -335,7 +347,9 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 </section>
 
 <section>
-  <h2 id="takeaways"><span class="n">4</span>Takeaways for introducing a harness</h2>
+  <h2 id="takeaways"><span class="n">4</span>Applying it — introducing a harness</h2>
+<div data-app>
+<div class="decis">
   <p>Distilled to what we act on:</p>
   <div class="io">
     <div class="box"><div class="lab">Assess before you build (feeds E6)</div><ul><li>Is there a fast, trustworthy test suite? (verification)</li><li>Can CI return signal an agent can read?</li><li>Are source-of-truth artifacts retrievable? (context)</li><li>Do dev/prod separation, RBAC and secrets hygiene exist? (governance)</li></ul></div>
@@ -345,6 +359,11 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
     <div class="t">Three sentences to remember E1 by</div>
     <p>An agent is a model plus a harness; the harness is where our engineering value and the client's risk both live. Some components are advisory (prompt, context) and some must be deterministic (governance, verification) — never confuse the two. Build the loop, verify with external truth, bound the blast radius, and remove scaffolding as the model grows.</p>
   </div>
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
 </section>
 
 <section>

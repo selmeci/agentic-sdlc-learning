@@ -169,15 +169,7 @@ def check_diagram_lightbox(s, label):
 # files not yet converted; it only ever shrinks. New deep dives must comply
 # immediately — never add to this set.
 APP_EXEMPT_PREFIXES = ("PB1-", "PB2-", "PB3-", "PB4-", "PB5-")
-APP_PENDING = {
-    "B1-bootstrap-paradox-deepdive.html",
-    "B2-characterization-golden-master-deepdive.html",
-    "E1-agent-model-harness-deepdive.html",
-    "S4-mcp-tools-attack-surface-deepdive.html",
-    "S5-loop-autorun-selfmod-sandbox-deepdive.html",
-    "S6-memory-poisoning-multiagent-risk-deepdive.html",
-    "S7-contract-brownfield-surfaces-secrets-deepdive.html",
-}
+APP_PENDING = set()
 app_stubs = []  # (label, count) — informational
 
 def check_application_section(s, label):

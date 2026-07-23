@@ -147,6 +147,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{margin:8px 0 2px}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -166,7 +175,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s4"><b>4</b> · Phase 0: read-only</a>
   <a href="#s5"><b>5</b> · Wrong-order failure modes</a>
   <a href="#s6"><b>6</b> · Running it at the client</a>
-  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Applying it</a>
   <a href="#s8"><b>8</b> · Further reading</a>
 </nav>
 <main>
@@ -175,7 +184,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the paradox stated as three verifiable claims, with the evidence for each — including whether "the agent can build its own prerequisites" is actually true yet (§1)</li><li>the evidence file: DORA 2024/2025, the METR RCT, GitClear, Stack Overflow 2025 — sorted by evidential weight, with the 2024→2025 sign flip flagged (§2)</li><li>the dependency chain: read-only comprehension → characterization → minimal CI → AGENTS.md → scoped writes, and why each arrow is a precondition, not a preference (§3)</li><li>Phase 0 as the paradox-breaker: zero write risk, immediate comprehension value, trust with a defensive team (§4)</li><li>four wrong-order failure modes, each with its detection signal (§5)</li><li>the per-step exit criteria table — what must exist before you take the next step (§6)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>B2 — characterization &amp; golden-master: the second chain step in full</li><li>B3 — mutation testing: the quality gate that keeps agent tests honest</li><li>B4 — agent archaeology: what Phase 0 actually produces</li><li>B5/B6 — where to start writing (heatmap) and the F0–F3 roadmap with STOP criteria</li><li>E4 — verification-first: the loop the agent needs; this chapter is E4 meeting a codebase that lacks it</li><li>E5/E6 — deterministic vs advisory, and autonomy levels: Phase 0 is L1 enforced structurally</li><li>I1–I3 — the artifacts the bootstrap creates (AGENTS.md, docs-as-hypothesis) and why they must be extracted, not decreed</li><li>E7 — measurement: the pilot metrics that tell you the ordering is working</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>The paradox, stated precisely</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The paradox, stated precisely</h2>
       <p>Michael Feathers gave brownfield its operational definition in 2004: <em>"To me, legacy code is simply code without tests."</em> The same preface carries the reason the definition still bites: <em>"Code without tests is bad code. It doesn't matter how well written it is… With tests, we can change the behavior of our code quickly and verifiably. Without them, we really don't know if our code is getting better or worse."</em> Note what the definition is <strong>not</strong> about: age, language, style, or the retirement date of the original author. It is about the absence of a verification signal — and that absence is precisely what disables an agent.</p>
       <p>The paradox is three claims, each independently true:</p>
       <figure><div class="figwrap"><div class="figscroll"><svg viewBox="0 0 980 400" role="img" aria-label="The bootstrap paradox as three boxes closing into a loop. Box one: the agent needs a verification loop — tests and CI are its error signal. Box two: legacy does not have one — legacy code is simply code without tests. Box three: the agent is the cheapest tool to build one — mass characterization tests, doc drafts, CI configs. Arrows connect one to two to three and back to one, with the annotation that box three's output is unverified too. A column at right names the exit: anchor every agent output in a deterministic signal, start read-only, then unwind the chain one verified step at a time.">
@@ -316,9 +328,15 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       </table></div>
       <p>Two honesty rules for the conversation. First, <strong>do not oversell the downside evidence</strong>: §2's file does not say agents fail on legacy code — METR's authors themselves warn against generalizing, and DORA 2025 shows throughput gains for teams with the platform basics. The claim to make is narrower and stronger: unverified writes degrade stability, and self-report will not detect it, so the ordering is the cheap insurance. Second, <strong>concede what is genuinely unsettled</strong>: how long Phase 0 should last has no evidence-backed answer — our time-box guidance is practice, not research — and claim 3's trajectory (§1) is moving fast enough that the "cheapest tool" assessment deserves a re-check at engagement start. Clients trust the material more, not less, when the synthesis is flagged (D1–D5 discipline).</p>
 
-      <h2 id="s7"><span class="n">7</span>Takeaways</h2>
+      <h2 id="s7"><span class="n">7</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences</div><p>The bootstrap paradox — the agent needs a verification loop, legacy lacks one, the agent is the cheapest way to build one — closes into a bug-as-spec trap unless every agent output is anchored in a deterministic signal, so adoption unwinds along a forced dependency chain: read-only comprehension → characterization/golden-master → minimal CI → extracted-and-pruned AGENTS.md → scoped writes (our Report 4 synthesis, components standard, ordering ours). The evidence file supports ordering, not abstinence: DORA's amplifier findings (−7.2% stability in 2024, throughput sign flipped positive in 2025, instability persisting), the METR RCT's 19%-slower-while-believing-20%-faster on mature repos, and the benchmark teardowns (SWE-bench requires pre-existing fail-to-pass tests; agents drop from 72.8% to 25% when the task looks like real evolution) all say the same thing — write-capacity without verification discipline degrades stability and self-report will not notice. Phase 0 read-only breaks the loop at zero blast radius while attacking the 58% comprehension share of engineering time and earning the skeptics' trust on questions they can grade — but it needs a time-boxed exit with deterministic criteria, because both write-first (WO1) and Phase-0-forever (WO4) are ways of losing the same engagement.</p></div>
-
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
       <h2 id="s8"><span class="n">8</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Michael Feathers — Working Effectively with Legacy Code</div><div class="mt">Prentice Hall · 2004 · the definitions in the Preface</div><p>"To me, legacy code is simply code without tests" — and the reason: without tests "we really don't know if our code is getting better or worse." Twenty years on, the operational definition of where agents can and cannot verify.</p></div>
