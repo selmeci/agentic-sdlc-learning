@@ -261,9 +261,10 @@ GALLERY_CSS = """
 .gallery-preview:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
 .gallery-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:3vh 3vw;background:rgba(26,36,48,.72)}
 .gallery-modal[hidden]{display:none}
-.gallery-modal-box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:min(1100px,94vw);max-height:90vh;overflow:auto;padding:26px;box-shadow:0 18px 60px rgba(26,36,48,.35)}
-.gallery-modal-body svg{width:100%;height:auto;display:block}
-.gallery-modal-close{position:absolute;top:10px;right:10px;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:16px;line-height:1;cursor:pointer}
+.gallery-modal-box{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;width:94vw;height:94vh;max-width:94vw;max-height:94vh;display:flex;flex-direction:column;overflow:hidden;padding:26px;box-shadow:0 18px 60px rgba(26,36,48,.35)}
+.gallery-modal-body{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.gallery-modal-body svg{width:100%;height:100%;display:block}
+.gallery-modal-close{position:absolute;top:10px;right:10px;z-index:1;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:16px;line-height:1;cursor:pointer}
 .gallery-modal-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
 """.strip()
 
