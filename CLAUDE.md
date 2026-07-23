@@ -50,16 +50,16 @@ Content in English (English technical terms preserved); prose is dense and conci
 - Each deep dive follows a fixed shape: `§0 why it matters → … → takeaways → further reading`,
   with `.io` input/output/SDLC cards, `.comp` component cards, `.callout` boxes, one or more
   inline SVG figures, and a closing `.closingnote`. Match the existing files exactly.
-- **Every `<figure>` SVG carries `role="img"` + a descriptive `aria-label`.** Since v1.69 every
-  figure is **click-to-enlarge** via the shared lightbox (the `.dlb` modal + script, mirroring
-  `gallery.html`); `role="img"` is the exact selector it and screen readers use. New standalone
-  deep dives must include the `.dlb` block (see AUTHORING-GUIDE Step 2). Keep small inline icons
-  role-less so they are not treated as zoomable figures. Enforced by `check_diagram_lightbox`.
 - **Every study deep dive carries the application layer** (v1.71 shape): the §0
   "call you're making" frame (`data-app-frame`) and the "Applying it — decision guide"
   section (`data-app`) with Meridian worked example, self-test, and PB-runbook bridge.
   Recipe: AUTHORING-GUIDE Step 1b; contract: AGENTS.md; enforced by
   `check_application_section`.
+- **Every `<figure>` SVG carries `role="img"` + a descriptive `aria-label`.** Since v1.69 every
+  figure is **click-to-enlarge** via the shared lightbox (the `.dlb` modal + script, mirroring
+  `gallery.html`); `role="img"` is the exact selector it and screen readers use. New standalone
+  deep dives must include the `.dlb` block (see AUTHORING-GUIDE Step 2). Keep small inline icons
+  role-less so they are not treated as zoomable figures. Enforced by `check_diagram_lightbox`.
 - Every topic ties back to the framework: name the E-/P-/D- topics and reports it connects to.
 - Separate **strong independent evidence** from **vendor claims** from **practitioner synthesis**.
 - Preserve hard data points (percentages, arXiv IDs, named practitioners, dates, CVEs).
