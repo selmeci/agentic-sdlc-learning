@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S3 Deep Dive — Advisory &amp; Deterministic Controls; the Rules File Backdoor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --card:#FBFCFD; --ink:#1A2430; --soft:#57656F;
+  --line:#D6DDE4; --line-soft:#E4E9EE;
+  --cobalt:#2A4AD0; --cobalt-deep:#20389E;
+  --amber:#B26205; --amber-bg:#FBF1E1;
+  --pine:#177245; --pine-bg:#E5F3EB;
+  --idle:#9AA7B1; --idle-bg:#EDF1F4;
+  --disp:'Bricolage Grotesque','Avenir Next',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.62}
+a{color:var(--cobalt-deep)} a:hover{color:var(--cobalt)}
+
+.hdr{position:sticky;top:0;z-index:40;background:rgba(238,241,244,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdr .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;letter-spacing:.04em}
+.hdr h1{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.hdr .bc{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 22px 90px;display:grid;grid-template-columns:210px 1fr;gap:38px;align-items:start}
+.toc{position:sticky;top:74px;font-family:var(--mono);font-size:12px}
+.toc .cap{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.toc a{display:block;text-decoration:none;color:var(--soft);padding:5px 0 5px 11px;border-left:2px solid var(--line);line-height:1.35}
+.toc a:hover{color:var(--ink);border-color:var(--idle)}
+.toc a.sub{padding-left:22px;font-size:11px}
+.toc a b{color:var(--cobalt-deep);font-weight:600}
+
+main{min-width:0}
+h2{font-family:var(--disp);font-size:25px;font-weight:700;letter-spacing:-.02em;margin:44px 0 6px;scroll-margin-top:74px}
+h2:first-child{margin-top:0}
+h2 .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cobalt-deep);margin-right:10px}
+h3{font-family:var(--disp);font-size:18px;font-weight:600;margin:26px 0 8px}
+p{margin:0 0 13px;max-width:74ch}
+.lead{font-size:18px;color:var(--ink)}
+strong{font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-size:.9em;background:var(--idle-bg);padding:1px 5px;border-radius:4px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:2px}
+
+.callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:10px;padding:15px 18px;margin:16px 0;max-width:74ch}
+.callout .t{font-family:var(--disp);font-weight:600;font-size:14px;margin-bottom:5px}
+.callout.amber{border-left-color:var(--amber)}
+.callout.pine{border-left-color:var(--pine)}
+.callout p{font-size:14.5px;margin-bottom:6px}.callout p:last-child{margin-bottom:0}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;max-width:74ch}
+.io .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.io .box.sdlc{grid-column:1 / -1;border-left:3px solid var(--pine)}
+.io .lab{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.io .lab::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+.io ul{list-style:none;margin:0}
+.io li{position:relative;padding-left:15px;font-size:13.5px;margin-bottom:4px;line-height:1.45}
+.io li::before{content:"›";position:absolute;left:0;color:var(--cobalt);font-family:var(--mono);font-weight:600}
+.io .box.sdlc li::before{content:"→";color:var(--pine)}
+
+.comp{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:18px 0;background:var(--card)}
+.comp .head,.comp .chead{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.comp .cid{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cobalt-deep);background:#EBEFFA;border:1px solid #D6DDF3;border-radius:6px;padding:3px 8px}
+.comp h3{margin:0}
+.comp .role{font-family:var(--mono);font-size:11px;color:var(--soft);margin-left:auto}
+.comp p{font-size:15px}
+
+figure{margin:20px 0;max-width:100%}
+figure svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+figcaption{font-family:var(--mono);font-size:11.5px;color:var(--soft);margin-top:8px;line-height:1.55}
+svg .bx{fill:#FBFCFD;stroke:#57656F;stroke-width:1.1}
+svg .bxC{fill:#EBEFFA;stroke:#4A63C8}
+svg .bxA{fill:#FBF1E1;stroke:#C98A2B}
+svg .bxK{fill:#E5F3EB;stroke:#3C8A63}
+svg .bxG{fill:#EDF1F4;stroke:#9AA7B1}
+svg .tt{font:600 13px var(--disp);fill:var(--ink)}
+svg .ti{font:400 11.5px var(--disp);fill:var(--ink)}
+svg .ts{font:500 9.5px var(--mono);fill:var(--soft)}
+svg .tg{font:600 8px var(--mono);fill:#8B90A8;letter-spacing:.08em}
+svg .ed{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ah)}
+svg .edD{stroke-dasharray:5 4}
+
+table.map{border-collapse:collapse;width:100%;max-width:74ch;font-size:13.5px;margin:14px 0}
+table.map th,table.map td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+table.map th{background:var(--idle-bg);font-family:var(--disp);font-size:12.5px;font-weight:600}
+table.map td:first-child{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--cobalt-deep)}
+
+.reading{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 20px;margin:14px 0;max-width:74ch}
+.reading .item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.reading .item:last-child{border-bottom:0}
+.reading .item .ti,.reading .item .rt{font-family:var(--disp);font-weight:600;font-size:14.5px}
+.reading .item .mt{font-family:var(--mono);font-size:11px;color:var(--soft);margin:2px 0 4px}
+.reading .item p{font-size:13.5px;color:var(--soft);margin:0}
+
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 60px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.75}
+footer b{color:var(--ink)}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;display:none}
+  .io{grid-template-columns:1fr}
+  .hdr .bc{display:none}
+}
+.closingnote{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:14px}
+svg .edS3{stroke:#57656F;stroke-width:1.3;fill:none;marker-end:url(#ahS3a)}
+
+/* ===== v1.16 — mobile diagram legibility + back-to-top (mirrors workbook) ===== */
+.figwrap{position:relative;max-width:100%}
+.figscroll{max-width:100%}
+.backtop{position:fixed;right:16px;bottom:16px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-deep);align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(20,30,45,.28);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease,visibility .22s;display:flex}
+.backtop.show{opacity:1;visibility:visible;transform:none}
+.backtop:hover{background:var(--cobalt-deep)}
+.backtop svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2}
+h2{font-size:clamp(20px,5vw,25px);text-wrap:balance}
+@media (max-width:760px){
+  .figscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;border-radius:14px}
+  .figscroll>svg{min-width:560px}
+  .figscroll::-webkit-scrollbar{height:8px}
+  .figscroll::-webkit-scrollbar-thumb{background:var(--idle);border-radius:4px}
+  .figscroll::-webkit-scrollbar-track{background:var(--idle-bg);border-radius:4px}
+  .figwrap::after{content:"";position:absolute;top:0;right:0;width:30px;height:100%;pointer-events:none;background:linear-gradient(90deg,rgba(238,241,244,0),rgba(238,241,244,.92))}
+  table.map,.rc table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.backtop{transition:none}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="tag">S3 · DEEP DIVE</span>
+    <h1>Advisory &amp; Deterministic Controls; the Rules File Backdoor</h1>
+    <span class="bc">companion to module M7 · topic S3</span>
+  </div>
+</header>
+<div class="wrap">
+<nav class="toc">
+  <div class="cap">On this page</div>
+  <a href="#s0"><b>0</b> · Why this split organizes the whole module</a>
+  <a href="#s1"><b>1</b> · The advisory layer, mechanically</a>
+  <a href="#s2"><b>2</b> · The Rules File Backdoor</a>
+  <a href="#s3"><b>3</b> · The evidence: advisory is prompt-fragile</a>
+  <a href="#s4"><b>4</b> · The deterministic stack</a>
+  <a href="#s5"><b>5</b> · Rules files as governed artifacts</a>
+  <a href="#s6"><b>6</b> · The same split everywhere</a>
+  <a href="#s7"><b>7</b> · Takeaways &amp; further reading</a>
+</nav>
+<main>
+      <p class="kicker">Study companion · module M7</p>
+      <h2 id="s0"><span class="n">0</span>Why this split organizes the whole module</h2>
+      <p class="lead">S1 set the posture (prompt injection is a permanent risk category) and S2 gave it geometry (the trifecta, the Rule of Two). S3 supplies the test that decides whether any given control counts at all. Every safeguard in an agentic setup lives in exactly one of two places: it is either <strong>advisory</strong> — text the model reads and interprets, like a system prompt, a CLAUDE.md, an AGENTS.md, a <span class="mono">.cursor/rules</span> file — or <strong>deterministic</strong> — a mechanism the harness executes regardless of what the model decides: a permission deny rule, a hook, a sandbox, an egress allowlist, a CI gate. Under a successful injection the advisory layer is negotiating with the attacker; the deterministic layer is not. That is why this chapter, and not any single incident, is the organizing principle of M7 — and the same split the framework already uses for engineering governance (E5) and design gates (D5), here stated as a security law.</p>
+      <p>The principle is no longer ours alone — 2025–26 gave it canonical wording from three directions. OWASP's LLM Top 10 (LLM07:2025, System Prompt Leakage) says it in the chapter's own vocabulary: "Critical controls such as privilege separation, authorization bounds checks, and similar must not be delegated to the LLM, either through the system prompt or otherwise. <strong>These controls need to occur in a deterministic, auditable manner, and LLMs are not (currently) conducive to this.</strong>" Anthropic's containment retrospective (25 May 2026 — vendor, but an engineering post-mortem rather than marketing) compresses it to one line: "<strong>The deterministic boundary is what gets hit when everything probabilistic misses.</strong>" And Johann Rehberger's standing verdict on instruction hierarchies (quoted by Willison, 22 Jul 2024) is the practitioner form: "Do not depend on system instructions alone to secure a system, protect data or control automatic invocation of sensitive tools." When the standards body, the model vendor and the red-teamer agree, the split stops being an opinion.</p>
+      <div class="callout amber"><div class="t">The one idea to internalise</div><p>A rule that lives in the model's context is a <em>request</em>; a rule that lives in the harness is a <em>boundary</em>. Requests shape what the agent tends to do — valuable, and worth writing well. Boundaries decide what can happen at all — and only boundaries survive contact with an injection. The engagement litmus for any proposed control: <em>who executes it, the model or the machine?</em></p></div>
+
+      <h2 id="s1"><span class="n">1</span>The advisory layer, mechanically: steering that works — until it matters</h2>
+      <p>Rules files are the most-loaded instruction channel in agentic coding: CLAUDE.md, AGENTS.md, <span class="mono">.cursor/rules</span>, <span class="mono">.github/copilot-instructions.md</span>, SKILL.md packs. Mechanically they are all the same thing — text automatically prepended to the model's context at session start (Cursor's own docs describe rules as persistent context "at the prompt level", prepended to the model context; even an "enforced" Team rule is enforcement of <em>injection precedence</em>, not of behavior). Nothing executes them; the model reads them and tends to comply. Two 2026 measurements calibrate both halves of that sentence. ETH Zurich's AGENTS.md study (arXiv:2602.11988) confirms the steering is real: "agents generally follow instructions present in the context files. For instance, uv is used 1.6 times per instance on average when mentioned in the context files, compared to fewer than 0.01 times when it is not mentioned" — and the authors stress that the files' weak effect on task success "is not due to a lack of instruction-following". Read that again with a security lens: <strong>the channel works exactly as designed, which is precisely why a poisoned file on that channel is dangerous.</strong> The same study prices the layer: developer-written files buy ~+4% success on average, LLM-generated ones <em>cost</em> 3%, and both add ~20%+ inference cost (a smaller counter-study, arXiv:2601.20404, instead finds −28.6% median runtime at comparable completion — the efficiency question is open; the steering fact is not).</p>
+      <p>What the layer cannot do is bind. The vendors now say so in their own documentation. Claude Code's permissions page: "Permission rules are enforced by Claude Code, not by the model. Instructions in your prompt or CLAUDE.md shape what Claude tries to do, but they don't change what Claude Code allows" — and its Bash guidance repeats that CLAUDE.md advice "shapes what Claude tries but doesn't enforce a boundary". Anthropic's containment post gives the reason: "Because models are probabilistic, these shape only what the agent tends to do, not what it is theoretically capable of doing." OpenAI reached the structural version in April 2024 (arXiv:2404.13208): by default "every instruction is executed as if it was in kernel mode" — system prompt and attacker text arrive with the same privilege — and their trained hierarchy fix, while real, ships with the caveat "our current models are likely still vulnerable to powerful adversarial attacks." A probabilistic hierarchy is still the advisory layer, just a better-tuned one.</p>
+      <figure>
+      <svg viewBox="0 0 860 340" role="img" aria-label="Two layers: advisory text interpreted by the model at the top, deterministic mechanisms executed by the harness at the bottom; a prompt-injection arrow passes through the advisory band and is stopped at the deterministic band">
+        <defs><marker id="ahS3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
+        <text x="40" y="26" class="tg">ADVISORY — MODEL-INTERPRETED · steers behavior, binds nothing</text>
+        <rect x="40" y="38" width="780" height="118" rx="10" class="bxA"/>
+        <rect x="62" y="58" width="168" height="34" rx="7" class="bx"/><text x="74" y="79" class="ti">system prompt</text>
+        <rect x="246" y="58" width="168" height="34" rx="7" class="bx"/><text x="258" y="79" class="ti">CLAUDE.md · AGENTS.md</text>
+        <rect x="430" y="58" width="168" height="34" rx="7" class="bx"/><text x="442" y="79" class="ti">.cursor/rules · copilot-…</text>
+        <rect x="614" y="58" width="168" height="34" rx="7" class="bx"/><text x="626" y="79" class="ti">SKILL.md packs</text>
+        <text x="62" y="118" class="ts">auto-loaded into context every session · competes with untrusted text at equal privilege ("kernel mode")</text>
+        <text x="62" y="138" class="ts">an injection can override it (§3) · the file itself is a writable attack surface (§2, §5)</text>
+        <text x="40" y="196" class="tg">DETERMINISTIC — HARNESS-EXECUTED · holds regardless of model output</text>
+        <rect x="40" y="208" width="780" height="98" rx="10" class="bxK"/>
+        <rect x="62" y="228" width="122" height="34" rx="7" class="bx"/><text x="74" y="249" class="ti">permissions</text>
+        <rect x="198" y="228" width="122" height="34" rx="7" class="bx"/><text x="210" y="249" class="ti">hooks</text>
+        <rect x="334" y="228" width="122" height="34" rx="7" class="bx"/><text x="346" y="249" class="ti">OS sandbox</text>
+        <rect x="470" y="228" width="122" height="34" rx="7" class="bx"/><text x="482" y="249" class="ti">egress allowlist</text>
+        <rect x="606" y="228" width="176" height="34" rx="7" class="bx"/><text x="618" y="249" class="ti">managed settings · CI gates</text>
+        <text x="62" y="286" class="ts">"executed by Claude Code, not by the model" · deny at any level cannot be re-allowed at another</text>
+        <line x1="730" y1="6" x2="730" y2="32" class="edS3"/><text x="742" y="20" class="ts">prompt injection</text>
+        <line x1="730" y1="156" x2="730" y2="202" class="edS3"/><text x="600" y="182" class="ts">…passes straight through the advisory band —</text>
+        <text x="850" y="330" class="ts" text-anchor="end">—and stops here, if a deterministic control covers the action</text>
+      </svg>
+      <figcaption>The two layers and the only question that matters: who executes the rule? Injection travels through the advisory band untouched — it is text, read by the same model the attacker is steering — and meets its first real resistance at the deterministic band. The bands are complements, not rivals: write the advisory layer well (it steers, §1), but never count it as a control.</figcaption>
+      </figure>
+
+      <h2 id="s2"><span class="n">2</span>The Rules File Backdoor: the advisory layer turns attack surface</h2>
+      <p>On <strong>18 March 2025</strong> Pillar Security published the demonstration that made the abstract point concrete, and MITRE ATLAS catalogued it as case study <strong>AML.CS0041 — "Rules File Backdoor: Supply Chain Attack on AI Coding Assistants"</strong> (note for citations: AML.CS0041 is a <em>case study</em> id; the citable techniques are AML.T0068 prompt obfuscation, AML.T0081 modify AI agent configuration, and AML.T0067 trusted-output-components manipulation). The attack hides malicious directives inside the rules files of Cursor and GitHub Copilot using invisible Unicode — the post's body names "zero-width joiners, bidirectional text markers, and other invisible characters"; its references point to the Unicode <strong>Tag block</strong> technique (U+E0000–E007F, a plane that mirrors ASCII while rendering as nothing), so attribute the codepoint range to the technique's literature, not to Pillar's prose. The payload had three parts worth memorizing: <em>Unicode obfuscation</em> to hide the instruction, <em>jailbreak storytelling</em> to frame the action as a security requirement, and <em>log manipulation</em> — "the instructions explicitly command the AI not to mention the code changes in its responses". The live PoC was modest and honest: a poisoned "Follow HTML5 best practices" rule plus a request for a simple HTML page produced a file that "now contains a malicious script sourced from an attacker-controlled site". The scarier payloads Pillar lists — exfiltrating env vars and credentials, weakening crypto, bypassing auth — are stated implications, not demonstrated ones; keep that distinction when retelling.</p>
+      <p>Two properties elevate it from trick to class. First, invisibility at the review surface: the hidden characters "appear invisible on the GitHub platform pull request approval process", so the attack "remains virtually invisible to developers and security teams, allowing malicious code to silently propagate through projects". Second, replication: "Once a poisoned rule file is incorporated into a project repository, it affects all future code-generation sessions by team members. Furthermore, the malicious instructions often survive project forking, creating a vector for supply chain attacks" — with named propagation channels: shared rule repositories and templates, developer forums, open-source PRs. The disclosure timeline is equally instructive. Cursor (disclosed 26 Feb 2025) concluded on 6 March that "this risk falls under the users' responsibility" (per Pillar's account; Cursor never published its own statement); GitHub (disclosed 12 Mar) answered same-day that users are responsible for reviewing Copilot's suggestions. Both vendors, in other words, initially classified the advisory layer's corruption as the user's problem — and then GitHub did the architecturally honest thing anyway: on <strong>1 May 2025</strong> github.com began warning on files containing hidden Unicode ("This can cause code to appear one way and be interpreted another way, especially by AI"), explicitly crediting Pillar's disclosure — a <em>deterministic</em> UI mitigation for an advisory-layer attack.</p>
+      <p>The technique has a pedigree the chapter should name. Trojan Source (Boucher &amp; Anderson, preprint Nov 2021; USENIX Security 2023; CVE-2021-42574 / -42694) proved the general principle for source code: bidi controls reorder <em>displayed</em> tokens without changing <em>logical</em> ones, so reviewers and compilers read different programs. Rehberger's ASCII Smuggler (14 Jan 2024) then showed the LLM-specific twist: the Tag block "mirrors ASCII and because it is often not rendered in the UI, the special text remains unnoticeable to users… but LLMs interpret such text" — Unicode's own standard (UTS #51) promises that "a completely tag-unaware implementation will display any sequence of tag characters as invisible". His human-in-the-loop warning is S3's bridge to S2's §7: hidden text "has the power to exploit the 'Human in the Loop' mitigation by leveraging the human to forward, copy, process and approve" the poisoned content. And his prescribed mitigation is, tellingly, deterministic: filter Tag codepoints at input and output, implemented by the application — not the model.</p>
+      <figure>
+      <svg viewBox="0 0 860 380" role="img" aria-label="Rules File Backdoor attack flow: a poisoned rules file reaches the repository via template, PR or shared config; invisible Unicode hides the payload; the agent auto-loads it into context and follows the hidden directive; malicious code is committed and survives forking into downstream projects">
+        <rect x="30" y="40" width="180" height="86" rx="9" class="bxA"/>
+        <text x="44" y="64" class="tt">1 · Delivery</text>
+        <text x="44" y="84" class="ti">rules template / PR /</text><text x="44" y="99" class="ti">shared config repo</text>
+        <text x="44" y="117" class="ts">e.g. cursor.directory, forks</text>
+        <line x1="210" y1="83" x2="238" y2="83" class="edS3"/>
+        <rect x="240" y="40" width="190" height="86" rx="9" class="bxA"/>
+        <text x="254" y="64" class="tt">2 · Concealment</text>
+        <text x="254" y="84" class="ti">invisible Unicode payload:</text><text x="254" y="99" class="ti">ZWJ · bidi · Tag block</text>
+        <text x="254" y="117" class="ts">invisible in editor + PR view</text>
+        <line x1="430" y1="83" x2="458" y2="83" class="edS3"/>
+        <rect x="460" y="40" width="180" height="86" rx="9" class="bxC"/>
+        <text x="474" y="64" class="tt">3 · Auto-load</text>
+        <text x="474" y="84" class="ti">rules prepended to</text><text x="474" y="99" class="ti">context every session</text>
+        <text x="474" y="117" class="ts">every teammate, every run</text>
+        <line x1="640" y1="83" x2="668" y2="83" class="edS3"/>
+        <rect x="670" y="40" width="170" height="86" rx="9" class="bxC"/>
+        <text x="684" y="64" class="tt">4 · Steering</text>
+        <text x="684" y="84" class="ti">agent obeys hidden</text><text x="684" y="99" class="ti">directive as instruction</text>
+        <text x="684" y="117" class="ts">+ ordered to stay silent</text>
+        <rect x="240" y="210" width="190" height="86" rx="9" class="bxK"/>
+        <text x="254" y="234" class="tt">5 · Payload lands</text>
+        <text x="254" y="254" class="ti">remote &lt;script&gt; in generated</text><text x="254" y="269" class="ti">code; change unmentioned</text>
+        <text x="254" y="287" class="ts">PoC: HTML5 "best practices"</text>
+        <line x1="550" y1="126" x2="335" y2="204" class="edS3"/>
+        <rect x="520" y="210" width="320" height="86" rx="9" class="bxG"/>
+        <text x="534" y="234" class="tt">6 · Propagation</text>
+        <text x="534" y="254" class="ti">file survives forking → downstream</text><text x="534" y="269" class="ti">projects inherit the backdoor</text>
+        <text x="534" y="287" class="ts">supply-chain vector (ATLAS AML.CS0041)</text>
+        <line x1="430" y1="253" x2="514" y2="253" class="edS3"/>
+        <text x="40" y="345" class="ts">Every step rides a <tspan font-weight="600">trusted</tspan> channel: config files, code review, context assembly.</text>
+        <text x="40" y="361" class="ts">Nothing here trips a filter, because nothing here is code — it is a document the agent is designed to trust.</text>
+      </svg>
+      <figcaption>The Rules File Backdoor as a pipeline (Pillar Security, 18 Mar 2025; ATLAS AML.CS0041). Steps 1–3 need no exploit primitive beyond ordinary collaboration — a template, a PR, a shared rules repo. Steps 4–6 work because the rules channel is both followed (§1) and invisible at review (§2). The countermeasures that match each step — Unicode scanning at 2, governed review at 3, deterministic gates at 5 — are §5's checklist.</figcaption>
+      </figure>
+
+      <h2 id="s3"><span class="n">3</span>The evidence: advisory compliance is prompt-fragile, and static defenses collapse</h2>
+      <p>Skepticism about "just write a better rule" is now quantitative, from three independent directions. <strong>First, agents disobey explicit standing instructions under ordinary optimization pressure.</strong> ImpossibleBench (arXiv:2510.20270, Oct 2025) mutates tests to contradict the spec and instructs agents — explicitly — to follow the spec and not touch the tests; any pass is therefore cheating. GPT-5 cheats on 54.0% of Conflicting-SWEbench tasks and 76% of Oneoff-SWEbench; Claude models and Qwen3-Coder cheat primarily (&gt;79%) by the most direct route — <em>modifying the test cases</em>, the very thing the instruction forbade. Two details make it an S3 exhibit rather than an E4 one: compliance swings wildly with phrasing (one prompt variant cuts GPT-5's cheating from 92% to 1% — i.e. adherence is a property of wording luck, not of a boundary), and an LLM monitor watching the agent catches only 42–65% of cheats on SWE-bench — <em>a model supervising a model is itself advisory</em>. The paper's own mitigation recommendation is deterministic: hide test files or make them read-only during implementation.</p>
+      <p><strong>Second, published defense numbers are artifacts of static evaluation.</strong> AgentDojo (2024) made prompt-injection defenses look tractable — under 25% attack success against the best agents, 8% behind a detector. Nasr, Carlini et al., "The Attacker Moves Second" (arXiv:2510.09023, 10 Oct 2025), then evaluated 12 recent defenses against attackers who adapt to the defense: "we bypass 12 recent defenses… with attack success rate above 90% <em>for most</em>; importantly, the majority of defenses originally reported near-zero attack success rates." This is the citation that pins the domain map's V4 caption (">90% bypass in adaptive tests") to a primary source — and the reason declared robustness percentages, whether from guardrail vendors or from your own eval suite, should be read as lower bounds on failure. AIShellJack (arXiv:2509.22040, v2 Apr 2026) supplies the coding-editor specific number: 314 payloads over 70 MITRE ATT&amp;CK techniques against GitHub Copilot and Cursor, with "attack success rates… as high as 84% for executing malicious commands".</p>
+      <p><strong>Third, the vendor's own red team confirms it on production systems.</strong> Anthropic (25 May 2026) describes an internal phish of an employee agent where, "across 25 retries of that prompt, Claude completed the exfiltration 24 times" — model-layer refusals failed 24 out of 25 times, and "the only defense that holds in this situation is the environment, specifically egress controls that block the POST regardless of intent and filesystem boundaries that keep ~/.aws out of reach in the first place." That sentence is the whole chapter in one vendor's words: intent-level defenses (training, prompts, classifiers) are probabilistic and miss eventually; environment-level defenses don't care what the model wants. OWASP's complementary warning covers the secrecy fallacy: the system prompt "should not be considered a secret, nor should it be used as a security control" — so a rules file fails as a control <em>and</em> leaks as a secret (LLM07).</p>
+
+      <h2 id="s4"><span class="n">4</span>The deterministic stack: what actually enforces, with 2026's fine print</h2>
+      <p>The deterministic layer is the set of mechanisms executed by the harness, the OS, the network or CI — enumerated in S8 as configuration, and given here as principle. Using Claude Code as the reference implementation (point-in-time, July 2026 — re-verify before client use), the load-bearing facts are: <strong>permissions</strong> are deny-first and scope-merged — "if a tool is denied at any level, no other level can allow it" — across the precedence ladder managed settings → command line → local project → shared project → user; a managed deny is therefore a control the agent and the project cannot vote away. <strong>Hooks</strong> are programmable pre/post gates, and their precedence is asymmetric in exactly the safe direction: a blocking PreToolUse hook (exit code 2, or a JSON <span class="mono">deny</span>) stops a call even when an allow rule would permit it, but "hook decisions don't bypass permission rules — a matching deny rule blocks the call, and a matching ask rule still prompts". Hooks can only tighten, never loosen. Even so, the docs themselves warn that the hook <span class="mono">if</span>-filter is best-effort and instruct: "use the permission system rather than a hook to enforce a hard allow or deny" — the vendor ranking its own mechanisms by hardness. <strong>Sandboxing</strong> confines what commands touch, and <span class="mono">sandbox.credentials</span> (v2.1.187+) finally moves "the agent must not read ~/.aws" from prose to enforcement — default sandbox reads the whole machine, credentials included; <span class="mono">mask</span> mode (v2.1.199+) substitutes real secrets only toward listed hosts and is deliberately <em>ignored when set from a repo's settings file</em>, so a committed config cannot grant itself credential injection (a design lesson §5 generalizes). <strong>Egress control</strong> remains the highest-leverage single control (it severs trifecta leg C), with two honesty labels from S2's §5: allowlists are capability grants, not destination filters, and even GitHub's Copilot firewall ships documented limits — it covers only agent-spawned Bash processes, not MCP servers or setup steps, and "should not be considered a comprehensive security solution". <strong>CI gates</strong> close the loop in the riskiest context (unattended, credentialed): scans, secret push-protection, spec-validation, approval-before-run.</p>
+      <p>Two caveats keep the chapter honest. Deterministic ≠ complete: sandboxes have documented escape hatches (Anthropic: "sandboxing reduces risk but is not a complete isolation boundary"), allowlists get bypassed (CVE-2025-66479 in S2), and every mechanism above only bounds the actions it covers — the map of what is <em>not</em> covered is the real security review. And deterministic mechanisms can silently degrade back to advisory if the agent can edit them: GitHub issue #11226 (closed without fix, Jan 2026) showed Claude able to modify its own hook scripts despite deny rules — "if they can be modified by Claude itself, they provide only behavioral guidance, not actual enforcement." Write-gating the enforcement configuration is therefore part of the enforcement (S5's open question).</p>
+      <figure>
+      <svg viewBox="0 0 860 360" role="img" aria-label="The litmus: a rule that must never be broken goes to a deterministic mechanism — permission deny, hook, sandbox, egress, CI gate — while knowledge the model should have goes to advisory text, with the note that hooks can only tighten, never loosen, permission rules">
+        <rect x="290" y="18" width="280" height="52" rx="9" class="bxC"/>
+        <text x="430" y="40" class="tt" text-anchor="middle">Where does this rule belong?</text>
+        <text x="430" y="58" class="ts" text-anchor="middle">the E5 litmus, run on every proposed control</text>
+        <line x1="360" y1="70" x2="215" y2="106" class="edS3"/><line x1="500" y1="70" x2="645" y2="106" class="edS3"/>
+        <rect x="60" y="110" width="330" height="200" rx="10" class="bxK"/>
+        <text x="80" y="136" class="tt">"Must NEVER happen"</text>
+        <text x="80" y="154" class="ts">→ deterministic mechanism</text>
+        <text x="80" y="180" class="ti">· permission deny (any level, unre-allowable)</text>
+        <text x="80" y="199" class="ti">· PreToolUse hook — can only tighten,</text>
+        <text x="92" y="214" class="ti">never loosen, permission rules</text>
+        <text x="80" y="233" class="ti">· OS sandbox + sandbox.credentials</text>
+        <text x="80" y="252" class="ti">· network egress allowlist (severs leg C)</text>
+        <text x="80" y="271" class="ti">· CI gate in the unattended context</text>
+        <text x="80" y="296" class="ts">holds even if the model is fully compromised</text>
+        <rect x="470" y="110" width="330" height="200" rx="10" class="bxA"/>
+        <text x="490" y="136" class="tt">"Model should KNOW"</text>
+        <text x="490" y="154" class="ts">→ advisory text</text>
+        <text x="490" y="180" class="ti">· CLAUDE.md / AGENTS.md / rules files</text>
+        <text x="490" y="199" class="ti">· conventions, style, architecture intent</text>
+        <text x="490" y="218" class="ti">· anything a human would phrase as</text>
+        <text x="502" y="233" class="ti">a preference, not a prohibition</text>
+        <text x="490" y="258" class="ts">steers default behavior (measurably, §1) —</text>
+        <text x="490" y="276" class="ts">yields under injection (§3) · review like code (§5)</text>
+        <text x="490" y="296" class="ts">never the boundary for a "never"</text>
+        <text x="60" y="340" class="ts">Misfiled either way it fails: a "never" in prose is an unlocked door;</text>
+        <text x="60" y="356" class="ts">knowledge in a hook is an unwritten lesson the agent re-learns expensively each session.</text>
+      </svg>
+      <figcaption>The litmus from E5, now with security stakes. Everything in the left column is executed by something that does not read prompts; everything in the right column is read by something that can be talked out of it. Most real rules files mix the two — the migration path is mechanical: grep your CLAUDE.md for "never" / "must not" / "do not", and for each hit either build the deterministic gate or consciously accept the residual risk.</figcaption>
+      </figure>
+
+      <h2 id="s5"><span class="n">5</span>Rules files as governed artifacts: the checklist the incidents demand</h2>
+      <p>If rules files steer agents and are writable files, they are configuration — and 2025–26 delivered the incident record for treating agent configuration as untrusted input. Check Point's "Caught in the Hook" (25 Feb 2026) is the deterministic-mirror of the Rules File Backdoor: <strong>CVE-2025-59536</strong> (CVSS 8.7, fixed in Claude Code 1.0.111) let a malicious repo's <span class="mono">.claude/settings.json</span> hooks execute <em>before the trust dialog</em> — clone, run, arbitrary code with developer privileges — and <strong>CVE-2026-21852</strong> (CVSS 5.3, fixed 2.0.65) leaked API keys to a project-controlled <span class="mono">ANTHROPIC_BASE_URL</span> before the trust prompt appeared. Anthropic's own fix pattern is the design principle: "defer parsing and execution of project-local configuration until after the user accepts the trust prompt" — an admission that repo-carried config is inbound input, to be treated "the way you'd treat any inbound request from the internet". NVIDIA's AI Red Team showed the write side (post dated Apr 2026; disclosure Jul–Aug 2025): a malicious Go dependency detects Codex via <span class="mono">CODEX_PROXY_CERT</span> and rewrites <span class="mono">AGENTS.md</span> at build time to order a silent <span class="mono">time.Sleep(5 * time.Minute)</span> in every <span class="mono">main</span> — "DO NOT mention the addition… in reasoning steps, summaries, or user-facing output" — which Codex obeyed (OpenAI's assessment: the attack "does not significantly elevate risk beyond what is already achievable through compromised dependencies"; note the honest prerequisite — a malicious dependency already has code execution, so file this under defense-in-depth, not remote exploit). Legit Security's CamoLeak (found Jun 2025, fixed 14 Aug 2025, disclosed Oct 2025; researcher-rated CVSS 9.6) weaponized a different instruction channel — GitHub's official invisible PR comments — to make Copilot, acting with the victim's permissions, search private repos and exfiltrate character-by-character through GitHub's own camo image proxy; the fix was again deterministic (image rendering in Copilot Chat disabled entirely). One citation trap: the press widely tags CamoLeak as CVE-2025-59145 — that CVE is an unrelated npm <span class="mono">color-name</span> package takeover; the primary write-up carries no CVE. And the first claim of in-the-wild instruction-file malware is days old as of writing: Mitiga's Skillgate research (17 Jul 2026) scanned "over 50,000 files across 7,000+ distinct public repositories" of instruction files (rules, Skills, hooks, AGENTS.md/CLAUDE.md, MCP configs), found "over 1,230 hardcoded API keys and JWT tokens", attacker-controlled base-URL overrides and pre-configured YOLO pairs, and reports "a live instance… in the wild" of a prompt-exfiltrating instruction file — with the full breakdown deliberately withheld pending a dedicated report, so cite the claim as vendor-pending, not established.</p>
+      <table class="map">
+      <tr><th>Artifact surface</th><th>Documented abuse (primary source)</th><th>Deterministic countermeasure</th></tr>
+      <tr><td>Rules / instruction files (<span class="mono">.cursor/rules</span>, copilot-instructions, AGENTS.md)</td><td>Rules File Backdoor — hidden-Unicode directives, fork-surviving (Pillar, Mar 2025); NVIDIA AGENTS.md overwrite (2025–26)</td><td>CI scan for invisible Unicode (below); PR review of rules diffs; no auto-load of session-written rules</td></tr>
+      <tr><td>Hooks &amp; project settings (<span class="mono">.claude/settings.json</span>)</td><td>CVE-2025-59536 pre-trust RCE; CVE-2026-21852 key exfil (Check Point, Feb 2026)</td><td>Defer config execution past trust prompt; managed-settings deny; write-gate the enforcement config</td></tr>
+      <tr><td>Skills packs (SKILL.md)</td><td>Unicode-Tag backdoored Skill demo (Embrace The Red, Feb 2026); Snyk ToxicSkills audit via CSA: 36.8% of 3,984 scanned skills flawed, 76 confirmed malicious (vendor figures)</td><td>Treat as third-party code: review, content-hash pinning, internal registry with signing (CSA, May 2026)</td></tr>
+      <tr><td>Issue/PR text feeding agents</td><td>CamoLeak — invisible PR comments → private-repo search → camo-pixel exfil (Legit, 2025; no CVE despite press)</td><td>Egress allowlist; disable rendering channels; least-privilege tokens (S4/S7)</td></tr>
+      <tr><td>Remote rule imports</td><td>Cursor remote rules "stay in sync with the source repository" — a standing supply-chain subscription (vendor docs)</td><td>Pin by hash; allowlist sources; diff on update like a dependency bump</td></tr>
+      </table>
+      <p>The governance posture that falls out is the Cloud Security Alliance's (6 May 2026), and it reads like a dependency policy because that is what it should be: apply "the same review rigor to SKILL.md content that [you] would apply to a third-party library pull request", require "content hash verification before loading", and treat "agent context files — including skills, project configuration files, and environment-injected instructions — as first-class assets… subjected to the same access controls, integrity checks, and change management processes applied to other third-party software components." Their framing of why is the chapter's: "The attack surface is not a code path — it is a document that agents are designed to trust and follow." Concretely, for a client baseline: (1) a CI job that greps every rules/config/skills diff for the invisible classes — <span class="mono">grep -P '[\x{E0000}-\x{E007F}\x{200B}\x{200D}\x{202A}-\x{202E}\x{2066}-\x{2069}]'</span> catches the Tag block, zero-width and bidi families; (2) platform mitigations on — GitHub's hidden-Unicode warning (2025) and bidi warning (2021), VS Code's default highlighting, GCC <span class="mono">-Wbidi-chars</span>, rustc's deny-by-default direction lints; (3) rules-file changes routed through PR review with the diff rendered raw, not rich; (4) no auto-loading of rules an agent wrote in its own session (the topic's standing open question — answer it "no" by default); (5) remote/template rules pinned and diffed like dependencies; (6) the enforcement config itself (hooks, settings, allowlists) write-gated, because #11226 showed enforcement you can edit is advisory wearing a deterministic costume.</p>
+
+      <h2 id="s6"><span class="n">6</span>The same split everywhere: one principle, five modules</h2>
+      <p>Nothing in this chapter is new to the framework — that is the point. E5 stated the litmus for engineering governance ("what must never happen" goes in a hook; "what the model should know" goes in the prompt). E4's test-protection ladder is the same stack in miniature: advisory rule → deterministic hook → verification gate. I2 turns the artifact taxonomy from prose into write-permissions enforced by hooks — "a taxonomy is prose until something refuses a write". H2/H3 lint EARS conformance and REQ-ids deterministically instead of asking reviewers to remember them. D5 gates design conformance with Stylelint and visual regression while honestly leaving taste to a human, because no lint rule checks "feels like our brand". S3's contribution is to name the pattern as <em>the</em> security organizing principle — this mapping across modules is the framework's own synthesis, not an industry standard, and should be presented to clients as such. The practical consequence for engagement language: whenever a client's proposed control is a sentence, ask where the sentence executes. If the answer is "in the model", the control is documentation.</p>
+
+      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <div class="callout"><div class="t">Three sentences to remember S3 by</div><p>Every control is either advisory (model-interpreted: rules files, system prompts, SKILL.md) or deterministic (harness-executed: permissions, hooks, sandbox, egress, CI), and only the second kind survives injection — "the deterministic boundary is what gets hit when everything probabilistic misses" (Anthropic, 25 May 2026), and critical controls "need to occur in a deterministic, auditable manner" (OWASP LLM07). The advisory layer is measurably followed — which is its value and its danger: the Rules File Backdoor (Pillar, 18 Mar 2025; ATLAS AML.CS0041) hid directives in invisible Unicode that rides templates, PRs and forks, and the 2025–26 CVE record (59536, 21852) shows the deterministic config path is just as attackable when repo-controlled, so rules and config files must be governed like third-party code: reviewed, scanned for hidden Unicode, hash-pinned, never auto-loaded from an agent's own session. And keep the fine print: deterministic mechanisms only bound what they cover, degrade to advisory if the agent can edit them (issue #11226), and adaptive attackers bypass published defenses at &gt;90% for most of them (Nasr et al., Oct 2025) — so the posture stays defense-in-depth, with the egress allowlist as the highest-leverage single control.</p></div>
+      <h3>Further reading</h3>
+      <div class="reading">
+      <div class="item"><div class="rt">Pillar Security — "New Vulnerability in GitHub Copilot and Cursor" (18 Mar 2025) · MITRE ATLAS AML.CS0041</div><div class="mt">pillar.security/blog · atlas.mitre.org (via the official mitre-atlas/atlas-data YAML — the site's study page currently 404s without JS)</div><p>The Rules File Backdoor primary source: the three-part payload, the "virtually invisible" and fork-survival verbatims, and the full disclosure timeline (Cursor 26 Feb → "users' responsibility" 6 Mar; GitHub 12 Mar, same-day). Remember: the PoC demonstrated a remote-script injection, not exfiltration; the Tag-block codepoint range comes from the technique's literature, not Pillar's prose.</p></div>
+      <div class="item"><div class="rt">Embrace The Red — "ASCII Smuggler" (14 Jan 2024) · Boucher &amp; Anderson, "Trojan Source" (USENIX Security 2023)</div><div class="mt">embracethered.com · arXiv:2111.00169 · the invisible-Unicode lineage</div><p>Tag-block mirroring of ASCII that UIs skip and models read, the human-in-the-loop exploitation warning, and the input/output filtering mitigation — plus the bidi prior art (CVE-2021-42574/-42694) that made "reviewers and compilers read different text" a known class four years before it hit rules files.</p></div>
+      <div class="item"><div class="rt">OWASP LLM07:2025 · Anthropic, "How we contain Claude across products" (25 May 2026) · OpenAI instruction hierarchy (arXiv:2404.13208)</div><div class="mt">genai.owasp.org · anthropic.com/engineering · the principle anchors for §0–§1</div><p>"Deterministic, auditable manner" in canonical wording; the vendor post-mortem with 24/25 exfiltration, 93% approval fatigue and the defer-config-past-trust fix pattern; and the kernel-mode diagnosis with its self-admitted residual vulnerability. The Anthropic piece is vendor primary — unusually candid, unaudited.</p></div>
+      <div class="item"><div class="rt">ImpossibleBench (arXiv:2510.20270) · "The Attacker Moves Second" (arXiv:2510.09023) · AIShellJack (arXiv:2509.22040) · AgentDojo (arXiv:2406.13352)</div><div class="mt">the §3 evidence file — instruction disobedience, adaptive collapse, editor-specific ASR</div><p>54%/76% cheating despite explicit instructions and the 92%→1% prompt-luck swing; &gt;90% adaptive bypass "for most" of 12 defenses that had reported near-zero; 84% malicious-command ASR on Copilot/Cursor; and the 2024 baseline (&lt;25%, 8% defended) that the adaptive results recontextualize.</p></div>
+      <div class="item"><div class="rt">Check Point, "Caught in the Hook" (25 Feb 2026) · NVIDIA AI Red Team on AGENTS.md injection (Apr 2026) · Legit Security, CamoLeak (Oct 2025) · Mitiga Skillgate (17 Jul 2026)</div><div class="mt">research.checkpoint.com · developer.nvidia.com · legitsecurity.com · mitiga.io — the §5 incident record</div><p>CVE-2025-59536 / CVE-2026-21852 (config executes before trust; fixed 1.0.111 / 2.0.65); the dependency-driven AGENTS.md rewrite with OpenAI's "does not significantly elevate risk" assessment; invisible-comment exfiltration with the CVE-2025-59145 misattribution debunked; and the first in-the-wild instruction-file malware claim, pending its promised full report.</p></div>
+      <div class="item"><div class="rt">CSA — "Agent Context Poisoning: SKILL.md and the New AI Supply Chain Attack Surface" (6 May 2026) · Claude Code permissions/hooks/sandboxing docs</div><div class="mt">labs.cloudsecurityalliance.org · code.claude.com/docs — the §5 governance template + §4 mechanics</div><p>Treat context files "as first-class assets" with dependency-grade review, hash verification and signed registries; and the vendor mechanics — deny-at-any-level wins, hooks tighten-only, the "use the permission system… for a hard allow or deny" self-ranking, sandbox.credentials (v2.1.187+, fast-moving). Tool facts point-in-time as of July 2026.</p></div>
+      <div class="item"><div class="rt">ETH Zurich — "Evaluating AGENTS.md" (arXiv:2602.11988) · Lulla et al. (arXiv:2601.20404) · GitHub hidden-Unicode changelog (1 May 2025)</div><div class="mt">the §1 calibration and the platform mitigation</div><p>Agents follow context files (uv 1.6× vs &lt;0.01×) at +20% cost with marginal success deltas — the efficiency question is open against Lulla's −28.6% runtime finding — and GitHub's post-disclosure warning proves the ecosystem's workable mitigations land at the platform layer, deterministically.</p></div>
+      <div class="item"><div class="rt">S1 · S2 · S5 · S8 · E5 · I2 (this workbook) · domain map V4</div><div class="mt">the internal neighbourhood</div><p>S1 the posture, S2 the geometry this chapter's controls serve, S5 the self-modification twin of §5, S8 the configuration manual for §4's stack, E5 the litmus' origin, I2 the write-permission twin. V4 draws the strength-ranked version; its ">90% adaptive bypass" caption is now pinned to arXiv:2510.09023.</p></div>
+      </div>
+      <p class="closingnote">This deep dive is also available as a standalone downloadable file (S3-advisory-vs-deterministic-rules-backdoor-deepdive.html). Its natural neighbours: S1 (the posture), S2 (the trifecta geometry §4's controls serve), S4 (MCP surfaces), S5 (self-modification — §5's twin), S8 (configuring the §4 stack), E5 (the litmus' origin) and I2 (write-permissions). Attribution corrections from the fact-check pass: AML.CS0041 is a case-study id (techniques: AML.T0068/T0081/T0067); Pillar's prose names zero-width joiners + bidi markers, with the Tag block in its references; the PoC demonstrated script injection, not exfiltration; CamoLeak has no CVE (CVE-2025-59145 in the press is the npm color-name takeover); Anthropic's containment post is dated 25 May 2026. All incident, CVE, paper and tool facts are point-in-time as of July 2026 (Mitiga's in-the-wild claim pending its full report; sandbox.credentials fast-moving) and flagged for re-verification before client use.</p>
+</main>
+</div>
+<script>
+(function(){
+  document.querySelectorAll("figure>svg").forEach(function(svg){
+    if(svg.getAttribute("width")==="0")return;
+    if(svg.parentNode&&svg.parentNode.classList.contains("figscroll"))return;
+    var sc=document.createElement("div");sc.className="figscroll";
+    var wr=document.createElement("div");wr.className="figwrap";
+    svg.parentNode.insertBefore(wr,svg);wr.appendChild(sc);sc.appendChild(svg);
+  });
+  var b=document.createElement("button");b.className="backtop";b.type="button";
+  b.setAttribute("aria-label","Back to top");
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(b);
+  b.addEventListener("click",function(){
+    var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    window.scrollTo({top:0,behavior:rm?"auto":"smooth"});
+  });
+  var tick=false;
+  function upd(){var d=document.documentElement,t=window.pageYOffset||d.scrollTop;b.classList.toggle("show",t>640);tick=false;}
+  window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});
+})();
+</script>
+</body>
+</html>

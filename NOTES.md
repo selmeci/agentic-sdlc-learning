@@ -107,6 +107,27 @@ Use this for open questions, session hand-off notes, and things to check before 
   census compared against); 850,157 one-snapshot (3.3%/30× base) vs 886,122 cross-project total.
   NOT citeable: "~42% of GitHub issues correctly linked" (unpinnable); "Jira has its own version
   of reality" (not found); Conventional-Commits/interpret-trailers verbatims confirmed.
+- New from the S3 session (2026-07-21): Mitiga Skillgate full report (in-the-wild
+  instruction-file malware claim — only the teaser post existed as of 2026-07-21; confirm or
+  soften before citing); sandbox.credentials (v2.1.187+) and mask mode (v2.1.199+) — fast-moving
+  Claude Code surface, re-check the docs; Cursor's response to the Rules File Backdoor (only
+  Pillar's side is documented — Cursor never published its own statement); the ATLAS site's
+  AML.CS0041 study page 404s without JS (cite the mitre-atlas/atlas-data YAML instead);
+  Snyk ToxicSkills figures (36.8% of 3,984 / 76 malicious — seen via the CSA relay only,
+  not against Snyk's own report).
+
+- New from the S4 session (2026-07-22): CVE-2026-33032 (MCPwn) patch status is contested —
+  NVD lists ≤2.3.5 affected with "no publicly available patches" at publication, while
+  Pluto/THN reported "fixed in 2.3.4" — re-check before citing; MCP registry GA status
+  (preview since 8 Sep 2025, GA unannounced) — re-verify; Claude Code MCP allowlist bypass
+  via CLI flags (issue #31508) and GitHub MCP `--read-only` ineffective under the `http`
+  command (issue #2156, closed working-as-intended) — both point-in-time; "TrustFall"
+  (alleged unpatched MCP flaw in Cursor CLI/Claude Code/Gemini CLI/Copilot CLI) seen only
+  in vendor marketing, no primary research — do not cite without a primary source; Koi's
+  "ClawHavoc" campaign (1,184 malicious agent skills) is skills-layer, not MCP — candidate
+  for S3/S6 follow-up; Supabase's response post is dated 16 Sep 2025 (not July); mcp-scan
+  is now Snyk Agent Scan (post-acquisition) and its CLI sends tool descriptions to Snyk's
+  API — mention when recommending it.
 
 ## Next scoped initiative — DARK MODE (evaluated in v1.16, deliberately deferred)
 Research backs dark mode as an **opt-in** (light stays default for a reading-heavy artifact;
@@ -135,6 +156,23 @@ not because it lacks merit. When picking it up, do it token-first — do NOT `fi
    `scripts/validate.py`. Screenshot both themes at desktop + mobile before shipping.
 
 ## Session hand-off
+- 2026-07-21 (S3 session): **S3 deep dive added (v1.62) — Advisory vs Deterministic Controls;
+  the Rules File Backdoor.** Outline (docs/plans/2026-07-21-s3-deepdive-outline.md) → 6-agent
+  swarm (4 fact clusters + 2 discovery) → 2-agent spot-verify round (catches: Anthropic's
+  containment post is **25 May 2026**, not "Jun 2026" — retro-fixed in both S2 copies too;
+  Check Point "Caught in the Hook" is **Feb 25** 2026; NVIDIA's AGENTS.md post is **Apr 2026**;
+  GitHub issue #11226 was **closed not-planned**; arXiv:2602.11988 has **no venue**; CamoLeak
+  has **no CVE** — CVE-2025-59145 in the press is the npm color-name takeover) → write →
+  assemble per AUTHORING-GUIDE. Attribution fixes baked into the body: AML.CS0041 = case study
+  (techniques AML.T0068/T0081/T0067); Tag-block range credited to the technique literature, not
+  Pillar's prose; PoC = script injection, not exfil. Fact fix elsewhere: S8's "hooks override
+  permission rules" rewritten — hooks can only tighten, never loosen (a blocking hook beats an
+  allow rule; deny/ask are hook-proof), and Anthropic's own docs rank the permission system
+  above hooks for a hard allow/deny. SVG lesson paid again: headless-chrome screenshots caught
+  three clipped/overflowing labels across the three figures (two viewBox overflows, one
+  box-border cross) — fixed identically in both copies, gallery regenerated. New re-verify
+  items above (Mitiga Skillgate, sandbox.credentials, Cursor's side, ATLAS 404, Snyk via CSA).
+  Validator green; nothing committed (per instruction).
 - 2026-07-16 (I7 session): **I7 deep dive added (v1.38) — M4 COMPLETE (I1–I7).** Outline → 3
   teammates (i7jul16-facts-links / i7jul16-facts-mcp / i7jul16-scout) → i7jul16-spotverify on
   discovery finds (7th session in a row it paid: GitLost "VP of Sales" + preview-date dropped

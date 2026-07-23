@@ -623,6 +623,110 @@
       "section": "6 · Multi-agent systems: digital gossiping reassembles the trifecta",
       "sectionAnchor": "s6",
       "why": "Shows why per-agent compliance fails: three individually compliant agents sharing memory and handoffs reassemble the full trifecta inside one cluster trust boundary."
+    },
+    {
+      "deepDive": "S3-advisory-vs-deterministic-rules-backdoor-deepdive",
+      "figureIndex": 0,
+      "title": "The two layers and the only question that matters: who executes the rule? Injection travels through the advisory band untouched — it is text, read by the same model the attacker is steering — and meets its first real resistance at the deterministic band. The bands are complements, not rivals: write the advisory layer well (it steers, §1), but never count it as a control.",
+      "section": "1 · The advisory layer, mechanically: steering that works — until it matters",
+      "sectionAnchor": "s1",
+      "why": "It draws the chapter's one test as a picture — injection sails through the advisory band and stops only at the deterministic band — so 'who executes the rule?' becomes a thing you can point at, not just assert."
+    },
+    {
+      "deepDive": "S3-advisory-vs-deterministic-rules-backdoor-deepdive",
+      "figureIndex": 1,
+      "title": "The Rules File Backdoor as a pipeline (Pillar Security, 18 Mar 2025; ATLAS AML.CS0041). Steps 1–3 need no exploit primitive beyond ordinary collaboration — a template, a PR, a shared rules repo. Steps 4–6 work because the rules channel is both followed (§1) and invisible at review (§2). The countermeasures that match each step — Unicode scanning at 2, governed review at 3, deterministic gates at 5 — are §5's checklist.",
+      "section": "2 · The Rules File Backdoor: the advisory layer turns attack surface",
+      "sectionAnchor": "s2",
+      "why": "The backdoor as a six-step pipeline shows that every step rides an ordinary trusted channel, which is exactly why no filter trips — the diagram is what turns the attack from anecdote into an auditable checklist."
+    },
+    {
+      "deepDive": "S3-advisory-vs-deterministic-rules-backdoor-deepdive",
+      "figureIndex": 2,
+      "title": "The litmus from E5, now with security stakes. Everything in the left column is executed by something that does not read prompts; everything in the right column is read by something that can be talked out of it. Most real rules files mix the two — the migration path is mechanical: grep your CLAUDE.md for \"never\" / \"must not\" / \"do not\", and for each hit either build the deterministic gate or consciously accept the residual risk.",
+      "section": "4 · The deterministic stack: what actually enforces, with 2026's fine print",
+      "sectionAnchor": "s4",
+      "why": "The E5 litmus rendered as a sorting rule (never-happens left, should-know right) is the engagement tool itself: grep your rules file for 'never' and migrate each hit — the figure makes the migration mechanical."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 0,
+      "title": "The seam in one picture. Both directions are trust relationships, and S2's trifecta legs map onto them: IN supplies leg A (untrusted content), OUT supplies legs B and C (private data access, external action). A single server can therefore be the whole trifecta — which is why the GitHub MCP incident needed no vulnerability at all.",
+      "section": "1 · MCP mechanically: what the protocol actually trusts",
+      "sectionAnchor": "s1",
+      "why": "Shows that one MCP tool call crosses the trust boundary twice — content in, privileges out — and maps S2's trifecta legs onto each direction, so the team sees why a single server can be the whole trifecta."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 1,
+      "title": "The GitHub MCP toxic flow (Invariant Labs, 26 May 2025) as a six-step chain. Every arrow is a legitimate feature; the attack is their composition. Supabase's PoC is the same shape with a support ticket as step 1, a service_role key as step 5, and a ticket INSERT as step 6 — which is why the fixes that matter (curate the content, narrow the token, gate the write) are leg removals, not better prompting.",
+      "section": "2 · Class 1 — injection through tool results: content arrives with a privileged microphone",
+      "sectionAnchor": "s2",
+      "why": "Walks the GitHub MCP toxic flow as six composable steps so reviewers can point at the exact leg to sever (curate content, narrow the token, gate the write) instead of arguing about prompts."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 2,
+      "title": "The class map for §2–§4. Class 1 needs a hostile data producer; class 2 a hostile server operator; class 3 just a buggy one. The controls differ per class — there is no single \"MCP security\" fix, and §6's defense stack is organized by exactly this split.",
+      "section": "3 · Class 2 — the server itself is the attacker",
+      "sectionAnchor": "s3",
+      "why": "Organizes the incident zoo into three attack classes by hostile party (data producer, server operator, buggy implementation), making clear why no single 'MCP security' fix exists and why controls must be matched per class."
+    },
+    {
+      "deepDive": "S4-mcp-tools-attack-surface-deepdive",
+      "figureIndex": 3,
+      "title": "The defense stack, organized by the class map. Layers 1–2 answer class 2 (who is this server, and is it the one we approved?); layer 3 answers class 3 (when it breaks, what can it reach?); layer 4 answers class 1 (when the content lies, what can the lie make happen?); layer 5 is the backstop for everything. The dashed band is where 2025's failed defenses lived — Supabase's result-wrapping, MCP-TDP's \"Firewall Fallacy\" — useful as signals, fatal as boundaries.",
+      "section": "6 · The defense stack, MCP-specific: what actually binds",
+      "sectionAnchor": "s6",
+      "why": "Stacks the five defense layers against the three attack classes and visually quarantines advisory defenses in the dashed band, so the client checklist lands on deterministic controls only."
+    },
+    {
+      "deepDive": "S5-loop-autorun-selfmod-sandbox-deepdive",
+      "figureIndex": 0,
+      "title": "The self-escalation cycle. Every entry in the ledger is the same four steps: untrusted content injects an instruction; the agent — using the write tools that are its selling point — edits its own execution context; the next iteration runs with privileges it was never granted; and the cycle repeats with the new privilege as the baseline. Each CVE is pinned to the context it edits, and the amber write-gate (§5) is the control class that severs the cycle rather than slowing it.",
+      "section": "1 · Self-escalation: one class, a ledger of CVEs",
+      "sectionAnchor": "s1",
+      "why": "Shows the four-step self-escalation cycle — injected content, the agent editing its own execution context, the next iteration running escalated — with each ledger CVE pinned to the context it edits, so the team sees why write-gating the enforcement config is the only control that severs the loop rather than slowing it."
+    },
+    {
+      "deepDive": "S5-loop-autorun-selfmod-sandbox-deepdive",
+      "figureIndex": 1,
+      "title": "The gate spectrum. Moving right removes assurance in kind, not just degree: a human gate fails softly (fatigue, hollow dialogs, one-Enter trust), a model gate fails probabilistically (S3's litmus — classifiers are advisory, and the classifier reads the same injected content), and full YOLO leaves nothing between injection and execution but the sandbox. That is why the vendors' own documentation couples every bypass flag to isolation, and why §3's escape record is the price list for the right-hand column.",
+      "section": "2 · YOLO / auto-approve: removing the gate, then hollowing it",
+      "sectionAnchor": "s2",
+      "why": "Maps the three gate positions (human, classifier, none) against what actually stands between injection and execution at each, making the case that YOLO-class modes are acceptable only inside a hardened, network-isolated, credential-free sandbox — and that classifier-gated auto still fails S3's determinism litmus."
+    },
+    {
+      "deepDive": "S5-loop-autorun-selfmod-sandbox-deepdive",
+      "figureIndex": 2,
+      "title": "The containment stack as shipped in mid-2026, with the six documented escape classes pinned at the seams they cross. No layer is a hard boundary — Anthropic says so verbatim — but the record is specific rather than vibes: each class has named CVEs or researcher write-ups, and SandboxEscapeBench measures the practical meaning of \"configured correctly\": frontier agents escape default setups about half the time using only known techniques, while correctly configured sandboxes held at difficulty 4–5 against every technique the benchmark knows. The Cowork annotation marks the architectural contrast: a boundary with no outer process holding an escape-hatch key.",
+      "section": "3 · The sandbox: the containment answer and its escape record",
+      "sectionAnchor": "s3",
+      "why": "Stacks the containment layers as shipped in mid-2026 and pins the six documented escape classes at the seams they cross, so a client can name their sandbox's status against each class instead of trusting 'sandboxed' as a blanket claim."
+    },
+    {
+      "deepDive": "S6-memory-poisoning-multiagent-risk-deepdive",
+      "figureIndex": 0,
+      "title": "The memory write path as shipped in July 2026. Untrusted sources inject through S1/S4's channels into four write channels (MPBench's count), landing in stores scoped project/user/global/shared and retrieved into future context — with system-prompt authority before Claude Code v2.1.50 and user-message authority since. The three gates drawn are the only ones that exist: Cursor's sidecar confirmation, Claude Code's @import approval, and enterprise off-toggles; everything else is notify-and-review. MemoryTrap's path (red) never touches a gate because the installer wrote the files directly. Sources: Cisco (1 Apr 2026); Habler/OWASP (13 May 2026); vendor docs per row of the store matrix; Guan (27 Dec 2025); MPBench (arXiv:2606.04329).",
+      "section": "2 · The write path is the attack surface",
+      "sectionAnchor": "s2",
+      "why": "Maps the memory write path end to end — sources, injection, the four write channels, scoped stores, retrieval authority — and pins the only three gates that ship today, with the MemoryTrap file-writing path drawn underneath as the route that bypasses every gate. It turns the store-by-store matrix into one architecture picture of where a durable configuration change enters the system."
+    },
+    {
+      "deepDive": "S6-memory-poisoning-multiagent-risk-deepdive",
+      "figureIndex": 1,
+      "title": "Temporal decoupling and the four places a defense can sit. The plant in session N is benign-in-isolation (Palo Alto's fragmented-payload framing); the session boundary resets nothing; retrieval in session N+k is the detonation; and the blast radius is lateral. Below the timeline: the write gate, provenance at rest, the cross-session regression test (a confirmed open gap — §5 fills it with a homegrown pattern), and the retrieval-time check. The ledger strip records why each matters, with sources: Palo Alto (31 Jan 2026), Microsoft Defender (10 Feb 2026), Rehberger (20 Sep 2024), MemoryGraft/GhostWriter, Forensic Trajectory Signatures (arXiv:2606.30566 v2).",
+      "section": "3 · Temporal decoupling: the exploit runs once, the memory runs indefinitely",
+      "sectionAnchor": "s3",
+      "why": "Makes temporal decoupling visible: the benign-looking plant in session N, the session boundary that resets nothing, retrieval-as-detonation in N+k, and lateral spread — with the four defense placements annotated at the only points in time where each can work, including the confirmed open gap of cross-session regression testing."
+    },
+    {
+      "deepDive": "S6-memory-poisoning-multiagent-risk-deepdive",
+      "figureIndex": 2,
+      "title": "The propagation graph and the three edge controls, with their honest status. Poison enters through one worker and fans out three ways: handoffs up to the orchestrator (where trust is upgraded — Anthropic's NIST RFI framing), handoffs across to sibling workers, and writes into the shared store every agent reads (MMCA's hidden bridges, which defeat agent-to-agent airgapping). Of the controls: message signing does not ship (A2A signs AgentCards, not messages — issue #1497 is an open proposal), sanitize-at-handoff is advisory by S3's litmus, and circuit breakers ship as middleware (MS Agent Governance Toolkit), not kernel. Sources per edge: arXiv:2410.07283, 2507.13038, 2402.08567, 2512.08296 (v1), Springer Cybersecurity 9:191, Wiz (2 Feb 2026).",
+      "section": "4 · The cluster is the trust boundary",
+      "sectionAnchor": "s4",
+      "why": "Shows why the cluster is the trust boundary: one poisoned worker fans out through trust-upgraded handoffs and a shared store that defeats agent-to-agent airgapping, and grades the three edge controls — signed messages, sanitize-at-handoff, circuit breaker — by what actually ships today."
     }
   ]
 }
