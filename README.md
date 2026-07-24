@@ -106,6 +106,26 @@ the **"Go deeper"** links open the embedded deep dive for that topic.
 "add the next deep-dive companion" — the recipe is mechanical and validated by
 `scripts/validate.py`. `docs/ROADMAP.md` lists what remains.
 
+**To author, enrich, or refactor a deep dive:** in Claude Code, invoke the **`/deepdive`**
+skill (`.claude/skills/deepdive/SKILL.md`); in any other agent tool, follow
+`docs/DEEPDIVE-PLAYBOOK.md` directly — the skill is a thin orchestrator over that playbook.
+Three modes:
+
+- **NEW** ("prepare the deep dive for topic X") — outline first, adversarial fact
+  verification (refute-mode verifiers per claim cluster + one divergent scout, checked
+  against the playbook's corrections & do-not-cite register), then writing per
+  AUTHORING-GUIDE Steps 1/1b/1c, the two-copies build, and the ordered review gates.
+- **ENRICH** ("enrich I4") — replace a skeleton's `data-app-stub` blocks with the real
+  decision frame, Meridian worked example (canon: `docs/WORKED-EXAMPLE-CLIENT.md`),
+  self-test, and a named PB-runbook bridge; any touch of existing evidence prose carries
+  a mandatory per-paragraph fact-survival audit.
+- **REFACTOR** ("refactor E7 to the current structure") — restructure an existing deep
+  dive without changing its facts; `references/refactor-mechanics.md` in the skill
+  directory carries the four-phase procedure and the traps learned on the B3 pilot.
+
+`scripts/validate.py` remains the deterministic gate for all three modes; a version bump
+is never part of these flows unless explicitly requested.
+
 ---
 
 ## Status at time of packaging
