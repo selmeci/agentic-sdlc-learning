@@ -34,7 +34,9 @@
 ```css
 /* application layer */
 .callframe{border-left-color:#B26A00}
-.callframe ul{margin:8px 0 2px}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
 .decis{margin:12px 0}
 .apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
 .apptest summary{cursor:pointer;font-weight:600}
@@ -398,7 +400,9 @@ NEWHEAD = "Applying it — decision guide"
 
 CSS = """/* application layer */
 .callframe{border-left-color:#B26A00}
-.callframe ul{margin:8px 0 2px}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
 .decis{margin:12px 0}
 .apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
 .apptest summary{cursor:pointer;font-weight:600}
