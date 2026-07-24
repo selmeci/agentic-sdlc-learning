@@ -51,4 +51,7 @@ quality rules live in `docs/AUTHORING-GUIDE.md` Steps 1b–1c. Follow all of the
 
 For content shape, house style, the golden rules (stable topic ids, two-copies-in-sync, in-page
 overlays, inline SVG, single `store` backend, validate-after-every-edit), and the authoring
-recipe, follow `CLAUDE.md` and `docs/AUTHORING-GUIDE.md`. They apply to all agents.
+recipe, follow `CLAUDE.md` and `docs/AUTHORING-GUIDE.md`. When authoring or enriching a deep
+dive, the end-to-end process (research → verify → write → build → review, including the
+corrections & do-not-cite register) is `docs/DEEPDIVE-PLAYBOOK.md` — it binds every agent and
+tool, not just Claude Code. They apply to all agents.
