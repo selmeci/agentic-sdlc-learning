@@ -1,6 +1,6 @@
 ---
 name: deepdive
-description: Author or enrich a deep-dive companion for the study workbook — the full research → write → build → review pipeline. Use this whenever the user asks to create a new deep dive, add a section/topic companion (e.g. "priprav S8", "add the next deep dive", "pokracujme v priprave studijnych materialov pre sekciu X"), enrich an existing deep dive's application-layer stubs, or do prose surgery on evidence sections. Also use it when the user asks to "verify facts via swarm/teammates" for study content — fact verification for this repo runs through this pipeline, not ad hoc.
+description: Author, enrich, or refactor a deep-dive companion for the study workbook — the full research → write → build → review pipeline. Use this whenever the user asks to create a new deep dive, add a section/topic companion (e.g. "priprav S8", "add the next deep dive", "pokracujme v priprave studijnych materialov pre sekciu X"), enrich an existing deep dive's application-layer stubs, refactor/restructure an existing deep dive to the current structure or prose rules (e.g. "zrefaktoruj E7", "vylepsi strukturu I4", "apply Step 1c to this chapter"), or do prose surgery on evidence sections. Also use it when the user asks to "verify facts via swarm/teammates" for study content — fact verification for this repo runs through this pipeline, not ad hoc.
 ---
 
 # Deep-dive authoring pipeline
@@ -23,6 +23,14 @@ each phase demands.
   explicitly per targeted paragraph, and the audit runs before the commit. Surgery
   plans without it are incomplete; this is the gate that has caught silently dropped
   titles and mis-scoped anchors.
+- **REFACTOR** (restructure an existing deep dive to the current standards — the
+  application-layer shape and/or the Step 1c prose rules — without changing its
+  facts): read `references/refactor-mechanics.md` in this skill directory FIRST — it
+  carries the four-phase procedure (diagnose → inventory-driven surgery plan →
+  execute both copies → review loop) and the traps learned on the B3 pilot (TOC-label
+  silent no-ops, dropped-title relocation, population-scope anchors, review by
+  execution). The ENRICH fact-survival rule above binds REFACTOR doubly: the whole
+  point of a refactor is that every fact survives.
 
 ## Orchestration sequence
 
