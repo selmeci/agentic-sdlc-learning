@@ -69,6 +69,42 @@ Skeleton stubs (from `scripts/add_application_skeleton.py`) carry `data-app-stub
 notes. Enrichment = replacing every stub in the file; the validator prints the
 remaining stub count per file (informational).
 
+## Step 1c — prose architecture for evidence sections (anti-abstract rules)
+
+Evidence sections keep their rigor — real citations, real numbers, honest
+strong-evidence vs vendor-claim vs synthesis labels are the moat. What is regulated
+here is the **load order**: prose must read as an argument, never as an inventory of
+abstracts. (Grounded in learning-science evidence — assertion-evidence ordering:
+Garner & Alley 2013; self-explanation meta-analyses: Fiorella & Mayer 2015, d≈0.61;
+number formats: Gigerenzer & Hoffrage 1995; expertise reversal: Kalyuga et al. 2003 —
+plus the corpus prose diagnosis of 2026-07-24.)
+
+1. **Assertion first.** Every evidence paragraph opens with the claim in plain
+   language as a full sentence; citations and numbers follow as *support for it*.
+   Never open a paragraph with `Study (authors; venue; arXiv:ID) measured: "quote"`.
+2. **One claim per paragraph, consequence last.** One or two citations per paragraph;
+   never stack 3+ studies or ~8+ numbers before any interpretation appears. Close the
+   paragraph with the one-sentence "so what" for practice.
+3. **Anchor every number in the same sentence.** A percentage travels with a
+   comparison, ratio, or consequence: "~45% — nearly half the survivor list is
+   noise"; "15 minutes × a survivor list in the hundreds is why nobody adjudicates
+   by hand".
+4. **Demote the citation apparatus.** The parenthetical (authors, venue, ID) comes
+   AFTER the point lands; full paper titles live in Further reading only.
+5. **Connect findings explicitly.** Each new study ties to the running thread ("the
+   same pattern shows up in…", "this breaks down when…") — never a cold start on a
+   fresh arXiv ID.
+6. **Write for experts.** Don't re-explain mechanics a senior engineer already knows
+   (expertise-reversal effect); leave productive inferential gaps; cut
+   seductive-detail trivia or set it apart in a labeled aside.
+
+Surgery scope for existing files (do it whenever you enrich one): rewrite the
+section openers to claim-first, then de-inventory only the paragraphs that stack 3+
+citations or ~8+ numbers. Expect +15–20% length on the touched paragraphs — that is
+the price of meaning, not bloat. Callouts, §0 leads, figures, and the Applying-it
+section already read as argument — leave them alone. B3 §2/§6 are the worked
+before/after exemplars of this surgery.
+
 ## Step 2 — generate the standalone file
 Reuse E1's `<head>` verbatim, then:
 - retitle `<title>` and the header `<h1>`/tag;

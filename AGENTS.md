@@ -40,9 +40,12 @@ deep dive must carry: a "call you're making" decision frame at the end of §0
 a branch-aware decision guide, a worked example on the Meridian canon client
 (`docs/WORKED-EXAMPLE-CLIENT.md` — fictional, never real-client data), an
 apply-level self-test, and a PB-runbook bridge link. Evidence sections keep their
-rigor and honesty flags — the application layer adds, never dilutes. Structure is
-enforced by `check_application_section` in `scripts/validate.py`; quality rules live
-in `docs/AUTHORING-GUIDE.md` Step 1b. Follow both.
+rigor and honesty flags — the application layer adds, never dilutes. Evidence PROSE
+follows the anti-abstract rules of `docs/AUTHORING-GUIDE.md` Step 1c: assertion
+first, one claim per paragraph with a closing consequence, every number anchored in
+its sentence, citation apparatus demoted to a parenthetical after the point lands.
+Structure is enforced by `check_application_section` in `scripts/validate.py`;
+quality rules live in `docs/AUTHORING-GUIDE.md` Steps 1b–1c. Follow all of them.
 
 ## Everything else
 

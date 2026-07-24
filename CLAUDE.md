@@ -53,8 +53,9 @@ Content in English (English technical terms preserved); prose is dense and conci
 - **Every study deep dive carries the application layer**: the §0
   "call you're making" frame (`data-app-frame`) and the "Applying it — decision guide"
   section (`data-app`) with Meridian worked example, self-test, and PB-runbook bridge.
-  Recipe: AUTHORING-GUIDE Step 1b; contract: AGENTS.md; enforced by
-  `check_application_section`.
+  Evidence prose follows the anti-abstract rules (assertion first, one claim per
+  paragraph, every number anchored). Recipe: AUTHORING-GUIDE Steps 1b–1c; contract:
+  AGENTS.md; enforced by `check_application_section`.
 - **Every `<figure>` SVG carries `role="img"` + a descriptive `aria-label`.** Since v1.69 every
   figure is **click-to-enlarge** via the shared lightbox (the `.dlb` modal + script, mirroring
   `gallery.html`); `role="img"` is the exact selector it and screen readers use. New standalone
