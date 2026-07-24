@@ -149,6 +149,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -169,7 +180,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s5"><b>5</b> · Runtime enforcement</a>
   <a href="#s6"><b>6</b> · Week one at the client</a>
   <a href="#s7"><b>7</b> · Framework map</a>
-  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s8"><b>8</b> &middot; Applying it</a>
   <a href="#s9"><b>9</b> · Further reading</a>
 </nav>
 <main>
@@ -178,7 +189,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the two directions, kept apart: formal methods on the agent's <em>output</em> vs on the agent's <em>behaviour</em> (§1)</li><li>the economics that changed, with the AWS precedent and the antfly workflow read honestly (§2)</li><li>the vericoding evidence: 82/44/27, the 58% Dafny result, and the 8.6% TLA+ counterpoint (§3)</li><li>the intent gap — why the spec, not the proof, is the bottleneck (§4)</li><li>runtime enforcement of agent behaviour: reactive, predictive, and the measured safety–utility trade-off (§5)</li><li>what a brownfield client can actually use this year (§6)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>E4 — the verification hierarchy this chapter extends upward</li><li>H2 — EARS/Gherkin are the low ceremony end of the same formalization ladder</li><li>E5/S3 — advisory vs deterministic: runtime enforcement is the research frontier of deterministic</li><li>E10 — unattended agents are why behaviour enforcement matters at all</li><li>E8 — spec-driven development meets checkable specs</li><li>B2/B3 — characterization and mutation testing, the brownfield rungs below</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>Two directions, one label — keep them apart</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>Two directions, one label — keep them apart</h2>
       <p>"Formal verification of agents" is used in the wild for two nearly unrelated practices, and the first discipline this chapter teaches is to ask <em>which one</em> a source means. <strong>Direction A — formal methods on the agent's output:</strong> the agent (or the human) writes a machine-checkable specification, and a verifier — Dafny's SMT backend, Lean's kernel, TLA+'s model checker TLC — proves the code or design meets it. The agent's role is authorship; the guarantee attaches to the <em>artifact</em>. The antfly essay lives here: its agent writes TLA+ models of a distributed key-value store and hunts race conditions. <strong>Direction B — formal methods on the agent's behaviour:</strong> the agent itself is treated as an opaque, stochastic component whose <em>actions at runtime</em> are checked against declarative rules — stop it before it deletes the database, whatever the model weights think. AgentSpec and its successors live here; so, at the deployed-practice end, do the learned guardrail filters (NeMo Guardrails, Llama Guard) that these formal approaches aim to outdo with provable semantics. The academic framing for why Direction B is runtime-only is Ferrando's FMAS 2025 vision paper ("Watchdogs and Oracles"): LLMs are "stochastic, non-deterministic, and continually updated," so static pre-deployment verification of the model's internals is impractical — a widely held position in the formal-methods literature, and the reason every serious system in §5 is a monitor, not a proof. Note what this means for vocabulary discipline: nothing in this chapter certifies "the agent is correct." Direction A certifies artifacts; Direction B bounds behaviours.</p>
       <figure><div class="figwrap"><svg viewBox="0 0 980 290" role="img" aria-label="Two directions of formal methods in the agentic loop. Direction A: the agent authors code plus a formal specification; a mechanical verifier such as Dafny, Lean or the TLC model checker checks the artifact; the guarantee attaches to the artifact. Direction B: the agent is an opaque component; a runtime monitor checks each proposed action against declarative safety rules before execution; the guarantee bounds behaviour. A centre note warns the two are routinely conflated under one label.">
       <defs><marker id="ahE11a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#57656F"/></marker></defs>
@@ -258,10 +272,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>B2/B3 · brownfield</td><td>characterization tests and mutation gates are the rungs a legacy codebase climbs first; formal models of one hot component come after, not instead</td></tr>
       <tr><td>E6 · autonomy</td><td>blast radius picks the enforcement operating point: hard-stop for irreversible surfaces, reflect for the rest</td></tr></table>
 
-      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <h2 id="s8"><span class="n">8</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout"><div class="t">Three sentences to keep</div><p>"Formal verification of agents" means two different things — proving properties of what the agent <em>produced</em> (real today where a mechanical verifier sits in the loop: 82% Dafny vericoding, Cedar/Lean in production) versus bounding what the agent <em>does</em> (a fast-moving research stack — AgentSpec, ICSE 2026 — whose state of the art is runtime monitoring, not proofs) — and every source should be asked which one it means. The economics genuinely flipped: agents collapse the spec-authoring cost that kept formal methods in avionics, but the 8.6% semantic-correctness result for unsupervised NL-to-TLA+ says the human still owns the intent and the properties. Safety from runtime enforcement is purchasable and now priced — 40.6% → 2.6% unsafe at the cost of 59% → 10% task completion — so the blast radius, not the vendor deck, picks the operating point.</p></div>
 
-      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s9"><span class="n">9</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Newcombe et al. — How Amazon Web Services Uses Formal Methods</div><div class="mt">CACM 58(4) · April 2015 · peer-reviewed industry report</div><p>The precedent and the cost-perception quote: seven teams, TLA+ finding 35-step bugs, "debugging designs" as the internal sales pitch.</p></div>
       <div class="item"><div class="rt">Rowan Copley — Cheap code means formal verification is reasonable now</div><div class="mt">antfly.io/research · May 6, 2026 · practitioner (vendor blog; Antfly sells agent retrieval, not verification)</div><p>The economic thesis and the disciplined workflow — human-scoped properties, bugs must reproduce as failing tests, models discarded. One validation anchor (Pebble — found a different, later-fixed bug), zero quantified metrics.</p></div>

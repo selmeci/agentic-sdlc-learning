@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -164,7 +175,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s2"><b>2</b> · The core patterns</a>
   <a href="#s3"><b>3</b> · The pruning principle</a>
   <a href="#s4"><b>4</b> · Mapping to the SDLC</a>
-  <a href="#s5"><b>5</b> · Takeaways</a>
+  <a href="#s5"><b>5</b> &middot; Applying it</a>
   <a href="#s6"><b>6</b> · Further reading</a>
 </nav>
 <main>
@@ -174,7 +185,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>This document turns the abstract "orchestrating scaffold" into named patterns with inputs and outputs: how a memoryless model is bootstrapped into a session, how state survives between sessions, how work stays merge-ready, and why the right long-term move is to <em>delete</em> parts of the harness as models improve. Everything here is drawn from Anthropic's own harness-engineering practice and generalised for a brownfield client.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Every harness component encodes an assumption about what the model <em>cannot</em> do yet. The harness is therefore a <em>liability register of model weaknesses</em>, written in code. When a weakness disappears with a better model, the matching scaffold should be removed — a good harness shrinks over time, it does not accrete.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>What the harness is responsible for</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>What the harness is responsible for</h2>
       <p>Between "a model that can reason" and "an agent that ships merge-ready code" sits a set of responsibilities nothing else owns. The harness is the software that discharges them:</p>
       <div class="io"><div class="box"><div class="lab">State &amp; continuity</div><ul><li>bootstrap a cold, memoryless model into a working session</li><li>carry decisions and progress across sessions</li><li>leave the repo in a clean, resumable state</li></ul></div>
       <div class="box"><div class="lab">Orchestration &amp; control</div><ul><li>assemble context each turn (E2) and invoke tools</li><li>run the loop; detect stuck/blocked states</li><li>enforce deterministic constraints (E5 governance)</li></ul></div>
@@ -269,12 +283,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>Org-wide rollout</td><td>plugins + managed settings</td><td>harness modules packaged and versioned; fleet held above a known-good version</td></tr>
       <tr><td>Every model upgrade</td><td>pruning</td><td>obsolete scaffolding removed; canary set proves it, traces show it; harness stays minimal</td></tr></table></div>
 
-      <h2 id="s5"><span class="n">5</span>Takeaways for our engagement</h2>
+      <h2 id="s5"><span class="n">5</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Can a model bootstrap the repo (build/test) unaided?</li><li>Is there a fast verification loop to make clean-state real?</li><li>Are artifacts classifiable as durable/derived/disposable?</li><li>Do we have hook enforcement points for controlled writes?</li></ul></div>
       <div class="box"><div class="lab">Build (feeds E7)</div><ul><li>initializer → progress-file convention → clean-state protocol</li><li>sprint contract at task kickoff; evaluator signal wired in</li><li>controlled write-surfaces (JSON state, protected tests)</li><li>a re-evaluation cadence to prune per model release</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember E3 by</div><p>The harness is the software we build and own — it supplies the state, sequencing and hard limits a stateless, unconstrained model lacks. Its patterns (initializer, progress file, clean-state, sprint contract, controlled writes) all exist to make a memoryless model behave like disciplined engineers working in shifts. Every component encodes a model weakness, so a healthy harness is pruned as the model grows — it shrinks, not just grows.</p></div>
 
-      <h2 id="s6"><span class="n">6</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s6"><span class="n">6</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Effective harnesses for long-running agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering</div><p>The primary source for the initializer, progress-file, clean-state and sprint-contract patterns, and the pruning principle. Start here.</p></div>
       <div class="item"><div class="rt">Building effective agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering/building-effective-agents</div><p>The wider frame — agents vs workflows and when to add (or not add) each piece of scaffolding.</p></div>

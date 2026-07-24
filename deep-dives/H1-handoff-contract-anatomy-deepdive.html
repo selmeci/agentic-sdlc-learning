@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -167,7 +178,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s5"><b>5</b> · How big — the tiers</a>
   <a href="#s6"><b>6</b> · TASK-042, annotated</a>
   <a href="#s7"><b>7</b> · Framework map</a>
-  <a href="#s8"><b>8</b> · Takeaways</a>
+  <a href="#s8"><b>8</b> &middot; Applying it</a>
   <a href="#s9"><b>9</b> · Further reading</a>
 </nav>
 <main>
@@ -177,7 +188,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>This topic also carries direct engagement value: the roadmap marks the contract anatomy as a <strong>directly reusable client template</strong>. What follows is written to be lifted — the six components in §2, the review checklist in §3 and the sizing tiers in §5 are the pieces a client team can adopt in a week.</p>
       <div class="callout amber"><div class="t">The amnesia test (our synthesis)</div><p>A handoff contract is the smallest durable artifact that lets a competent stranger with <em>no memory of your project</em> build the right thing — and prove it. Every component in §2 exists because some clause of that sentence fails without it: no intent and they build the wrong right-looking thing; no boundaries and they build too much; no executable criteria and nobody can prove anything; no links and they guess the context; no definition of done and "finished" is an opinion.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>From prompt to contract</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>From prompt to contract</h2>
       <p>The clearest statement of the shift this module is built on came from Sean Grove of OpenAI at the AI Engineer World's Fair in June 2025, in a talk titled <em>The New Code</em>: specifications, not prompts and not code, are becoming the fundamental unit of programming. Two of his lines do real work here. First, "code itself is actually a lossy projection from the specification" — the intent is the asset, the diff is one rendering of it. Second, his jab at throwaway prompting: teams "keep the generated code and delete the prompt", which he compares to shredding the source and carefully version-controlling the binary. That is a manifesto, not a measurement — Grove sells a worldview, and we flag it as such — but it names precisely what the contract fixes: the prompt is ephemeral, unreviewed and unowned; the contract is durable, reviewed and owned (M4). His worked example, OpenAI's own Model Spec, is anatomically instructive too: every clause carries a unique ID plus example prompts that act as unit tests for the principle — the same <em>clause = ID + example-as-test</em> pattern our acceptance-criteria component uses (H2) and our traceability chain depends on (H3).</p>
       <p>The aggressive end of the same argument is Tessl (Guy Podjarny), whose spec-centric thesis says comprehensive specs and tests make the code itself disposable, and whose Spec Registry packages specifications as versioned, dependency-managed artifacts — "npm for specs". Vendor claims, point-in-time, and further along the spec-as-source spectrum than we recommend (H3 argues for spec-anchored) — but useful as evidence that specs are becoming managed artifacts with tooling, not just documents.</p>
       <div class="io">
@@ -336,10 +350,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <tr><td>D1 · design system</td><td>the third artifact standing beside the contract when the work has a screen</td></tr>
       </table></div>
 
-      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <h2 id="s8"><span class="n">8</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences to keep</div><p>The contract, not the prompt, is the unit of delegation — durable, versioned in the repo, reviewed like code; Grove named the shift, M4 makes it operational. The six components are Report 2's synthesis, and the two that decide success are the two humans must write themselves: intent (where LLM drafts measurably fail — Rationale Clarity) and non-goals (where agents measurably wander); criteria must be executable or the gate is theatre. Size by autonomy and blast radius — T0/T1/T2 — because the spec review gate only pays while contracts stay at 10–30 lines and the review stays at ten minutes; otherwise you have rebuilt Böckeler's pile of markdown.</p></div>
 
-      <h2 id="s9"><span class="n">9</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s9"><span class="n">9</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Sean Grove — The New Code</div><div class="mt">AI Engineer World's Fair, San Francisco · June 2025 · youtube.com/watch?v=8rABwKRsec4</div><p>The manifesto for specs as the fundamental unit: "code is a lossy projection from the specification", the shredded-prompt argument, and the Model Spec's clause = ID + example-as-test pattern. A worldview, not evidence — cite as such.</p></div>
       <div class="item"><div class="rt">Quattrocchi, Pasquale, Spoletini &amp; Baresi — Can LLMs generate user stories and assess their quality?</div><div class="mt">arXiv:2507.15157 · July 2025</div><p>The evidence behind §2A: 153 stories, QUS semantic dimensions, Rationale Clarity the systematic LLM weak spot (GPT-4 1.54 vs ground truth 2.66) — the why is the human's field.</p></div>

@@ -147,6 +147,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -167,7 +178,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s4"><b>4</b> · Why D5 is the anti-pattern</a>
   <a href="#s5"><b>5</b> · The designer as curator</a>
   <a href="#s6"><b>6</b> · Choosing the level</a>
-  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> &middot; Applying it</a>
   <a href="#s8"><b>8</b> · Further reading</a>
 </nav>
 <main>
@@ -177,7 +188,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>Positioning, stated plainly: <strong>D1–D5 is our synthesis</strong>, inspired by P1–P5 — flag it wherever it appears. It has honest ancestors: Parasuraman's levels of automation applied to design activities by Altavilla &amp; Blanco (DESIGN 2020), Morris et al.'s per-task autonomy ladder (<em>Levels of AGI</em>, 2023 — domain-general), and Stanford's Human Agency Scale H1–H5 (arXiv:2506.06576; 1,500 workers, 844 tasks — per-task, but not design-specific). The nearest design-specific frame is Matt Davey's AI Design Capability Maturity Model (five levels, Limited → Leading, as summarized and extended with a sixth "Symbiotic" level by Jakob Nielsen, UX Tigers, March 2026) — but that is an <em>organizational</em> maturity model (leadership, budget, culture, enablement), not a per-task autonomy scale. As of July 2026 we found no published design-specific per-task autonomy ladder; the flag holds, point-in-time, and the space is moving fast.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>The calibration rule is Karpathy's (YC AI Startup School, June 2025, as P5 applied it to product): build <strong>autonomy sliders</strong>, because generation is cheap and verification is expensive — set the slider by what you can verify, not by what the model can generate. Design adds a wrinkle no other layer has: the slider has <strong>two detents</strong>. The machine can verify that a screen stayed inside the system; only the designer can verify that the screen was worth making. Every rung of the D-scale is a decision about where those two verifications meet.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The five levels</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The five levels</h2>
       <div class="figscroll"><table class="map">
         <tr><th>Level</th><th>What the agent does</th><th>What the designer does</th><th>Where it stands</th></tr>
         <tr><td>D1</td><td>assisted drafting — completions, layout suggestions, asset generation on demand</td><td>makes every decision; AI is stationery</td><td>universal, uncontroversial</td></tr>
@@ -276,12 +290,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>And because the failure mode is drift rather than decision, every level assignment needs its <strong>downshift triggers</strong>, watched per artifact type: review time collapsing while PR volume grows; lint waivers accumulating; slop tells (Krebs' patterns) appearing in merged diffs; the kill rate on agent PRs falling toward zero; a designer unable to articulate why a recently shipped screen is right. Any of them fires: drop the artifact one rung and rebuild the review habit before climbing again. The scale is a dial, not a ratchet.</p>
       <p>The topic's own open question — what measurable criteria gate a team's move from D3 to D4 — gets an honest answer: <strong>as of July 2026, no published quantitative standard exists</strong>, and we looked. What exists: adoption metrics (Pinterest's Gestalt team computes design adoption as DS-library layers ÷ total layers per frame, nightly via their FigStats service over the Figma API, plus a cloud lint of hex-codes-vs-styles — published on Figma's blog, February 2023); maturity frameworks usable as checklists (NN/g's six-dimension Design-System Maturity article, July 2026 — days old at writing; zeroheight's model, which now includes an "AI Readiness" axis — vendor); code-side component analytics (Omlet — vendor). "Self-healing design system" (Kavcic, June 2025) remains a blog concept with no measured deployment. So the D3→D4 criteria are today an engineering judgment; our candidate set (synthesis, flagged): review throughput stable as agent volume grows; waiver and revert rates on agent PRs flat or falling; drift incidents per quarter bounded; a named curator with protected review hours (the PB1 mechanic). Measure for two clean quarters at D3 before granting the rung — and treat the absence of a standard as a finding about the field, not a gap in this document.</p>
 
-      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <h2 id="s7"><span class="n">7</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>which level does each artifact type actually run at today — and who decided?</li><li>is the deterministic half of the harness installed (lint, axe, baselines), or is the "gate" a skim?</li><li>what are the review-capacity numbers — PRs per designer-hour, and is volume outpacing them?</li><li>any artifact already drifting toward D5 by rubber-stamp (check the §6 triggers)?</li><li>how do juniors build taste here, if the grinding work is automated?</li></ul></div>
       <div class="box"><div class="lab">Build</div><ul><li>set levels per artifact type, explicitly, with the D-scale as shared vocabulary</li><li>install the machine half first, in D5's cost order — lint before visual regression before interaction tests</li><li>name the curator: write-pen on durable design context, protected review hours</li><li>wire the downshift triggers into the same ceremony; treat the scale as a dial</li><li>pilot D4 only after two clean quarters at D3, on the §6 candidate criteria</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember D6 by</div><p>The design layer gets its own autonomy scale because it alone has a split verifier — machines prove conformance (FrontendBench's deterministic scripts) but not quality (WebDevJudge's 70% plateau against an 84.56% human baseline; UI-Bench's expert panels) — so the D1–D5 ladder (assisted drafting → constrained generation → maintenance-with-review → gated system proposals → autonomous anti-pattern) caps where judgment begins, and it is our synthesis: Davey's maturity model (extended by Nielsen) is the nearest named frame and measures organizations, not task autonomy. The evidence rates the rungs: D2's constraints are what separate a system from the slop audit's 22%; D3's ceiling is priced by CodeRabbit (1.7× issues), Veracode (45% security failure, flat across model generations) and CodeA11y (0 of 16 prompting for accessibility); D4 is gated by governance capacity, not model quality; and D5 has no evidence, an automation-bias literature predicting its degradation, and a strongest advocate (Nielsen's Level 6) who still keeps humans curating "the soul." The designer's job becomes curator — write-pen on durable design context, quality gate at PR level, NN/g's "curated taste, research-informed contextual understanding, critical thinking, and careful judgment" — with levels set per artifact, dialed down on the drift triggers, and the Junior Designer Dilemma as the role's open wound.</p></div>
 
-      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s8"><span class="n">8</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Moran, Budiu &amp; Gibbons — State of UX 2026: Design Deeper to Differentiate</div><div class="mt">Nielsen Norman Group · Jan 16, 2026 · nngroup.com/articles/state-of-ux-2026</div><p>The role-shift source: component-slappers "already replaceable by AI"; curated taste, contextual understanding, critical thinking and judgment not automatable. An editorial forecast — cite as expert judgment, not data.</p></div>
       <div class="item"><div class="rt">Nielsen — 2025 Predictions Revisited · The Capability Maturity Model for AI in Design</div><div class="mt">UX Tigers · Dec 22, 2025 &amp; Mar 5, 2026 · uxtigers.com</div><p>The pixel-pushing obituary (a retrospective self-grade — read it as commentary) and Davey's five-level org-maturity model with Nielsen's sixth "Symbiotic" level: the nearest named frame to D1–D5, and §4's counter-argument in full.</p></div>

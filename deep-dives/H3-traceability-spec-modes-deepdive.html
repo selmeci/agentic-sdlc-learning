@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -167,7 +178,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s6"><b>6</b> · Provenance — who wrote this?</a>
   <a href="#s7"><b>7</b> · A minimal ID scheme</a>
   <a href="#s8"><b>8</b> · Framework map</a>
-  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> &middot; Applying it</a>
   <a href="#s10"><b>10</b> · Further reading</a>
 </nav>
 <main>
@@ -176,7 +187,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The failure mode is already documented — though so far as vendor narrative, not measurement. Jama Software describes a systems-engineering team that ran a traceability audit about six months into an AI-assisted initiative and found that "a significant share" of agent-generated code had no traceable link back to any documented requirement, alongside orphaned test cases and specified features that were never built (Mario Maldari, Jama blog, May 2026). No percentage is given, and Jama sells traceability tooling — treat it as an illustration with an incentive, not a statistic. But it names the mechanism precisely: the agent built <em>something</em>, tests passed, PRs merged, and only the audit revealed that nobody could say which requirements the code answered to.</p>
       <div class="callout"><div class="t">The link is the memory</div><p>A human author can be interrogated months later — "why is this here?" gets an answer from memory, however fuzzy. An agent's session is gone the moment it ends (the amnesia argument P3 made for decomposition). For agent-written artifacts the recorded link is not documentation <em>about</em> the knowledge — it is the only knowledge there is. That inversion is why traceability moves from compliance chore to load-bearing infrastructure in an agentic SDLC.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>Thirty years of prior art</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>Thirty years of prior art</h2>
       <p>Traceability is the least novel topic in this workbook, and that is its strength: the concepts are proven, only the economics changed. The field's founding problem statement is Gotel &amp; Finkelstein's "An Analysis of the Requirements Traceability Problem" (ICRE '94), built on a study of 100+ practitioners, which also drew the still-useful line between <em>pre-requirements</em> traceability (where a requirement came from — stakeholder, regulation, decision) and <em>post-requirements</em> traceability (where it went — design, code, test). The requirements traceability matrix is a standard artifact formalized in ISO/IEC/IEEE 29148; BABOK calls the same thing a coverage matrix. And requirements-management tools solved <em>change propagation</em> decades ago: in IBM DOORS, Jama Connect or Polarion, editing an upstream requirement automatically flags every downstream link as <strong>"suspect"</strong> until an engineer reviews and clears it — a mechanism we will steal wholesale in §4.</p>
       <p>In regulated industries none of this is optional. DO-178C (avionics) requires demonstrable bidirectional trace from system requirements through software requirements to source code, test cases and results; ISO 26262 (automotive) and IEC 62304 (medical device software) mandate the same discipline with different evidence depth. The audit question "show me the requirement behind this code" has had a mandatory answer in aerospace since before most web developers were born.</p>
       <div class="io"><div class="box"><div class="lab">What the heritage solved</div><ul><li>the vocabulary: trace links, suspect flags, coverage matrices (29148)</li><li>the mechanism: upstream change → downstream artifacts flagged for review</li><li>the governance: bidirectional trace as an audit obligation (DO-178C, ISO 26262, IEC 62304)</li></ul></div>
@@ -272,12 +286,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>M4 · information architecture</td><td>specs in the durable tier make the chain reviewable in the same diff as code; links are structure, not metadata in a silo</td></tr>
       <tr><td>M5 · brownfield</td><td>the bootstrap pass (§3) runs over the change heatmap; characterization tests inherit REQ ids as they are ratified</td></tr></table></div>
 
-      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <h2 id="s9"><span class="n">9</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>can anyone answer "which requirement does this file serve?" — for human code? for agent code?</li><li>does any ID survive from tracker to PR today, or do links die at the first hop?</li><li>where do specs live — repo, wiki, nowhere — and who notices when code drifts from them?</li><li>is agent-authored work distinguishable in git history at all?</li></ul></div>
       <div class="box"><div class="lab">Build (feeds E7 rollout)</div><ul><li>the five-move ID scheme (§7), advisory first, deterministic once trusted</li><li>the suspect gate as a PR label wired to H4's triage ritual</li><li>one provenance trailer convention in CLAUDE.md + CI</li><li>a metric for E7: % of merged PRs carrying a valid REQ id — the traceability coverage curve</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember H3 by</div><p>At agent speed the link between requirement and code is the only memory of intent, so it must be written at creation — structural IDs that travel requirement → spec → task → code → test → PR — because reconstructing links afterwards is probabilistic (~60–85%) while stamping them is deterministic and costs an agent nothing. Change management is the heritage suspect flag rebuilt on git: touch code without its spec and the PR gets flagged, feeding the drift triage. Of Böckeler's three spec modes, recommend spec-anchored and budget honestly for its invalidation discipline; treat spec-as-source as a horizon (its boldest bet, Tessl, pivoted away in January 2026), and stamp provenance now — the multi-method agent census shows unstamped agent authorship is unrecoverable even by researchers trying hard.</p></div>
 
-      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s10"><span class="n">10</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Birgitta Böckeler — Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl</div><div class="mt">martinfowler.com · October 2025</div><p>The spec-first / spec-anchored / spec-as-source framing this section builds on, with tool-by-tool analysis. The definitional anchor in a field the Radar itself calls terminologically inconsistent.</p></div>
       <div class="item"><div class="rt">Gotel &amp; Finkelstein — An Analysis of the Requirements Traceability Problem</div><div class="mt">ICRE '94</div><p>The founding problem statement (100+ practitioners; pre- vs post-requirements traceability). Thirty years of prior art in twelve pages — read it to avoid reinventing vocabulary.</p></div>

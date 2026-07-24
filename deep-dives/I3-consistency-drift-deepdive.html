@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -167,7 +178,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s6"><b>6</b> · Debt triage</a>
   <a href="#s7"><b>7</b> · Week one at the client</a>
   <a href="#s8"><b>8</b> · Framework map</a>
-  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> &middot; Applying it</a>
   <a href="#s10"><b>10</b> · Further reading</a>
 </nav>
 <main>
@@ -176,7 +187,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the pre-AI baseline: how much drift ordinary repos carry, measured (§1)</li><li>what agents change — docs as context, "context rot" in both senses, and the config-file evidence (§2)</li><li>docs-as-code: the substrate that makes docs governable at all (§3)</li><li>the docs-as-tests ladder: five deterministic checks, from doctests to contract tests (§4)</li><li>a freshness policy for the AI era — owners, timestamps, expiry, and what to measure from git alone (§5)</li><li>documentation debt triaged like technical debt, not confessed like sin (§6)</li><li>a week-one drift audit for a brownfield client (§7)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>I1 — the taxonomy: drift is what the derived discipline exists to prevent</li><li>I2 — write-permissions: who is allowed to fix what §4's checks catch</li><li>I5 — CLAUDE.md gardening and progressive disclosure, in depth</li><li>H3 — traceability: drift at the link level, suspect-flags on artifacts</li><li>E5 — the advisory/deterministic distinction this chapter keeps applying</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>Drift predates AI — the measured baseline</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>Drift predates AI — the measured baseline</h2>
       <p>It would be convenient to blame agents for documentation rot, but the baseline was measured before they arrived and it is bad. Tan, Wagner and Treude built DOCER, a detector for <em>outdated code-element references</em> — a method or file named in the documentation that has since been deleted from every source file — and ran it across the most popular GitHub projects ("Detecting Outdated Code Element References in Software Repository Documentation", arXiv:2212.01479, December 2022; journal version in <em>Empirical Software Engineering</em>, 2023). The result: <strong>28.9% of projects (265 of 918 analyzable) contained at least one outdated document</strong>, and the stale references had been wrong for <strong>4.7 years on average</strong>. These are the industry's flagship repositories, and the definition is conservative — it counts only references that provably point at nothing, not descriptions that are merely misleading.</p>
       <p>The mechanism behind that number is older still. Fluri, Würsch and Gall asked "Do Code and Comments Co-Evolve?" (WCRE 2007) across ArgoUML, Azureus and Eclipse's JDT Core, and found that 97% of comment changes happen in the same revision as the associated code change — but newly added code, despite its growth rate, barely gets commented in the first place. Translation: prose that is going to be maintained gets maintained <em>with the change or never</em>. There is no later. Every process that schedules documentation updates "for after the release" is scheduling them for the 4.7-year bucket.</p>
       <p>The phenomenon has a name in the technical-debt literature — <strong>documentation debt</strong> is a recognized debt type in the standard taxonomies (Alves et al.'s technical-debt ontology; Rios, Mendonça-Neto &amp; Spínola's 2018 tertiary study in <em>Information and Software Technology</em>, which catalogues it among fifteen types and maps it to SDLC phases). Naming matters here for one reason: it moves stale docs from the moral register ("we should be better") into the engineering register ("a liability with a principal, an interest rate, and repayment options" — §6).</p>
@@ -276,10 +290,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <tr><td>M7 · security</td><td>a stale config file is an integrity problem: agents act on it — context-rot detection is also poisoning detection (ASI06 neighbours)</td></tr>
       </table></div>
 
-      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <h2 id="s9"><span class="n">9</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences to keep</div><p>Documentation drift was already endemic before AI — 28.9% of flagship repos carried references stale for 4.7 years on average — but agents change its physics: docs became input, loaded every session and acted on without skepticism, so a stale line no longer decays quietly but is re-injected into generation "without any visible error," and the config files agents trust most are measurably rotten in about a quarter of repositories. The countermeasure is E5's move applied to prose: freshness metadata and same-PR review as the advisory layer, and docs-as-tests as the deterministic one — executable examples, reference and link checks (a two-snapshot grep covers CLAUDE.md and AGENTS.md), docs exercised against the product, and contract tests from the spec — each a build-failing check, because "keep docs updated" is how every client got here. Triage the resulting pile like the debt it is — delete or demote, regenerate, or rewrite-and-own; never the unowned middle — with deterministic detectors producing the worklist, agents drafting repairs, and humans gating the merge, since a documentation fix is still a write to a durable artifact.</p></div>
 
-      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s10"><span class="n">10</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Tan, Wagner &amp; Treude — Detecting Outdated Code Element References in Software Repository Documentation</div><div class="mt">arXiv:2212.01479 · December 2022 · journal version in Empirical Software Engineering, 2023</div><p>The baseline and the tool (DOCER): 28.9% (265/918) of top GitHub projects with at least one outdated document, stale for 4.7 years on average.</p></div>
       <div class="item"><div class="rt">Treude &amp; Baltes — Context Rot in AI-Assisted Software Development</div><div class="mt">arXiv:2606.09090 · June 2026</div><p>DOCER pointed at agent config files: stale references in 23.0% of repos; the definition of config-file context rot, the "without any visible error" failure mode, and the two-snapshot CI grep.</p></div>

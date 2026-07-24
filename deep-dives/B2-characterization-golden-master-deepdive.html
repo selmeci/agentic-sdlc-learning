@@ -147,6 +147,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -166,7 +177,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s4"><b>4</b> · The five traps</a>
   <a href="#s5"><b>5</b> · The workflow</a>
   <a href="#s6"><b>6</b> · Toolbox &amp; exit criteria</a>
-  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> · Applying it</a>
   <a href="#s8"><b>8</b> · Further reading</a>
 </nav>
 <main>
@@ -175,7 +186,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the two pinning techniques, precisely: Feathers characterization (per-behavior assertions) and Falco approval/golden-master (whole-output diffs) — and when each fits (§1–§2)</li><li>the terminology map: approval / golden master / snapshot / characterization are one mechanism with four emphases — with Bache's argument for which word to use (§2)</li><li>the evidence file: Meta TestGen-LLM and ACH, Qodo Cover, UnitTenX — what filtered generation achieved in production, with the numbers in their honest contexts (§3)</li><li>the five traps: coverage vanity, oracle-by-construction, bug-as-spec measured, flaky pins, and the agent gaming its own net (§4)</li><li>the workflow: "document, don't fix" → deterministic filter → sampled human review → SUSPECTED-BUG triage → mutation gate → read-only commit (§5, our synthesis)</li><li>the toolbox point-in-time and the exit criteria table (§6)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>B1 — why this step is second, never first: the dependency chain</li><li>B3 — mutation testing: the gate that decides whether these tests are real</li><li>B4 — agent archaeology: the read-only comprehension this step builds on</li><li>B5 — the heatmap that picks which module to characterize first, and Hyrum's Law on why bugs are load-bearing</li><li>E4 — verification-first: characterization is E4's loop being built where none existed</li><li>E5 — deterministic vs advisory: the filter pipeline is E5 applied to test generation</li><li>H2 — EARS/Gherkin: greenfield's machine-verifiable AC; characterization is the brownfield cousin that pins instead of specifies</li><li>I2 — write permissions: why approved characterization tests go read-only for the agent</li><li>D7 — design archaeology: the same golden-master move on the visual layer</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>Pinning what is: characterization tests</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>Pinning what is: characterization tests</h2>
       <p>Michael Feathers introduced the technique in <em>Working Effectively with Legacy Code</em> (2004), in the chapter titled — with a candor most methodology books avoid — "I Need to Make a Change, but I Don't Know What Tests to Write." His definition: <em>"A characterization test is a test that characterizes the actual behavior of a piece of code."</em> The purpose, in his later words: <em>"The purpose of characterization testing is to document your system's actual behavior, not check for the behavior you wish your system had."</em> The procedure is almost mechanical, which is precisely what makes it agent-compatible. Call the code with a chosen input. Write an assertion you <em>know</em> is wrong. Run it; the failure message tells you what the code actually returns. Change the assertion to expect that. You now have a test that passes — and a documented fact about the system. Repeat until the behaviors you care about are pinned.</p>
       <p>Notice what the procedure never asks: whether the answer is <em>correct</em>. That omission is deliberate, and Feathers defends it with an argument that has only grown teeth since 2004: <em>"When a system goes into production, in a way, it becomes its own specification."</em> He tells the story of finding an obvious bug, fixing it, and fielding complaints from users whose workflows depended on the broken behavior. The general law arrived later, from Google's C++ estate — <strong>Hyrum's Law</strong>: <em>"With a sufficient number of users of an API, it does not matter what you promise in the contract: all observable behaviors of your system will be depended on by somebody."</em> (An observation of Hyrum Wright's, named by Titus Winters.) The canonical museum piece is Excel, which to this day treats 1900 as a leap year; Microsoft's own documentation explains the incorrect assumption was kept so Excel could <em>"use the same serial date system used by Lotus 1-2-3"</em> — a bug preserved for decades because correctness mattered less than what users depended on. A smaller, closer-to-home instance: when Java 8 reorganized HashMap's internals, iteration order — never guaranteed, always depended on — shifted, and test suites failed across the ecosystem (the Broad Institute's picard tracked it as "Unit tests fail due to changes in HashMap iteration order"). Pairing these examples with Hyrum's Law is our synthesis, not the sources'; but the pattern they share is the reason characterization pins <em>everything observable</em>, bugs included.</p>
       <p>That is the technique's strength and its trap in one sentence. As a <strong>safety belt for refactoring</strong>, pinning actual behavior is exactly right: the refactor's contract is "observable behavior does not change," and a suite that encodes today's behavior — warts included — is the only suite that can enforce it. As a <strong>specification</strong>, the same suite is poison: it asserts that the warts are load-bearing without anyone having decided they are. Feathers wrote the technique for a developer who holds the difference in their head — they know they are documenting, not specifying. An agent holds nothing in its head between tasks (E2); hand it the technique without the discipline and you get B1's bug-as-spec loop at industrial scale. The discipline — who decides what a pinned wart means — is §5's whole subject.</p>
@@ -333,7 +347,9 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       </table></div>
       <p>The last row's tail matters: Feathers and Falco both treat pins as potentially <em>disposable</em> — a golden master that existed to guard one refactor can be deleted after it, and often should be, precisely because of the approve-all fatigue arc. Keep the per-behavior characterization tests that read as documentation; discard the whole-output pins whose diffs nobody will read next quarter; record which you did in the module's ADR trail (I1: durable decision, disposable artifact). A net you keep is a maintenance commitment, not a trophy.</p>
 
-      <h2 id="s7"><span class="n">7</span>Takeaways</h2>
+      <h2 id="s7"><span class="n">7</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <ul>
         <li><strong>Choose techniques that don't need understanding.</strong> Characterization (per-behavior) and approval/golden-master (whole-output) were designed for code nobody trusts their grasp of — the agent's weakness is the technique's operating assumption, not its refutation (§1–§2).</li>
         <li><strong>The filter is the product.</strong> Meta shipped 73%-acceptance test generation by putting build/repeat-run/coverage-delta gates in front of humans; ACH upgraded the gate to injected faults. Ask any generator vendor what stands between the model and your review queue (§3).</li>
@@ -343,7 +359,11 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <li><strong>Pins can be disposable.</strong> Keep what documents; discard what nobody will re-read; write down which — the fatigue arc kills unread golden masters anyway (§6).</li>
       </ul>
       <div class="callout pine"><div class="t">Three sentences</div><p>Characterization and approval testing pin what a legacy system <em>does</em> — deliberately including its bugs, because Hyrum's Law says someone depends on them — and they are the natural first write task for an agent precisely because they replace understanding with observation plus a human approval step. The production evidence (Meta's TestGen-LLM and ACH, Qodo's public PR, UnitTenX's model-checker anchor) converges on one design: mass generation is a commodity and every guarantee lives in the deterministic filter chain and the repair loop, while the measured traps — 100%-coverage/4%-mutation suites, fault detection falling from ~25% to ~14% when the model sees buggy code, generated tests flaking at multiples of the baseline rate, agents editing failing tests to reach green — are each a place where generation tried to do verification's or interpretation's job. Our workflow holds the line with "document, don't fix" plus SUSPECTED-BUG marking, sampled review, two-door triage (load-bearing → ADR; real bug → ticket, fixed only after the net exists), a ~70% mutation gate before any write phase, and read-only status for the approved net (our Report 4 synthesis; components standard, assembly ours).</p></div>
-
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
       <h2 id="s8"><span class="n">8</span>Further reading</h2>
       <div class="reading">
         <div class="item"><div class="rt">Feathers — Working Effectively with Legacy Code (2004) + "Characterization Testing" (blog)</div><div class="mt">the source technique · ch. 13 · michaelfeathers.silvrback.com</div><p>The definition, the failing-assertion procedure, and the "it becomes its own specification" argument — the chapter's §1 in the author's own words.</p></div>

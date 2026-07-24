@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -166,7 +177,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s4"><b>4</b> · The deterministic stack</a>
   <a href="#s5"><b>5</b> · Rules files as governed artifacts</a>
   <a href="#s6"><b>6</b> · The same split everywhere</a>
-  <a href="#s7"><b>7</b> · Takeaways &amp; further reading</a>
+  <a href="#s7"><b>7</b> &middot; Applying it</a>
 </nav>
 <main>
       <p class="kicker">Study companion · module M7</p>
@@ -175,7 +186,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The principle is no longer ours alone — 2025–26 gave it canonical wording from three directions. OWASP's LLM Top 10 (LLM07:2025, System Prompt Leakage) says it in the chapter's own vocabulary: "Critical controls such as privilege separation, authorization bounds checks, and similar must not be delegated to the LLM, either through the system prompt or otherwise. <strong>These controls need to occur in a deterministic, auditable manner, and LLMs are not (currently) conducive to this.</strong>" Anthropic's containment retrospective (25 May 2026 — vendor, but an engineering post-mortem rather than marketing) compresses it to one line: "<strong>The deterministic boundary is what gets hit when everything probabilistic misses.</strong>" And Johann Rehberger's standing verdict on instruction hierarchies (quoted by Willison, 22 Jul 2024) is the practitioner form: "Do not depend on system instructions alone to secure a system, protect data or control automatic invocation of sensitive tools." When the standards body, the model vendor and the red-teamer agree, the split stops being an opinion.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>A rule that lives in the model's context is a <em>request</em>; a rule that lives in the harness is a <em>boundary</em>. Requests shape what the agent tends to do — valuable, and worth writing well. Boundaries decide what can happen at all — and only boundaries survive contact with an injection. The engagement litmus for any proposed control: <em>who executes it, the model or the machine?</em></p></div>
 
-      <h2 id="s1"><span class="n">1</span>The advisory layer, mechanically: steering that works — until it matters</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The advisory layer, mechanically: steering that works — until it matters</h2>
       <p>Rules files are the most-loaded instruction channel in agentic coding: CLAUDE.md, AGENTS.md, <span class="mono">.cursor/rules</span>, <span class="mono">.github/copilot-instructions.md</span>, SKILL.md packs. Mechanically they are all the same thing — text automatically prepended to the model's context at session start (Cursor's own docs describe rules as persistent context "at the prompt level", prepended to the model context; even an "enforced" Team rule is enforcement of <em>injection precedence</em>, not of behavior). Nothing executes them; the model reads them and tends to comply. Two 2026 measurements calibrate both halves of that sentence. ETH Zurich's AGENTS.md study (arXiv:2602.11988) confirms the steering is real: "agents generally follow instructions present in the context files. For instance, uv is used 1.6 times per instance on average when mentioned in the context files, compared to fewer than 0.01 times when it is not mentioned" — and the authors stress that the files' weak effect on task success "is not due to a lack of instruction-following". Read that again with a security lens: <strong>the channel works exactly as designed, which is precisely why a poisoned file on that channel is dangerous.</strong> The same study prices the layer: developer-written files buy ~+4% success on average, LLM-generated ones <em>cost</em> 3%, and both add ~20%+ inference cost (a smaller counter-study, arXiv:2601.20404, instead finds −28.6% median runtime at comparable completion — the efficiency question is open; the steering fact is not).</p>
       <p>What the layer cannot do is bind. The vendors now say so in their own documentation. Claude Code's permissions page: "Permission rules are enforced by Claude Code, not by the model. Instructions in your prompt or CLAUDE.md shape what Claude tries to do, but they don't change what Claude Code allows" — and its Bash guidance repeats that CLAUDE.md advice "shapes what Claude tries but doesn't enforce a boundary". Anthropic's containment post gives the reason: "Because models are probabilistic, these shape only what the agent tends to do, not what it is theoretically capable of doing." OpenAI reached the structural version in April 2024 (arXiv:2404.13208): by default "every instruction is executed as if it was in kernel mode" — system prompt and attacker text arrive with the same privilege — and their trained hierarchy fix, while real, ships with the caveat "our current models are likely still vulnerable to powerful adversarial attacks." A probabilistic hierarchy is still the advisory layer, just a better-tuned one.</p>
       <figure>
@@ -300,9 +314,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <h2 id="s6"><span class="n">6</span>The same split everywhere: one principle, five modules</h2>
       <p>Nothing in this chapter is new to the framework — that is the point. E5 stated the litmus for engineering governance ("what must never happen" goes in a hook; "what the model should know" goes in the prompt). E4's test-protection ladder is the same stack in miniature: advisory rule → deterministic hook → verification gate. I2 turns the artifact taxonomy from prose into write-permissions enforced by hooks — "a taxonomy is prose until something refuses a write". H2/H3 lint EARS conformance and REQ-ids deterministically instead of asking reviewers to remember them. D5 gates design conformance with Stylelint and visual regression while honestly leaving taste to a human, because no lint rule checks "feels like our brand". S3's contribution is to name the pattern as <em>the</em> security organizing principle — this mapping across modules is the framework's own synthesis, not an industry standard, and should be presented to clients as such. The practical consequence for engagement language: whenever a client's proposed control is a sentence, ask where the sentence executes. If the answer is "in the model", the control is documentation.</p>
 
-      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <h2 id="s7"><span class="n">7</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout"><div class="t">Three sentences to remember S3 by</div><p>Every control is either advisory (model-interpreted: rules files, system prompts, SKILL.md) or deterministic (harness-executed: permissions, hooks, sandbox, egress, CI), and only the second kind survives injection — "the deterministic boundary is what gets hit when everything probabilistic misses" (Anthropic, 25 May 2026), and critical controls "need to occur in a deterministic, auditable manner" (OWASP LLM07). The advisory layer is measurably followed — which is its value and its danger: the Rules File Backdoor (Pillar, 18 Mar 2025; ATLAS AML.CS0041) hid directives in invisible Unicode that rides templates, PRs and forks, and the 2025–26 CVE record (59536, 21852) shows the deterministic config path is just as attackable when repo-controlled, so rules and config files must be governed like third-party code: reviewed, scanned for hidden Unicode, hash-pinned, never auto-loaded from an agent's own session. And keep the fine print: deterministic mechanisms only bound what they cover, degrade to advisory if the agent can edit them (issue #11226), and adaptive attackers bypass published defenses at &gt;90% for most of them (Nasr et al., Oct 2025) — so the posture stays defense-in-depth, with the egress allowlist as the highest-leverage single control.</p></div>
-      <h3>Further reading</h3>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h3>Further reading</h3>
       <div class="reading">
       <div class="item"><div class="rt">Pillar Security — "New Vulnerability in GitHub Copilot and Cursor" (18 Mar 2025) · MITRE ATLAS AML.CS0041</div><div class="mt">pillar.security/blog · atlas.mitre.org (via the official mitre-atlas/atlas-data YAML — the site's study page currently 404s without JS)</div><p>The Rules File Backdoor primary source: the three-part payload, the "virtually invisible" and fork-survival verbatims, and the full disclosure timeline (Cursor 26 Feb → "users' responsibility" 6 Mar; GitHub 12 Mar, same-day). Remember: the PoC demonstrated a remote-script injection, not exfiltration; the Tag-block codepoint range comes from the technique's literature, not Pillar's prose.</p></div>
       <div class="item"><div class="rt">Embrace The Red — "ASCII Smuggler" (14 Jan 2024) · Boucher &amp; Anderson, "Trojan Source" (USENIX Security 2023)</div><div class="mt">embracethered.com · arXiv:2111.00169 · the invisible-Unicode lineage</div><p>Tag-block mirroring of ASCII that UIs skip and models read, the human-in-the-loop exploitation warning, and the input/output filtering mitigation — plus the bidi prior art (CVE-2021-42574/-42694) that made "reviewers and compilers read different text" a known class four years before it hit rules files.</p></div>

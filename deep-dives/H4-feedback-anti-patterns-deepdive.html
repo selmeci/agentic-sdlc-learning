@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -168,7 +179,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s7"><b>7</b> · Loop-health metrics</a>
   <a href="#s8"><b>8</b> · Five brownfield moves</a>
   <a href="#s9"><b>9</b> · Framework map</a>
-  <a href="#s10"><b>10</b> · Takeaways</a>
+  <a href="#s10"><b>10</b> &middot; Applying it</a>
   <a href="#s11"><b>11</b> · Further reading</a>
 </nav>
 <main>
@@ -177,7 +188,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>There is also an asymmetry worth naming up front. The engineering layer is structurally the <em>best-placed detector of bad requirements</em> in the whole SDLC: implementation is where vagueness becomes a concrete fork in the road ("should the discount apply before or after tax?" cannot be deferred once you are writing the line). Agents hit those forks earlier, faster and in greater volume than any human team ever did — the question is whether the discovery travels back to the requirement's owner or dies in a session log. M2 ended with the PM as editor and curator (P4); H4 supplies the mechanism that keeps feeding that editor the one input only implementation can produce: evidence about the requirements themselves.</p>
       <div class="callout"><div class="t">The division of labour with E7</div><p>E7's anti-pattern catalogue (AP1–AP6) covers <strong>rollout failures</strong> — autonomy without guardrails, review bottlenecks, perception-driven decisions. H4's catalogue covers <strong>handoff failures</strong>: the four ways the contract itself goes wrong between product and engineering. Same discipline — every named failure maps to a specific control — different layer of the stack.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The silence is the default — agents don't ask</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The silence is the default — agents don't ask</h2>
       <p>The naïve assumption behind throw-over-the-wall delegation is that an agent facing a broken requirement will stop and say so. Measured behaviour says otherwise, consistently, across independent benchmarks. HumanEvalComm (Wu et al., ACM TOSEM 2025, arXiv:2406.00215) rewrote 164 HumanEval problems into 762 variants with injected ambiguity, inconsistency or missing information: <strong>over 60% of code-LLM responses produced code instead of a clarifying question</strong>. "Learning to Ask" (Wang et al., EMNLP 2025) found the same reflex in tool-using agents — faced with an instruction missing a required argument, models <em>hallucinate the missing value</em> rather than ask, a behaviour the authors trace to next-token training itself. And MAST, the UC Berkeley-led failure taxonomy of multi-agent systems (arXiv:2503.13657, preprint), puts a number on it in the wild: "fail to ask for clarification" alone accounts for roughly 12% of observed failures.</p>
       <p>The sharpest result is the newest. HiL-Bench (Scale AI, arXiv:2604.09408, May 2026 — preprint, re-verify) gives agents an explicit <span class="mono">ask_human()</span> tool and withholds one piece of task-critical information: on software-engineering tasks, pass rates (Pass@3) that sit at 67–88% with full information <strong>collapse to 1–9%</strong> when success requires recognising the gap and asking. On those same tasks even the best models detected fewer than half of the blockers — the dominant failure signature is confident execution on wrong beliefs. The capability gap is not writing code; it is <em>knowing when not to</em>. The cost of the silence is also quantified: on ambiguous requirements, Pass@1 drops by ~7.2 percentage points on average and by 31 for the worst ambiguity types, and ambiguity nearly doubles a model's internal self-contradiction rate (Orchid benchmark, arXiv:2604.21505 — preprint, re-verify). A newer interactive line measures the questions themselves and finds detection wildly uneven by defect class — some ambiguity types get caught nearly every time, others barely at all (ClarifyCodeBench, arXiv:2607.00711 — preprint).</p>
       <div class="io"><div class="box"><div class="lab">What the benchmarks establish</div><ul><li>default behaviour is to proceed, not ask — &gt;60% code-instead-of-question on ambiguous specs (TOSEM 2025)</li><li>the gap is judgment, not skill: 67–88% → 1–9% when asking is required (HiL-Bench, preprint)</li><li>detection is uneven by defect class — some ambiguity types are barely caught (ClarifyCodeBench, preprint)</li><li>guided clarification measurably pays: +11.52% relative from targeted questions (ClarifyGPT, H2)</li></ul></div>
@@ -286,10 +300,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <tr><td>T2 · pilot design</td><td>loop-health metrics are pilot success criteria, baselined before day one</td></tr>
       </table></div>
 
-      <h2 id="s10"><span class="n">10</span>Takeaways for our engagement</h2>
+      <h2 id="s10"><span class="n">10</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences to keep</div><p>Agents do not volunteer doubt — across independent benchmarks the default on an ambiguous or contradictory contract is confident silent execution, so the return channel must be instructed, structured and owned, never assumed. Every drift event has exactly three exits — code wrong, requirement wrong, or we learned something — and until someone with authority picks one, the process (not the artifact) is what's broken; the third exit is normal engineering, not failure, and a loop that punishes learning will hide it. The whole apparatus is cheap — a steering-file rule, a label with an owner, two CI greps, fifteen minutes a week — and its health is measurable from day 0 through DORA's rework rate and agent-PR merge outcomes, which is what turns "the handoff works" from a feeling into a number.</p></div>
 
-      <h2 id="s11"><span class="n">11</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s11"><span class="n">11</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Leonid Bugaev — Source of truth: Code, Spec, or Requirement?</div><div class="mt">blog.reqproof.com · May 14, 2026</div><p>The triage question verbatim, and the line this chapter is built on: until it is resolved, "something is broken in the process." Author is building a traceability product — read with that interest in mind.</p></div>
       <div class="item"><div class="rt">Wu et al. — HumanEvalComm: Benchmarking the Communication Competence of Code Generation</div><div class="mt">ACM TOSEM 2025 · arXiv:2406.00215</div><p>The peer-reviewed anchor for §1: 762 ambiguity-injected problems, &gt;60% of responses code instead of asking. Communication Rate and Good Question Rate as measurable properties of a coding model.</p></div>

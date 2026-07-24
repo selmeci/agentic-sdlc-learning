@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -165,7 +176,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s4"><b>4</b> &middot; Secrets from day 0</a>
   <a href="#s5"><b>5</b> &middot; STOP criteria &amp; back-arrows</a>
   <a href="#s6"><b>6</b> &middot; Day 1 and the master plan</a>
-  <a href="#s7"><b>7</b> &middot; Takeaways</a>
+  <a href="#s7"><b>7</b> &middot; Applying it</a>
   <a href="#s8"><b>8</b> &middot; Further reading</a>
 </nav>
 <main>
@@ -175,7 +186,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the four phases with per-phase permissions, artifacts and autonomy levels (§1)</li><li>exit criteria as deterministic gates — the table, and who signs off (§2)</li><li>the metrics that survive scrutiny: delivery health vs bootstrap progress, with the self-report trap and the vendor-telemetry file (§3)</li><li>secrets from day 0: the 2026 evidence that agent-assisted commits leak more, and the toolbox (§4)</li><li>STOP criteria and back-arrows: never-start conditions, automatic demotion, and the human factor (§5)</li><li>the day-1 recipe and the master plan that merges Reports 1–3 and 6 into one table (§6, our synthesis)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>B1 — the dependency chain these phases operationalize, and why the ordering is not optional</li><li>B2/B3 — what F1 builds (the net) and the gate that grades it</li><li>B4 — F0's workflow in full: archaeologist prompts, hypothesis registers, sampling</li><li>B5 — the heatmap that picks F2's modules and drives F3's expansion</li><li>E5/E6 — deterministic vs advisory, and the L1–L5 autonomy scale the phases map onto</li><li>E7/T2 — how the pilot inside F2 is measured; baseline discipline</li><li>I2 — write permissions as governance: the enforcement layer under every phase</li><li>M7 — the security module this roadmap inherits its blast-radius logic from</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>The four phases — permissions, not quarters</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The four phases — permissions, not quarters</h2>
       <p>The first thing to say about F0–F3 is what the F stands not for: not "fiscal", not a schedule. A phase is a <strong>permission tier plus a proof obligation</strong> — the agent's write scope stays fixed until the exit criteria are met, however long that takes, and widens only when a gate opens (§2). This is the same logic the write-permission matrix gave individual artifacts in I2, applied to the engagement as a whole; it is also why the roadmap survives the awkward fact, established in B1, that agent throughput is worthless while the verification loop beneath it is missing. Phases are cheap to describe and expensive to skip: every failure pattern catalogued in B1 — the bug-as-spec loop, the review pile-up, the deleted-tests incident — is a phase boundary crossed without its proof.</p>
 
       <figure>
@@ -294,12 +308,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       </table></div>
       <p>The mapping is this workbook's synthesis — the rows are standard components from the named chapters; the assembly into one table is ours, and it is the artifact to put in front of a client when the six reports would be five too many.</p>
 
-      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <h2 id="s7"><span class="n">7</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess (before proposing dates)</div><ul><li>Can a verification loop exist here at all — build, test environment, one seam? If not, the proposal is F0-only and says so.</li><li>Is any scope safety-regulated or audit-bound? Then provenance machinery precedes write access, whatever the demo showed.</li><li>What does the full-history secrets scan return — and is anyone prepared for the answer to be "active production credentials"?</li><li>Who would the champion be, and would their wins be visible to peers?</li></ul></div>
       <div class="box"><div class="lab">Commit (the plan itself)</div><ul><li>Phases as permission tiers with proof obligations; gates stated as deterministic checks with named sign-off; dates estimated, criteria fixed.</li><li>Baseline instrumented before F2; success criteria pre-registered; self-report demoted to a health signal.</li><li>Back-triggers agreed at gate-opening so demotion is automatic — a number acts, no meeting needed.</li><li>One master table (§6) as the client-facing plan; the six reports behind it as appendices.</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember B6 by</div><p>The roadmap is a permission ladder, not a schedule: each phase fixes what the agent may touch, and the gate out of it is a measured exit criterion — mutation score, clean scan, stable rework rate — checked deterministically and signed by a named human, with demotion automatic when the numbers regress. The evidence file says infrastructure decides outcomes — METR disqualified self-report, Faros' telemetry shows production outrunning review until review is skipped, DORA's amplifier findings and KPMG's stall diagnosis both point at readiness rather than models, and GitGuardian's 2026 measurement (agent-assisted commits leaking at ~2× baseline) makes the secrets scan a day-1 gate rather than a hardening task. F0–F3 has no published canonical equivalent as of July 2026 — its cousins stage oversight per task, not access over time — so it ships flagged as Report 4's synthesis: assembled from named, standard components, defensible piece by piece, and ours.</p></div>
 
-      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s8"><span class="n">8</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">DORA — metrics history, the five metrics, and the AI Capabilities Model</div><div class="mt">dora.dev/insights/dora-metrics-history · dora.dev/guides/dora-metrics-four-keys · 2025 AI Capabilities Model PDF</div><p>The current vocabulary (change fail rate, deployment rework rate — introduced 2024), verbatim definitions, and the seven capabilities; stance, version control and small batches are the roadmap-relevant three.</p></div>
       <div class="item"><div class="rt">Murphy-Hill, Butler &amp; Savelieva — CLI coding agents at Microsoft</div><div class="mt">arXiv:2607.01418 · July 2026 · independent, instrumented</div><p>Tens of thousands of engineers: ~24% sustained PR-merge lift over four months, adoption spreading through peer networks — the F3 diffusion evidence and the anti-mandate argument.</p></div>

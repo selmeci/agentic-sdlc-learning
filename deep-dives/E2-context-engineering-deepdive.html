@@ -145,6 +145,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -164,7 +175,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s3"><b>3</b> · How it is assembled</a>
   <a href="#s4"><b>4</b> · Context as attack surface</a>
   <a href="#s5"><b>5</b> · Mapping to the SDLC</a>
-  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s6"><b>6</b> &middot; Applying it</a>
   <a href="#s7"><b>7</b> · Further reading</a>
 </nav>
 <main>
@@ -174,7 +185,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>For our engagement this is where a client's existing information architecture (M4) either pays off or bites. A brownfield repo with retrievable, well-structured sources makes context engineering cheap; a repo where knowledge lives in people's heads and stale wikis makes it the first thing we must fix. This document unpacks what context <em>is</em>, the physics that constrain it, how it is assembled, and what we configure.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Context is not "everything the model might need" — it is <em>the smallest set of high-signal tokens that makes the next step succeed</em>. More context is not better; past a point it is actively worse. The discipline is curation under a budget, repeated every turn.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>What "context" actually contains</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>What "context" actually contains</h2>
       <p>Context is the full working set handed to the model at a given step — not just the user's message. In a coding agent it is assembled from several distinct sources, each with a different trust level and lifespan:</p>
       <div class="io"><div class="box"><div class="lab">Trusted / durable</div><ul><li>system &amp; role instructions (CLAUDE.md/AGENTS.md)</li><li>the task spec (handoff contract, M3)</li><li>source-of-truth artifacts: code, ADRs, specs (M4)</li><li>tool definitions — every registered tool's name, description and schema sits in the window before any work starts</li></ul></div>
       <div class="box"><div class="lab">Untrusted / tainted</div><ul><li>retrieved web content</li><li>ticket &amp; issue text, design-file text (M7 injection channels)</li><li>tool results from external systems</li></ul></div>
@@ -241,12 +255,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>Long tasks</td><td>long-horizon mgmt</td><td>compaction / notes / sub-agents keep the window in the green zone</td></tr>
       <tr><td>Any external input</td><td>taint handling</td><td>retrieved/ticket/design content treated as untrusted; summarised, gated</td></tr></table></div>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess (feeds E6)</div><ul><li>Are source-of-truth artifacts retrievable, or tribal knowledge?</li><li>Is documentation fresh enough to be worth retrieving?</li><li>Repo size/shape: does grep navigation stay tractable?</li><li>Where does untrusted content enter (tickets, web, design)?</li></ul></div>
       <div class="box"><div class="lab">Build</div><ul><li>default to agentic search; hybrid only when measured to help</li><li>enforce "reference, don't copy" — excerpts + links</li><li>set compaction/notes conventions for long tasks</li><li>taint untrusted retrieval; summarise web content</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember E2 by</div><p>Context is the smallest set of high-signal tokens that makes the next step succeed — more is worse, because attention rots as the window grows. Retrieve precisely, include sparingly (reference don't copy), and shed load on long tasks via compaction, notes and sub-agents. Every retrieved token is also a trust decision, so context engineering and injection defence are one discipline.</p></div>
 
-      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s7"><span class="n">7</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Effective context engineering for AI agents</div><div class="mt">Anthropic Engineering · anthropic.com/engineering/effective-context-engineering-for-ai-agents</div><p>The canonical treatment: "smallest set of high-signal tokens", the Goldilocks zone, and long-horizon techniques. Start here.</p></div>
       <div class="item"><div class="rt">Context Rot: how increasing input tokens impacts LLM performance</div><div class="mt">Chroma Research (2025)</div><p>The empirical study across 18 models behind the "rot zone" — recall degrades well before the window limit, worse as semantic similarity drops.</p></div>

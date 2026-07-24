@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -165,7 +176,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s3"><b>3</b> · Assume breach, reduce blast radius</a>
   <a href="#s4"><b>4</b> · The honest ceiling</a>
   <a href="#s5"><b>5</b> · The cross-cut map</a>
-  <a href="#s6"><b>6</b> · Takeaways &amp; further reading</a>
+  <a href="#s6"><b>6</b> &middot; Applying it</a>
 </nav>
 <main>
       <p class="kicker">Study companion · module M7</p>
@@ -174,7 +185,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>Two incidents frame the stakes, one adversarial and one not (both point-in-time). The adversarial case: in April 2026 ("Comment and Control", Guan et al.), a single pull-request title made three different vendors' coding agents — Claude Code Security Review, Gemini CLI Action and Copilot Agent — post their own API keys as PR comments. Rated CVSS 9.4; silently patched, no CVEs issued. Untrusted content reached a privileged agent, and the agent turned on its operator — three times, across three independent harnesses, from one payload. The second case had no attacker at all: in December 2025 (reported by the Financial Times in February 2026), Amazon's internal Kiro agent, holding operator-level permissions, deleted and recreated an environment and caused a roughly 13-hour AWS Cost Explorer outage. Same lesson from both directions: the controls that bound an injected agent also bound an honest agent that is simply wrong. Blast-radius engineering is dual-purpose.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>You cannot train, prompt or filter your way out of prompt injection — the best cross-lab evidence says adaptive attackers bypass every published defense. What you can do is decide in advance how much damage a compromised (or merely mistaken) agent is able to do, and engineer that number down. Security work on an agentic harness is blast-radius engineering applied to every component — which is why this module re-reads the whole framework instead of adding to it.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The root cause: one token stream, no trust separation</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The root cause: one token stream, no trust separation</h2>
       <p>Simon Willison's one-sentence mechanism (June 2025): "Everything eventually gets glued together into a sequence of tokens and fed to the model." The system prompt, the user's task, and every piece of content the agent retrieves — tickets, web pages, tool output, tool descriptions — arrive as one undifferentiated stream, and the model has no reliable way to treat one span as orders and another as inert data. Willison coined the term at the very start of the LLM era ("Prompt injection attacks against GPT-3", 12 Sep 2022 — Riley Goodside demonstrated the attack, Willison named it): "I coined the term prompt injection… I named it after SQL injection, which has the same underlying problem."</p>
       <p>The SQL analogy is worth completing, because it explains why no patch is coming. Classic SQL injection was solved by parameterized queries: the database receives instructions and data through separate channels, so data can never execute. Willison initially hoped for an equivalent — "parameterized prompts" — and retracted the hope in April 2023 as "extremely difficult, if not impossible". The UK NCSC's David C. wrote the definitive version ("Prompt injection is not SQL injection (it may be worse)", 8 Dec 2025): parameterized queries fix SQLi "at its root", but under an LLM "there is only ever 'next token'". One channel, one mechanism, no separation to engineer.</p>
       <p>Two delivery modes matter in practice. <strong>Direct</strong> injection — the attacker types at the model — is mostly the lab case. <strong>Indirect</strong> injection — the payload sits in content the agent reads on its operator's behalf — is the delivery vector behind nearly every real incident in this module, because an agent that reads tickets, browses the web and runs tools ingests attacker-controlled text by design. And the channel is wider than document text: MCP tool descriptions are themselves executable trust and can carry poisoned instructions (Invariant's tool-poisoning work — one sentence here; S4 owns the depth).</p>
@@ -261,9 +275,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>governance</td><td>the layer that must stay deterministic — advisory governance is itself injectable</td><td>—</td><td>E5</td></tr>
       <tr><td>contract surfaces</td><td>untrusted PRDs, design files and legacy estate flowing into privileged sessions; secrets in reach</td><td>—</td><td>S7</td></tr></table></div>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout"><div class="t">Three sentences to remember S1 by</div><p>One root cause explains nearly the whole module: trusted instructions and untrusted data share a single token stream, and no model-layer defense has survived an adaptive attacker (&gt;90% bypass for most, cross-lab, Oct 2025) — so injection is a permanent risk category, managed, never solved. What you are defending is a privileged runtime, a confused deputy with shell, files, network and credentials, so the posture is assume breach: least privilege, sandbox, egress allowlist, human gates and audit, deterministic controls only (E5), because the advisory layer is itself injectable. And the honest client sentence is a feature, not a concession: complete security is unsolved, every control reduces likelihood and blast radius, none prevents injection — which is exactly why autonomy stays capped at Report 1's L3.</p></div>
-      <h3>Further reading</h3>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h3>Further reading</h3>
       <div class="reading">
       <div class="item"><div class="rt">Simon Willison — the prompt-injection series &amp; "The lethal trifecta for AI agents"</div><div class="mt">simonwillison.net/series/prompt-injection · trifecta post 16 Jun 2025</div><p>The primary source for §1–§2: the 2022 coinage ("Prompt injection attacks against GPT-3", 12 Sep 2022), the token-stream mechanism, the Dual-LLM proposal, and the Jun 2026 softening that still refuses irreversible autonomy. Start here.</p></div>
       <div class="item"><div class="rt">NCSC — "Prompt injection is not SQL injection (it may be worse)"</div><div class="mt">ncsc.gov.uk · David C., 8 Dec 2025</div><p>The regulator-grade wording for §1 and §4: "only ever 'next token'", "inherently confusable", residual risk that no product or appliance removes, and the anti-silver-bullet line. Advice aligned to ETSI TS 104 223.</p></div>

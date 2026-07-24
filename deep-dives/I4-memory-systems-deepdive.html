@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -167,7 +178,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s6"><b>6</b> · Files or a store</a>
   <a href="#s7"><b>7</b> · Week one at the client</a>
   <a href="#s8"><b>8</b> · Framework map</a>
-  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> &middot; Applying it</a>
   <a href="#s10"><b>10</b> · Further reading</a>
 </nav>
 <main>
@@ -176,7 +187,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>a working typology: four operational layers of agent memory, and the academic frame behind them (§1)</li><li>the vendor landscape, point-in-time mid-2026 — file-based, database/graph, platform — and what the Mem0-vs-Zep dispute teaches about memory benchmarks (§2)</li><li>the three long-horizon techniques in depth: compaction, structured note-taking, sub-agents (§3)</li><li>memory as the governed fourth write-mode: git-versioned memory, provenance, and the promotion path (§4)</li><li>the threat model: ASI06, the research attacks, the documented real-world demos, and the defense stack (§5)</li><li>the org-store decision: when a managed memory store earns its keep against plain files in the repo (§6)</li><li>a week-one memory setup for a brownfield client (§7)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>E2 — context engineering: the window this machinery exists to protect</li><li>I1 — the taxonomy; memory as its hardest grey zone</li><li>I2 — the write-permission matrix this chapter's row comes from</li><li>I3 — staleness: memory drifts like every other artifact</li><li>I5 — progressive disclosure: keeping what you remember loadable</li><li>M7 — the security module; ASI06 in the full threat landscape</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>What agent memory is — a working typology</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>What agent memory is — a working typology</h2>
       <p>Strip the vendor language and agent memory sorts into <strong>four operational layers</strong>, distinguished by lifetime and by who can see them:</p>
       <div class="comp"><div class="chead"><span class="cid">SESSION</span><h3>Working memory</h3><span class="role">one session · the window itself</span></div>
       <p>The context window: the conversation, tool results, scratch reasoning. Lives for one session, dies with it. E2's territory — managed by retrieval and shedding, not by storage.</p></div>
@@ -277,10 +291,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <tr><td>Report 3</td><td>the memory-typology and update-protocol research notes this chapter expands</td></tr>
       </table></div>
 
-      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <h2 id="s9"><span class="n">9</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences to keep</div><p>Agent memory is an information-architecture decision, not a model feature: four layers by lifetime — window, persistent files, cross-session state, organizational store — with the harness itself as procedural memory, and the research base (Reflexion's 11-point HumanEval lift on one side, LongMemEval's 30% sustained-memory drop on the other) saying memory pays and memory systems fail, which is why it gets engineering and governance rather than trust. The working default is files in the repo, git-versioned, with an index kept loadable, a validated write path, provenance on entries, and one non-negotiable rule — memory may propose, only a human merge promotes anything into a steering file — because the threat is measured (poisoning at 80% success from 0.1% poison rates, query-only injection, and two documented in-the-wild demos), persistent, and designed to outlive the session that planted it. Buy a managed store only when memory must cross repo boundaries, outgrow lexical retrieval, or meet compliance-grade retention — and when you do, move the gate from paths to identity and keep the promotion rule intact, because the store changes where memory lives, never who may promote it.</p></div>
 
-      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s10"><span class="n">10</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Anthropic — Memory tool documentation</div><div class="mt">platform.claude.com docs · GA, tool type memory_20250818 · point-in-time mid-2026</div><p>The minimal file-based design: six operations, client-side execution, the injected protocol ("ALWAYS VIEW YOUR MEMORY DIRECTORY…", "ASSUME INTERRUPTION…"), and the documented validation floor — path containment, sensitive-data stripping, size caps, expiry.</p></div>
       <div class="item"><div class="rt">Anthropic — Effective context engineering for AI agents</div><div class="mt">anthropic.com/engineering · September 29, 2025</div><p>The three long-horizon techniques with the copyable details: what compaction preserves, the Pokémon note-taking demonstration, and the 1–2k-token subagent summary contract.</p></div>

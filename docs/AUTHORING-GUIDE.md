@@ -26,6 +26,85 @@ House rules: dense English prose; tie back to the framework (name the E/P/D topi
 it connects to); separate strong evidence vs vendor claims vs synthesis; flag D1–D5 as original;
 mark fast-moving tool facts as point-in-time.
 
+## Step 1b — the application layer (required in every study deep dive)
+
+Every study deep dive teaches a *decision*, not just evidence. Two required parts,
+both marked with data-attributes the validator checks (`check_application_section`):
+
+1. **The call you're making** — a `.callout.callframe` box carrying `data-app-frame`,
+   at the END of §0. One sentence naming the decision this deep dive equips, then an
+   if/then list (3–5 `<li>`: client signal → your move). Write it first — it is the
+   advance organizer every later section fills in.
+2. **Applying it — decision guide** — the penultimate section (the old "Takeaways for
+   our engagement" slot; keep its `id`). Body wrapped in ONE `<div data-app>` holding,
+   in order:
+   - `.decis` block — the frame expanded, branch-aware, unhappy paths included
+     (brownfield realities first: what if the artifact/practice already exists,
+     half-broken?). Close with the "three sentences to remember X by" callout.
+   - **Worked example — Meridian** (`.callout`): ~400 words, one decision walked
+     end to end on the canon client (`docs/WORKED-EXAMPLE-CLIENT.md`) with concrete
+     numbers and one visible judgment call under ambiguity.
+   - **Self-test** (`<details class="apptest">`): 3–4 scenario questions at
+     apply/evaluate level ("client says/has X — what do you do/say?"), model answers
+     inside the details body.
+   - **PB bridge** (`.callout.pbbridge`): one line naming WHERE this becomes
+     procedure, with an overlay link `href="#pb[1-5]-deepdive"` and the step named in
+     text (e.g. "PB1 Assess — step 1.2"). In the standalone copy the link is inert
+     (fragment only resolves in the workbook) — that is accepted; the named step keeps
+     it usable. When you enrich a deep dive, land the procedural payload (talk tracks,
+     templates, ops detail) in that runbook step in the SAME commit, with a one-line
+     "Why: see <topic> §N" back-link.
+3. **"So you…" hooks** — append a one-line applied consequence (`<span class="soyou">`)
+   to each evidence section: the single sentence that re-aims the section at action.
+
+Advisory quality checklist (validator cannot see these — you must):
+- decision frame rows are *signals a consultant can actually observe*, not theory labels;
+- worked example numbers are consistent with the Meridian canon file;
+- unhappy paths covered (the client already has a broken version of the thing);
+- self-test answers model reasoning, not just verdicts;
+- evidence sections stay intact: rigor, strong-evidence vs vendor-claim vs synthesis
+  labeling, honesty flags. The application layer ADDS; it never dilutes.
+
+Skeleton stubs (from `scripts/add_application_skeleton.py`) carry `data-app-stub`
+notes. Enrichment = replacing every stub in the file; the validator prints the
+remaining stub count per file (informational).
+
+## Step 1c — prose architecture for evidence sections (anti-abstract rules)
+
+Evidence sections keep their rigor — real citations, real numbers, honest
+strong-evidence vs vendor-claim vs synthesis labels are the moat. What is regulated
+here is the **load order**: prose must read as an argument, never as an inventory of
+abstracts. (Grounded in learning-science evidence — assertion-evidence ordering:
+Garner & Alley 2013; self-explanation meta-analyses: Fiorella & Mayer 2015, d≈0.61;
+number formats: Gigerenzer & Hoffrage 1995; expertise reversal: Kalyuga et al. 2003 —
+plus the corpus prose diagnosis of 2026-07-24.)
+
+1. **Assertion first.** Every evidence paragraph opens with the claim in plain
+   language as a full sentence; citations and numbers follow as *support for it*.
+   Never open a paragraph with `Study (authors; venue; arXiv:ID) measured: "quote"`.
+2. **One claim per paragraph, consequence last.** One or two citations per paragraph;
+   never stack 3+ studies or ~8+ numbers before any interpretation appears. Close the
+   paragraph with the one-sentence "so what" for practice.
+3. **Anchor every number in the same sentence.** A percentage travels with a
+   comparison, ratio, or consequence: "~45% — nearly half the survivor list is
+   noise"; "15 minutes × a survivor list in the hundreds is why nobody adjudicates
+   by hand".
+4. **Demote the citation apparatus.** The parenthetical (authors, venue, ID) comes
+   AFTER the point lands; full paper titles live in Further reading only.
+5. **Connect findings explicitly.** Each new study ties to the running thread ("the
+   same pattern shows up in…", "this breaks down when…") — never a cold start on a
+   fresh arXiv ID.
+6. **Write for experts.** Don't re-explain mechanics a senior engineer already knows
+   (expertise-reversal effect); leave productive inferential gaps; cut
+   seductive-detail trivia or set it apart in a labeled aside.
+
+Surgery scope for existing files (do it whenever you enrich one): rewrite the
+section openers to claim-first, then de-inventory only the paragraphs that stack 3+
+citations or ~8+ numbers. Expect +15–20% length on the touched paragraphs — that is
+the price of meaning, not bloat. Callouts, §0 leads, figures, and the Applying-it
+section already read as argument — leave them alone. B3 §2/§6 are the worked
+before/after exemplars of this surgery.
+
 ## Step 2 — generate the standalone file
 Reuse E1's `<head>` verbatim, then:
 - retitle `<title>` and the header `<h1>`/tag;

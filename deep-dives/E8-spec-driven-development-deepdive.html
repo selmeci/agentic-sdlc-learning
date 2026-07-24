@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -166,7 +177,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s4"><b>4</b> · The critique &amp; when it's overkill</a>
   <a href="#s5"><b>5</b> · How SDD connects the framework</a>
   <a href="#s6"><b>6</b> · Mapping to the SDLC</a>
-  <a href="#s7"><b>7</b> · Takeaways</a>
+  <a href="#s7"><b>7</b> &middot; Applying it</a>
   <a href="#s8"><b>8</b> · Further reading</a>
 </nav>
 <main>
@@ -176,7 +187,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>But E8 comes with a deliberate double message. SDD is genuinely powerful for the cases it fits, and actively counter-productive for the cases it doesn't. Our job in the engagement is not to sell "adopt SDD wholesale" — it is to help the client apply it where the leverage is real (greenfield, legacy modernization, multi-task features) and avoid the sledgehammer-on-a-thumbtack failure mode Böckeler warns about.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>"Intent is the source of truth." SDD's core move is to make the specification — not the code — the thing you review, version, and hold agents accountable to. That inverts the classic gate: <strong>spec review precedes (or replaces) code review as the primary quality control.</strong> The prize is catching a wrong intent on paper; the risk is drowning a small task in ceremony.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>What SDD actually is</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>What SDD actually is</h2>
       <p>SDD is a workflow in which a structured specification is authored first, reviewed and agreed, and then drives implementation — with the agent building toward the spec rather than improvising intent from a terse ticket. The spec is executable-adjacent: precise enough that acceptance criteria (EARS/Gherkin, M3) can be derived and checked.</p>
       <figure>
       <svg viewBox="0 0 860 250" role="img" aria-label="The spec-driven development flow">
@@ -293,12 +307,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <tr><td>Refinement</td><td>tasks</td><td>decomposed into right-sized, agent-ready items (M3 sizing)</td></tr>
       <tr><td>Implementation</td><td>implement</td><td>agent builds toward acceptance criteria; spec is the accountability anchor</td></tr></table></div>
 
-      <h2 id="s7"><span class="n">7</span>Takeaways for our engagement</h2>
+      <h2 id="s7"><span class="n">7</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>where is intent non-trivial and delegated (SDD pays off)?</li><li>where are tasks tiny (SDD is overkill)?</li><li>is there appetite to review specs, not just code?</li><li>can we extract a lightweight pipeline without tool lock-in?</li></ul></div>
       <div class="box"><div class="lab">Build (feeds E7 rollout)</div><ul><li>a minimal constitution of non-negotiables</li><li>spec-anchored workflow; specs versioned in the repo (M4)</li><li>EARS/Gherkin acceptance criteria feeding tests (E4)</li><li>spec review as the gate for L3 delegation (E6)</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember E8 by</div><p>SDD makes intent the source of truth: an explicit spec is authored and reviewed first, so spec review becomes the primary quality gate before code exists. It is powerful for greenfield, legacy modernization and multi-task delegated features — but overkill for small tasks, so keep specs minimal (10–30 lines) and reach for it only when getting intent wrong is expensive. Recommend spec-anchored (a living contract with human review), not spec-as-source, and wire the constitution to governance, the acceptance criteria to verification, and the spec review to L3 autonomy.</p></div>
 
-      <h2 id="s8"><span class="n">8</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s8"><span class="n">8</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">GitHub Spec Kit</div><div class="mt">github.com/github/spec-kit</div><p>The lightweight, tool-agnostic reference workflow (constitution → specify → plan → tasks → implement). Start here for the portable methodology.</p></div>
       <div class="item"><div class="rt">Amazon Kiro</div><div class="mt">kiro.dev</div><p>The gated-phase agentic IDE with EARS baked into requirements and contradiction checks before code — the tightest spec-to-verifiability coupling. GA since Nov 2025; see the GA announcement for property-based spec-correctness testing.</p></div>

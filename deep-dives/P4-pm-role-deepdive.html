@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -165,7 +176,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s3"><b>3</b> · Risk 2: losing user contact</a>
   <a href="#s4"><b>4</b> · The editor&#8217;s toolkit</a>
   <a href="#s5"><b>5</b> · The curator half</a>
-  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s6"><b>6</b> &middot; Applying it</a>
   <a href="#s7"><b>7</b> · Further reading</a>
 </nav>
 <main>
@@ -175,7 +186,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The frame the industry converged on is the <strong>editor</strong>: Lenny Rachitsky put it early — "PMs will become editors of super-intelligent suggestions" (April 2024). We extend it with a second half, the <strong>curator</strong> (§5) — that extension is our synthesis, not an industry standard. Both halves name the same shift: the PM's value moves from producing artifacts to judging them and tending the context they are produced from.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Author → editor is not a smaller job; it is a <strong>different job under active attack</strong>. Two documented forces work to hollow it out: <em>automation bias</em> (§2) erodes the quality of review, and <em>losing user contact</em> (§3) erodes the judgment review runs on. Neither announces itself — both look, from the outside, like a team happily shipping faster. The toolkit in §4 exists because good intentions measurably do not survive contact with a mostly-right machine.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>Which PM gets automated — Cagan's distinction</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>Which PM gets automated — Cagan's distinction</h2>
       <p>Marty Cagan's line is the sharpest on record, and worth quoting exactly (<em>A Vision For Product Teams</em>, svpg.com, February 2025): <em>"For product owners and feature team product managers, where the job is primarily about delivery, and driven by a delivery process, it seems pretty clear to me that there will be very substantial productivity improvements, if not full automation."</em> He calls these roles "very vulnerable in this timeframe" and urges the people in them to upskill. The other side of the same distinction (<em>Preparing For The Future</em>, 2023): <em>"if you're a product manager on an empowered product team, then your role is likely to become more critical rather than less."</em></p>
       <div class="figscroll"><table class="map">
         <tr><th>Profile</th><th>The job is mostly…</th><th>AI exposure</th></tr>
@@ -224,12 +238,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The editor judges the artifact stream; the <strong>curator</strong> owns what the stream is generated <em>from</em>. Every product-layer assist in this module drafts from durable context — the company-context file, the PRD template, the opportunity tree, the requirement registry (H3), the glossary. P3's amnesia argument applies with full force: agents read this context fresh every session, so a stale or wrong durable artifact poisons every downstream draft silently and at scale. Someone must own its truth. That someone is the PM — it is product knowledge, and nobody else will notice when it drifts (I3).</p>
       <p>Concretely, the curator: holds the write-pen on durable product context (M4's write-permission discipline, I2 — agents propose, the PM approves what becomes durable); prunes requirements and opportunities that are no longer true; keeps the PRD template and red-team checklist current as the team learns (E8's compound loop, product edition); and treats the context files as a product with users — the users being every agent and human who drafts from them. Flag we repeat everywhere: the editor frame is Rachitsky's (2024); this curator extension is <strong>our synthesis</strong> — it follows from M4's architecture, but no industry source formalises it yet.</p>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>which PM profile does the client employ — delivery PO, feature-team PM, empowered PM?</li><li>who reviews AI drafts, and can they show a rejected one?</li><li>when did each PM last watch or run a user interview?</li><li>who owns the durable product context — or does nobody?</li></ul></div>
       <div class="box"><div class="lab">Build</div><ul><li>install the accountability mechanics: disposition-with-rationale on every finding</li><li>mandate spot-checks vs raw material; watch kill rate and no-follow-up rate</li><li>reinvest saved hours into discovery, explicitly and by agreement</li><li>name the curator: give the PM the write-pen on durable product context (I2)</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember P4 by</div><p>The PM shifts from author to editor and curator, and Cagan's split says which PMs survive it: delivery-process roles face "very substantial productivity improvements, if not full automation," while empowered PMs become more critical. The editor's two occupational diseases are measured, not hypothetical — automation bias (55% expert omission errors; training does not fix it; −6 pp clinician deskilling in 3 months; confidence in AI ↔ less critical thinking) and losing user contact (30% fabricated quotes in AI interview synthesis; "synthesis skills atrophy from lack of use"). The countermeasures are structural, not advisory: accountability via disposition-with-rationale, mandatory spot-checks, kill-rate and no-follow-up metrics, saved hours reinvested into discovery, and the PM holding the write-pen on the durable context every agent drafts from.</p></div>
 
-      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s7"><span class="n">7</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Marty Cagan — A Vision For Product Teams · Preparing For The Future</div><div class="mt">svpg.com · Feb 2025 · Jun 2023</div><p>The full-automation quote and the vulnerable-vs-empowered distinction; the earlier piece argues the empowered PM becomes more critical. Practitioner opinion, consistently sober — the P2 junior-PM frame comes from the same well.</p></div>
       <div class="item"><div class="rt">Lee et al. — The impact of generative AI on critical thinking</div><div class="mt">CHI 2025 · Microsoft Research · DOI 10.1145/3706598.3713778</div><p>319 knowledge workers, 936 real GenAI tasks: confidence in the AI correlates with less critical thinking. Self-reported and correlational — but the LLM-era confirmation of the cockpit literature.</p></div>

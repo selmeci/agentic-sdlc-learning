@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -167,7 +178,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s5"><b>5</b> · Severing a leg: the control map, with 2026's honesty</a>
   <a href="#s6"><b>6</b> · Multi-agent systems: digital gossiping reassembles the trifecta</a>
   <a href="#s7"><b>7</b> · The human gate: the Rule's fallback and its failure modes</a>
-  <a href="#s8"><b>8</b> · Takeaways &amp; further reading</a>
+  <a href="#s8"><b>8</b> &middot; Applying it</a>
 </nav>
 <main>
       <p class="kicker">Study companion · module M7</p>
@@ -176,7 +187,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>The framing has also crossed from a blogger's coinage into institutional practice in just over a year, which is why it earns a deep dive of its own. Willison posted it in June 2025; Meta formalized it as the Rule of Two in October 2025; the Frontier Model Forum's "Emerging Security Practices for AI Agents" (3 Jun 2026) cites the Rule of Two as recommended practice, and the first joint Five Eyes guidance on agentic AI (CISA/NSA/NCSC et al., 1 May 2026) reaches the same destination — distinct agent identities, least privilege, human oversight for high-impact actions — in regulator vocabulary. When a vendor heuristic, an industry forum and five governments converge, the concept has earned a place in the engagement toolbox.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>An agent holding any two of {untrusted input, sensitive access, external reach} is a risk you manage; an agent holding all three is an exploit you have not detected yet. Security review of an agentic workflow is a leg inventory: list the three properties, find the sessions where all three meet, and drop, gate or sandbox one leg. Everything else in this chapter — and most of M7 — is refinement of that move.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>The three legs: Willison's lethal trifecta</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The three legs: Willison's lethal trifecta</h2>
       <p>Simon Willison — who named prompt injection itself in September 2022 — posted "The lethal trifecta for AI agents: private data, untrusted content, and external communication" on <strong>16 June 2025</strong>. The subtitle is the definition; the post lists the three properties in this order, unlettered (the [A]/[B]/[C] lettering arrives with Meta in §2 — attribute it there, not to Willison):</p>
       <div class="io"><div class="box"><div class="lab">The three properties (verbatim, 16 Jun 2025)</div><ul><li><strong>Access to your private data</strong> — "one of the most common purposes of tools in the first place!"</li><li><strong>Exposure to untrusted content</strong> — "any mechanism by which text (or images) controlled by a malicious attacker could become available to your LLM"</li><li><strong>The ability to externally communicate</strong> "in a way that could be used to steal your data (I often call this 'exfiltration' but I'm not confident that term is widely understood.)"</li></ul></div>
       <div class="box"><div class="lab">The exploit condition</div><ul><li>"If your agent combines these three features, an attacker can <strong>easily trick it</strong> into accessing your private data and sending it to that attacker."</li><li>Any two legs: a risk to manage. All three: a working exploit path, demonstrated repeatedly in the wild (§4).</li></ul></div>
@@ -314,9 +328,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="box sdlc"><div class="lab">What a gate must do to be worth anything</div><ul><li>render the exact bytes sent to the model — never LLM-supplied Markdown in the dialog (OWASP LITL mitigations)</li><li>show the assembled command/payload and diff file writes; resolve wrappers; strip the agent's self-justification from the approver's view (Anthropic's auto-mode design principles, applied to humans)</li><li>pin tools by hash; re-approve on any metadata change (the rug-pull fix)</li><li>evaluate real-world impact, not surface text — and keep the gate for genuinely consequential actions only, or fatigue eats it within weeks</li></ul></div></div>
       <p>The hierarchy that falls out: sever a leg deterministically where you can (§5); where you cannot, gate — but engineer the gate like a control surface, with rendered-truth guarantees, or it is compliance theater. And note the closing asymmetry for engagement language: the human gate is the only option that gets <em>worse</em> with use. Sandbox and egress controls do not fatigue.</p>
 
-      <h2 id="s8"><span class="n">8</span>Takeaways for our engagement</h2>
+      <h2 id="s8"><span class="n">8</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout"><div class="t">Three sentences to remember S2 by</div><p>The lethal trifecta (Willison, 16 Jun 2025) names the exploit condition — private data, untrusted content, external communication in one session — and Meta's Rule of Two (31 Oct 2025) makes it operational: no more than two legs per session, the third dropped or human-gated, with two-leg sessions now honestly labeled "lower risk", never "safe". Apply it per session and per <em>cluster</em> — digital gossiping reassembles all three legs across compliant agents, and persistent memory carries leg A across sessions — and sever legs in order of leverage: egress control at the infrastructure layer first (deterministic, but audit it: 2026 shipped both broken allowlists and exfiltration through allowed domains — "a capability grant, not a destination filter"), least-privilege credentials second, untrusted-content quarantine where the harness supports it, and the human gate last, engineered for rendered truth, because 93% approval rates make it the only control that degrades with use. Every incident in M7 is a trifecta instantiation, which makes the leg inventory the cheapest security review we sell: list A/B/C per workflow, find where all three meet, and pick which leg to break.</p></div>
-      <h3>Further reading</h3>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h3>Further reading</h3>
       <div class="reading">
       <div class="item"><div class="rt">Simon Willison — "The lethal trifecta for AI agents" (16 Jun 2025) + the lethal-trifecta tag</div><div class="mt">simonwillison.net/2025/Jun/16/the-lethal-trifecta · practitioner synthesis, the primary source</div><p>The coinage, the email-assistant example, the guardrails-are-failing argument, and 25+ follow-ups through July 2026 — including "99% is a failing grade" (26 Sep 2025) and "the easiest leg to remove is the exfiltration vectors". The tag page is the running incident log for §4.</p></div>
       <div class="item"><div class="rt">Meta — "Agents Rule of Two: A Practical Approach to AI Agent Security" (31 Oct 2025)</div><div class="mt">ai.meta.com/blog/practical-ai-agent-security · vendor primary source</div><p>The [A]/[B]/[C] formulation, the three permitted-pair examples, mid-session transitions, and the honest limitations paragraph ("a supplement — and not a substitute — for… least-privilege"). Pair with Willison's 2 Nov 2025 response, which documents the "safe" → "lower risk" correction and endorses the rule: "the best practical advice… in the absence of prompt injection defenses we can rely on."</p></div>

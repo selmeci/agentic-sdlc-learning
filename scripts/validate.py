@@ -163,6 +163,55 @@ def check_diagram_lightbox(s, label):
     note(len(problems) == before, f"{label}: diagram lightbox present, figures zoomable")
 
 
+# --- application layer (deep-dive application scaffold) ---------------------
+# Study deep dives carry a decision frame + Applying-it section (AUTHORING-GUIDE
+# Step 1b). PB runbooks ARE the application layer and are exempt. APP_PENDING lists
+# files not yet converted; it only ever shrinks. New deep dives must comply
+# immediately — never add to this set.
+APP_EXEMPT_PREFIXES = ("PB1-", "PB2-", "PB3-", "PB4-", "PB5-")
+APP_PENDING = set()
+app_stubs = []  # (label, count) — informational
+
+def check_application_section(s, label):
+    fn = label.split(":")[0]
+    if fn.startswith(APP_EXEMPT_PREFIXES):
+        return
+    if fn in APP_PENDING:
+        return
+    before = len(problems)
+    frames = len(re.findall(r"data-app-frame\b", s))
+    if frames != 1:
+        note(False, f"{label}: expected exactly 1 data-app-frame, found {frames}")
+    # By convention the frame box (<div class="callout callframe" data-app-frame>…</div>)
+    # never nests another <div>, so its region ends at the first </div> after the marker;
+    # scope the row check to that region instead of matching any later <li>/<tr> in the doc.
+    fm = re.search(r"data-app-frame.*?</div>", s, flags=re.S)
+    if fm and not re.search(r"<(li|tr)\b", fm.group(0)):
+        note(False, f"{label}: data-app-frame box has no <li>/<tr> row")
+    apps = len(re.findall(r"<div data-app>", s))
+    if apps != 1:
+        note(False, f"{label}: expected exactly 1 <div data-app>, found {apps}")
+    m = re.search(r"<div data-app>.*?</details>", s, flags=re.S)
+    body = m.group(0) if m else ""
+    if 'class="decis"' not in body:
+        note(False, f"{label}: data-app container missing .decis block")
+    if 'class="apptest"' not in body:
+        note(False, f"{label}: data-app container missing .apptest self-test")
+    if not re.search(r'href="#pb[1-5]-deepdive"', s):
+        note(False, f"{label}: missing PB bridge link (#pb[1-5]-deepdive)")
+    stubs = len(re.findall(r"data-app-stub\b", s))
+    if stubs:
+        app_stubs.append((label, stubs))
+    note(len(problems) == before, f"{label}: application layer present")
+
+def app_stub_report():
+    if app_stubs:
+        print(f"  info application-layer stubs awaiting enrichment in "
+              f"{len(app_stubs)} copies: "
+              + ", ".join(f"{l}({c})" for l, c in sorted(app_stubs)[:10])
+              + (" …" if len(app_stubs) > 10 else ""))
+
+
 def check_gallery_registry():
     print("gallery registry")
     before = len(problems)
@@ -426,16 +475,36 @@ def check_workbook():
     check_workbook_id_uniqueness(s, "workbook")
     check_fragment_reachability(s, "workbook")
 
+    # application layer per overlay: map overlay token -> standalone filename
+    TOKEN_FIXUPS = {}
+    dd_files = {f.split("-")[0].lower(): f for f in os.listdir(DEEPDIR)
+                if f.endswith(".html")}
+    for tok, fn in sorted(dd_files.items()):
+        tok = TOKEN_FIXUPS.get(tok, tok)
+        ovid = f'id="{tok}ov"'
+        i = s.find(ovid)
+        if i < 0:
+            continue  # not embedded (should not happen; other checks catch it)
+        j = s.find('<div class="e1ov"', i + 1)
+        seg = s[i:j] if j > 0 else s[i:s.find("<footer")]
+        check_application_section(seg, f"{fn}: overlay {tok}ov")
+
     # deep-dive anchors wired: link(s) + exactly one JS handler.
-    # sdlc has two entry links (intro + section) + 1 handler = 3; others have 1 link + 1 handler = 2.
+    # sdlc has two entry links (intro + section) + 1 handler = 3; the baseline for every
+    # other token is 1 link + 1 handler = 2. The corpus cross-links by design — study deep
+    # dives bridge to PB runbooks (#pbN-deepdive), and runbook steps back-link study topics
+    # (#<tok>-deepdive) — so any token's link count can legitimately grow past its baseline.
+    # We therefore require link count >= exp for every token (still catches a dropped link)
+    # and exactly one JS handler == 1 (still catches a missing or duplicated handler). The
+    # sdlc special case keeps its higher baseline (exp = 3) under the same rule.
     tokens = sorted(set(re.findall(r"#([a-z0-9]+)-deepdive", s)))
     for tok in tokens:
         c = s.count(f"#{tok}-deepdive")
         handlers = s.count(f'a[href="#{tok}-deepdive"]')
         exp = 3 if tok == "sdlc" else 2
-        ok = (c == exp and handlers == 1)
+        ok = (c >= exp and handlers == 1)
         note(ok, f"#{tok}-deepdive wired x{c} (+1 handler)" if ok
-             else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected {exp} total, 1 handler)")
+             else f"#{tok}-deepdive wired x{c}, handlers={handlers} (expected >= {exp} total, 1 handler)")
 
     # topic count
     ids = re.findall(r'id:"((?:eng|prod|hand|ia|brown|traj|des|sec|pb|gf)-[a-z0-9-]*)"', s)
@@ -513,6 +582,7 @@ def check_deepdives():
         check_language_english(s, fn)
         check_h2_anchors(s, fn)
         check_standalone_anchor_affordance(s, fn)
+        check_application_section(s, fn)
         anc = set(re.findall(r'href="#([\w-]+)"', s))
         ids = set(re.findall(r'id="([\w-]+)"', s))
         missing = {a for a in anc if a.startswith("s") and a[1:].isdigit()} - ids
@@ -529,6 +599,8 @@ if __name__ == "__main__":
     check_svg_id_uniqueness()
     print()
     check_gallery_freshness()
+    print()
+    app_stub_report()
     print()
     if problems:
         print(f"RESULT: {len(problems)} problem(s) — fix before committing.")

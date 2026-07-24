@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head><body>
 <header class="hdr">
@@ -167,7 +178,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s6"><b>6</b> · Grey zones &amp; promotion</a>
   <a href="#s7"><b>7</b> · The brownfield sweep</a>
   <a href="#s8"><b>8</b> · Framework map</a>
-  <a href="#s9"><b>9</b> · Takeaways</a>
+  <a href="#s9"><b>9</b> &middot; Applying it</a>
   <a href="#s10"><b>10</b> · Further reading</a>
 </nav>
 <main>
@@ -177,7 +188,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <div class="io"><div class="box"><div class="lab">What this chapter gives you</div><ul><li>the three-category taxonomy: durable / derived / disposable (§1)</li><li>the discipline each category imposes — human gate, never-hand-edit, prune (§2–§4)</li><li>the SSOT boundary between product and engineering masters (§5)</li><li>the grey zones: agent-written docs, memory files, promotion paths (§6)</li><li>a first-week classification sweep for a brownfield client (§7)</li></ul></div>
       <div class="box"><div class="lab">Where its neighbours pick up</div><ul><li>I2 — write-permissions per category, enforced with hooks, ADR lifecycle in full</li><li>I3 — measuring the drift that misclassification produces</li><li>I4 — memory systems in depth; poisoning and its defenses</li><li>I5 — keeping durables small enough to load (progressive disclosure)</li><li>I7 — reference-don't-copy mechanics across the SSOT boundary</li></ul></div></div>
 
-      <h2 id="s1"><span class="n">1</span>The triad — durable, derived, disposable</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>The triad — durable, derived, disposable</h2>
       <div class="callout amber"><div class="t">Flag: this taxonomy is our synthesis</div><p>Like the D1–D5 scale, the durable/derived/disposable triad is <strong>Report 3's original synthesis, not an industry standard</strong> — no external framework packages artifacts this way (checked 2026-07-15). It does have honest ancestors: Charity Majors' durable-vs-disposable split for <em>code</em> (by intended lifespan), records management's vital/important/useful classes (where "important = can be recreated if lost" is exactly our "derived"), and — strongest of all — the never-hand-edit discipline for generated files that the software industry has already encoded in tooling (§3). The three-bucket packaging is ours; present it as such.</p></div>
       <p>The taxonomy classifies every artifact the development system produces or consumes by one question with three answers: <strong>if this file changed or vanished, what is the correct response?</strong> If the answer is "someone must decide, review and own the change" — it is durable. If the answer is "regenerate it from its master" — it is derived. If the answer is "nothing; it served its purpose" — it is disposable. Owner, change path and lifetime all follow from that one classification.</p>
       <div class="comp"><div class="chead"><span class="cid">DURABLE</span><h3>Sources of truth</h3><span class="role">owned · reviewed · human gate</span></div>
@@ -299,10 +313,18 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
         <tr><td>B4 · agent archaeology (M5)</td><td>produces the grey-zone artifact of §6 — derived until deliberately promoted</td></tr>
       </table></div>
 
-      <h2 id="s9"><span class="n">9</span>Takeaways for our engagement</h2>
+      <h2 id="s9"><span class="n">9</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="callout pine"><div class="t">Three sentences to keep</div><p>Classify every artifact by its change path — owned and human-gated (durable), regenerated from a master and never hand-edited (derived), or freely written and pruned on a TTL (disposable) — and the module's remaining machinery has something to govern; the triad is our Report-3 synthesis, but its derived discipline is exactly what the industry already encodes in DO-NOT-EDIT headers, linguist-generated attributes and committed lockfiles. The expensive failures are all classification failures: the hand-edited generated file that forks the truth, the pasted PRD that drifts inside the repo's most-trusted file, the unowned "source of truth", and the plan graveyard that feeds stale context to agents that read whatever is lying around. Movement between categories is a decision, not an accident — promote by validating, owning and gating; demote by admitting nobody owns it — and the first-week classification sweep at a brownfield client surfaces every artifact that would fail the question "who owns this, and what happens when it's wrong?"</p></div>
 
-      <h2 id="s10"><span class="n">10</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s10"><span class="n">10</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Michael Nygard — Documenting Architecture Decisions</div><div class="mt">cognitect.com blog · November 15, 2011</div><p>The durable archetype: short numbered records, proposed → accepted, deprecated/superseded by later decisions, never edited in place. adr.github.io carries the living tooling and templates.</p></div>
       <div class="item"><div class="rt">Go toolchain — generated-code convention</div><div class="mt">go.dev/blog/generate · golang.org/s/generatedcode</div><p>The never-hand-edit rule as a machine-readable spec: <span class="mono">^// Code generated .* DO NOT EDIT\.$</span> — honored by the ecosystem's generators. The strongest precedent for the derived category's discipline.</p></div>

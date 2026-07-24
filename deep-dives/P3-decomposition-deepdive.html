@@ -146,6 +146,17 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
 .dlb-body svg{width:100%;height:100%;max-height:100%;display:block}
 .dlb-close{position:absolute;top:10px;right:10px;z-index:1;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-family:var(--mono);font-size:17px;line-height:1;cursor:pointer}
 .dlb-close:hover{border-color:var(--cobalt);color:var(--cobalt)}
+/* application layer */
+.callframe{border-left-color:#B26A00}
+.callframe ul{list-style:none;margin:8px 0 2px}
+.callframe li{position:relative;padding-left:16px;margin:6px 0}
+.callframe li::before{content:"›";position:absolute;left:0;color:#B26A00;font-family:var(--mono);font-weight:600}
+.decis{margin:12px 0}
+.apptest{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;max-width:74ch}
+.apptest summary{cursor:pointer;font-weight:600}
+.pbbridge{border-left-color:#2E7D5B}
+.appstub{font-style:italic;opacity:.75}
+.soyou{display:block;margin:10px 0 0;font-style:italic;opacity:.85;max-width:74ch}
 </style>
 </head>
 <body>
@@ -165,7 +176,7 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
   <a href="#s3"><b>3</b> · The evidence — split vs estimate</a>
   <a href="#s4"><b>4</b> · The agent-ready checklist</a>
   <a href="#s5"><b>5</b> · SDD toolchains — what to take</a>
-  <a href="#s6"><b>6</b> · Takeaways</a>
+  <a href="#s6"><b>6</b> &middot; Applying it</a>
   <a href="#s7"><b>7</b> · Further reading</a>
 </nav>
 <main>
@@ -175,7 +186,10 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>A perfectly specified epic that is badly sliced still fails: items too big exceed what a model can reliably finish, items too entangled serialise into a queue and merge-conflict against each other, items without their own context force every agent to rediscover intent from scratch. Decomposition is where the product layer either buys the engineering layer its parallelism — or quietly caps it.</p>
       <div class="callout amber"><div class="t">The one idea to internalise</div><p>Decomposition is a <strong>judgment task disguised as a mechanical one</strong>. An LLM can propose a split in seconds, and the proposal will look complete. But deciding <em>where the seams are</em> — what is genuinely independent, what is one change pretending to be three, what is out of scope — requires knowing the codebase, the architecture and the strategy. The evidence (§3) says exactly this: AI splitting is a useful completeness checker; the seams and the sizes stay human.</p></div>
 
-      <h2 id="s1"><span class="n">1</span>INVEST, re-read for agents</h2>
+      <div class="callout callframe" data-app-frame><b>The call you’re making</b>
+<ul><li class="appstub" data-app-stub>Decision frame being enriched — the if/then rows (client signal → your move) land here. Until then, see the Applying it section below.</li></ul>
+</div>
+<h2 id="s1"><span class="n">1</span>INVEST, re-read for agents</h2>
       <p>Bill Wake coined <strong>INVEST</strong> — Independent, Negotiable, Valuable, Estimable, Small, Testable — in a 2003 article on xp123.com (a practitioner blog post, later popularised by Mike Cohn's <em>User Stories Applied</em>). It was designed for exactly our problem, twenty years early: handing work across a context gap to someone who was not in the room. Agents widen that gap to its maximum — the recipient now has <em>no</em> shared history at all — which makes INVEST more relevant, not less. Each letter earns a sharper reading:</p>
       <div class="figscroll"><table class="map">
         <tr><th>Letter</th><th>2003 reading (for humans)</th><th>Agent re-reading</th></tr>
@@ -236,12 +250,20 @@ svg[role="img"]:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px
       <p>What we extract is portable without adopting either tool. First, <strong>the task list is itself a reviewable artifact</strong> — decomposition gets reviewed before any implementation starts, the same inversion E8 applies to specs. Second, <strong>independence is made inspectable</strong>: explicit dependency ordering and parallel markers turn "these are independent" from a hope into a claim a reviewer can check. Third, <strong>traceability travels per task</strong>, not per epic (H3). This is what P4 on the assistance scale — AI-driven decomposition with approval gates — looks like when it is done right.</p>
       <div class="callout amber"><div class="t">The parallelism trap</div><p>Parallel markers make fan-out tempting: ten independent tasks, ten agents. But the binding constraint is not task independence — it is <strong>review capacity</strong> (E7: never scale agents beyond it). Decomposition sets the <em>ceiling</em> on parallelism; the review bottleneck sets the <em>budget</em>. Slice for independence, then spend the budget deliberately.</p></div>
 
-      <h2 id="s6"><span class="n">6</span>Takeaways for our engagement</h2>
+      <h2 id="s6"><span class="n">6</span>Applying it — decision guide</h2>
+<div data-app>
+<div class="decis">
       <div class="io"><div class="box"><div class="lab">Assess</div><ul><li>who splits epics today, and does AI propose or decide?</li><li>do items carry non-goals, AC, context links, requirement IDs?</li><li>typical item size — and how often do agents finish without follow-up questions?</li><li>are AI-proposed splits filtered, or pasted into the backlog?</li></ul></div>
       <div class="box"><div class="lab">Build</div><ul><li>adopt the agent-ready checklist as the refinement exit gate; lint the structural parts</li><li>AI proposes the split, a human owns seams and sizes — hybrid won 100% preference</li><li>size to the reliability horizon: hours not days, spec 10–30 lines</li><li>track the no-follow-up completion rate and the share of AI-proposed tasks that ship (59% is the published baseline)</li></ul></div></div>
       <div class="callout"><div class="t">Three sentences to remember P3 by</div><p>Agents work item by item, so decomposition — not the epic — decides parallelism, review load and safe autonomy; INVEST re-read for total amnesia is the checklist. The controlled evidence (Pavlič et al.): AI splitting is a finer-grained completeness checker (5.4 vs 3.2 tasks/story) that needs a human filter (only ~59% of AI tasks ship), while AI estimation fails outright (16% vs 60% accuracy) — expansion works, judgment doesn't. Right-size to the reliability horizon (METR's 80% horizon is ~5× below the headline; hours, not days), give every item its six contract components with context links, and enforce the checklist as a lintable refinement gate.</p></div>
 
-      <h2 id="s7"><span class="n">7</span>Further reading</h2>
+      
+</div>
+<div class="callout"><b>Worked example — Meridian.</b> <span class="appstub" data-app-stub>The end-to-end walkthrough on the recurring fictional client is added during enrichment (canon: docs/WORKED-EXAMPLE-CLIENT.md).</span></div>
+<details class="apptest"><summary>Self-test — can you apply this?</summary><p class="appstub" data-app-stub>Scenario questions with model answers are added during enrichment.</p></details>
+<div class="callout pbbridge"><b>Where this becomes procedure:</b> <a href="#pb1-deepdive">PB playbook</a> <span class="appstub" data-app-stub>— the exact runbook step is wired during enrichment.</span></div>
+</div>
+<h2 id="s7"><span class="n">7</span>Further reading</h2>
       <div class="reading">
       <div class="item"><div class="rt">Pavlič, Saklamaeva &amp; Beranič — Can LLMs replace humans in agile effort estimation?</div><div class="mt">Applied Sciences 2024, 14(24):12006 · DOI 10.3390/app142412006</div><p>The controlled GitLab Duo experiment behind §3: 16% vs 60% estimation accuracy, 5.4 vs 3.2 tasks per story, 100% hybrid preference. The primary source for this topic.</p></div>
       <div class="item"><div class="rt">Pavlič, Bernsteiner, Schlögl &amp; Ploder — Splitting user stories with AI: a foe or an ally?</div><div class="mt">arXiv:2605.07320 · 2026 follow-up, same group</div><p>The 59%-of-AI-tasks-shipped number and the relevance perception data. A follow-up, not independent replication — as of mid-2026 this group's work is essentially the whole controlled-evidence base.</p></div>
