@@ -18,6 +18,11 @@ each phase demands.
   Phase 1 in reduced form (verify only newly added facts; diagnose the prose against
   Step 1c), then Phases 2–4. Check the stub count first:
   `python3 scripts/validate.py` prints which files still carry stubs.
+  **Non-negotiable in ENRICH:** any plan or edit that touches existing evidence prose
+  carries a fact-survival audit (playbook Phase 4, gate 1) — the plan names it
+  explicitly per targeted paragraph, and the audit runs before the commit. Surgery
+  plans without it are incomplete; this is the gate that has caught silently dropped
+  titles and mis-scoped anchors.
 
 ## Orchestration sequence
 

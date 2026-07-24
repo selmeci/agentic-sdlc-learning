@@ -9,7 +9,9 @@ playbook covers the *process* — what happens in which order, and why.
 Two modes share the same rules:
 - **NEW** — author a deep dive from scratch (all four phases).
 - **ENRICH** — replace an existing skeleton's stubs with real content (Phases 2–4; Phase 1
-  runs in reduced form: verify only the facts you add, plus the prose-surgery diagnosis).
+  runs in reduced form: verify only the facts you add, plus the prose-surgery diagnosis —
+  and every paragraph the surgery will touch gets an explicit fact-survival-audit entry
+  in the plan, not just in the Phase 4 checklist).
 
 ---
 
